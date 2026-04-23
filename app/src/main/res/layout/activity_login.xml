@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".view.Login">
+
+    <TextView
+        android:id="@+id/tv_login"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="@string/app_login"
+        android:textSize="24sp"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/ti_layoutEmail"
+
+        app:layout_constraintVertical_chainStyle="packed"
+        />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/ti_layoutEmail"
+
+        android:layout_width="@dimen/width_etLayout"
+        android:layout_height="@dimen/default_height"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        app:layout_constraintTop_toBottomOf="@+id/tv_login"
+        app:layout_constraintBottom_toTopOf="@+id/ti_layoutPassword"
+        >
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_email"
+
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            android:hint="@string/hint_emailv1" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/ti_layoutPassword"
+
+        android:layout_width="@dimen/width_etLayout"
+        android:layout_height="@dimen/default_height"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+
+        app:layout_constraintTop_toBottomOf="@+id/ti_layoutEmail"
+        app:layout_constraintBottom_toBottomOf="@+id/cb_showPassword"
+        >
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_password"
+
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            android:hint="@string/hint_passwordv1" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <CheckBox
+        android:id="@+id/cb_showPassword"
+
+        android:layout_width="@dimen/width_etLayout"
+        android:layout_height="@dimen/default_height"
+
+        android:text="@string/show_password"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+
+        app:layout_constraintTop_toBottomOf="@+id/ti_layoutPassword"
+        app:layout_constraintBottom_toTopOf="@+id/btn_login"
+        />
+
+    <Button
+        android:id="@+id/btn_login"
+
+        android:layout_width="@dimen/width_etLayout"
+        android:layout_height="wrap_content"
+
+        android:text="@string/btn_login"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+
+        app:layout_constraintTop_toBottomOf="@+id/cb_showPassword"
+        app:layout_constraintBottom_toTopOf="@+id/tv_createAccount"
+        />
+
+    <TextView
+        android:id="@+id/tv_createAccount"
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:text="@string/link_createAccount"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+
+        app:layout_constraintTop_toBottomOf="@+id/btn_login"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
