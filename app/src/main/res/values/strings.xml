@@ -1,3 +1,20 @@
 <resources>
     <string name="app_name">KipuCode</string>
+
+    <!-- ELEMENTOS DE LOG IN -->
+    <string name="app_login">Log In</string>
+    <string name="app_register">Create Account</string>
+
+
+    <string name="hint_emailv1">Email</string>
+    <string name="hint_emailv2">johndoe@email.com</string>
+    <string name="hint_passwordv1">Password</string>
+    <string name="hint_passwordv2">•••••••••</string>
+
+    <string name="show_password">Show password</string>
+
+    <string name="btn_login">Log in</string>
+
+    <string name="link_createAccount">Don`t have account? Create Account</string>
+    <string name="link_login">Do you have account? Log in</string>
 </resources>
