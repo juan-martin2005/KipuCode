@@ -1,6 +1,7 @@
 package com.kipucode.view;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -19,6 +20,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.kipucode.MainActivity;
 import com.kipucode.R;
+import com.kipucode.service.Utils;
 
 public class Login extends AppCompatActivity {
 
@@ -36,23 +38,12 @@ public class Login extends AppCompatActivity {
         });
 
         createAccount = findViewById(R.id.tv_createAccount);
+        createAccount.setHighlightColor(Color.TRANSPARENT);
+
 
         String txt_createAccount = createAccount.getText().toString();
 
-        SpannableString spannableString = new SpannableString(txt_createAccount);
-
-        ClickableSpan clickableSpan = new ClickableSpan() {
-            @Override
-            public void onClick(@NonNull View widget) {
-                Intent register = new Intent(Login.this, Register.class);
-                startActivity(register);
-            }
-        };
-
-        int fin = txt_createAccount.length();
-        int inicio = txt_createAccount.indexOf("?") + 2;
-
-        spannableString.setSpan(clickableSpan,inicio,fin, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        SpannableString spannableString = Utils.getSpannableString(this, txt_createAccount, Register.class, "?");
 
         createAccount.setText(spannableString);
         createAccount.setMovementMethod(LinkMovementMethod.getInstance());

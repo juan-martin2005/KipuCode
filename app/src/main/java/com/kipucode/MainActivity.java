@@ -11,6 +11,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.kipucode.view.Login;
+import com.kipucode.view.Register;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -26,9 +27,8 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        Intent goLogin = new Intent(MainActivity.this, Login.class);
+        Intent goLogin = new Intent(MainActivity.this, Register.class);
         startActivity(goLogin);
-
     }
 
 }
