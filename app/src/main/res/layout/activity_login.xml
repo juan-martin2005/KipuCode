@@ -14,7 +14,9 @@
         android:layout_height="wrap_content"
 
         android:text="@string/app_login"
-        android:textSize="24sp"
+        style="@style/title_styles"
+
+        android:layout_marginVertical="@dimen/default_vmargin"
 
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -28,8 +30,10 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/ti_layoutEmail"
 
-        android:layout_width="@dimen/width_etLayout"
-        android:layout_height="@dimen/default_height"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:layout_marginHorizontal="@dimen/margin_horizontal"
 
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -51,14 +55,16 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/ti_layoutPassword"
 
-        android:layout_width="@dimen/width_etLayout"
-        android:layout_height="@dimen/default_height"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:layout_marginHorizontal="@dimen/margin_horizontal"
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
 
         app:layout_constraintTop_toBottomOf="@+id/ti_layoutEmail"
-        app:layout_constraintBottom_toBottomOf="@+id/cb_showPassword"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_login"
         >
 
         <com.google.android.material.textfield.TextInputEditText
@@ -71,33 +77,23 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <CheckBox
-        android:id="@+id/cb_showPassword"
-
-        android:layout_width="@dimen/width_etLayout"
-        android:layout_height="@dimen/default_height"
-
-        android:text="@string/show_password"
-
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-
-        app:layout_constraintTop_toBottomOf="@+id/ti_layoutPassword"
-        app:layout_constraintBottom_toTopOf="@+id/btn_login"
-        />
 
     <Button
         android:id="@+id/btn_login"
 
-        android:layout_width="@dimen/width_etLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+
+        android:layout_marginHorizontal="@dimen/margin_horizontal"
+        android:layout_marginVertical="@dimen/default_vmargin"
+
 
         android:text="@string/btn_login"
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
 
-        app:layout_constraintTop_toBottomOf="@+id/cb_showPassword"
+        app:layout_constraintTop_toBottomOf="@+id/ti_layoutPassword"
         app:layout_constraintBottom_toTopOf="@+id/tv_createAccount"
         />
 

@@ -3,7 +3,6 @@
 
     <!-- ELEMENTOS DE LOG IN -->
     <string name="app_login">Log In</string>
-    <string name="app_register">Create Account</string>
 
 
     <string name="hint_emailv1">Email</string>
@@ -16,5 +15,15 @@
     <string name="btn_login">Log in</string>
 
     <string name="link_createAccount">Don`t have account? Create Account</string>
+
+    <!-- ELEMENTOS DE SING UP -->
+    <string name="app_signup">Create Account</string>
+
+    <string name="hint_confirmPassword">Confirm Password</string>
+
+    <string name="btn_signup">Sign Up</string>
+
     <string name="link_login">Do you have account? Log in</string>
+
+
 </resources>
