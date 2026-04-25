@@ -4,7 +4,11 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,12 +16,15 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.kipucode.R;
 import com.kipucode.service.Utils;
 
 public class Register extends AppCompatActivity {
 
     TextView login;
+    EditText email, pass, confirmPass;
+    Button btnSingUp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +38,11 @@ public class Register extends AppCompatActivity {
         });
 
         login = findViewById(R.id.tv_login);
+        btnSingUp = findViewById(R.id.btn_signUp);
+        email = findViewById(R.id.et_email);
+        pass = findViewById(R.id.et_password);
+        confirmPass = findViewById(R.id.et_confirm_password);
+
         login.setHighlightColor(Color.TRANSPARENT);
 
         String txt_login = login.getText().toString();
@@ -39,5 +51,39 @@ public class Register extends AppCompatActivity {
 
         login.setText(spannableString);
         login.setMovementMethod(LinkMovementMethod.getInstance());
+
+        setup();
+    }
+
+    public void setup() {
+        // 1. Inicializamos mAuth correctamente
+        final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
+        btnSingUp.setOnClickListener(v -> {
+            // 2. Obtenemos el texto DENTRO del onClick para capturar lo que el usuario escribió
+            String _email = email.getText().toString().trim();
+            String _pass = pass.getText().toString().trim();
+            String _confirm_pass = confirmPass.getText().toString().trim();
+
+            if(!_email.isEmpty() && !_pass.isEmpty() && !_confirm_pass.isEmpty() && _confirm_pass.equals(_pass)){
+                // 3. Pasamos el contexto de la Actividad (Register.this) en lugar de 'this'
+                mAuth.createUserWithEmailAndPassword(_email, _pass)
+                        .addOnCompleteListener(Register.this, task -> {
+                            if (task.isSuccessful()) {
+                                // Sign in success
+                                Toast.makeText(Register.this, "Sign Up successful", Toast.LENGTH_SHORT).show();
+                                email.setText("");
+                                pass.setText("");
+                                confirmPass.setText("");
+                            } else {
+                                Log.w("ERROR", "createUserWithEmail:failure", task.getException());// Si falla, mostramos el mensaje
+                                Toast.makeText(Register.this, "Authentication failed: "+task.getException(), Toast.LENGTH_SHORT).show();
+                            }
+                        }); // 4. Cerramos el addOnCompleteListener correctamente
+            } else {
+                // Opcional: Avisar al usuario que faltan datos
+                Toast.makeText(Register.this, "Por favor llena todos los campos", Toast.LENGTH_SHORT).show();
+            }
+        }); // 4. Cerramos el setOnClickListener correctamente
     }
 }
