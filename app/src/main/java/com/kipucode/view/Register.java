@@ -17,6 +17,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.kipucode.R;
 import com.kipucode.service.Utils;
 
@@ -66,11 +67,22 @@ public class Register extends AppCompatActivity {
             String _confirm_pass = confirmPass.getText().toString().trim();
 
             if(!_email.isEmpty() && !_pass.isEmpty() && !_confirm_pass.isEmpty() && _confirm_pass.equals(_pass)){
-                // 3. Pasamos el contexto de la Actividad (Register.this) en lugar de 'this'
+
                 mAuth.createUserWithEmailAndPassword(_email, _pass)
                         .addOnCompleteListener(Register.this, task -> {
                             if (task.isSuccessful()) {
-                                // Sign in success
+                                // Sign up success
+                                FirebaseUser user = mAuth.getCurrentUser();
+                                if(user != null){
+                                    user.sendEmailVerification().addOnCompleteListener(tk -> {
+                                        if(tk.isSuccessful()){
+                                            Toast.makeText(Register.this, "Se ha enviado un email de verificación a \n" + user.getEmail(), Toast.LENGTH_LONG).show();
+                                        }
+                                        else {
+                                            Log.e("EmailVerification", "Error al enviar el email de verificación.", task.getException());
+                                        }
+                                    });
+                                }
                                 Toast.makeText(Register.this, "Sign Up successful", Toast.LENGTH_SHORT).show();
                                 email.setText("");
                                 pass.setText("");
@@ -79,7 +91,8 @@ public class Register extends AppCompatActivity {
                                 Log.w("ERROR", "createUserWithEmail:failure", task.getException());// Si falla, mostramos el mensaje
                                 Toast.makeText(Register.this, "Authentication failed: "+task.getException(), Toast.LENGTH_SHORT).show();
                             }
-                        }); // 4. Cerramos el addOnCompleteListener correctamente
+                        });
+
             } else {
                 // Opcional: Avisar al usuario que faltan datos
                 Toast.makeText(Register.this, "Por favor llena todos los campos", Toast.LENGTH_SHORT).show();

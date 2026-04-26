@@ -17,10 +17,11 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.kipucode.R;
 import com.kipucode.service.Utils;
 
-import java.util.Objects;
+
 
 public class Login extends AppCompatActivity {
 
@@ -68,16 +69,25 @@ public class Login extends AppCompatActivity {
                 // 3. Pasamos el contexto de la Actividad (Register.this) en lugar de 'this'
                 mAuth.signInWithEmailAndPassword(_email, _pass)
                         .addOnCompleteListener(Login.this, task -> {
-                            if (task.isSuccessful()) {
-                                // Sign in success
-                                Toast.makeText(Login.this, "Sign In successful", Toast.LENGTH_SHORT).show();
-                                email.setText("");
-                                pass.setText("");
-                            } else {
-                                Log.w("ERROR", "createUserWithEmail:failure", task.getException());// Si falla, mostramos el mensaje
-                                Toast.makeText(Login.this, "Authentication failed: "+ Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            if(user != null){
+                                if(!user.isEmailVerified()){
+                                    Toast.makeText(Login.this, "Verified your email", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                                if (task.isSuccessful()) {
+                                    // Sign in success
+                                    Toast.makeText(Login.this, "Sign In successful", Toast.LENGTH_SHORT).show();
+                                    email.setText("");
+                                    pass.setText("");
+                                } else {
+                                    var ex = task.getException();
+                                    String message = ex != null ? ex.getMessage() : null;
+                                    Log.w("ERROR", "signIn:failure", task.getException());// Si falla, mostramos el mensaje
+                                    Toast.makeText(Login.this, message , Toast.LENGTH_SHORT).show();
+                                }
                             }
-                        }); // 4. Cerramos el addOnCompleteListener correctamente
+                        });
             } else {
                 // Opcional: Avisar al usuario que faltan datos
                 Toast.makeText(Login.this, "Por favor llena todos los campos", Toast.LENGTH_SHORT).show();
