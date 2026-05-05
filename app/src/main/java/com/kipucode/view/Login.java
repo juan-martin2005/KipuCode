@@ -1,5 +1,6 @@
 package com.kipucode.view;
 
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.SpannableString;
@@ -7,11 +8,13 @@ import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -39,7 +42,7 @@ public class Login extends AppCompatActivity {
         });
 
         createAccount = findViewById(R.id.tv_createAccount);
-        btnLogin = findViewById(R.id.btn_login);
+        btnLogin = findViewById(R.id.btn_logIn);
         email = findViewById(R.id.et_email);
         pass = findViewById(R.id.et_password);
         createAccount.setHighlightColor(Color.TRANSPARENT);
@@ -47,6 +50,8 @@ public class Login extends AppCompatActivity {
         spannableStringRegister();
         setupFirebaseAuth();
     }
+
+
 
     public void spannableStringRegister(){
         String txt_createAccount = createAccount.getText().toString();

@@ -39,7 +39,7 @@ public class Register extends AppCompatActivity {
         });
 
         login = findViewById(R.id.tv_login);
-        btnSingUp = findViewById(R.id.btn_signUp);
+        btnSingUp = findViewById(R.id.btn_createAccount);
         email = findViewById(R.id.et_email);
         pass = findViewById(R.id.et_password);
         confirmPass = findViewById(R.id.et_confirm_password);
