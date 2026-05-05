@@ -7,4 +7,115 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <ImageView
+        android:id="@+id/iv_mode"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+
+        android:contentDescription="@string/cd_toggle_theme"
+        app:srcCompat="@drawable/light_mode"
+
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginVertical="16dp"
+
+        android:scaleType="fitCenter"
+
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageView
+        android:id="@+id/iv_logo"
+
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+
+        app:srcCompat="@drawable/logo"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="32dp"
+
+        app:layout_constraintBottom_toTopOf="@+id/tv_heroHead"
+        app:layout_constraintVertical_chainStyle="packed"
+        />
+
+    <TextView
+        android:id="@+id/tv_heroHead"
+
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+
+        android:layout_marginVertical="24dp"
+
+        android:text="@string/hero_text"
+        android:textSize="32sp"
+        android:gravity="center"
+        android:textStyle="bold"
+
+        android:layout_marginHorizontal="@dimen/margin_horizontal"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+
+        app:layout_constraintTop_toBottomOf="@+id/iv_logo"
+        app:layout_constraintBottom_toTopOf="@+id/subHeadline"
+        />
+
+    <TextView
+        android:id="@+id/subHeadline"
+
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+
+        android:layout_marginVertical="16dp"
+
+        android:text="@string/subHeadline_text"
+        android:textSize="16sp"
+
+        android:layout_marginHorizontal="@dimen/margin_horizontal"
+        android:gravity="center"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+
+        app:layout_constraintTop_toBottomOf="@+id/tv_heroHead"
+        />
+
+    <Button
+        android:id="@+id/btn_logIn"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:layout_marginHorizontal="@dimen/margin_horizontal"
+        android:layout_marginTop="@dimen/default_vmargin"
+
+        android:text="@string/btn_login"
+
+        app:layout_constraintBottom_toTopOf="@+id/btn_createAccount"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+    <Button
+        android:id="@+id/btn_createAccount"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:layout_marginHorizontal="@dimen/margin_horizontal"
+
+        android:backgroundTint="@null"
+        android:layout_marginBottom="24dp"
+
+        android:text="@string/btn_createAccount"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

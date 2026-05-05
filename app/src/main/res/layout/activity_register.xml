@@ -94,7 +94,7 @@
         app:layout_constraintStart_toStartOf="parent"
 
         app:layout_constraintTop_toBottomOf="@+id/ti_layoutPassword"
-        app:layout_constraintBottom_toTopOf="@+id/btn_signUp"
+        app:layout_constraintBottom_toTopOf="@+id/btn_createAccount"
         >
 
         <com.google.android.material.textfield.TextInputEditText
@@ -110,7 +110,7 @@
 
 
     <Button
-        android:id="@+id/btn_signUp"
+        android:id="@+id/btn_createAccount"
 
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -118,7 +118,7 @@
         android:layout_marginHorizontal="@dimen/margin_horizontal"
         android:layout_marginVertical="@dimen/default_vmargin"
 
-        android:text="@string/btn_signup"
+        android:text="@string/btn_createAccount"
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -137,7 +137,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
 
-        app:layout_constraintTop_toBottomOf="@+id/btn_signUp"
+        app:layout_constraintTop_toBottomOf="@+id/btn_createAccount"
         app:layout_constraintBottom_toBottomOf="parent"
         />
 
