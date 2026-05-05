@@ -21,9 +21,15 @@
 
     <string name="hint_confirmPassword">Confirm Password</string>
 
-    <string name="btn_signup">Sign Up</string>
+    <string name="btn_createAccount">Create account</string>
 
     <string name="link_login">Do you have account? Log in</string>
 
+    <!-- ELEMENTOS DE MAIN ACTIVITY - WELCOME -->
+    <string name="cd_toggle_theme">Switch between light and dark mode</string>
+
+    <string name="hero_text">Learn to code with clarity, practice, and purpose</string>
+
+    <string name="subHeadline_text">Build real programming skills through guided lessons and hands-on experience</string>
 
 </resources>
