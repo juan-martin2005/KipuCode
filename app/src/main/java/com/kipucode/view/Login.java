@@ -21,8 +21,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.kipucode.R;
 import com.kipucode.service.Utils;
 
-
-
 public class Login extends AppCompatActivity {
 
     TextView createAccount;
@@ -46,17 +44,20 @@ public class Login extends AppCompatActivity {
         pass = findViewById(R.id.et_password);
         createAccount.setHighlightColor(Color.TRANSPARENT);
 
+        spannableStringRegister();
+        setupFirebaseAuth();
+    }
 
+    public void spannableStringRegister(){
         String txt_createAccount = createAccount.getText().toString();
 
         SpannableString spannableString = Utils.getSpannableString(this, txt_createAccount, Register.class, "?");
 
         createAccount.setText(spannableString);
         createAccount.setMovementMethod(LinkMovementMethod.getInstance());
-        setup();
     }
 
-    public void setup() {
+    public void setupFirebaseAuth() {
         // 1. Inicializamos mAuth correctamente
         final FirebaseAuth mAuth = FirebaseAuth.getInstance();
 

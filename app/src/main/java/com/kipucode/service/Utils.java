@@ -10,7 +10,6 @@ import android.view.View;
 import org.jspecify.annotations.NonNull;
 
 public class Utils {
-
     public static SpannableString getSpannableString(Context context, String txt_link, Class<?> target, String charToSearch) {
         SpannableString spannableString = new SpannableString(txt_link);
 

@@ -44,6 +44,11 @@ public class Register extends AppCompatActivity {
         pass = findViewById(R.id.et_password);
         confirmPass = findViewById(R.id.et_confirm_password);
 
+        spannableStringLogin();
+        setupFirebaseAuth();
+    }
+
+    public void spannableStringLogin(){
         login.setHighlightColor(Color.TRANSPARENT);
 
         String txt_login = login.getText().toString();
@@ -52,11 +57,9 @@ public class Register extends AppCompatActivity {
 
         login.setText(spannableString);
         login.setMovementMethod(LinkMovementMethod.getInstance());
-
-        setup();
     }
 
-    public void setup() {
+    public void setupFirebaseAuth() {
         // 1. Inicializamos mAuth correctamente
         final FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
