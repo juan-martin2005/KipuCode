@@ -26,7 +26,7 @@ import com.kipucode.service.Utils;
 
 public class Login extends AppCompatActivity {
 
-    TextView createAccount;
+    TextView createAccount, forgotPassword;
     Button btnLogin;
     EditText email, pass;
 
@@ -42,24 +42,33 @@ public class Login extends AppCompatActivity {
         });
 
         createAccount = findViewById(R.id.tv_createAccount);
+        forgotPassword = findViewById(R.id.tv_forgotPassword);
         btnLogin = findViewById(R.id.btn_logIn);
         email = findViewById(R.id.et_email);
         pass = findViewById(R.id.et_password);
-        createAccount.setHighlightColor(Color.TRANSPARENT);
 
-        spannableStringRegister();
+
+        createAccount.setHighlightColor(Color.TRANSPARENT);
+        forgotPassword.setHighlightColor(Color.TRANSPARENT);
+
+        spannableStrings();
         setupFirebaseAuth();
     }
 
 
 
-    public void spannableStringRegister(){
+    public void spannableStrings(){
         String txt_createAccount = createAccount.getText().toString();
+        String txt_forgotPassword = forgotPassword.getText().toString();
 
-        SpannableString spannableString = Utils.getSpannableString(this, txt_createAccount, Register.class, "?");
+        SpannableString spannableString1 = Utils.getSpannableString(this, txt_createAccount, Register.class, "?");
+        SpannableString spannableString2 = Utils.getSpannableString(this, txt_forgotPassword, Register.class, "");
 
-        createAccount.setText(spannableString);
+        createAccount.setText(spannableString1);
         createAccount.setMovementMethod(LinkMovementMethod.getInstance());
+
+        forgotPassword.setText(spannableString2);
+        forgotPassword.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     public void setupFirebaseAuth() {

@@ -16,7 +16,7 @@
         android:text="@string/app_login"
         style="@style/title_styles"
 
-        android:layout_marginVertical="@dimen/default_vmargin"
+        android:layout_marginBottom="16dp"
 
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -28,10 +28,15 @@
         />
 
     <com.google.android.material.textfield.TextInputLayout
+        style="@style/modernForm"
+        app:startIconDrawable="@drawable/mail_icon"
+
         android:id="@+id/ti_layoutEmail"
 
+        android:layout_marginBottom="10dp"
+
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
 
         android:layout_marginHorizontal="@dimen/margin_horizontal"
 
@@ -53,18 +58,25 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
+        style="@style/modernForm"
+        app:startIconDrawable="@drawable/lock_password_icon"
+
         android:id="@+id/ti_layoutPassword"
 
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
+
+        android:layout_marginBottom="10dp"
 
         android:layout_marginHorizontal="@dimen/margin_horizontal"
+
+        app:endIconMode="password_toggle"
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
 
         app:layout_constraintTop_toBottomOf="@+id/ti_layoutEmail"
-        app:layout_constraintBottom_toBottomOf="@+id/btn_logIn"
+        app:layout_constraintBottom_toTopOf="@+id/tv_forgotPassword"
         >
 
         <com.google.android.material.textfield.TextInputEditText
@@ -77,23 +89,45 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <TextView
+        android:id="@+id/tv_forgotPassword"
 
-    <Button
-        android:id="@+id/btn_logIn"
+        android:layout_marginHorizontal="@dimen/margin_horizontal"
+
+        android:layout_marginBottom="10dp"
 
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
 
-        android:layout_marginHorizontal="@dimen/margin_horizontal"
-        android:layout_marginVertical="@dimen/default_vmargin"
+        android:text="@string/forgot_password"
 
-
-        android:text="@string/btn_login"
+        android:gravity="end"
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
 
         app:layout_constraintTop_toBottomOf="@+id/ti_layoutPassword"
+        app:layout_constraintBottom_toTopOf="@+id/btn_logIn"
+        />
+
+    <Button
+        style="@style/Widget.Material3.Button"
+
+        android:id="@+id/btn_logIn"
+
+        android:layout_marginBottom="10dp"
+
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+
+        android:layout_marginHorizontal="@dimen/margin_horizontal"
+        android:text="@string/btn_login"
+
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+
+        app:layout_constraintTop_toBottomOf="@+id/tv_forgotPassword"
         app:layout_constraintBottom_toTopOf="@+id/tv_createAccount"
         />
 
