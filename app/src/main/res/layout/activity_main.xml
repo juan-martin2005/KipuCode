@@ -9,10 +9,12 @@
 
     <ImageView
         android:id="@+id/iv_mode"
+
         android:layout_width="32dp"
         android:layout_height="32dp"
 
         android:contentDescription="@string/cd_toggle_theme"
+
         app:srcCompat="@drawable/light_mode"
 
         android:layout_marginHorizontal="16dp"
@@ -26,8 +28,11 @@
     <ImageView
         android:id="@+id/iv_logo"
 
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="170dp"
+        android:layout_height="170dp"
+
+        android:layout_marginTop="80dp"
+        android:contentDescription="@string/icon_description"
 
         app:srcCompat="@drawable/logo"
 
@@ -35,11 +40,8 @@
         app:layout_constraintStart_toStartOf="parent"
 
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="32dp"
-
         app:layout_constraintBottom_toTopOf="@+id/tv_heroHead"
-        app:layout_constraintVertical_chainStyle="packed"
-        />
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
         android:id="@+id/tv_heroHead"
@@ -60,34 +62,52 @@
         app:layout_constraintStart_toStartOf="parent"
 
         app:layout_constraintTop_toBottomOf="@+id/iv_logo"
-        app:layout_constraintBottom_toTopOf="@+id/subHeadline"
-        />
+        app:layout_constraintBottom_toTopOf="@+id/viewPager_Slider" />
 
-    <TextView
-        android:id="@+id/subHeadline"
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager_Slider"
 
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-
-        android:layout_marginVertical="16dp"
-
-        android:text="@string/subHeadline_text"
-        android:textSize="16sp"
-
-        android:layout_marginHorizontal="@dimen/margin_horizontal"
-        android:gravity="center"
+        android:layout_height="0dp"
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
 
         app:layout_constraintTop_toBottomOf="@+id/tv_heroHead"
+        app:layout_constraintBottom_toTopOf="@+id/tabLayout_Dots"
         />
 
-    <Button
-        android:id="@+id/btn_logIn"
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout_Dots"
 
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="16dp"
+
+        android:layout_marginBottom="16dp"
+
+        android:background="@android:color/transparent"
+
+        app:tabBackground="@drawable/selector_dots"
+
+        app:tabMinWidth="16dp"
+        app:tabMaxWidth="16dp"
+
+        app:tabGravity="center"
+        app:tabIndicatorHeight="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/btn_logIn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        style="@style/Widget.Material3.Button"
+
+        android:id="@+id/btn_logIn"
+
+        android:layout_marginBottom="5dp"
+
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
 
         android:layout_marginHorizontal="@dimen/margin_horizontal"
         android:layout_marginTop="@dimen/default_vmargin"
@@ -96,26 +116,27 @@
 
         app:layout_constraintBottom_toTopOf="@+id/btn_createAccount"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
+        style="@style/Widget.Material3.Button.OutlinedButton"
+        app:strokeWidth="2dp"
+        app:strokeColor="?attr/colorPrimary"
+
         android:id="@+id/btn_createAccount"
 
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
 
         android:layout_marginHorizontal="@dimen/margin_horizontal"
 
-        android:backgroundTint="@null"
-        android:layout_marginBottom="24dp"
+        android:layout_marginBottom="32dp"
 
         android:text="@string/btn_createAccount"
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
 
-        app:layout_constraintBottom_toBottomOf="parent"
-        />
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

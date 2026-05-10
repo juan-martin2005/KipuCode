@@ -10,7 +10,7 @@
     <string name="hint_passwordv1">Password</string>
     <string name="hint_passwordv2">•••••••••</string>
 
-    <string name="show_password">Show password</string>
+    <string name="forgot_password">Forgotten Password?</string>
 
     <string name="btn_login">Log in</string>
 
@@ -31,5 +31,7 @@
     <string name="hero_text">Learn to code with clarity, practice, and purpose</string>
 
     <string name="subHeadline_text">Build real programming skills through guided lessons and hands-on experience</string>
+
+    <string name="icon_description">KipuCode Icon</string>
 
 </resources>
