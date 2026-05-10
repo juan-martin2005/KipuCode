@@ -3,6 +3,8 @@ package com.kipucode.service;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -27,12 +29,20 @@ public class Utils {
             public void updateDrawState(@androidx.annotation.NonNull TextPaint drawState){
                 super.updateDrawState(drawState);
                 drawState.setUnderlineText(false);
-                drawState.setFakeBoldText(true);
+                drawState.setTypeface(Typeface.create(drawState.getTypeface(), Typeface.BOLD));
             }
         };
 
         int end = txt_link.length();
-        int start = txt_link.indexOf(charToSearch) + 2;
+        int start;
+
+        if (charToSearch.isEmpty()){
+            start = 0;
+        }else {
+            int index = txt_link.indexOf(charToSearch);
+
+            start = index + 2;
+        }
 
         spannableString.setSpan(clickableSpan, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         return spannableString;
