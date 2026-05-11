@@ -1,9 +1,7 @@
-package com.kipucode.service;
+package com.kipucode.utils;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -11,6 +9,12 @@ import android.text.TextPaint;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.view.View;
+
+import com.google.firebase.FirebaseNetworkException;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+
 import org.jspecify.annotations.NonNull;
 
 public class Utils {
@@ -59,6 +63,21 @@ public class Utils {
         }
 
         return spannable;
+    }
+
+    public static String getAuthErrorMessage(Exception ex){
+
+        if (ex instanceof FirebaseAuthInvalidUserException) {
+            return "No existe una cuenta con este email";
+        } else if (ex instanceof FirebaseAuthInvalidCredentialsException) {
+            return "Email o contraseña incorrecta";
+        } else if (ex instanceof FirebaseAuthUserCollisionException) {
+            return "Este email ya está registrado";
+        } else if (ex instanceof FirebaseNetworkException) {
+            return "Error de red, verifica tu conexión";
+        }
+
+        return "Error de autenticacion, intentelo de nuevo";
     }
 
 }

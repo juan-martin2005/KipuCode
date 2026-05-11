@@ -1,4 +1,4 @@
-package com.kipucode.service;
+package com.kipucode.utils;
 
 import android.view.LayoutInflater;
 import android.view.View;
