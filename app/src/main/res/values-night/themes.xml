@@ -4,5 +4,10 @@
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
         <item name="android:fontFamily">@font/poppins</item>
+
+        <item name="android:textColor">#f6f7f9</item>
+
+        <item name="colorPrimary">#07a0a6</item>
+
     </style>
 </resources>

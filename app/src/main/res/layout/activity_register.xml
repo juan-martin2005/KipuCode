@@ -134,6 +134,7 @@
         android:layout_marginVertical="@dimen/default_vmargin"
 
         android:text="@string/btn_createAccount"
+        android:textStyle="bold"
 
         app:layout_constraintBottom_toTopOf="@+id/tv_login"
         app:layout_constraintEnd_toEndOf="parent"
