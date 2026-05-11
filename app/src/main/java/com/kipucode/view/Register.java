@@ -19,13 +19,14 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.kipucode.R;
-import com.kipucode.service.Utils;
+import com.kipucode.utils.Utils;
 
 public class Register extends AppCompatActivity {
 
     TextView login;
     EditText email, pass, confirmPass;
     Button btnSingUp;
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,46 +61,56 @@ public class Register extends AppCompatActivity {
     }
 
     public void setupFirebaseAuth() {
-        // 1. Inicializamos mAuth correctamente
-        final FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
         btnSingUp.setOnClickListener(v -> {
-            // 2. Obtenemos el texto DENTRO del onClick para capturar lo que el usuario escribió
+
             String _email = email.getText().toString().trim();
             String _pass = pass.getText().toString().trim();
             String _confirm_pass = confirmPass.getText().toString().trim();
 
-            if(!_email.isEmpty() && !_pass.isEmpty() && !_confirm_pass.isEmpty() && _confirm_pass.equals(_pass)){
-
-                mAuth.createUserWithEmailAndPassword(_email, _pass)
-                        .addOnCompleteListener(Register.this, task -> {
-                            if (task.isSuccessful()) {
-                                // Sign up success
-                                FirebaseUser user = mAuth.getCurrentUser();
-                                if(user != null){
-                                    user.sendEmailVerification().addOnCompleteListener(tk -> {
-                                        if(tk.isSuccessful()){
-                                            Toast.makeText(Register.this, "Se ha enviado un email de verificación a \n" + user.getEmail(), Toast.LENGTH_LONG).show();
-                                        }
-                                        else {
-                                            Log.e("EmailVerification", "Error al enviar el email de verificación.", task.getException());
-                                        }
-                                    });
-                                }
-                                Toast.makeText(Register.this, "Sign Up successful", Toast.LENGTH_SHORT).show();
-                                email.setText("");
-                                pass.setText("");
-                                confirmPass.setText("");
-                            } else {
-                                Log.w("ERROR", "createUserWithEmail:failure", task.getException());// Si falla, mostramos el mensaje
-                                Toast.makeText(Register.this, "Authentication failed: "+task.getException(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
-
-            } else {
-                // Opcional: Avisar al usuario que faltan datos
+            if(_email.isEmpty() || _pass.isEmpty() || _confirm_pass.isEmpty()){
                 Toast.makeText(Register.this, "Por favor llena todos los campos", Toast.LENGTH_SHORT).show();
             }
-        }); // 4. Cerramos el setOnClickListener correctamente
+            if(!_confirm_pass.equals(_pass)){
+                Toast.makeText(Register.this, "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show();
+            }
+
+            createUserAccount(_email, _pass);
+
+        });
+    }
+
+    public void sendEmailVerification() {
+        FirebaseUser user = mAuth.getCurrentUser();
+        if(user != null){
+            user.sendEmailVerification().addOnCompleteListener(tk -> {
+                if(tk.isSuccessful()){
+                    Toast.makeText(Register.this, "Se ha enviado un email de verificación a \n" + user.getEmail(), Toast.LENGTH_LONG).show();
+                }
+                else {
+                    Log.e("EmailVerification", "Error al enviar el email de verificación.", tk.getException());
+                    Toast.makeText(Register.this, "Error al enviar el email de verificación.", Toast.LENGTH_LONG).show();
+                }
+            });
+
+        }
+    }
+
+    public void createUserAccount(String _email, String _pass){
+        mAuth.createUserWithEmailAndPassword(_email, _pass)
+                .addOnCompleteListener(Register.this, task -> {
+                    if (task.isSuccessful()) {
+
+                        Toast.makeText(Register.this, "Se ha creado tu cuenta", Toast.LENGTH_SHORT).show();
+                        sendEmailVerification();
+                        email.setText("");
+                        pass.setText("");
+                        confirmPass.setText("");
+                    } else {
+                        Log.w("ERROR", "createUserWithEmail:failure", task.getException());
+                        String errorMessage = Utils.getAuthErrorMessage(task.getException());
+                        Toast.makeText(Register.this, errorMessage, Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 }
