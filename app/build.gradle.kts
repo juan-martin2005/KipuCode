@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -41,13 +42,13 @@ android {
 
 dependencies {
     // Enrutador
-    implementation("androidx.navigation:navigation-compose:2.9.8")
+    implementation(libs.androidx.navigation.compose)
 
     // Firebase and Room
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.auth)
     implementation(libs.room.runtime)
-
+    ksp(libs.room.compiler)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)
