@@ -2,10 +2,12 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     id("com.google.devtools.ksp")
+    id("com.google.gms.google-services")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
-    namespace = "com.dam.kipucode"
+    namespace = "com.kipucode"
     compileSdk {
         version = release(36) {
             minorApiLevel = 1
@@ -13,7 +15,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.dam.kipucode"
+        applicationId = "com.kipucode"
         minSdk = 26
         targetSdk = 36
         versionCode = 1
@@ -45,10 +47,13 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
 
     // Firebase and Room
+    implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.auth)
     implementation(libs.room.runtime)
     ksp(libs.room.compiler)
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.android.compiler)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)

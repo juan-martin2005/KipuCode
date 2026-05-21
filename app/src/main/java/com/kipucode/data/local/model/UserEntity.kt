@@ -1,0 +1,18 @@
+package com.kipucode.data.local.model
+
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "users")
+data class UserEntity(
+    @PrimaryKey
+    val id: String,
+    val name: String?,
+    val email: String?,
+    @ColumnInfo(name = "total_xp")
+    val totalXp: Int,
+    @ColumnInfo(name = "streak_day")
+    val streakDay: Int,
+    val token: String?
+)
