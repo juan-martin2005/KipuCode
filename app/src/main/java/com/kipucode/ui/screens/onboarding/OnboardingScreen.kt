@@ -1,6 +1,5 @@
 package com.kipucode.ui.screens.onboarding
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -13,10 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,11 +19,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kipucode.R
+import com.kipucode.ui.component.button.FilledButton
+import com.kipucode.ui.component.button.OutlineButton
 import com.kipucode.ui.theme.Nunito
 
 @Composable
@@ -42,7 +41,7 @@ fun OnboardingScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFf6f7f9))
-            .padding(horizontal = 24.dp, vertical = 16.dp),
+            .padding(vertical = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
@@ -50,14 +49,14 @@ fun OnboardingScreen(
 
         Image(
             painter = painterResource(id = R.drawable.img_kipucode_logo),
-            contentDescription = "Logo KipuCode",
+            contentDescription = stringResource(id = R.string.cd_banner),
             modifier = Modifier
                 .size(180.dp)
-                .align(Alignment.CenterHorizontally),
+                .align(Alignment.CenterHorizontally)
         )
         
         Text(
-            text = "Learn to code with clarity, practice and purpose",
+            text = stringResource(id = R.string.banner),
             fontFamily = Nunito,
             fontWeight = FontWeight.ExtraBold,
             fontSize = 32.sp,
@@ -78,12 +77,13 @@ fun OnboardingScreen(
             val page = onboardingPages[position]
 
             Column(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize()
+                    .padding(horizontal = 24.dp),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = page.description,
+                    text = stringResource(id = page.descriptionRes),
                     color = Color(0xFF4B5563),
                     fontFamily = Nunito,
                     fontWeight = FontWeight.Normal,
@@ -92,18 +92,16 @@ fun OnboardingScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 40.dp)
-                        .fillMaxSize()
                 )
             }
         }
 
         Image(
-            painter = painterResource(id = R.drawable.img_kipu_two),
-            contentDescription = "Loading Bar Kipu",
+            painter = painterResource(id = R.drawable.img_kipu),
+            contentDescription = stringResource(id = R.string.cd_kipu),
             contentScale = ContentScale.FillWidth,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 40.dp)
                 .padding(bottom = 30.dp)
         )
 
@@ -114,51 +112,28 @@ fun OnboardingScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        Button(
-            onClick = {
-                onNavigateToLogin()
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp),
-            shape = RoundedCornerShape(14.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0293a8))
-        ) {
-            Text(
-                text = "Log In",
-                fontFamily = Nunito,
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp,
-                color = Color.White
-            )
-        }
+        FilledButton(
+            stringResource(id = R.string.logIn),
+            {onNavigateToLogin()},
+            modifier = Modifier.padding(horizontal = 24.dp)
+        )
+
         Spacer(modifier = Modifier.height(10.dp))
 
-        OutlinedButton(
-            onClick = {
-                onNavigateToRegister()
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp),
-            shape = RoundedCornerShape(14.dp),
-            border = BorderStroke(width = 2.dp, color = Color(0xFF0293a8)),
-            colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFF0293a8))
-        ) {
-            Text(
-                text = "Register",
-                fontFamily = Nunito,
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp,
-                color = Color(0xFF0293a8)
-            )
-        }
+        OutlineButton(
+            stringResource(id = R.string.register),
+            { onNavigateToRegister()},
+            modifier = Modifier.padding(horizontal = 24.dp)
+
+        )
     }
 }
 
-//@Preview(showBackground = true, name = "Pantalla de Onboarding")
-//@Composable
-//fun OnboardingPreview() {
-//    OnboardingScreen {
-//    }
-//}
+@Preview(showBackground = true, name = "Pantalla de Onboarding")
+@Composable
+fun OnboardingPreview() {
+    OnboardingScreen(
+        onNavigateToLogin = {},
+        onNavigateToRegister = {}
+    )
+}

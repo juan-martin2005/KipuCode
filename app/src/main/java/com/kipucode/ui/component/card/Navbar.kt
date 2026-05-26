@@ -1,19 +1,15 @@
-package com.kipucode.ui.components.cards
+package com.kipucode.ui.component.card
 
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import com.kipucode.ui.theme.Nunito
 import com.kipucode.R
-import com.kipucode.ui.screens.auth.LoginScreen
 
 sealed class NavBarItem(val route: String, val title: String, val icon: Int) {
     object Home : NavBarItem("home", "Home", R.drawable.ic_home)

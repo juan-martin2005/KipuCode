@@ -1,6 +1,6 @@
 package com.kipucode.ui.screens.onboarding
 
-import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,22 +15,14 @@ import androidx.compose.ui.unit.dp
 import com.kipucode.R
 
 data class OnboardingPageInfo(
-    val description: String
+    @param:StringRes val descriptionRes: Int
 )
 
 val onboardingPages = listOf(
-    OnboardingPageInfo(
-        description = "Build real programming skills through guided lessons and hands on experience"
-    ),
-    OnboardingPageInfo(
-        description = "Master fundamental logic through structured and easy to follow learning paths"
-    ),
-    OnboardingPageInfo(
-        description = "Transition from theory to execution with interactive coding challenges"
-    ),
-    OnboardingPageInfo(
-        description = "Transform basic knowledge into advanced & professional engineering skills"
-    ),
+    OnboardingPageInfo(descriptionRes = R.string.slider_1),
+    OnboardingPageInfo(descriptionRes = R.string.slider_2),
+    OnboardingPageInfo(descriptionRes = R.string.slider_3),
+    OnboardingPageInfo(descriptionRes = R.string.slider_4),
 )
 
 @Composable

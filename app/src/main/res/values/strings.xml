@@ -1,4 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">KipuCode</string>
+
+    <!-- Onboarding-Screen -->
+    <string name="subline">Learn. Understand.\nProgram. Create.</string>
+    <string name="cd_logo">Logo KipuCode</string>
+
+    <!-- Onboarding-Screen -->
+    <string name="banner">Learn to code with clarity, practice and purpose</string>
+
+    <string name="cd_banner">Logo KipuCode</string>
+    <string name="cd_kipu">"Loading Bar Kipu"</string>
+
+    <string name="cd_go_back">Go back</string>
+
+
+    <string name="slider_1">Build real programming skills through guided lessons and hands on experience</string>
+    <string name="slider_2">Master fundamental logic through structured and easy to follow learning paths</string>
+    <string name="slider_3">Transition from theory to execution with interactive coding challenges</string>
+    <string name="slider_4">Transform basic knowledge into advanced &amp; professional engineering skills</string>
+
+    <!-- Buttons & Texts -->
+    <string name="logIn">Log In</string>
+    <string name="log_in">Log in</string>
+    <string name="register">Register</string>
+
+    <string name="password">Password</string>
+    <string name="email">Email</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="full_name">Full Name</string>
+
+    <string name="ph_full_name">Your name</string>
+
+    <!-- Login-Screen -->
+    <string name="login_title">Welcome back!</string>
+    <string name="login_desc">Continue your programming journey. Ready to learn something new?</string>
+
+    <string name="login_clickable_start">"Don't have an account yet?, "</string>
+    <string name="login_clickable_end">Register</string>
+
+
+    <!-- Register-Screen -->
+    <string name="register_title">Create account</string>
+    <string name="register_desc">Join KipuCode and start your journey into the world of programming</string>
+
+    <string name="register_clickable_start">"Do you already have an account?, "</string>
+    <string name="register_clickable_end">" Log in"</string>
+
+    <!-- Login & Register - Validaciones -->
+    <string name="error_name_required">Full Name is required.</string>
+    <string name="error_email_required">Email is required.</string>
+    <string name="error_email_domain">Please use your institutional email (@upn.pe).</string>
+    <string name="error_password_required">Password is required.</string>
+    <string name="error_confirm_password_required">Confirm Password is required.</string>
+
 </resources>
