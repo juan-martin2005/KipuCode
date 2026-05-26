@@ -1,5 +1,6 @@
 package com.kipucode.ui.screens.auth
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -8,32 +9,58 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kipucode.R
+import com.kipucode.domain.model.Response
 import com.kipucode.ui.component.button.FilledButton
 import com.kipucode.ui.component.text_field.ClickableLink
 import com.kipucode.ui.component.text_field.KipuForm
 import com.kipucode.ui.theme.Nunito
-import androidx.compose.ui.platform.LocalContext
+import com.kipucode.viewmodel.AuthViewModel
+
 @Composable
 fun LoginScreen(
-    onLoginSuccess: (String, String) -> Unit,
+    onLoginSuccess: () -> Unit,
     onNavigateToRegister: () -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    authViewModel: AuthViewModel = viewModel(factory = AuthViewModel.Factory)
 ) {
     // ESTADOS PARA LOS CAMPOS
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
+    val loginState by authViewModel.loginState.collectAsStateWithLifecycle()
+
     // ESTADOS PARA LAS CONTRASEÑAS
     var passwordVisible by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
+    LaunchedEffect(loginState) {
+        when (loginState) {
+            is Response.Loading -> {
+            }
+            is Response.Success -> {
+                Toast.makeText(context, "¡Bienvenido de nuevo!", Toast.LENGTH_SHORT).show()
+                onLoginSuccess()
+                authViewModel.resetState()
+            }
+            is Response.Error -> {
+                val errorMessage = (loginState as Response.Error).message ?: "Error desconocido"
+                Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+                authViewModel.resetState()
+            }
+            null -> { }
+        }
+    }
 
     // ESTADOS DE ERROR (VALIDACIONES)
     var emailError by remember { mutableStateOf<String?>(null) }
@@ -42,6 +69,7 @@ fun LoginScreen(
     val msgErrorEmailRequired = stringResource(id = R.string.error_email_required)
     val msgErrorEmailDomain = stringResource(id = R.string.error_email_domain)
     val msgErrorPassRequired = stringResource(id = R.string.error_password_required)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -165,7 +193,7 @@ fun LoginScreen(
                     }
 
                     if (!hasError) {
-                        onLoginSuccess(emailTrimmed, password)
+                        authViewModel.login(emailTrimmed, password)
                     }
                 }
             )
@@ -179,18 +207,5 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.weight(2f))
         }
-
     }
-
-
 }
-
-//@Preview(showBackground = true, name = "Pantalla de Login")
-//@Composable
-//fun LoginPreview() {
-//    LoginScreen(
-//        onLoginSuccess = {mail, password ->},
-//        onNavigateToRegister = {},
-//        onBack = {}
-//    )
-//}

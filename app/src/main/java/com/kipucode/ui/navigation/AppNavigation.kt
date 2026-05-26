@@ -74,8 +74,7 @@ fun AppNavigation(){
 
             composable("login"){
                 LoginScreen(
-                    onLoginSuccess = { mail, password ->
-                        navController.navigate("home") {
+                    onLoginSuccess = { navController.navigate("home") {
                             popUpTo(0)
                         }
                     },

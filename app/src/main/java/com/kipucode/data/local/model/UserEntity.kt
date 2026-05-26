@@ -14,5 +14,4 @@ data class UserEntity(
     val totalXp: Int,
     @ColumnInfo(name = "streak_day")
     val streakDay: Int,
-    val token: String?
 )
