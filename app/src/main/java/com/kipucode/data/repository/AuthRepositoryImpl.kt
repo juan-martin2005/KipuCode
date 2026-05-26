@@ -18,11 +18,11 @@ internal class AuthRepositoryImpl(
 
             if(currentUser != null){
 
-                val user = User(currentUser.uid,currentUser.displayName,currentUser.email)
+                val user = User(currentUser.uid,currentUser.displayName,currentUser.email.toString())
 
                 Response.Success(user)
             } else {
-                Response.Error("No hay usuario registrado", null)
+                Response.Error("verifica tu email", null)
 
             }
 
@@ -33,11 +33,28 @@ internal class AuthRepositoryImpl(
     }
 
     override suspend fun register(user: User, password: String): Response<User> {
-        TODO("Not yet implemented")
+        return try {
+            val authResult = remoteDataSource.registerUserWithEmail(user.email,password).await()
+
+            val currentUser = authResult.user
+
+            if(currentUser != null){
+
+                val user = User(currentUser.uid,currentUser.displayName,currentUser.email.toString())
+
+                Response.Success(user)
+            } else {
+                Response.Error("No hay usuario registrado", null)
+
+            }
+
+        }catch (ex: Exception){
+            Response.Error(ex.message, null)
+        }
     }
 
     override suspend fun logout() {
-        TODO("Not yet implemented")
+        remoteDataSource.logoutUser()
     }
 
 

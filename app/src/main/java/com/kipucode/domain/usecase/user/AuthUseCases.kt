@@ -16,5 +16,8 @@ class LoginUseCases (
 class RegisterUseCase(
     private val authRepository: AuthRepository
 ){
+    suspend operator fun invoke(user: User, password: String): Response<User>{
 
+        return authRepository.register(user, password)
+    }
 }

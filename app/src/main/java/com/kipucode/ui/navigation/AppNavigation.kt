@@ -59,7 +59,7 @@ fun AppNavigation(){
             composable("register"){
                 RegisterScreen(
                     onRegisterSuccess = {
-                        navController.navigate("home") {
+                        navController.navigate("login") {
                             popUpTo(0)
                         }
                     },
