@@ -23,11 +23,13 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kipucode.R
-import com.kipucode.ui.components.textfields.KipucodeText
+import com.kipucode.ui.component.text_field.KipucodeText
 import com.kipucode.ui.theme.Nunito
 import kotlinx.coroutines.delay
 
@@ -68,16 +70,19 @@ fun SplashScreen(
         ) {
             Image(
                 painter = painterResource(id = R.drawable.img_kipu_logo_splashscreen),
-                contentDescription = "Logo KipuCode",
-                modifier = Modifier.height(250.dp)
+                contentDescription = stringResource(R.string.cd_logo),
+                modifier = Modifier.height(240.dp)
             )
 
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Components -> TextFields
             KipucodeText()
 
-            Spacer(modifier = Modifier.height(50.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
             Text(
-                text = "Learn. Understand.\nProgram. Create.",
+                text = stringResource(id = R.string.subline),
                 color = Color.White.copy(alpha = 0.8f),
                 fontSize = 20.sp,
                 textAlign = androidx.compose.ui.text.style.TextAlign.Center,
@@ -86,21 +91,26 @@ fun SplashScreen(
                 fontFamily = Nunito,
                 fontWeight = FontWeight.SemiBold
             )
+            Spacer(modifier = Modifier.height(48.dp))
         }
 
         Image(
-            painter = painterResource(id = R.drawable.img_kipu_two),
-            contentDescription = "Loading Bar Kipu",
+            painter = painterResource(id = R.drawable.img_kipu),
+            contentDescription = stringResource(id = R.string.cd_kipu),
             contentScale = ContentScale.FillWidth,
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 80.dp)
-                .padding(horizontal = 80.dp)
 
                 .alpha(animationState.value)
                 .scale(animationState.value)
         )
-
     }
+}
+
+@Preview(showBackground = true, name = "Splash Inicial")
+@Composable
+fun OnboardingPreview() {
+    SplashScreen { }
 }

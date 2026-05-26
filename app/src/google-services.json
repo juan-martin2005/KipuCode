@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "902682217261",
+    "project_id": "appmartin-105de",
+    "storage_bucket": "appmartin-105de.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:902682217261:android:af15aaf08cd3df330761a4",
+        "android_client_info": {
+          "package_name": "com.kipucode"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBOKV476S8EpIihtiJ2IMBzC-2NrCY2RZo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

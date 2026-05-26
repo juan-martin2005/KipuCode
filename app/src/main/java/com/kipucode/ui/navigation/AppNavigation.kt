@@ -12,7 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.kipucode.ui.components.cards.KipuBottomBar
+import com.kipucode.ui.component.card.KipuBottomBar
 import com.kipucode.ui.screens.auth.LoginScreen
 import com.kipucode.ui.screens.auth.RegisterScreen
 import com.kipucode.ui.screens.home.HomeScreen
@@ -58,24 +58,36 @@ fun AppNavigation(){
 
             composable("register"){
                 RegisterScreen(
+<<<<<<< HEAD
                     onRegisterSuccess = {
                         navController.navigate("login") {
+=======
+                    onRegisterSuccess = {name, mail, password, confirmPassword ->
+                        navController.navigate("home") {
+>>>>>>> fa2f9e117f3e50d4f8993c0eaa5529b9d393989a
                             popUpTo(0)
                         }
                     },
-                    onNavigateToLogin = { navController.navigate("login") },
+                    onNavigateToLogin = {
+                        navController.navigate("login") {
+                            popUpTo("register") { inclusive = true }
+                        }
+                    },
                     onBack = { navController.popBackStack() }
                 )
             }
 
             composable("login"){
                 LoginScreen(
-                    onLoginSuccess = {
-                        navController.navigate("home") {
+                    onLoginSuccess = { navController.navigate("home") {
                             popUpTo(0)
                         }
                     },
-                    onNavigateToRegister = { navController.navigate("register") },
+                    onNavigateToRegister = {
+                        navController.navigate("register") {
+                            popUpTo("login") { inclusive = true }
+                        }
+                    },
                     onBack = { navController.popBackStack() }
                 )
             }

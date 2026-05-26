@@ -13,30 +13,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.LinkAnnotation
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.withLink
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kipucode.R
+<<<<<<< HEAD
 import com.kipucode.domain.model.Response
 import com.kipucode.domain.model.User
+=======
+import com.kipucode.ui.component.button.FilledButton
+import com.kipucode.ui.component.text_field.ClickableLink
+import com.kipucode.ui.component.text_field.KipuForm
+>>>>>>> fa2f9e117f3e50d4f8993c0eaa5529b9d393989a
 import com.kipucode.ui.theme.Nunito
 import com.kipucode.viewmodel.AuthViewModel
 
 @Composable
 fun RegisterScreen(
-    onRegisterSuccess: () -> Unit,
+    onRegisterSuccess: (String, String, String, String) -> Unit,
     onNavigateToLogin: () -> Unit,
     onBack: () -> Unit,
     authViewModel: AuthViewModel = viewModel(factory = AuthViewModel.Factory)
@@ -53,6 +54,7 @@ fun RegisterScreen(
     var passwordVisible by remember { mutableStateOf(false) }
     var confirmPasswordVisible by remember { mutableStateOf(false) }
 
+<<<<<<< HEAD
     val context = LocalContext.current
     LaunchedEffect(loginState) {
         when (loginState) {
@@ -61,6 +63,13 @@ fun RegisterScreen(
             is Response.Success -> {
                 // A) Mostramos un mensaje de éxito
                 Toast.makeText(context, "¡Estudiante registrado!\n revisa tu correo para ser verificado", Toast.LENGTH_SHORT).show()
+=======
+    // ESTADOS DE ERROR (VALIDACIONES)
+    var nameError by remember { mutableStateOf<String?>(null) }
+    var emailError by remember { mutableStateOf<String?>(null) }
+    var passwordError by remember { mutableStateOf<String?>(null) }
+    var confirmPasswordError by remember { mutableStateOf<String?>(null) }
+>>>>>>> fa2f9e117f3e50d4f8993c0eaa5529b9d393989a
 
                 // B) Ejecutamos el callback que activa la navegación en AppNavigation
                 onRegisterSuccess()
@@ -84,6 +93,11 @@ fun RegisterScreen(
         }
     }
 
+    val msgErrorNameRequired = stringResource(id = R.string.error_name_required)
+    val msgErrorEmailRequired = stringResource(id = R.string.error_email_required)
+    val msgErrorEmailDomain = stringResource(id = R.string.error_email_domain)
+    val msgErrorPassRequired = stringResource(id = R.string.error_password_required)
+    val msgErrorConfirmPassRequired = stringResource(id = R.string.error_confirm_password_required)
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -99,9 +113,10 @@ fun RegisterScreen(
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_arrow_back),
-                contentDescription = "Go back",
+                contentDescription = stringResource(R.string.cd_go_back),
                 tint = Color(0xFF081c40),
-                modifier = Modifier.size(32.dp)
+                modifier = Modifier
+                    .size(32.dp)
                     .fillMaxWidth()
             )
         }
@@ -115,16 +130,18 @@ fun RegisterScreen(
             Spacer(modifier = Modifier.weight(1f))
 
             Text(
-                text = "Create account",
+                text = stringResource(R.string.register_title),
                 fontSize = 32.sp,
                 fontFamily = Nunito,
                 fontWeight = FontWeight.ExtraBold,
                 color = Color(0xFF081c40),
-                modifier = Modifier.fillMaxWidth().padding(bottom = 5.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 5.dp)
             )
 
             Text(
-                text = "Join KipuCode and start your journey into the world of programming.",
+                text = stringResource(R.string.register_desc),
                 fontSize = 16.sp,
                 fontFamily = Nunito,
                 fontWeight = FontWeight.SemiBold,
@@ -135,170 +152,96 @@ fun RegisterScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             // --- CAMPO: NAME ---
-            Text(
-                text = "Full Name",
-                fontSize = 16.sp,
-                fontFamily = Nunito,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF081c40),
-                modifier = Modifier.fillMaxWidth().padding(bottom = 6.dp)
-            )
-            OutlinedTextField(
+            KipuForm(
+                label = stringResource(R.string.full_name),
                 value = name,
-                onValueChange = { name = it },
-                placeholder = { Text(text = "Your name", color = Color.Gray) },
-                leadingIcon = { Icon(painter = painterResource(id = R.drawable.ic_user), contentDescription = null) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                shape = RoundedCornerShape(12.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent,
-                    focusedLeadingIconColor = Color.Gray,
-                    unfocusedLeadingIconColor = Color.Gray,
-                    focusedPlaceholderColor = Color.Gray,
-                    unfocusedPlaceholderColor = Color.Gray,
-                    unfocusedBorderColor = Color.Gray,
-                    focusedBorderColor = Color(0xFF0293a8),
-                )
+                onValueChange = {
+                    name = it
+                    nameError = null
+                },                placeholder = stringResource(R.string.ph_full_name),
+                iconRes = R.drawable.ic_user,
+                isError = nameError != null,
+                errorMessage = nameError
             )
-
-            Spacer(modifier = Modifier.height(16.dp))
 
             // --- CAMPO: EMAIL ---
-            Text(
-                text = "Email",
-                fontSize = 16.sp,
-                fontFamily = Nunito,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF081c40),
-                modifier = Modifier.fillMaxWidth().padding(bottom = 6.dp)
-            )
-            OutlinedTextField(
+            KipuForm(
+                label = stringResource(R.string.email),
                 value = email,
-                onValueChange = { email = it },
-                placeholder = { Text(text = "n00123456@upn.pe", color = Color.Gray) },
-                leadingIcon = { Icon(painter = painterResource(id = R.drawable.ic_mail), contentDescription = null) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                shape = RoundedCornerShape(12.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent,
-                    focusedLeadingIconColor = Color.Gray,
-                    unfocusedLeadingIconColor = Color.Gray,
-                    focusedPlaceholderColor = Color.Gray,
-                    unfocusedPlaceholderColor = Color.Gray,
-                    unfocusedBorderColor = Color.Gray,
-                    focusedBorderColor = Color(0xFF0293a8),
-                )
+                onValueChange = {
+                    email = it
+                    emailError = null
+                },
+                placeholder = "n00123456@upn.pe",
+                iconRes = R.drawable.ic_mail,
+                keyboardType = KeyboardType.Email,
+                isError = emailError != null,
+                errorMessage = emailError
             )
-
-            Spacer(modifier = Modifier.height(16.dp))
 
             // --- CAMPO: PASSWORD ---
-            Text(
-                text = "Password",
-                fontSize = 16.sp,
-                fontFamily = Nunito,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF081c40),
-                modifier = Modifier.fillMaxWidth().padding(bottom = 6.dp)
-            )
-            OutlinedTextField(
+            KipuForm(
+                label = stringResource(R.string.password),
                 value = password,
-                onValueChange = { password = it },
-                placeholder = {Text(
-                    text = if (passwordVisible) "password" else "••••••••",
-                    color = Color.Gray
-                )},
-                leadingIcon = {
-                    Icon(painter = painterResource(id = R.drawable.ic_lock), contentDescription = null)
+                onValueChange = {
+                    password = it
+                    passwordError = null
                 },
+                placeholder = if (passwordVisible) stringResource(R.string.password).lowercase() else "••••••••",
+                iconRes = if (passwordVisible) R.drawable.ic_unlock else R.drawable.ic_lock,
+                isPasswordField = true,
+                isPasswordVisible = passwordVisible,
+                onVisibilityChange = { passwordVisible = !passwordVisible },
+                keyboardType = KeyboardType.Password,
+                isError = passwordError != null,
+                errorMessage = passwordError
+            )
 
-                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-
-                trailingIcon = {
-                    val imageId = if (passwordVisible) R.drawable.ic_eye_open else R.drawable.ic_eye_closed
-
-                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                        Icon(
-                            painter = painterResource(id = imageId),
-                            contentDescription = "Toggle password visibility",
-                            tint = Color.Gray
-                        )
-                    }
+            // --- CAMPO: CONFIRM PASSWORD ---
+            KipuForm(
+                label = stringResource(R.string.confirm_password),
+                value = confirmPassword,
+                onValueChange = {
+                    confirmPassword = it
+                    confirmPasswordError = null
                 },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                shape = RoundedCornerShape(12.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent,
-                    focusedLeadingIconColor = Color.Gray,
-                    unfocusedLeadingIconColor = Color.Gray,
-                    focusedPlaceholderColor = Color.Gray,
-                    unfocusedPlaceholderColor = Color.Gray,
-                    unfocusedBorderColor = Color.Gray,
-                    focusedBorderColor = Color(0xFF0293a8),
-                )
+                placeholder = if (confirmPasswordVisible) stringResource(R.string.confirm_password).lowercase() else "••••••••",
+                iconRes = if (confirmPasswordVisible) R.drawable.ic_unlock else R.drawable.ic_lock,
+                isPasswordField = true,
+                isPasswordVisible = confirmPasswordVisible,
+                onVisibilityChange = { confirmPasswordVisible = !confirmPasswordVisible },
+                keyboardType = KeyboardType.Password,
+                isError = confirmPasswordError != null,
+                errorMessage = confirmPasswordError
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // --- CAMPO: CONFIRM PASSWORD ---
-            Text(
-                text = "Confirm Password",
-                fontSize = 16.sp,
-                fontFamily = Nunito,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF081c40),
-                modifier = Modifier.fillMaxWidth().padding(bottom = 6.dp)
-            )
-            OutlinedTextField(
-                value = confirmPassword,
-                onValueChange = { confirmPassword = it },
-                placeholder = {Text(
-                    text = if (confirmPasswordVisible) "confirmPassword" else "••••••••",
-                    color = Color.Gray
-                )},            leadingIcon = {
-                    Icon(painter = painterResource(id = R.drawable.ic_lock), contentDescription = null)
-                },
+            FilledButton(
+                "Sign Up",
+                {
+                    val emailTrimmed = email.trim()
+                    var hasError = false
 
-                visualTransformation = if (confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                    nameError = null
+                    emailError = null
+                    passwordError = null
+                    confirmPasswordError = null
 
-                trailingIcon = {
-                    val imageId = if (confirmPasswordVisible) R.drawable.ic_eye_open else R.drawable.ic_eye_closed
-
-                    IconButton(onClick = { confirmPasswordVisible = !confirmPasswordVisible }) {
-                        Icon(
-                            painter = painterResource(id = imageId),
-                            contentDescription = "Toggle password visibility",
-                            tint = Color.Gray
-                        )
+                    if (name.isEmpty()) {
+                        nameError = msgErrorNameRequired
+                        hasError = true
                     }
-                },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                shape = RoundedCornerShape(12.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent,
-                    focusedLeadingIconColor = Color.Gray,
-                    unfocusedLeadingIconColor = Color.Gray,
-                    focusedPlaceholderColor = Color.Gray,
-                    unfocusedPlaceholderColor = Color.Gray,
-                    unfocusedBorderColor = Color.Gray,
-                    focusedBorderColor = Color(0xFF0293a8),
-                )
-            )
 
-            Spacer(modifier = Modifier.height(32.dp))
+                    if (emailTrimmed.isEmpty()) {
+                        emailError = msgErrorEmailRequired
+                        hasError = true
+                    } else if (!emailTrimmed.endsWith("@upn.pe")) {
+                        emailError = msgErrorEmailDomain
+                        hasError = true
+                    }
 
+<<<<<<< HEAD
             Button(
                 onClick = {
                     val user = User( "",name,email )
@@ -318,30 +261,28 @@ fun RegisterScreen(
                     color = Color.White
                 )
             }
+=======
+                    if (password.isEmpty()) {
+                        passwordError = msgErrorPassRequired
+                        hasError = true
+                    }
+>>>>>>> fa2f9e117f3e50d4f8993c0eaa5529b9d393989a
 
-            val annotatedText = buildAnnotatedString {
-                withStyle(style = SpanStyle(color = Color(0xFF6B7280), fontSize = 16.sp)) {
-                    append("Do you already have an account?, ")
-                }
-                val clickableLink = LinkAnnotation.Clickable(tag = "LogIn") {
-                    onNavigateToLogin()
-                }
-                withLink(clickableLink) {
-                    withStyle(
-                        style = SpanStyle(
-                            color = Color(0xFF0293a8),
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 16.sp,
-                            textDecoration = TextDecoration.None
-                        )
-                    ) {
-                        append(" Log in")
+                    if (confirmPassword.isEmpty()) {
+                        confirmPasswordError = msgErrorConfirmPassRequired
+                        hasError = true
+                    }
+
+                    if (!hasError) {
+                        onRegisterSuccess(name, email, password, confirmPassword)
                     }
                 }
-            }
+            )
 
-            Text(
-                text = annotatedText,
+            ClickableLink(
+                stringResource(R.string.register_clickable_start),
+                stringResource(R.string.register_clickable_end),
+                { onNavigateToLogin() },
                 modifier = Modifier.padding(top = 16.dp)
             )
 
@@ -349,15 +290,13 @@ fun RegisterScreen(
         }
 
     }
-
-
 }
 
 //@Preview(showBackground = true, name = "Pantalla de Register")
 //@Composable
 //fun RegisterPreview() {
 //    RegisterScreen(
-//        onRegisterSuccess = {},
+//        onRegisterSuccess = {name, mail, password, confirmPassword ->},
 //        onNavigateToLogin = {},
 //        onBack = {}
 //    )

@@ -1,4 +1,4 @@
-package com.kipucode.ui.components.textfields
+package com.kipucode.ui.component.text_field
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -10,6 +10,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.sp
 import com.kipucode.ui.theme.Nunito
 
+// Banner KipuCode
 @Composable
 fun KipucodeText(){
     Text(
