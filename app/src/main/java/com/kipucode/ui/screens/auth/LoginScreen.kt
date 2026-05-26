@@ -1,5 +1,6 @@
 package com.kipucode.ui.screens.auth
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -10,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
@@ -24,21 +26,60 @@ import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kipucode.R
+import com.kipucode.domain.model.Response
 import com.kipucode.ui.theme.Nunito
+import com.kipucode.viewmodel.AuthViewModel
 
 @Composable
 fun LoginScreen(
     onLoginSuccess: () -> Unit,
     onNavigateToRegister: () -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    authViewModel: AuthViewModel = viewModel(factory = AuthViewModel.Factory)
 ) {
     // ESTADOS PARA LOS CAMPOS
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
+    val loginState by authViewModel.loginState.collectAsStateWithLifecycle()
+
     // ESTADOS PARA LAS CONTRASEÑAS
     var passwordVisible by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    LaunchedEffect(loginState) {
+        when (loginState) {
+            is Response.Loading -> {
+            }
+            is Response.Success -> {
+                // A) Mostramos un mensaje de éxito
+                Toast.makeText(context, "¡Bienvenido de nuevo!", Toast.LENGTH_SHORT).show()
+
+                // B) Ejecutamos el callback que activa la navegación en AppNavigation
+                onLoginSuccess()
+
+                // C) MUY IMPORTANTE: Limpiamos el estado en el ViewModel.
+                // Si no lo haces, al regresar a esta pantalla por accidente,
+                // se volverá a disparar el éxito automáticamente.
+                authViewModel.resetState()
+            }
+            is Response.Error -> {
+                // Mostramos el mensaje de error que viene desde Firebase/Backend
+                val errorMessage = (loginState as Response.Error).message ?: "Error desconocido"
+                Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+
+                // Limpiamos el estado para poder intentar loguearnos otra vez
+                authViewModel.resetState()
+            }
+            null -> {
+                // Estado inicial o resetseado, no hacemos nada
+            }
+        }
+    }
+
+
 
     Column(
         modifier = Modifier
@@ -187,7 +228,7 @@ fun LoginScreen(
 
             Button(
                 onClick = {
-                    onLoginSuccess()
+                    authViewModel.login(email,password)
                 },
                 modifier = Modifier
                     .fillMaxWidth()
