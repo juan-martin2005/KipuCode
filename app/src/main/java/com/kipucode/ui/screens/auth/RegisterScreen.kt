@@ -3,11 +3,8 @@ package com.kipucode.ui.screens.auth
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,31 +13,26 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kipucode.R
-<<<<<<< HEAD
+import com.kipucode.domain.model.ErrorType
 import com.kipucode.domain.model.Response
 import com.kipucode.domain.model.User
-=======
 import com.kipucode.ui.component.button.FilledButton
 import com.kipucode.ui.component.text_field.ClickableLink
 import com.kipucode.ui.component.text_field.KipuForm
->>>>>>> fa2f9e117f3e50d4f8993c0eaa5529b9d393989a
 import com.kipucode.ui.theme.Nunito
 import com.kipucode.viewmodel.AuthViewModel
 
 @Composable
 fun RegisterScreen(
-    onRegisterSuccess: (String, String, String, String) -> Unit,
+    onRegisterSuccess: () -> Unit,
     onNavigateToLogin: () -> Unit,
     onBack: () -> Unit,
-    authViewModel: AuthViewModel = viewModel(factory = AuthViewModel.Factory)
+    authViewModel: AuthViewModel = viewModel (factory = AuthViewModel.Factory)
 ) {
     // ESTADOS PARA LOS CAMPOS
     var name by remember { mutableStateOf("") }
@@ -48,56 +40,46 @@ fun RegisterScreen(
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
 
-    val loginState by authViewModel.loginState.collectAsStateWithLifecycle()
-
     // ESTADOS PARA LAS CONTRASEÑAS
     var passwordVisible by remember { mutableStateOf(false) }
     var confirmPasswordVisible by remember { mutableStateOf(false) }
 
-<<<<<<< HEAD
+    // ESTADOS DE ERROR (VALIDACIONES)
+    var nameError by remember { mutableStateOf<String?>(null) }
+    var emailError by remember { mutableStateOf<String?>(null) }
+    var passwordError by remember { mutableStateOf<String?>(null) }
+    var confirmPasswordError by remember { mutableStateOf<String?>(null) }
+
+    val loginState by authViewModel.loginState.collectAsStateWithLifecycle()
+
     val context = LocalContext.current
     LaunchedEffect(loginState) {
         when (loginState) {
             is Response.Loading -> {
             }
             is Response.Success -> {
-                // A) Mostramos un mensaje de éxito
-                Toast.makeText(context, "¡Estudiante registrado!\n revisa tu correo para ser verificado", Toast.LENGTH_SHORT).show()
-=======
-    // ESTADOS DE ERROR (VALIDACIONES)
-    var nameError by remember { mutableStateOf<String?>(null) }
-    var emailError by remember { mutableStateOf<String?>(null) }
-    var passwordError by remember { mutableStateOf<String?>(null) }
-    var confirmPasswordError by remember { mutableStateOf<String?>(null) }
->>>>>>> fa2f9e117f3e50d4f8993c0eaa5529b9d393989a
-
-                // B) Ejecutamos el callback que activa la navegación en AppNavigation
                 onRegisterSuccess()
-
-                // C) MUY IMPORTANTE: Limpiamos el estado en el ViewModel.
-                // Si no lo haces, al regresar a esta pantalla por accidente,
-                // se volverá a disparar el éxito automáticamente.
+                Toast.makeText(context, "¡Estudiante registrado!\n revisa tu correo para ser verificado", Toast.LENGTH_SHORT).show()
                 authViewModel.resetState()
             }
             is Response.Error -> {
-                // Mostramos el mensaje de error que viene desde Firebase/Backend
-                val errorMessage = (loginState as Response.Error).message ?: "Error desconocido"
-                Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-
-                // Limpiamos el estado para poder intentar loguearnos otra vez
+                val errorMessage = (loginState as Response.Error).message ?: "Internal Error"
+                val pos = (loginState as Response.Error).error
+                when(pos){
+                    ErrorType.NAME_EMPTY -> nameError = errorMessage
+                    ErrorType.EMAIL_EMPTY,
+                    ErrorType.EMAIL_DOMAIN_NOT_VALID,
+                    ErrorType.EMAIL_ALREADY_EXIST -> emailError = errorMessage
+                    ErrorType.PASSWORD_EMPTY -> passwordError = errorMessage
+                    ErrorType.CREDENTIAL_INVALID -> passwordError = errorMessage
+                }
                 authViewModel.resetState()
             }
             null -> {
-                // Estado inicial o resetseado, no hacemos nada
             }
         }
     }
 
-    val msgErrorNameRequired = stringResource(id = R.string.error_name_required)
-    val msgErrorEmailRequired = stringResource(id = R.string.error_email_required)
-    val msgErrorEmailDomain = stringResource(id = R.string.error_email_domain)
-    val msgErrorPassRequired = stringResource(id = R.string.error_password_required)
-    val msgErrorConfirmPassRequired = stringResource(id = R.string.error_confirm_password_required)
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -221,61 +203,8 @@ fun RegisterScreen(
                 "Sign Up",
                 {
                     val emailTrimmed = email.trim()
-                    var hasError = false
-
-                    nameError = null
-                    emailError = null
-                    passwordError = null
-                    confirmPasswordError = null
-
-                    if (name.isEmpty()) {
-                        nameError = msgErrorNameRequired
-                        hasError = true
-                    }
-
-                    if (emailTrimmed.isEmpty()) {
-                        emailError = msgErrorEmailRequired
-                        hasError = true
-                    } else if (!emailTrimmed.endsWith("@upn.pe")) {
-                        emailError = msgErrorEmailDomain
-                        hasError = true
-                    }
-
-<<<<<<< HEAD
-            Button(
-                onClick = {
-                    val user = User( "",name,email )
+                    val user = User( "",name, emailTrimmed )
                     authViewModel.register(user, password)
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp),
-                shape = RoundedCornerShape(14.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0293a8))
-            ) {
-                Text(
-                    text = "Sign Up",
-                    fontFamily = Nunito,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                    color = Color.White
-                )
-            }
-=======
-                    if (password.isEmpty()) {
-                        passwordError = msgErrorPassRequired
-                        hasError = true
-                    }
->>>>>>> fa2f9e117f3e50d4f8993c0eaa5529b9d393989a
-
-                    if (confirmPassword.isEmpty()) {
-                        confirmPasswordError = msgErrorConfirmPassRequired
-                        hasError = true
-                    }
-
-                    if (!hasError) {
-                        onRegisterSuccess(name, email, password, confirmPassword)
-                    }
                 }
             )
 

@@ -1,6 +1,9 @@
 package com.kipucode.data.repository
 
+import android.util.Log
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.kipucode.data.remote.firebase.service.FirebaseRemoteDataSource
+import com.kipucode.domain.model.ErrorType
 import com.kipucode.domain.model.Response
 import com.kipucode.domain.model.User
 import com.kipucode.domain.repository.AuthRepository
@@ -18,16 +21,16 @@ internal class AuthRepositoryImpl(
 
             if(currentUser != null){
 
-                val user = User(currentUser.uid,currentUser.displayName,currentUser.email.toString())
+                val user = User(currentUser.uid,currentUser.displayName.toString(),currentUser.email.toString())
 
                 Response.Success(user)
             } else {
-                Response.Error("verifica tu email", null)
+                Response.Error("LOGIN ERROR", ErrorType.CREDENTIAL_INVALID)
 
             }
 
-        }catch (ex: Exception){
-            Response.Error(ex.message, null)
+        }catch (ex: FirebaseAuthInvalidCredentialsException){
+            Response.Error("The credential is invalid", ErrorType.CREDENTIAL_INVALID)
         }
 
     }
@@ -40,16 +43,18 @@ internal class AuthRepositoryImpl(
 
             if(currentUser != null){
 
-                val user = User(currentUser.uid,currentUser.displayName,currentUser.email.toString())
+                val user = User(currentUser.uid,currentUser.displayName.toString(),currentUser.email.toString())
 
                 Response.Success(user)
             } else {
-                Response.Error("No hay usuario registrado", null)
+
+                Response.Error("REGISTER ERROR", ErrorType.EMAIL_ALREADY_EXIST)
 
             }
 
         }catch (ex: Exception){
-            Response.Error(ex.message, null)
+            Log.w("FIREBASE ERROR: ", ex)
+            Response.Error("The email already exist", ErrorType.EMAIL_ALREADY_EXIST)
         }
     }
 

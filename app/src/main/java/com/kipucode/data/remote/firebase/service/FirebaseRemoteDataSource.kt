@@ -10,8 +10,7 @@ class FirebaseRemoteDataSource(
     private val firebaseAuth: FirebaseAuth
 ) {
     private val auth = Firebase.auth
-    suspend fun signInWithEmail(email: String, password: String) = firebaseAuth.signInWithEmailAndPassword(email,password)
-    suspend fun registerUserWithEmail(email: String, password: String) = firebaseAuth.createUserWithEmailAndPassword(email,password)
-    suspend fun logoutUser() = firebaseAuth.signOut()
-
+    fun signInWithEmail(email: String, password: String) = firebaseAuth.signInWithEmailAndPassword(email,password)
+    fun registerUserWithEmail(email: String, password: String) = firebaseAuth.createUserWithEmailAndPassword(email,password)
+    fun logoutUser() = firebaseAuth.signOut()
 }

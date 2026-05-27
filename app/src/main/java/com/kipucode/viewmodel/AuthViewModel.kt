@@ -28,17 +28,15 @@ class AuthViewModel(
             _loginState.value = result
         }
     }
+    fun resetState() {
+        _loginState.value = null
+    }
 
-    fun register (user: User, password: String){
-
+    fun register(user: User, password: String) {
         viewModelScope.launch {
             val result = registerUseCase.invoke(user,password)
             _loginState.value = result
         }
-    }
-
-    fun resetState() {
-        _loginState.value = null
     }
 
     companion object {
