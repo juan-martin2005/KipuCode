@@ -9,7 +9,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import com.kipucode.ui.navigation.AppNavigation
 import com.kipucode.ui.theme.KipuCodeTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         // EnableEdgeToEdge nos da acceso a modificar la pantalla completa dándonos acceso al

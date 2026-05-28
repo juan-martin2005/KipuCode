@@ -10,8 +10,8 @@ class LoginUseCases (
 ) {
     suspend operator fun invoke(email: String, password: String): Response<User>{
         if(email.isBlank()) return Response.Error("Email is required", ErrorType.EMAIL_EMPTY)
-        if(password.isBlank()) return Response.Error("Password is required", ErrorType.PASSWORD_EMPTY)
         if(!email.endsWith("@upn.pe")) return Response.Error("Please use your institutional email (@upn.pe)", ErrorType.EMAIL_DOMAIN_NOT_VALID)
+        if(password.isBlank()) return Response.Error("Password is required", ErrorType.PASSWORD_EMPTY)
         return authRepository.login(email,password)
     }
 }

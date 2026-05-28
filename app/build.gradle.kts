@@ -45,6 +45,7 @@ android {
 dependencies {
     // Enrutador
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.hilt.navigation.compose)
 
     // Firebase and Room
     implementation(platform(libs.firebase.bom))

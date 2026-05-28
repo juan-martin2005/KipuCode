@@ -16,7 +16,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.kipucode.R
 import com.kipucode.domain.model.ErrorType
 import com.kipucode.domain.model.Response
@@ -32,7 +32,7 @@ fun RegisterScreen(
     onRegisterSuccess: () -> Unit,
     onNavigateToLogin: () -> Unit,
     onBack: () -> Unit,
-    authViewModel: AuthViewModel = viewModel (factory = AuthViewModel.Factory)
+    authViewModel: AuthViewModel = hiltViewModel()
 ) {
     // ESTADOS PARA LOS CAMPOS
     var name by remember { mutableStateOf("") }

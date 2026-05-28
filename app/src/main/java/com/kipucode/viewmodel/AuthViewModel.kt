@@ -9,11 +9,14 @@ import com.kipucode.domain.model.Response
 import com.kipucode.domain.model.User
 import com.kipucode.domain.usecase.user.LoginUseCases
 import com.kipucode.domain.usecase.user.RegisterUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class AuthViewModel(
+@HiltViewModel
+class AuthViewModel @Inject constructor(
     private val loginUseCases: LoginUseCases,
     private val registerUseCase: RegisterUseCase
 ) : ViewModel() {
@@ -36,23 +39,6 @@ class AuthViewModel(
         viewModelScope.launch {
             val result = registerUseCase.invoke(user,password)
             _loginState.value = result
-        }
-    }
-
-    companion object {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val auth = com.google.firebase.auth.FirebaseAuth.getInstance()
-                val firebaseDataSource = com.kipucode.data.remote.firebase.service.FirebaseAuthSource(auth)
-                val authRepository = com.kipucode.data.repository.AuthRepositoryImpl(firebaseDataSource)
-                val loginUseCases = LoginUseCases(authRepository)
-                val registerUseCase = RegisterUseCase(authRepository)
-
-                AuthViewModel(
-                    loginUseCases = loginUseCases,
-                    registerUseCase = registerUseCase
-                )
-            }
         }
     }
 }

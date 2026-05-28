@@ -12,12 +12,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.kipucode.ui.component.card.KipuBottomBar
 import com.kipucode.ui.screens.auth.LoginScreen
 import com.kipucode.ui.screens.auth.RegisterScreen
+import com.kipucode.ui.screens.explore.ExploreScreen
 import com.kipucode.ui.screens.home.HomeScreen
 import com.kipucode.ui.screens.onboarding.OnboardingScreen
 import com.kipucode.ui.screens.splash.SplashScreen
+import com.kipucode.viewmodel.AuthViewModel
 
 @Composable
 fun AppNavigation(){
@@ -57,6 +60,7 @@ fun AppNavigation(){
             }
 
             composable("register"){
+                val authViewModel: AuthViewModel = hiltViewModel()
                 RegisterScreen(
                     onRegisterSuccess = {
                         navController.navigate("login") {
@@ -68,11 +72,13 @@ fun AppNavigation(){
                             popUpTo("register") { inclusive = true }
                         }
                     },
-                    onBack = { navController.popBackStack() }
+                    onBack = { navController.popBackStack() },
+                    authViewModel = authViewModel
                 )
             }
 
             composable("login"){
+                val authViewModel: AuthViewModel = hiltViewModel()
                 LoginScreen(
                     onLoginSuccess = { navController.navigate("home") {
                             popUpTo(0)
@@ -83,7 +89,8 @@ fun AppNavigation(){
                             popUpTo("login") { inclusive = true }
                         }
                     },
-                    onBack = { navController.popBackStack() }
+                    onBack = { navController.popBackStack() },
+                    authViewModel = authViewModel
                 )
             }
 
@@ -92,7 +99,7 @@ fun AppNavigation(){
             }
 
             composable("explore"){
-                Text(text = "Pantalla de Explorar - TEST")
+                ExploreScreen()
             }
 
             composable("code"){
