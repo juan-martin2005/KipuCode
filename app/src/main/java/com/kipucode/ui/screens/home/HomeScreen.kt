@@ -205,8 +205,8 @@ fun LessonCard(lesson: Lesson, kipuTeal: Color, darkBlue: Color, lightGray: Colo
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun HomePreview() {
-    HomeScreen()
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun HomePreview() {
+//    HomeScreen()
+//}

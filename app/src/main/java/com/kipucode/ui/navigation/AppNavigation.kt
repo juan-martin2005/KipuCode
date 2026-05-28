@@ -15,6 +15,7 @@ import androidx.navigation.compose.rememberNavController
 import com.kipucode.ui.component.card.KipuBottomBar
 import com.kipucode.ui.screens.auth.LoginScreen
 import com.kipucode.ui.screens.auth.RegisterScreen
+import com.kipucode.ui.screens.explore.ExploreScreen
 import com.kipucode.ui.screens.home.HomeScreen
 import com.kipucode.ui.screens.onboarding.OnboardingScreen
 import com.kipucode.ui.screens.splash.SplashScreen
@@ -59,6 +60,7 @@ fun AppNavigation(){
             composable("register"){
                 RegisterScreen(
                     onRegisterSuccess = {name, mail, password, confirmPassword ->
+
                         navController.navigate("home") {
                             popUpTo(0)
                         }
@@ -92,7 +94,7 @@ fun AppNavigation(){
             }
 
             composable("explore"){
-                Text(text = "Pantalla de Explorar - TEST")
+                ExploreScreen()
             }
 
             composable("code"){
