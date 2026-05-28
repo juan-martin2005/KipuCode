@@ -1,34 +1,38 @@
 package com.kipucode.ui.screens.auth
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kipucode.R
+import com.kipucode.domain.model.ErrorType
+import com.kipucode.domain.model.Response
+import com.kipucode.domain.model.User
 import com.kipucode.ui.component.button.FilledButton
 import com.kipucode.ui.component.text_field.ClickableLink
 import com.kipucode.ui.component.text_field.KipuForm
 import com.kipucode.ui.theme.Nunito
+import com.kipucode.viewmodel.AuthViewModel
 
 @Composable
 fun RegisterScreen(
-    onRegisterSuccess: (String, String, String, String) -> Unit,
+    onRegisterSuccess: () -> Unit,
     onNavigateToLogin: () -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    authViewModel: AuthViewModel = viewModel (factory = AuthViewModel.Factory)
 ) {
     // ESTADOS PARA LOS CAMPOS
     var name by remember { mutableStateOf("") }
@@ -46,12 +50,36 @@ fun RegisterScreen(
     var passwordError by remember { mutableStateOf<String?>(null) }
     var confirmPasswordError by remember { mutableStateOf<String?>(null) }
 
+    val loginState by authViewModel.loginState.collectAsStateWithLifecycle()
 
-    val msgErrorNameRequired = stringResource(id = R.string.error_name_required)
-    val msgErrorEmailRequired = stringResource(id = R.string.error_email_required)
-    val msgErrorEmailDomain = stringResource(id = R.string.error_email_domain)
-    val msgErrorPassRequired = stringResource(id = R.string.error_password_required)
-    val msgErrorConfirmPassRequired = stringResource(id = R.string.error_confirm_password_required)
+    val context = LocalContext.current
+    LaunchedEffect(loginState) {
+        when (loginState) {
+            is Response.Loading -> {
+            }
+            is Response.Success -> {
+                onRegisterSuccess()
+                Toast.makeText(context, "¡Estudiante registrado!\n revisa tu correo para ser verificado", Toast.LENGTH_SHORT).show()
+                authViewModel.resetState()
+            }
+            is Response.Error -> {
+                val errorMessage = (loginState as Response.Error).message ?: "Internal Error"
+                val pos = (loginState as Response.Error).error
+                when(pos){
+                    ErrorType.NAME_EMPTY -> nameError = errorMessage
+                    ErrorType.EMAIL_EMPTY,
+                    ErrorType.EMAIL_DOMAIN_NOT_VALID,
+                    ErrorType.EMAIL_ALREADY_EXIST -> emailError = errorMessage
+                    ErrorType.PASSWORD_EMPTY -> passwordError = errorMessage
+                    ErrorType.CREDENTIAL_INVALID -> passwordError = errorMessage
+                }
+                authViewModel.resetState()
+            }
+            null -> {
+            }
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -175,39 +203,8 @@ fun RegisterScreen(
                 "Sign Up",
                 {
                     val emailTrimmed = email.trim()
-                    var hasError = false
-
-                    nameError = null
-                    emailError = null
-                    passwordError = null
-                    confirmPasswordError = null
-
-                    if (name.isEmpty()) {
-                        nameError = msgErrorNameRequired
-                        hasError = true
-                    }
-
-                    if (emailTrimmed.isEmpty()) {
-                        emailError = msgErrorEmailRequired
-                        hasError = true
-                    } else if (!emailTrimmed.endsWith("@upn.pe")) {
-                        emailError = msgErrorEmailDomain
-                        hasError = true
-                    }
-
-                    if (password.isEmpty()) {
-                        passwordError = msgErrorPassRequired
-                        hasError = true
-                    }
-
-                    if (confirmPassword.isEmpty()) {
-                        confirmPasswordError = msgErrorConfirmPassRequired
-                        hasError = true
-                    }
-
-                    if (!hasError) {
-                        onRegisterSuccess(name, email, password, confirmPassword)
-                    }
+                    val user = User( "",name, emailTrimmed )
+                    authViewModel.register(user, password)
                 }
             )
 

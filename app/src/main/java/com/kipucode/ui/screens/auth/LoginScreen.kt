@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kipucode.R
+import com.kipucode.domain.model.ErrorType
 import com.kipucode.domain.model.Response
 import com.kipucode.ui.component.button.FilledButton
 import com.kipucode.ui.component.text_field.ClickableLink
@@ -42,7 +43,12 @@ fun LoginScreen(
 
     // ESTADOS PARA LAS CONTRASEÑAS
     var passwordVisible by remember { mutableStateOf(false) }
+
     val context = LocalContext.current
+
+    // ESTADOS DE ERROR (VALIDACIONES)
+    var emailError by remember { mutableStateOf<String?>(null) }
+    var passwordError by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(loginState) {
         when (loginState) {
@@ -54,21 +60,21 @@ fun LoginScreen(
                 authViewModel.resetState()
             }
             is Response.Error -> {
-                val errorMessage = (loginState as Response.Error).message ?: "Error desconocido"
-                Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+                val errorMessage = (loginState as Response.Error).message ?: "Internal Error"
+                val pos = (loginState as Response.Error).error
+                when(pos){
+                    ErrorType.NAME_EMPTY -> TODO()
+                    ErrorType.EMAIL_EMPTY,
+                    ErrorType.EMAIL_DOMAIN_NOT_VALID,
+                    ErrorType.EMAIL_ALREADY_EXIST -> emailError = errorMessage
+                    ErrorType.PASSWORD_EMPTY -> passwordError = errorMessage
+                    ErrorType.CREDENTIAL_INVALID -> passwordError = errorMessage
+                }
                 authViewModel.resetState()
             }
             null -> { }
         }
     }
-
-    // ESTADOS DE ERROR (VALIDACIONES)
-    var emailError by remember { mutableStateOf<String?>(null) }
-    var passwordError by remember { mutableStateOf<String?>(null) }
-
-    val msgErrorEmailRequired = stringResource(id = R.string.error_email_required)
-    val msgErrorEmailDomain = stringResource(id = R.string.error_email_domain)
-    val msgErrorPassRequired = stringResource(id = R.string.error_password_required)
 
     Column(
         modifier = Modifier
@@ -174,27 +180,7 @@ fun LoginScreen(
                 stringResource(id = R.string.logIn),
                 {
                     val emailTrimmed = email.trim()
-                    var hasError = false
-
-                    emailError = null
-                    passwordError = null
-
-                    if (emailTrimmed.isEmpty()) {
-                        emailError = msgErrorEmailRequired
-                        hasError = true
-                    } else if (!emailTrimmed.endsWith("@upn.pe")) {
-                        emailError = msgErrorEmailDomain
-                        hasError = true
-                    }
-
-                    if (password.isEmpty()) {
-                        passwordError = msgErrorPassRequired
-                        hasError = true
-                    }
-
-                    if (!hasError) {
-                        authViewModel.login(emailTrimmed, password)
-                    }
+                    authViewModel.login(emailTrimmed, password)
                 }
             )
 
