@@ -2,7 +2,7 @@ package com.kipucode.data.repository
 
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.kipucode.data.remote.firebase.service.FirebaseRemoteDataSource
+import com.kipucode.data.remote.firebase.service.FirebaseAuthSource
 import com.kipucode.domain.model.ErrorType
 import com.kipucode.domain.model.Response
 import com.kipucode.domain.model.User
@@ -10,12 +10,12 @@ import com.kipucode.domain.repository.AuthRepository
 import kotlinx.coroutines.tasks.await
 
 internal class AuthRepositoryImpl(
-    private val remoteDataSource: FirebaseRemoteDataSource
+    private val remoteAuthSource: FirebaseAuthSource
 ): AuthRepository {
 
     override suspend fun login(email: String, password: String): Response<User> {
         return try {
-            val authResult = remoteDataSource.signInWithEmail(email,password).await()
+            val authResult = remoteAuthSource.signInWithEmail(email,password).await()
 
             val currentUser = authResult.user
 
@@ -37,7 +37,7 @@ internal class AuthRepositoryImpl(
 
     override suspend fun register(user: User, password: String): Response<User> {
         return try {
-            val authResult = remoteDataSource.registerUserWithEmail(user.email,password).await()
+            val authResult = remoteAuthSource.registerUserWithEmail(user.email,password).await()
 
             val currentUser = authResult.user
 
@@ -59,7 +59,7 @@ internal class AuthRepositoryImpl(
     }
 
     override suspend fun logout() {
-        remoteDataSource.logoutUser()
+        remoteAuthSource.logoutUser()
     }
 
 

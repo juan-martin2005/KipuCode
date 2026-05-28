@@ -43,7 +43,7 @@ class AuthViewModel(
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val auth = com.google.firebase.auth.FirebaseAuth.getInstance()
-                val firebaseDataSource = com.kipucode.data.remote.firebase.service.FirebaseRemoteDataSource(auth)
+                val firebaseDataSource = com.kipucode.data.remote.firebase.service.FirebaseAuthSource(auth)
                 val authRepository = com.kipucode.data.repository.AuthRepositoryImpl(firebaseDataSource)
                 val loginUseCases = LoginUseCases(authRepository)
                 val registerUseCase = RegisterUseCase(authRepository)
