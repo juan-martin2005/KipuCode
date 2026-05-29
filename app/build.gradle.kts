@@ -51,6 +51,7 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore)
     implementation(libs.room.runtime)
     ksp(libs.room.compiler)
     implementation(libs.hilt.android)

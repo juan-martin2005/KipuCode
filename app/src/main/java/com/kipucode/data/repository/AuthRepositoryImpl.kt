@@ -15,7 +15,7 @@ internal class AuthRepositoryImpl(
 
     override suspend fun login(email: String, password: String): Response<User> {
         return try {
-            val authResult = remoteAuthSource.signInWithEmail(email,password).await()
+            val authResult = remoteAuthSource.signInWithEmail(email,password)
 
             val currentUser = authResult.user
 
@@ -37,7 +37,7 @@ internal class AuthRepositoryImpl(
 
     override suspend fun register(user: User, password: String): Response<User> {
         return try {
-            val authResult = remoteAuthSource.registerUserWithEmail(user.email,password).await()
+            val authResult = remoteAuthSource.registerUserWithEmail(user.email,password)
 
             val currentUser = authResult.user
 

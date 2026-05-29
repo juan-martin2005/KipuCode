@@ -1,10 +1,7 @@
 package com.kipucode.viewmodel
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.kipucode.domain.model.Response
 import com.kipucode.domain.model.User
 import com.kipucode.domain.usecase.user.LoginUseCases

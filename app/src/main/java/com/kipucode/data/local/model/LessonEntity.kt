@@ -18,10 +18,10 @@ data class LessonEntity(
     @PrimaryKey
     val id: String,
     @ColumnInfo(name = "course_id")
-    val courseId: String?,
-    val title: String?,
+    val courseId: String,
+    val title: String,
     @ColumnInfo(name = "theory_content")
-    val theoryContent: String?,
+    val theoryContent: String,
     @ColumnInfo(name = "order_index")
     val orderIndex: Int
 )

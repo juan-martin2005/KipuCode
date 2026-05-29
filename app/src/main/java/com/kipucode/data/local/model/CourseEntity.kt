@@ -8,8 +8,8 @@ import androidx.room.PrimaryKey
 data class CourseEntity(
     @PrimaryKey
     val id: String,
-    val title: String?,
-    val description: String?,
+    val title: String,
+    val description: String,
     @ColumnInfo(name = "order_index")
     val orderIndex: Int,
     @ColumnInfo(name = "created_at")

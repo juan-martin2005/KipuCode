@@ -21,6 +21,7 @@ import com.kipucode.ui.screens.home.HomeScreen
 import com.kipucode.ui.screens.onboarding.OnboardingScreen
 import com.kipucode.ui.screens.splash.SplashScreen
 import com.kipucode.viewmodel.AuthViewModel
+import com.kipucode.viewmodel.CoursesViewModel
 
 @Composable
 fun AppNavigation(){
@@ -99,7 +100,9 @@ fun AppNavigation(){
             }
 
             composable("explore"){
-                ExploreScreen()
+                val courseViewModel : CoursesViewModel = hiltViewModel()
+                ExploreScreen(
+                )
             }
 
             composable("code"){
