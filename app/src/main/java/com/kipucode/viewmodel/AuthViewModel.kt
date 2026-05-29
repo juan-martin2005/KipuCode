@@ -4,7 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kipucode.domain.model.Response
 import com.kipucode.domain.model.User
+import com.kipucode.domain.usecase.user.IsUserLoggedInUseCase
 import com.kipucode.domain.usecase.user.LoginUseCases
+import com.kipucode.domain.usecase.user.LogoutUseCase
 import com.kipucode.domain.usecase.user.RegisterUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,11 +17,17 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val loginUseCases: LoginUseCases,
-    private val registerUseCase: RegisterUseCase
+    private val registerUseCase: RegisterUseCase,
+    private val isUserLoggedInUseCase: IsUserLoggedInUseCase,
+    private val logoutUseCase: LogoutUseCase
 ) : ViewModel() {
 
     private val _loginState = MutableStateFlow<Response<User>?>(null)
     val loginState : StateFlow<Response<User>?> = _loginState
+
+    fun resetState() {
+        _loginState.value = null
+    }
 
     fun login (email: String, password: String){
 
@@ -28,14 +36,22 @@ class AuthViewModel @Inject constructor(
             _loginState.value = result
         }
     }
-    fun resetState() {
-        _loginState.value = null
-    }
 
     fun register(user: User, password: String) {
         viewModelScope.launch {
             val result = registerUseCase.invoke(user,password)
             _loginState.value = result
+        }
+    }
+
+    fun isUserLoggedIn(): Boolean {
+        return isUserLoggedInUseCase.invoke()
+    }
+
+    fun logout() {
+        viewModelScope.launch {
+            logoutUseCase.invoke()
+            resetState()
         }
     }
 }

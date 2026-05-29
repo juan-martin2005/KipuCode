@@ -1,18 +1,21 @@
 package com.kipucode.data.repository
 
 import android.util.Log
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.kipucode.R
 import com.kipucode.data.remote.firebase.service.FirebaseAuthSource
+import com.kipucode.data.remote.firebase.service.UserFirestoreSource
 import com.kipucode.domain.model.ErrorType
 import com.kipucode.domain.model.Response
 import com.kipucode.domain.model.User
 import com.kipucode.domain.repository.AuthRepository
 
 internal class AuthRepositoryImpl(
-    private val remoteAuthSource: FirebaseAuthSource
+    private val remoteAuthSource: FirebaseAuthSource,
+    private val userFirestoreSource: UserFirestoreSource
 ): AuthRepository {
 
     override suspend fun login(email: String, password: String): Response<User> {
@@ -22,13 +25,16 @@ internal class AuthRepositoryImpl(
 
             if(currentUser != null){
                 if (currentUser.isEmailVerified) {
-                    val user = User(
-                        id = currentUser.uid,
-                        name = currentUser.displayName.toString(),
-                        email = currentUser.email.toString()
-                    )
+                    val userProfile = userFirestoreSource.getUserProfile(currentUser.uid)
 
-                    Response.Success(user)
+                    if (userProfile != null) {
+                        Response.Success(userProfile)
+                    } else {
+                        Response.Error(
+                            "User profile data not found in database",
+                            ErrorType.FIRESTORE_ERROR
+                        )
+                    }
                 } else {
                     Response.Error("Email verification required",
                         ErrorType.EMAIL_NOT_VERIFIED)
@@ -53,11 +59,13 @@ internal class AuthRepositoryImpl(
             val currentUser = authResult.user
 
             if(currentUser != null){
-                val user = User(
+                val user = user.copy(
                     id = currentUser.uid,
-                    name = currentUser.displayName.toString(),
-                    email = currentUser.email.toString()
+                    totalXp = 0,
+                    streakDay = 0
                 )
+
+                userFirestoreSource.saveUserProfile(user)
 
                 Response.Success(user)
             } else {
@@ -71,6 +79,10 @@ internal class AuthRepositoryImpl(
             Response.Error("An unexpected error occurred during registration",
                 ErrorType.FIRESTORE_ERROR)
         }
+    }
+
+    override fun isUserLoggedIn(): Boolean {
+        return remoteAuthSource.isUserLoggedIn()
     }
 
     override suspend fun logout() {

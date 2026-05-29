@@ -31,11 +31,13 @@ import androidx.compose.ui.unit.sp
 import com.kipucode.R
 import com.kipucode.ui.component.text_field.KipucodeText
 import com.kipucode.ui.theme.Nunito
+import com.kipucode.viewmodel.AuthViewModel
 import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen(
-    onSplashFinished: () -> Unit
+    authViewModel: AuthViewModel,
+    onSplashFinished: (isUserLogged: Boolean) -> Unit
 ){
     // Animación
     val animationState = remember { Animatable(0f) }
@@ -45,8 +47,10 @@ fun SplashScreen(
             targetValue = 1f,
             animationSpec = tween(durationMillis = 1000)
         )
-        delay(500)
-        onSplashFinished()
+        delay(1800)
+
+        val isLogged = authViewModel.isUserLoggedIn()
+        onSplashFinished(isLogged)
     }
 
     // Fondo
@@ -109,8 +113,8 @@ fun SplashScreen(
     }
 }
 
-@Preview(showBackground = true, name = "Splash Inicial")
-@Composable
-fun OnboardingPreview() {
-    SplashScreen { }
-}
+//@Preview(showBackground = true, name = "Splash Inicial")
+//@Composable
+//fun OnboardingPreview() {
+//    SplashScreen { }
+//}

@@ -19,3 +19,19 @@ class RegisterUseCase(
         return authRepository.register(user, password)
     }
 }
+
+class IsUserLoggedInUseCase(
+    private val authRepository: AuthRepository
+) {
+    operator fun invoke(): Boolean {
+        return authRepository.isUserLoggedIn()
+    }
+}
+
+class LogoutUseCase(
+    private val authRepository: AuthRepository
+) {
+    suspend fun invoke() {
+        authRepository.logout()
+    }
+}

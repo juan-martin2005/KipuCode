@@ -60,4 +60,17 @@
     <string name="auth_repository_email_not_verified">Email verification required</string>
     <string name="auth_repository_credential_invalid">The credential is invalid</string>
     <string name="auth_repository_email_already_exist">The email is already registered</string>
+
+    <!-- Home - Texts -->
+    <string name="headline_home">¡Hello, %1$s!  👋</string>
+    <string name="sub_headline_home">Continue your learning journey and keep building your skills</string>
+
+    <string name="home_bar_lessons">%1$d of %2$d lessons completed</string>
+    <string name="home_underline_text_bar">Overall progress</string>
+
+    <string name="home_xp_text">Total XP</string>
+    <string name="home_xp_value">%1$d XP</string>
+
+    <string name="home_streak_text">Current streak</string>
+    <string name="home_streak_value">%1$d Days</string>
 </resources>

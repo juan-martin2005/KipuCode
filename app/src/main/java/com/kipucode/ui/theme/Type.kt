@@ -10,11 +10,6 @@ import com.kipucode.R
 
 // Set of Material typography styles to start with
 
-val Poppins = FontFamily(
-    Font(R.font.poppins_regular, FontWeight.Normal),
-    Font(R.font.poppings_bold, FontWeight.Bold),
-)
-
 val Nunito = FontFamily(
 Font(R.font.nunito_bold, FontWeight.Bold),
         Font(R.font.nunito_regular, FontWeight.Normal),
@@ -22,6 +17,9 @@ Font(R.font.nunito_bold, FontWeight.Bold),
         Font(R.font.nunito_semibold, FontWeight.SemiBold),
         Font(R.font.nunito_extrabold, FontWeight.ExtraBold),
         Font(R.font.nunito_black, FontWeight.Black),
+        Font(R.font.nunito_extralight, FontWeight.ExtraLight),
+        Font(R.font.nunito_light, FontWeight.Light),
+
 )
 val Typography = Typography(
     bodyLarge = TextStyle(

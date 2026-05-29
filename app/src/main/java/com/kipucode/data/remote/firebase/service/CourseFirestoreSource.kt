@@ -6,7 +6,7 @@ import com.kipucode.data.remote.firebase.dto.CourseDto
 import com.kipucode.data.remote.firebase.dto.LessonDto
 import kotlinx.coroutines.tasks.await
 
-class FirebaseDataSource(
+class CourseFirestoreSource(
     private val firestore: FirebaseFirestore
 ) {
     companion object {

@@ -1,0 +1,37 @@
+<!--
+  ~ Copyright (C) 2026 The Android Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="256dp"
+    android:height="256dp"
+    android:viewportWidth="256"
+    android:viewportHeight="256">
+  <path
+      android:pathData="M127.86,7.09C127.86,7.09 127.86,7.09 127.86,7.09c-3.93,0 -7.44,2.19 -9.18,5.71L85.59,79.84c-0.28,0.56 -0.81,0.95 -1.43,1.04L10.18,91.63c-3.89,0.56 -7.05,3.23 -8.26,6.97c-1.21,3.73 -0.22,7.76 2.59,10.5l53.53,52.18c0.45,0.44 0.65,1.07 0.55,1.68L45.95,236.63c-0.66,3.87 0.9,7.71 4.07,10.01c3.17,2.31 7.31,2.6 10.79,0.78l66.17,-34.79c0.28,-0.14 0.58,-0.22 0.88,-0.22C146.74,152.88 142.75,82.55 127.86,7.09z"
+      android:strokeLineJoin="miter"
+      android:strokeWidth="2.81"
+      android:fillColor="#FFC850"
+      android:fillType="nonZero"
+      android:strokeColor="#00000000"
+      android:strokeLineCap="butt"/>
+  <path
+      android:pathData="M127.86,7.09C127.86,7.09 127.86,7.09 127.86,7.09c3.93,0 7.44,2.19 9.18,5.71l33.08,67.04c0.28,0.56 0.81,0.95 1.43,1.04l73.98,10.75c3.89,0.56 7.05,3.23 8.26,6.97c1.21,3.73 0.22,7.76 -2.59,10.5L197.68,161.27c-0.45,0.44 -0.65,1.07 -0.55,1.68L209.77,236.63c0.66,3.87 -0.9,7.71 -4.07,10.01c-3.17,2.31 -7.31,2.6 -10.79,0.78L128.74,212.64c-0.28,-0.14 -0.58,-0.22 -0.88,-0.22C105.6,154.81 110.57,84.01 127.86,7.09z"
+      android:strokeLineJoin="miter"
+      android:strokeWidth="2.81"
+      android:fillColor="#FFDC64"
+      android:fillType="nonZero"
+      android:strokeColor="#00000000"
+      android:strokeLineCap="butt"/>
+</vector>

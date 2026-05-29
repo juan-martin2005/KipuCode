@@ -6,5 +6,6 @@ import com.kipucode.domain.model.User
 interface AuthRepository {
     suspend fun login(email: String, password: String): Response<User>
     suspend fun register(user: User, password: String): Response<User>
+    fun isUserLoggedIn(): Boolean
     suspend fun logout()
 }

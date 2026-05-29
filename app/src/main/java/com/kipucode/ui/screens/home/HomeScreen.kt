@@ -1,5 +1,6 @@
 package com.kipucode.ui.screens.home
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -23,16 +24,27 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kipucode.R
+import com.kipucode.domain.model.Response
+import com.kipucode.ui.component.card.HomeCard
 import com.kipucode.ui.theme.Nunito
+import com.kipucode.viewmodel.HomeViewModel
 
 enum class LessonStatus { COMPLETADO, EN_PROGRESO, BLOQUEADO }
 
@@ -51,102 +63,36 @@ val mockLessons = listOf(
 
 )
 @Composable
-fun HomeScreen() {
-    val darkBlue = Color(0xFF081c40)
-    val kipuTeal = Color(0xFF0293a8)
-    val lightGray = Color(0xFFE5E7EB)
+fun HomeScreen(
+    homeViewModel: HomeViewModel = hiltViewModel()
+) {
+    val userState by homeViewModel.userState.collectAsStateWithLifecycle()
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFFf6f7f9))
-            .padding(horizontal = 24.dp),
-        contentPadding = PaddingValues(top = 40.dp, bottom = 100.dp)
-    ) {
-        // --- SECCIÓN 1: BIENVENIDA ---
-        item {
-            Text(
-                text = "¡Hola, Usuario! \uD83D\uDC4B",
-                fontSize = 28.sp,
-                fontFamily = Nunito,
-                fontWeight = FontWeight.ExtraBold,
-                color = darkBlue
-            )
-            Text(
-                text = "Continúa tu aprendizaje",
-                fontSize = 16.sp,
-                fontFamily = Nunito,
-                color = Color.Gray,
-                modifier = Modifier.padding(top = 4.dp)
-            )
-            Spacer(modifier = Modifier.height(24.dp))
+    var userName by remember { mutableStateOf("") }
+    var userXp by remember { mutableIntStateOf(0) }
+    var userStreak by remember { mutableIntStateOf(0) }
+
+    when (val state = userState) {
+        is Response.Loading -> {}
+        is Response.Success -> {
+            userName = state.data.name.split(" ").first()
+            userXp = state.data.totalXp
+            userStreak = state.data.streakDay
         }
-
-        // --- SECCIÓN 2: CARD GRANDE DE PROGRESO ---
-        item {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                border = BorderStroke(1.dp, kipuTeal.copy(alpha = 0.3f))
-            ) {
-                Row(
-                    modifier = Modifier.padding(24.dp).fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column{
-                        Text("Fundamentos", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = darkBlue)
-                        Text("Progreso total", fontSize = 14.sp, color = Color.Gray)
-                    }
-
-                    Box(contentAlignment = Alignment.Center) {
-                        CircularProgressIndicator(
-                            progress = { 0.65f }, // <-- EL CAMBIO ESTÁ AQUÍ
-                            modifier = Modifier.size(70.dp),
-                            color = kipuTeal,
-                            strokeWidth = 6.dp,
-                            trackColor = lightGray.copy(alpha = 0.5f)
-                        )
-                        Text("65%", fontWeight = FontWeight.Bold, color = kipuTeal, fontSize = 16.sp)
-                    }
-                }
-            }
-            Spacer(modifier = Modifier.height(32.dp))
+        is Response.Error -> {
+            val errorMessage = state.message ?: "Internal Error"
+            Log.d("FIREBASE_ERROR", errorMessage)
         }
-
-        item {
-            Text(
-                text = "Ruta de Aprendizaje",
-                fontSize = 20.sp,
-                fontFamily = Nunito,
-                fontWeight = FontWeight.ExtraBold,
-                color = darkBlue
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-
-        // --- SECCIÓN 4: LA LISTA DE LECCIONES (Y LAS LÍNEAS CONECTORAS) ---
-        itemsIndexed(mockLessons) { index, lesson ->
-            LessonCard(lesson = lesson, kipuTeal = kipuTeal, darkBlue = darkBlue, lightGray = lightGray)
-
-            if (index < mockLessons.size - 1) {
-                val nextIsLocked = mockLessons[index + 1].status == LessonStatus.BLOQUEADO
-                val lineColor = if (nextIsLocked) lightGray else kipuTeal
-
-                Box(modifier = Modifier.padding(start = 28.dp)) {
-                    Spacer(
-                        modifier = Modifier
-                            .width(2.dp)
-                            .height(16.dp)
-                            .background(lineColor)
-                    )
-                }
-            }
-        }
+        null -> {}
     }
-}
 
+    HomeContent(
+        userName = userName,
+        userXp = userXp,
+        userStreak = userStreak,
+        lessons = mockLessons
+    )
+}
 @Composable
 fun LessonCard(lesson: Lesson, kipuTeal: Color, darkBlue: Color, lightGray: Color) {
 
@@ -165,7 +111,9 @@ fun LessonCard(lesson: Lesson, kipuTeal: Color, darkBlue: Color, lightGray: Colo
         border = BorderStroke(1.5.dp, borderColor)
     ) {
         Row(
-            modifier = Modifier.padding(16.dp).fillMaxWidth(),
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -205,8 +153,100 @@ fun LessonCard(lesson: Lesson, kipuTeal: Color, darkBlue: Color, lightGray: Colo
     }
 }
 
-//@Preview(showBackground = true)
+@Composable
+fun HomeContent(
+    userName: String,
+    userXp: Int,
+    userStreak: Int,
+    lessons: List<Lesson>
+) {
+    val darkBlue = Color(0xFF081c40)
+    val kipuTeal = Color(0xFF0293a8)
+    val lightGray = Color(0xFFE5E7EB)
+
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFf6f7f9))
+            .padding(16.dp),
+        contentPadding = PaddingValues(top = 8.dp)
+    ) {
+        // --- SECCIÓN 1: BIENVENIDA ---
+        item {
+            Text(
+                text = stringResource(R.string.headline_home, userName),
+                fontSize = 28.sp,
+                fontFamily = Nunito,
+                fontWeight = FontWeight.ExtraBold,
+                color = darkBlue,
+                modifier = Modifier.padding(start = 8.dp)
+            )
+            Text(
+                text = stringResource(R.string.sub_headline_home),
+                fontSize = 16.sp,
+                fontFamily = Nunito,
+                color = Color.Gray,
+                modifier = Modifier.padding(start = 8.dp, top = 6.dp)
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+
+        // --- SECCIÓN 2: TARJETA DE PROGRESO ---
+        item {
+            HomeCard(
+                courseName = "Fundamentos",
+                languageName = "Python",
+                currentLessons = 1,
+                totalLessons = 9,
+                progressPercentage = 70,
+                totalXp = userXp,
+                streakDays = userStreak
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+
+        // --- SECCIÓN 3: TÍTULO SECCIÓN ---
+        item {
+            Text(
+                text = "Ruta de Aprendizaje",
+                fontSize = 20.sp,
+                fontFamily = Nunito,
+                fontWeight = FontWeight.ExtraBold,
+                color = darkBlue
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+
+        // --- SECCIÓN 4: LISTA DE LECCIONES ---
+        itemsIndexed(lessons) { index, lesson ->
+            LessonCard(lesson = lesson, kipuTeal = kipuTeal, darkBlue = darkBlue, lightGray = lightGray)
+
+            if (index < lessons.size - 1) {
+                val nextIsLocked = lessons[index + 1].status == LessonStatus.BLOQUEADO
+                val lineColor = if (nextIsLocked) lightGray else kipuTeal
+
+                Box(modifier = Modifier.padding(start = 28.dp)) {
+                    Spacer(
+                        modifier = Modifier
+                            .width(2.dp)
+                            .height(16.dp)
+                            .background(lineColor)
+                    )
+                }
+            }
+        }
+    }
+}
+
+//@Preview(showBackground = true, showSystemUi = true)
 //@Composable
 //fun HomePreview() {
-//    HomeScreen()
+//    HomeContent(
+//        userName = "Estudiante",
+//        userXp = 1000,
+//        userStreak = 7,
+//        lessons = mockLessons
+//    )
 //}

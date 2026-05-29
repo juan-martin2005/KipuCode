@@ -71,7 +71,6 @@ fun RegisterScreen(
             is Response.Success -> {
                 onRegisterSuccess()
                 Toast.makeText(context, "¡Estudiante registrado!\n revisa tu correo para ser verificado", Toast.LENGTH_SHORT).show()
-                authViewModel.resetState()
             }
             is Response.Error -> {
                 val errorMessage = (loginState as Response.Error).message ?: "Internal Error"
@@ -81,7 +80,6 @@ fun RegisterScreen(
                     ErrorType.EMAIL_ALREADY_EXIST -> emailError = authMsgErrorEmailAlreadyExist
                     else -> Log.d("FIREBASE_ERROR", errorMessage)
                 }
-                authViewModel.resetState()
             }
             null -> {}
         }
@@ -206,6 +204,9 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            // OPTIMIZAR A FUTURO
+            // Pasar los datos al AuthViewModel y que el ViewModel haga la validación local usando
+            // funciones de utilidad / UseCases, cambiando los estados de error correspondientes.
             FilledButton(
                 stringResource(id = R.string.register),
                 {
@@ -216,6 +217,8 @@ fun RegisterScreen(
                     emailError = null
                     passwordError = null
                     confirmPasswordError = null
+
+                    authViewModel.resetState()
 
                     if (name.isBlank()) {
                         nameError = msgErrorNameRequired
@@ -244,7 +247,7 @@ fun RegisterScreen(
                     }
 
                     if (!hasError) {
-                        val user = User(name, emailTrimmed)
+                        val user = User(name = name, email = emailTrimmed)
                         authViewModel.register(user, password)
                     }
                 }

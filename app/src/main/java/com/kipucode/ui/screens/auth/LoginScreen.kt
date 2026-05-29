@@ -65,7 +65,6 @@ fun LoginScreen(
             is Response.Success -> {
                 Toast.makeText(context, "¡Bienvenido de nuevo!", Toast.LENGTH_SHORT).show()
                 onLoginSuccess()
-                authViewModel.resetState()
             }
             is Response.Error -> {
                 val errorMessage = (loginState as Response.Error).message ?: "Internal Error"
@@ -76,7 +75,6 @@ fun LoginScreen(
                     ErrorType.CREDENTIAL_INVALID -> passwordError = authMsgErrorCredentialInvalid
                     else -> Log.d("FIREBASE_ERROR", errorMessage)
                 }
-                authViewModel.resetState()
             }
             null -> {}
         }
@@ -182,6 +180,9 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            // OPTIMIZAR A FUTURO
+            // Pasar los datos al AuthViewModel y que el ViewModel haga la validación local usando
+            // funciones de utilidad / UseCases, cambiando los estados de error correspondientes.
             FilledButton(
                 stringResource(id = R.string.logIn),
                 {
@@ -190,6 +191,7 @@ fun LoginScreen(
 
                     emailError = null
                     passwordError = null
+                    authViewModel.resetState()
 
                     if (emailTrimmed.isBlank()) {
                         emailError = msgErrorEmailRequired

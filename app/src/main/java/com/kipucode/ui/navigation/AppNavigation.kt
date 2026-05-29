@@ -19,6 +19,7 @@ import com.kipucode.ui.screens.auth.RegisterScreen
 import com.kipucode.ui.screens.explore.ExploreScreen
 import com.kipucode.ui.screens.home.HomeScreen
 import com.kipucode.ui.screens.onboarding.OnboardingScreen
+import com.kipucode.ui.screens.profile.ProfileScreen
 import com.kipucode.ui.screens.splash.SplashScreen
 import com.kipucode.viewmodel.AuthViewModel
 import com.kipucode.viewmodel.CoursesViewModel
@@ -44,10 +45,19 @@ fun AppNavigation(){
             modifier = Modifier.padding(paddingValues).fillMaxSize()
         ) {
             composable("splash") {
+                val authViewModel: AuthViewModel = hiltViewModel()
+
                 SplashScreen(
-                    onSplashFinished = {
-                        navController.navigate("onboarding") {
-                            popUpTo("splash") { inclusive = true }
+                    authViewModel = authViewModel,
+                    onSplashFinished = { isUserLogged ->
+                        if (isUserLogged) {
+                            navController.navigate("home") {
+                                popUpTo("splash") { inclusive = true }
+                            }
+                        } else {
+                            navController.navigate("onboarding") {
+                                popUpTo("splash") { inclusive = true }
+                            }
                         }
                     }
                 )
@@ -100,7 +110,6 @@ fun AppNavigation(){
             }
 
             composable("explore"){
-                val courseViewModel : CoursesViewModel = hiltViewModel()
                 ExploreScreen(
                 )
             }
@@ -110,9 +119,14 @@ fun AppNavigation(){
             }
 
             composable("profile"){
-                Text(text = "Pantalla de Perfil - TEST")
+                ProfileScreen(
+                    onLogoutClick = {
+                        navController.navigate("onboarding") {
+                            popUpTo(0) { inclusive = true }
+                        }
+                    }
+                )
             }
-
         }
     }
 }
