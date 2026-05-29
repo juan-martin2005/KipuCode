@@ -1,5 +1,6 @@
 package com.kipucode.ui.screens.auth
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -22,6 +23,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.kipucode.R
 import com.kipucode.domain.model.ErrorType
 import com.kipucode.domain.model.Response
+import com.kipucode.domain.model.User
 import com.kipucode.ui.component.button.FilledButton
 import com.kipucode.ui.component.text_field.ClickableLink
 import com.kipucode.ui.component.text_field.KipuForm
@@ -39,16 +41,22 @@ fun LoginScreen(
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-    val loginState by authViewModel.loginState.collectAsStateWithLifecycle()
-
     // ESTADOS PARA LAS CONTRASEÑAS
     var passwordVisible by remember { mutableStateOf(false) }
-
-    val context = LocalContext.current
 
     // ESTADOS DE ERROR (VALIDACIONES)
     var emailError by remember { mutableStateOf<String?>(null) }
     var passwordError by remember { mutableStateOf<String?>(null) }
+
+    val msgErrorEmailRequired = stringResource(id = R.string.error_email_required)
+    val msgErrorEmailDomain = stringResource(id = R.string.error_email_domain)
+    val msgErrorPassRequired = stringResource(id = R.string.error_password_required)
+
+    val authMsgErrorEmailNotVerified = stringResource(id = R.string.auth_repository_email_not_verified)
+    val authMsgErrorCredentialInvalid = stringResource(id = R.string.auth_repository_credential_invalid)
+
+    val loginState by authViewModel.loginState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     LaunchedEffect(loginState) {
         when (loginState) {
@@ -61,18 +69,16 @@ fun LoginScreen(
             }
             is Response.Error -> {
                 val errorMessage = (loginState as Response.Error).message ?: "Internal Error"
-                val pos = (loginState as Response.Error).error
-                when(pos){
-                    ErrorType.NAME_EMPTY -> TODO()
-                    ErrorType.EMAIL_EMPTY,
-                    ErrorType.EMAIL_DOMAIN_NOT_VALID,
-                    ErrorType.EMAIL_ALREADY_EXIST -> emailError = errorMessage
-                    ErrorType.PASSWORD_EMPTY -> passwordError = errorMessage
-                    ErrorType.CREDENTIAL_INVALID -> passwordError = errorMessage
+                val errorType = (loginState as Response.Error).error
+
+                when (errorType) {
+                    ErrorType.EMAIL_NOT_VERIFIED -> emailError = authMsgErrorEmailNotVerified
+                    ErrorType.CREDENTIAL_INVALID -> passwordError = authMsgErrorCredentialInvalid
+                    else -> Log.d("FIREBASE_ERROR", errorMessage)
                 }
                 authViewModel.resetState()
             }
-            null -> { }
+            null -> {}
         }
     }
 
@@ -179,8 +185,28 @@ fun LoginScreen(
             FilledButton(
                 stringResource(id = R.string.logIn),
                 {
-                    val emailTrimmed = email.trim()
-                    authViewModel.login(emailTrimmed, password)
+                    var hasError = false
+                    val emailTrimmed = email.trim().lowercase()
+
+                    emailError = null
+                    passwordError = null
+
+                    if (emailTrimmed.isBlank()) {
+                        emailError = msgErrorEmailRequired
+                        hasError = true
+                    } else if (!emailTrimmed.endsWith("@upn.pe")) {
+                        emailError = msgErrorEmailDomain
+                        hasError = true
+                    }
+
+                    if (password.isBlank()) {
+                        passwordError = msgErrorPassRequired
+                        hasError = true
+                    }
+
+                    if (!hasError) {
+                        authViewModel.login(emailTrimmed, password)
+                    }
                 }
             )
 

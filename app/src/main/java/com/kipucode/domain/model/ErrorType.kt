@@ -2,10 +2,7 @@ package com.kipucode.domain.model
 
 enum class ErrorType {
     EMAIL_ALREADY_EXIST,
+    EMAIL_NOT_VERIFIED,
     CREDENTIAL_INVALID,
-    EMAIL_EMPTY,
-    EMAIL_DOMAIN_NOT_VALID,
-    PASSWORD_EMPTY,
-    NAME_EMPTY
-
+    FIRESTORE_ERROR
 }

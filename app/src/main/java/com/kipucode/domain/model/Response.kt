@@ -3,5 +3,8 @@ package com.kipucode.domain.model
 sealed class Response<out T>{
     object Loading : Response<Nothing>()
     data class Success<out T>(val data: T): Response<T>()
-    data class Error(val message : String? = null, val error: ErrorType): Response<Nothing>()
+    data class Error(
+        val message : String? = null,
+        val error: ErrorType
+    ): Response<Nothing>()
 }

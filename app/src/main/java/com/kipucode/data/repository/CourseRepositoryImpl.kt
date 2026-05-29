@@ -19,10 +19,8 @@ internal class CourseRepositoryImpl(
         return try {
             val remoteCourse = remoteDataSource.getCourses().map { it.toEntity() }
             Response.Success(remoteCourse.map { it.toDomain() })
-        }catch (ex : FirebaseFirestoreException){
-            Response.Error(ex.toString(), ErrorType.PASSWORD_EMPTY)
+        } catch (ex : FirebaseFirestoreException){
+            Response.Error("Error al cargar los cursos: ${ex.message}", ErrorType.FIRESTORE_ERROR)
         }
-
     }
-
 }

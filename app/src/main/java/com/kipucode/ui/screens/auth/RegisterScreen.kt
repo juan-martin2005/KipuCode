@@ -1,5 +1,6 @@
 package com.kipucode.ui.screens.auth
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -50,11 +51,21 @@ fun RegisterScreen(
     var passwordError by remember { mutableStateOf<String?>(null) }
     var confirmPasswordError by remember { mutableStateOf<String?>(null) }
 
-    val loginState by authViewModel.loginState.collectAsStateWithLifecycle()
+    val msgErrorNameRequired = stringResource(id = R.string.error_name_required)
+    val msgErrorEmailRequired = stringResource(id = R.string.error_email_required)
+    val msgErrorEmailDomain = stringResource(id = R.string.error_email_domain)
+    val msgErrorPassRequired = stringResource(id = R.string.error_password_required)
+    val msgErrorConfirmPassRequired = stringResource(id = R.string.error_confirm_password_required)
+    val msgErrorPasswordMismatch = stringResource(id = R.string.error_password_mismatch)
 
+    val authMsgErrorEmailAlreadyExist = stringResource(id = R.string.auth_repository_email_already_exist)
+
+    val loginState by authViewModel.loginState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+
     LaunchedEffect(loginState) {
         when (loginState) {
+            // Pantalla o elemento de carga OPCIONALES
             is Response.Loading -> {
             }
             is Response.Success -> {
@@ -64,19 +75,15 @@ fun RegisterScreen(
             }
             is Response.Error -> {
                 val errorMessage = (loginState as Response.Error).message ?: "Internal Error"
-                val pos = (loginState as Response.Error).error
-                when(pos){
-                    ErrorType.NAME_EMPTY -> nameError = errorMessage
-                    ErrorType.EMAIL_EMPTY,
-                    ErrorType.EMAIL_DOMAIN_NOT_VALID,
-                    ErrorType.EMAIL_ALREADY_EXIST -> emailError = errorMessage
-                    ErrorType.PASSWORD_EMPTY -> passwordError = errorMessage
-                    ErrorType.CREDENTIAL_INVALID -> passwordError = errorMessage
+                val errorType = (loginState as Response.Error).error
+
+                when (errorType) {
+                    ErrorType.EMAIL_ALREADY_EXIST -> emailError = authMsgErrorEmailAlreadyExist
+                    else -> Log.d("FIREBASE_ERROR", errorMessage)
                 }
                 authViewModel.resetState()
             }
-            null -> {
-            }
+            null -> {}
         }
     }
 
@@ -200,11 +207,46 @@ fun RegisterScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             FilledButton(
-                "Sign Up",
+                stringResource(id = R.string.register),
                 {
-                    val emailTrimmed = email.trim()
-                    val user = User( "",name, emailTrimmed )
-                    authViewModel.register(user, password)
+                    var hasError = false
+                    val emailTrimmed = email.trim().lowercase()
+
+                    nameError = null
+                    emailError = null
+                    passwordError = null
+                    confirmPasswordError = null
+
+                    if (name.isBlank()) {
+                        nameError = msgErrorNameRequired
+                        hasError = true
+                    }
+
+                    if (emailTrimmed.isBlank()) {
+                        emailError = msgErrorEmailRequired
+                        hasError = true
+                    } else if (!emailTrimmed.endsWith("@upn.pe")) {
+                        emailError = msgErrorEmailDomain
+                        hasError = true
+                    }
+
+                    if (password.isBlank()) {
+                        passwordError = msgErrorPassRequired
+                        hasError = true
+                    }
+
+                    if (confirmPassword.isBlank()) {
+                        confirmPasswordError = msgErrorConfirmPassRequired
+                        hasError = true
+                    } else if (password != confirmPassword) {
+                        confirmPasswordError = msgErrorPasswordMismatch
+                        hasError = true
+                    }
+
+                    if (!hasError) {
+                        val user = User(name, emailTrimmed)
+                        authViewModel.register(user, password)
+                    }
                 }
             )
 
