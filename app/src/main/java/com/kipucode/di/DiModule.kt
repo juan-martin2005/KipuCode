@@ -15,6 +15,7 @@ import com.kipucode.domain.usecase.user.IsUserLoggedInUseCase
 import com.kipucode.domain.usecase.user.LoginUseCases
 import com.kipucode.domain.usecase.user.LogoutUseCase
 import com.kipucode.domain.usecase.user.RegisterUseCase
+import com.kipucode.domain.usecase.user.ResetPasswordUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -74,7 +75,11 @@ class DiModule {
     internal fun provideLogoutUseCase(authRepository: AuthRepository): LogoutUseCase {
         return LogoutUseCase(authRepository)
     }
-
+    @Provides
+    @Singleton
+    internal fun provideResetPasswordUseCase(authRepository: AuthRepository): ResetPasswordUseCase {
+        return ResetPasswordUseCase(authRepository)
+    }
     @Provides
     @Singleton
     fun provideFirebaseDataSource(): CourseFirestoreSource {

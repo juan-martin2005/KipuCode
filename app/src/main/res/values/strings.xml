@@ -48,12 +48,12 @@
     <string name="register_clickable_end">" Log in"</string>
 
     <!-- Login & Register - Validaciones -->
-    <string name="error_name_required">Full Name is required.</string>
-    <string name="error_email_required">Email is required.</string>
-    <string name="error_email_domain">Please use your institutional email (@upn.pe).</string>
-    <string name="error_password_required">Password is required.</string>
-    <string name="error_confirm_password_required">Confirm Password is required.</string>
-    <string name="error_password_mismatch">Confirm Password don\'t match Password.</string>
+    <string name="error_name_required">Full Name is required</string>
+    <string name="error_email_required">Email is required</string>
+    <string name="error_email_domain">Please use your institutional email (@upn.pe)</string>
+    <string name="error_password_required">Password is required</string>
+    <string name="error_confirm_password_required">Confirm Password is required</string>
+    <string name="error_password_mismatch">Confirm Password don\'t match Password</string>
 
 
     <!-- Auth Firebase - Validaciones -->
@@ -73,4 +73,9 @@
 
     <string name="home_streak_text">Current streak</string>
     <string name="home_streak_value">%1$d Days</string>
+
+    <!-- ForgotPassword-Screen -->
+    <string name="reset_password">Reset Password</string>
+    <string name="subheadline_forgot_password">Enter your institutional email address. We’ll send you a secure link to reset your password</string>
+    <string name="send_email">Send Email</string>
 </resources>

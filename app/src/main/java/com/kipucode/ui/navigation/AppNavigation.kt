@@ -14,6 +14,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kipucode.ui.component.card.KipuBottomBar
+import com.kipucode.ui.screens.auth.ForgotPasswordScreen
 import com.kipucode.ui.screens.auth.LoginScreen
 import com.kipucode.ui.screens.auth.RegisterScreen
 import com.kipucode.ui.screens.explore.ExploreScreen
@@ -88,20 +89,28 @@ fun AppNavigation(){
                 )
             }
 
-            composable("login"){
+            composable("login") {
                 val authViewModel: AuthViewModel = hiltViewModel()
                 LoginScreen(
-                    onLoginSuccess = { navController.navigate("home") {
-                            popUpTo(0)
-                        }
+                    onLoginSuccess = {
+                        navController.navigate("home") { popUpTo(0) }
                     },
                     onNavigateToRegister = {
                         navController.navigate("register") {
                             popUpTo("login") { inclusive = true }
                         }
                     },
+                    onNavigateToForgotPassword = {
+                        navController.navigate("forgot_password")
+                    },
                     onBack = { navController.popBackStack() },
                     authViewModel = authViewModel
+                )
+            }
+
+            composable("forgot_password") {
+                ForgotPasswordScreen(
+                    onBack = { navController.popBackStack() }
                 )
             }
 

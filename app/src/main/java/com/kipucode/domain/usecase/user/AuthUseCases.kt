@@ -28,6 +28,14 @@ class IsUserLoggedInUseCase(
     }
 }
 
+class ResetPasswordUseCase(
+    private val authRepository: AuthRepository
+) {
+    suspend operator fun invoke(email: String): Response<Unit> {
+        return authRepository.resetPassword(email)
+    }
+}
+
 class LogoutUseCase(
     private val authRepository: AuthRepository
 ) {

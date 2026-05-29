@@ -81,6 +81,21 @@ internal class AuthRepositoryImpl(
         }
     }
 
+    override suspend fun resetPassword(email: String): Response<Unit> {
+        return try {
+            val userExists = userFirestoreSource.checkIfEmailExists(email)
+
+            if (!userExists) {
+                return Response.Error("Este correo no se encuentra registrado", ErrorType.CREDENTIAL_INVALID)
+            }
+            remoteAuthSource.sendPasswordReset(email)
+            Response.Success(Unit)
+
+        }catch (ex: Exception) {
+            Response.Error("An unexpected error occurred while sending the email", ErrorType.FIRESTORE_ERROR)
+        }
+    }
+
     override fun isUserLoggedIn(): Boolean {
         return remoteAuthSource.isUserLoggedIn()
     }

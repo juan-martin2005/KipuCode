@@ -20,8 +20,14 @@ class FirebaseAuthSource(
 
         return result
     }
+
+    suspend fun sendPasswordReset(email: String) {
+        firebaseAuth.sendPasswordResetEmail(email).await()
+    }
+
     fun isUserLoggedIn(): Boolean {
         return firebaseAuth.currentUser != null
     }
+
     fun logoutUser() = firebaseAuth.signOut()
 }

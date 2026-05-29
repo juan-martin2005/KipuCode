@@ -26,4 +26,18 @@ class UserFirestoreSource(
             .await()
             .toObject<User>()
     }
+
+    suspend fun checkIfEmailExists(email: String): Boolean {
+        return try {
+            val query = firestore
+                .collection("users")
+                .whereEqualTo("email", email)
+                .get()
+                .await()
+
+            !query.isEmpty
+        } catch (e: Exception) {
+            false
+        }
+    }
 }

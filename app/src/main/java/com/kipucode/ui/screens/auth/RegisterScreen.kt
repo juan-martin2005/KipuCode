@@ -14,6 +14,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -35,6 +36,60 @@ fun RegisterScreen(
     onBack: () -> Unit,
     authViewModel: AuthViewModel = hiltViewModel()
 ) {
+    val loginState by authViewModel.loginState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    var authEmailError by remember { mutableStateOf<String?>(null) }
+    val authMsgErrorEmailAlreadyExist = stringResource(id = R.string.auth_repository_email_already_exist)
+
+    LaunchedEffect(loginState) {
+        when (loginState) {
+            is Response.Loading -> {
+            }
+            is Response.Success -> {
+                Toast.makeText(
+                    context,
+                    "¡Estudiante registrado!\n revisa tu correo para ser verificado",
+                    Toast.LENGTH_SHORT
+                ).show()
+                onRegisterSuccess()
+            }
+            is Response.Error -> {
+                val errorMessage = (loginState as Response.Error).message ?: "Internal Error"
+                val errorType = (loginState as Response.Error).error
+
+                when (errorType) {
+                    ErrorType.EMAIL_ALREADY_EXIST -> authEmailError = authMsgErrorEmailAlreadyExist
+                    else -> Log.d("FIREBASE_ERROR", errorMessage)
+                }
+            }
+            null -> {}
+        }
+    }
+
+    RegisterContent(
+        onNavigateToLogin = onNavigateToLogin,
+        onBack = onBack,
+        onRegisterClick = { name, email, password ->
+            authEmailError = null
+            authViewModel.resetState()
+
+            val user = User(name = name, email = email)
+            authViewModel.register(user, password)
+        }
+    )
+}
+
+@Composable
+fun RegisterContent(
+    onNavigateToLogin: () -> Unit,
+    onBack: () -> Unit,
+    onRegisterClick: (String, String, String) -> Unit,
+    externalNameError: String? = null,
+    externalEmailError: String? = null,
+    externalPasswordError: String? = null,
+    externalConfirmPasswordError: String? = null
+) {
     // ESTADOS PARA LOS CAMPOS
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -45,11 +100,16 @@ fun RegisterScreen(
     var passwordVisible by remember { mutableStateOf(false) }
     var confirmPasswordVisible by remember { mutableStateOf(false) }
 
-    // ESTADOS DE ERROR (VALIDACIONES)
-    var nameError by remember { mutableStateOf<String?>(null) }
-    var emailError by remember { mutableStateOf<String?>(null) }
-    var passwordError by remember { mutableStateOf<String?>(null) }
-    var confirmPasswordError by remember { mutableStateOf<String?>(null) }
+    // ESTADOS DE ERROR (VALIDACIONES LOCALES)
+    var localNameError by remember { mutableStateOf<String?>(null) }
+    var localEmailError by remember { mutableStateOf<String?>(null) }
+    var localPasswordError by remember { mutableStateOf<String?>(null) }
+    var localConfirmPasswordError by remember { mutableStateOf<String?>(null) }
+
+    val nameError = localEmailError ?: externalNameError
+    val emailError = localEmailError ?: externalEmailError
+    val passwordError = localEmailError ?: externalPasswordError
+    val confirmPasswordError = localEmailError ?: externalConfirmPasswordError
 
     val msgErrorNameRequired = stringResource(id = R.string.error_name_required)
     val msgErrorEmailRequired = stringResource(id = R.string.error_email_required)
@@ -58,38 +118,11 @@ fun RegisterScreen(
     val msgErrorConfirmPassRequired = stringResource(id = R.string.error_confirm_password_required)
     val msgErrorPasswordMismatch = stringResource(id = R.string.error_password_mismatch)
 
-    val authMsgErrorEmailAlreadyExist = stringResource(id = R.string.auth_repository_email_already_exist)
-
-    val loginState by authViewModel.loginState.collectAsStateWithLifecycle()
-    val context = LocalContext.current
-
-    LaunchedEffect(loginState) {
-        when (loginState) {
-            // Pantalla o elemento de carga OPCIONALES
-            is Response.Loading -> {
-            }
-            is Response.Success -> {
-                onRegisterSuccess()
-                Toast.makeText(context, "¡Estudiante registrado!\n revisa tu correo para ser verificado", Toast.LENGTH_SHORT).show()
-            }
-            is Response.Error -> {
-                val errorMessage = (loginState as Response.Error).message ?: "Internal Error"
-                val errorType = (loginState as Response.Error).error
-
-                when (errorType) {
-                    ErrorType.EMAIL_ALREADY_EXIST -> emailError = authMsgErrorEmailAlreadyExist
-                    else -> Log.d("FIREBASE_ERROR", errorMessage)
-                }
-            }
-            null -> {}
-        }
-    }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFf6f7f9))
-            .padding(vertical = 16.dp, horizontal = 10.dp),
+            .padding(12.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         IconButton(
@@ -144,8 +177,9 @@ fun RegisterScreen(
                 value = name,
                 onValueChange = {
                     name = it
-                    nameError = null
-                },                placeholder = stringResource(R.string.ph_full_name),
+                    localNameError = null
+                },
+                placeholder = stringResource(R.string.ph_full_name),
                 iconRes = R.drawable.ic_user,
                 isError = nameError != null,
                 errorMessage = nameError
@@ -157,7 +191,7 @@ fun RegisterScreen(
                 value = email,
                 onValueChange = {
                     email = it
-                    emailError = null
+                    localEmailError = null
                 },
                 placeholder = "n00123456@upn.pe",
                 iconRes = R.drawable.ic_mail,
@@ -172,7 +206,7 @@ fun RegisterScreen(
                 value = password,
                 onValueChange = {
                     password = it
-                    passwordError = null
+                    localPasswordError = null
                 },
                 placeholder = if (passwordVisible) stringResource(R.string.password).lowercase() else "••••••••",
                 iconRes = if (passwordVisible) R.drawable.ic_unlock else R.drawable.ic_lock,
@@ -190,7 +224,7 @@ fun RegisterScreen(
                 value = confirmPassword,
                 onValueChange = {
                     confirmPassword = it
-                    confirmPasswordError = null
+                    localConfirmPasswordError = null
                 },
                 placeholder = if (confirmPasswordVisible) stringResource(R.string.confirm_password).lowercase() else "••••••••",
                 iconRes = if (confirmPasswordVisible) R.drawable.ic_unlock else R.drawable.ic_lock,
@@ -204,51 +238,45 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // OPTIMIZAR A FUTURO
-            // Pasar los datos al AuthViewModel y que el ViewModel haga la validación local usando
-            // funciones de utilidad / UseCases, cambiando los estados de error correspondientes.
             FilledButton(
                 stringResource(id = R.string.register),
                 {
                     var hasError = false
                     val emailTrimmed = email.trim().lowercase()
 
-                    nameError = null
-                    emailError = null
-                    passwordError = null
-                    confirmPasswordError = null
-
-                    authViewModel.resetState()
+                    localNameError = null
+                    localEmailError = null
+                    localPasswordError = null
+                    localConfirmPasswordError = null
 
                     if (name.isBlank()) {
-                        nameError = msgErrorNameRequired
+                        localNameError = msgErrorNameRequired
                         hasError = true
                     }
 
                     if (emailTrimmed.isBlank()) {
-                        emailError = msgErrorEmailRequired
+                        localEmailError = msgErrorEmailRequired
                         hasError = true
                     } else if (!emailTrimmed.endsWith("@upn.pe")) {
-                        emailError = msgErrorEmailDomain
+                        localEmailError = msgErrorEmailDomain
                         hasError = true
                     }
 
                     if (password.isBlank()) {
-                        passwordError = msgErrorPassRequired
+                        localPasswordError = msgErrorPassRequired
                         hasError = true
                     }
 
                     if (confirmPassword.isBlank()) {
-                        confirmPasswordError = msgErrorConfirmPassRequired
+                        localConfirmPasswordError = msgErrorConfirmPassRequired
                         hasError = true
                     } else if (password != confirmPassword) {
-                        confirmPasswordError = msgErrorPasswordMismatch
+                        localConfirmPasswordError = msgErrorPasswordMismatch
                         hasError = true
                     }
 
                     if (!hasError) {
-                        val user = User(name = name, email = emailTrimmed)
-                        authViewModel.register(user, password)
+                        onRegisterClick(name, emailTrimmed, password)
                     }
                 }
             )
@@ -262,16 +290,22 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.weight(1f))
         }
-
     }
 }
 
-//@Preview(showBackground = true, name = "Pantalla de Register")
-//@Composable
-//fun RegisterPreview() {
-//    RegisterScreen(
-//        onRegisterSuccess = {name, mail, password, confirmPassword ->},
-//        onNavigateToLogin = {},
-//        onBack = {}
-//    )
-//}
+// PREVIEWS
+@Preview(showBackground = true, name = "Registro - Estado Normal")
+@Composable
+fun RegisterScreenPreview() {
+    MaterialTheme {
+        RegisterContent(
+            onNavigateToLogin = {},
+            onBack = {},
+            onRegisterClick = { _, _, _ -> },
+//            externalNameError = "Full Name is required",
+//            externalEmailError = "Email is required",
+//            externalPasswordError = "Password is required",
+//            externalConfirmPasswordError = "Confirm Password is required"
+        )
+    }
+}

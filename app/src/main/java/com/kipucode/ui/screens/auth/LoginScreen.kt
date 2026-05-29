@@ -4,6 +4,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -16,6 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -23,7 +25,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.kipucode.R
 import com.kipucode.domain.model.ErrorType
 import com.kipucode.domain.model.Response
-import com.kipucode.domain.model.User
 import com.kipucode.ui.component.button.FilledButton
 import com.kipucode.ui.component.text_field.ClickableLink
 import com.kipucode.ui.component.text_field.KipuForm
@@ -35,28 +36,18 @@ fun LoginScreen(
     onLoginSuccess: () -> Unit,
     onNavigateToRegister: () -> Unit,
     onBack: () -> Unit,
+    onNavigateToForgotPassword: () -> Unit,
     authViewModel: AuthViewModel = hiltViewModel()
 ) {
-    // ESTADOS PARA LOS CAMPOS
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    val loginState by authViewModel.loginState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
-    // ESTADOS PARA LAS CONTRASEÑAS
-    var passwordVisible by remember { mutableStateOf(false) }
-
-    // ESTADOS DE ERROR (VALIDACIONES)
-    var emailError by remember { mutableStateOf<String?>(null) }
-    var passwordError by remember { mutableStateOf<String?>(null) }
-
-    val msgErrorEmailRequired = stringResource(id = R.string.error_email_required)
-    val msgErrorEmailDomain = stringResource(id = R.string.error_email_domain)
-    val msgErrorPassRequired = stringResource(id = R.string.error_password_required)
+    // Estados para atrapar los errores del ViewModel
+    var authEmailError by remember { mutableStateOf<String?>(null) }
+    var authPasswordError by remember { mutableStateOf<String?>(null) }
 
     val authMsgErrorEmailNotVerified = stringResource(id = R.string.auth_repository_email_not_verified)
     val authMsgErrorCredentialInvalid = stringResource(id = R.string.auth_repository_credential_invalid)
-
-    val loginState by authViewModel.loginState.collectAsStateWithLifecycle()
-    val context = LocalContext.current
 
     LaunchedEffect(loginState) {
         when (loginState) {
@@ -71,8 +62,8 @@ fun LoginScreen(
                 val errorType = (loginState as Response.Error).error
 
                 when (errorType) {
-                    ErrorType.EMAIL_NOT_VERIFIED -> emailError = authMsgErrorEmailNotVerified
-                    ErrorType.CREDENTIAL_INVALID -> passwordError = authMsgErrorCredentialInvalid
+                    ErrorType.EMAIL_NOT_VERIFIED -> authEmailError = authMsgErrorEmailNotVerified
+                    ErrorType.CREDENTIAL_INVALID -> authPasswordError = authMsgErrorCredentialInvalid
                     else -> Log.d("FIREBASE_ERROR", errorMessage)
                 }
             }
@@ -80,11 +71,53 @@ fun LoginScreen(
         }
     }
 
+    LoginContent(
+        onNavigateToRegister = onNavigateToRegister,
+        onBack = onBack,
+        onNavigateToForgotPassword = onNavigateToForgotPassword,
+        onLoginClick = { email, password ->
+            authEmailError = null
+            authPasswordError = null
+            authViewModel.resetState()
+            authViewModel.login(email, password)
+        },
+        externalEmailError = authEmailError,
+        externalPasswordError = authPasswordError
+    )
+}
+
+@Composable
+fun LoginContent(
+    onNavigateToRegister: () -> Unit,
+    onBack: () -> Unit,
+    onNavigateToForgotPassword: () -> Unit,
+    onLoginClick: (String, String) -> Unit,
+    externalEmailError: String? = null,
+    externalPasswordError: String? = null
+) {
+    // ESTADOS PARA LOS CAMPOS
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+
+    // ESTADOS PARA LAS CONTRASEÑAS
+    var passwordVisible by remember { mutableStateOf(false) }
+
+    // ESTADOS DE ERROR (VALIDACIONES)
+    var localEmailError by remember { mutableStateOf<String?>(null) }
+    var localPasswordError by remember { mutableStateOf<String?>(null) }
+
+    val emailError = localEmailError ?: externalEmailError
+    val passwordError = localPasswordError ?: externalPasswordError
+
+    val msgErrorEmailRequired = stringResource(id = R.string.error_email_required)
+    val msgErrorEmailDomain = stringResource(id = R.string.error_email_domain)
+    val msgErrorPassRequired = stringResource(id = R.string.error_password_required)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFf6f7f9))
-            .padding(vertical = 16.dp, horizontal = 10.dp),
+            .padding(12.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         IconButton(
@@ -151,7 +184,7 @@ fun LoginScreen(
                 value = email,
                 onValueChange = {
                     email = it
-                    emailError = null
+                    localEmailError = null
                 },
                 placeholder = "n00123456@upn.pe",
                 iconRes = R.drawable.ic_mail,
@@ -166,7 +199,7 @@ fun LoginScreen(
                 value = password,
                 onValueChange = {
                     password = it
-                    passwordError = null
+                    localPasswordError = null
                 },
                 placeholder = if (passwordVisible) stringResource(R.string.password).lowercase() else "••••••••",
                 iconRes = if (passwordVisible) R.drawable.ic_unlock else R.drawable.ic_lock,
@@ -178,36 +211,52 @@ fun LoginScreen(
                 errorMessage = passwordError
             )
 
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                Text(
+                    text = "¿Olvidaste tu contraseña?",
+                    color = Color(0xFF0293a8),
+                    fontSize = 14.sp,
+                    fontFamily = Nunito,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .background(Color.Transparent)
+                        .clickable{
+                            onNavigateToForgotPassword()
+                        }
+                )
+            }
+
             Spacer(modifier = Modifier.height(16.dp))
 
-            // OPTIMIZAR A FUTURO
-            // Pasar los datos al AuthViewModel y que el ViewModel haga la validación local usando
-            // funciones de utilidad / UseCases, cambiando los estados de error correspondientes.
             FilledButton(
                 stringResource(id = R.string.logIn),
                 {
                     var hasError = false
                     val emailTrimmed = email.trim().lowercase()
 
-                    emailError = null
-                    passwordError = null
-                    authViewModel.resetState()
+                    localEmailError = null
+                    localPasswordError = null
 
                     if (emailTrimmed.isBlank()) {
-                        emailError = msgErrorEmailRequired
+                        localEmailError = msgErrorEmailRequired
                         hasError = true
                     } else if (!emailTrimmed.endsWith("@upn.pe")) {
-                        emailError = msgErrorEmailDomain
+                        localEmailError = msgErrorEmailDomain
                         hasError = true
                     }
 
                     if (password.isBlank()) {
-                        passwordError = msgErrorPassRequired
+                        localPasswordError = msgErrorPassRequired
                         hasError = true
                     }
 
                     if (!hasError) {
-                        authViewModel.login(emailTrimmed, password)
+                        onLoginClick(emailTrimmed, password)
                     }
                 }
             )
@@ -219,7 +268,23 @@ fun LoginScreen(
                 modifier = Modifier.padding(top = 16.dp)
             )
 
-            Spacer(modifier = Modifier.weight(2f))
+            Spacer(modifier = Modifier.weight(3f))
         }
+    }
+}
+
+// PREVIEWS
+@Preview(showBackground = true, name = "Login")
+@Composable
+fun LoginScreenPreview() {
+    MaterialTheme {
+        LoginContent(
+            onNavigateToRegister = {},
+            onBack = {},
+            onNavigateToForgotPassword = {},
+            onLoginClick = { _, _ -> },
+//            externalEmailError = "Email is required",
+//            externalPasswordError = "Password is required"
+        )
     }
 }
