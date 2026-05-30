@@ -11,6 +11,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.kipucode.R
 import com.kipucode.ui.component.card.ProfileMenuCard
 import com.kipucode.ui.theme.Nunito
 import com.kipucode.viewmodel.AuthViewModel
@@ -18,6 +19,21 @@ import com.kipucode.viewmodel.AuthViewModel
 @Composable
 fun ProfileScreen(
     authViewModel: AuthViewModel = hiltViewModel(),
+    onLogoutClick: () -> Unit
+) {
+    ProfileContent(
+        onFeedbackClick = {
+        },
+        onLogoutClick = {
+            authViewModel.logout()
+            onLogoutClick()
+        }
+    )
+}
+
+@Composable
+fun ProfileContent(
+    onFeedbackClick: () -> Unit,
     onLogoutClick: () -> Unit
 ) {
     val darkBlue = Color(0xFF081c40)
@@ -42,22 +58,28 @@ fun ProfileScreen(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        // --- SECCIÓN 2: OPCIÓN CERRAR SESIÓN ---
+        // --- SECCIÓN 2: MENÚ EN BLOQUE ---
+        ProfileMenuCard(
+            text = "Feedback",
+            iconRes = R.drawable.ic_feedback,
+            isFirst = true,
+            onClick = onFeedbackClick
+        )
         ProfileMenuCard(
             text = "Cerrar sesión",
-            isDestructive = true,
-            onClick = {
-                authViewModel.logout()
-                onLogoutClick()
-            }
+            iconRes = R.drawable.ic_exit,
+            isRed = true,
+            isEnd = true,
+            onClick = onLogoutClick
         )
     }
 }
 
-//@Preview(showBackground = true, showSystemUi = true)
-//@Composable
-//fun ProfileScreenPreview() {
-//    ProfileScreen(
-//        onLogoutClick = {}
-//    )
-//}
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun ProfileScreenPreview() {
+    ProfileContent(
+        onFeedbackClick = {},
+        onLogoutClick = {}
+    )
+}

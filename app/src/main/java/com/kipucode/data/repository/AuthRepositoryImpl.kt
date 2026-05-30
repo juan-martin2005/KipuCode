@@ -86,7 +86,7 @@ internal class AuthRepositoryImpl(
             val userExists = userFirestoreSource.checkIfEmailExists(email)
 
             if (!userExists) {
-                return Response.Error("Este correo no se encuentra registrado", ErrorType.CREDENTIAL_INVALID)
+                return Response.Error("This email address is not associated with any account", ErrorType.CREDENTIAL_INVALID)
             }
             remoteAuthSource.sendPasswordReset(email)
             Response.Success(Unit)

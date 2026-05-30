@@ -71,11 +71,13 @@
     <string name="home_xp_text">Total XP</string>
     <string name="home_xp_value">%1$d XP</string>
 
-    <string name="home_streak_text">Current streak</string>
+    <string name="home_streak_text">Streak</string>
     <string name="home_streak_value">%1$d Days</string>
 
     <!-- ForgotPassword-Screen -->
+
     <string name="reset_password">Reset Password</string>
     <string name="subheadline_forgot_password">Enter your institutional email address. We’ll send you a secure link to reset your password</string>
     <string name="send_email">Send Email</string>
+    <string name="text_forgot_password">Forgot your password?</string>
 </resources>

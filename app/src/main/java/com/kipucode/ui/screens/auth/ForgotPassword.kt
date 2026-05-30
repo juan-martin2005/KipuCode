@@ -15,7 +15,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -73,7 +72,7 @@ fun ForgotPasswordScreen(
         // Botón Atrás
         IconButton(onClick = onBack, modifier = Modifier.size(48.dp)) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_arrow_back),
+                painter = painterResource(id = R.drawable.ic_arrow_left),
                 contentDescription = "Atrás",
                 tint = Color(0xFF081c40),
                 modifier = Modifier.size(32.dp)
@@ -148,14 +147,14 @@ fun ForgotPasswordScreen(
     }
 }
 
-// PREVIEWS
-@Preview(showBackground = true, name = "Recuperar Contraseña")
-@Composable
-fun ForgotPasswordScreenPreview() {
-    MaterialTheme {
-        ForgotPasswordScreen(
-            onBack = {},
-            authViewModel = null
-        )
-    }
-}
+//// PREVIEWS
+//@Preview(showBackground = true, name = "Recuperar Contraseña")
+//@Composable
+//fun ForgotPasswordScreenPreview() {
+//    MaterialTheme {
+//        ForgotPasswordScreen(
+//            onBack = {},
+//            authViewModel = null
+//        )
+//    }
+//}

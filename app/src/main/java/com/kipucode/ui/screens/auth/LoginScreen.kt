@@ -17,7 +17,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -127,7 +126,7 @@ fun LoginContent(
                 .align(Alignment.Start)
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_arrow_back),
+                painter = painterResource(id = R.drawable.ic_arrow_left),
                 contentDescription = stringResource(R.string.cd_go_back),
                 tint = Color(0xFF081c40),
                 modifier = Modifier
@@ -218,14 +217,14 @@ fun LoginContent(
                 contentAlignment = Alignment.CenterEnd
             ) {
                 Text(
-                    text = "¿Olvidaste tu contraseña?",
+                    text = stringResource(R.string.text_forgot_password),
                     color = Color(0xFF0293a8),
                     fontSize = 14.sp,
                     fontFamily = Nunito,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .background(Color.Transparent)
-                        .clickable{
+                        .clickable {
                             onNavigateToForgotPassword()
                         }
                 )
@@ -273,18 +272,18 @@ fun LoginContent(
     }
 }
 
-// PREVIEWS
-@Preview(showBackground = true, name = "Login")
-@Composable
-fun LoginScreenPreview() {
-    MaterialTheme {
-        LoginContent(
-            onNavigateToRegister = {},
-            onBack = {},
-            onNavigateToForgotPassword = {},
-            onLoginClick = { _, _ -> },
-//            externalEmailError = "Email is required",
-//            externalPasswordError = "Password is required"
-        )
-    }
-}
+//// PREVIEWS
+//@Preview(showBackground = true, name = "Login")
+//@Composable
+//fun LoginScreenPreview() {
+//    MaterialTheme {
+//        LoginContent(
+//            onNavigateToRegister = {},
+//            onBack = {},
+//            onNavigateToForgotPassword = {},
+//            onLoginClick = { _, _ -> },
+////            externalEmailError = "Email is required",
+////            externalPasswordError = "Password is required"
+//        )
+//    }
+//}

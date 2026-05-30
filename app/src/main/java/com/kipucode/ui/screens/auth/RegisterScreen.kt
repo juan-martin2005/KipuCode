@@ -14,7 +14,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -132,7 +131,7 @@ fun RegisterContent(
                 .align(Alignment.Start)
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_arrow_back),
+                painter = painterResource(id = R.drawable.ic_arrow_left),
                 contentDescription = stringResource(R.string.cd_go_back),
                 tint = Color(0xFF081c40),
                 modifier = Modifier
@@ -293,19 +292,19 @@ fun RegisterContent(
     }
 }
 
-// PREVIEWS
-@Preview(showBackground = true, name = "Registro - Estado Normal")
-@Composable
-fun RegisterScreenPreview() {
-    MaterialTheme {
-        RegisterContent(
-            onNavigateToLogin = {},
-            onBack = {},
-            onRegisterClick = { _, _, _ -> },
-//            externalNameError = "Full Name is required",
-//            externalEmailError = "Email is required",
-//            externalPasswordError = "Password is required",
-//            externalConfirmPasswordError = "Confirm Password is required"
-        )
-    }
-}
+//// PREVIEWS
+//@Preview(showBackground = true, name = "Registro - Estado Normal")
+//@Composable
+//fun RegisterScreenPreview() {
+//    MaterialTheme {
+//        RegisterContent(
+//            onNavigateToLogin = {},
+//            onBack = {},
+//            onRegisterClick = { _, _, _ -> },
+////            externalNameError = "Full Name is required",
+////            externalEmailError = "Email is required",
+////            externalPasswordError = "Password is required",
+////            externalConfirmPasswordError = "Confirm Password is required"
+//        )
+//    }
+//}
