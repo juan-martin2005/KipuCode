@@ -1,5 +1,6 @@
 package com.kipucode.data.repository
 
+import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.kipucode.data.mapper.toDomain
 import com.kipucode.data.mapper.toEntity

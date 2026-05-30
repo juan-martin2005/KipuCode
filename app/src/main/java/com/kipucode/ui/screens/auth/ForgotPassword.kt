@@ -46,18 +46,13 @@ fun ForgotPasswordScreen(
         when (resetState) {
             is Response.Loading -> {}
             is Response.Success -> {
-                Toast.makeText(context, "Correo de recuperación enviado con éxito.", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Correo de recuperación enviado. Revisa tu bandeja de entrada.", Toast.LENGTH_LONG).show()
                 authViewModel.resetForgotPasswordState()
                 onBack()
             }
             is Response.Error -> {
-                val errorMessage = (resetState as Response.Error).message ?: "Internal Error"
-                val errorType = (resetState as Response.Error).error
-
-                when (errorType) {
-                    ErrorType.CREDENTIAL_INVALID -> emailError = authMsgErrorCredentialInvalid
-                    else -> Log.d("FIREBASE_ERROR", errorMessage)
-                }
+                emailError = resetState.message ?: "Ocurrió un error inesperado"
+                Log.d("FIREBASE_ERROR", resetState.message ?: "Unknown Error")
             }
             null -> {}
         }

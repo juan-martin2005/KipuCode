@@ -240,13 +240,13 @@ fun HomeContent(
     }
 }
 
-//@Preview(showBackground = true, showSystemUi = true)
-//@Composable
-//fun HomePreview() {
-//    HomeContent(
-//        userName = "Estudiante",
-//        userXp = 1000,
-//        userStreak = 7,
-//        lessons = mockLessons
-//    )
-//}
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun HomePreview() {
+    HomeContent(
+        userName = "Estudiante",
+        userXp = 1000,
+        userStreak = 7,
+        lessons = mockLessons
+    )
+}
