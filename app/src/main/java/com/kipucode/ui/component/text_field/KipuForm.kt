@@ -81,6 +81,10 @@ fun KipuForm(
             } else null,
 
             colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = Color(0xFF081c40),
+                unfocusedTextColor = Color(0xFF081c40),
+                errorTextColor = Color(0xFF081c40),
+
                 focusedContainerColor = Color.Transparent,
                 unfocusedContainerColor = Color.Transparent,
                 focusedLeadingIconColor = Color.Gray,

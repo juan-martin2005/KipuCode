@@ -36,6 +36,7 @@ fun LoginScreen(
     onNavigateToRegister: () -> Unit,
     onBack: () -> Unit,
     onNavigateToForgotPassword: () -> Unit,
+
     authViewModel: AuthViewModel = hiltViewModel()
 ) {
     val loginState by authViewModel.loginState.collectAsStateWithLifecycle()
@@ -91,6 +92,7 @@ fun LoginContent(
     onBack: () -> Unit,
     onNavigateToForgotPassword: () -> Unit,
     onLoginClick: (String, String) -> Unit,
+
     externalEmailError: String? = null,
     externalPasswordError: String? = null
 ) {

@@ -3,7 +3,6 @@ package com.kipucode.ui.screens.home
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -33,7 +32,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -42,9 +40,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kipucode.R
 import com.kipucode.domain.model.Response
+import com.kipucode.ui.component.card.HeadlineHome
 import com.kipucode.ui.component.card.HomeCard
 import com.kipucode.ui.theme.Nunito
-import com.kipucode.viewmodel.HomeViewModel
+import com.kipucode.viewmodel.UserViewModel
 
 enum class LessonStatus { COMPLETADO, EN_PROGRESO, BLOQUEADO }
 
@@ -59,14 +58,16 @@ val mockLessons = listOf(
     Lesson(1, "1. Lógica y algoritmos", LessonStatus.COMPLETADO, 1f),
     Lesson(2, "2. Variables y tipos de datos", LessonStatus.COMPLETADO, 1f),
     Lesson(3, "3. Estructuras de control", LessonStatus.EN_PROGRESO, 0.1f),
-    Lesson(4, "4. Funciones", LessonStatus.BLOQUEADO)
-
+    Lesson(4, "4. Funciones", LessonStatus.BLOQUEADO),
+    Lesson(5, "4. Funciones", LessonStatus.BLOQUEADO),
+    Lesson(6, "4. Funciones", LessonStatus.BLOQUEADO),
+    Lesson(7, "4. Funciones", LessonStatus.BLOQUEADO),
 )
 @Composable
 fun HomeScreen(
-    homeViewModel: HomeViewModel = hiltViewModel()
+    userViewModel: UserViewModel
 ) {
-    val userState by homeViewModel.userState.collectAsStateWithLifecycle()
+    val userState by userViewModel.userState.collectAsStateWithLifecycle()
 
     var userName by remember { mutableStateOf("") }
     var userXp by remember { mutableIntStateOf(0) }
@@ -75,7 +76,7 @@ fun HomeScreen(
     when (val state = userState) {
         is Response.Loading -> {}
         is Response.Success -> {
-            userName = state.data.name.split(" ").first()
+            userName = state.data.name
             userXp = state.data.totalXp
             userStreak = state.data.streakDay
         }
@@ -86,12 +87,25 @@ fun HomeScreen(
         null -> {}
     }
 
-    HomeContent(
-        userName = userName,
-        userXp = userXp,
-        userStreak = userStreak,
-        lessons = mockLessons
-    )
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFf6f7f9))
+            .padding(top = 16.dp)
+    ) {
+        HeadlineHome(
+            userName = userName,
+            userXp = userXp,
+            userStreak = userStreak,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        HomeContent(
+            lessons = mockLessons
+        )
+    }
 }
 @Composable
 fun LessonCard(lesson: Lesson, kipuTeal: Color, darkBlue: Color, lightGray: Color) {
@@ -155,9 +169,6 @@ fun LessonCard(lesson: Lesson, kipuTeal: Color, darkBlue: Color, lightGray: Colo
 
 @Composable
 fun HomeContent(
-    userName: String,
-    userXp: Int,
-    userStreak: Int,
     lessons: List<Lesson>
 ) {
     val darkBlue = Color(0xFF081c40)
@@ -165,49 +176,21 @@ fun HomeContent(
     val lightGray = Color(0xFFE5E7EB)
 
     LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFFf6f7f9))
-            .padding(16.dp),
-        contentPadding = PaddingValues(top = 8.dp)
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 24.dp)
     ) {
-        // --- SECCIÓN 1: BIENVENIDA ---
-        item {
-            Text(
-                text = stringResource(R.string.headline_home, userName),
-                fontSize = 28.sp,
-                fontFamily = Nunito,
-                fontWeight = FontWeight.ExtraBold,
-                color = darkBlue,
-                modifier = Modifier.padding(start = 8.dp)
-            )
-            Text(
-                text = stringResource(R.string.sub_headline_home),
-                fontSize = 16.sp,
-                fontFamily = Nunito,
-                color = Color.Gray,
-                modifier = Modifier.padding(start = 8.dp, top = 6.dp)
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-
         // --- SECCIÓN 2: TARJETA DE PROGRESO ---
         item {
             HomeCard(
-                courseName = "Fundamentos",
-                languageName = "Python",
-                currentLessons = 1,
+                courseName = "Fundamentos Básicos de Programación Python",
+                currentLessons = 5,
                 totalLessons = 9,
-                progressPercentage = 70,
-                totalXp = userXp,
-                streakDays = userStreak
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(24.dp))
         }
 
-        // --- SECCIÓN 3: TÍTULO SECCIÓN ---
+        // --- SECCIÓN 3: TÍTULO SEPARADOR ---
         item {
             Text(
                 text = "Ruta de Aprendizaje",
@@ -240,13 +223,26 @@ fun HomeContent(
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+@Preview(showBackground = true)
 @Composable
 fun HomePreview() {
-    HomeContent(
-        userName = "Estudiante",
-        userXp = 1000,
-        userStreak = 7,
-        lessons = mockLessons
-    )
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFf6f7f9))
+            .padding(top = 16.dp)
+    ) {
+        HeadlineHome(
+            userName = "Marcelino Mamani Palma",
+            userXp = 1000,
+            userStreak = 365,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        HomeContent(
+            lessons = mockLessons
+        )
+    }
 }

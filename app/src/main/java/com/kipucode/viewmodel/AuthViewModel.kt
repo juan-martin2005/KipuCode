@@ -24,32 +24,28 @@ class AuthViewModel @Inject constructor(
     private val resetPasswordUseCase: ResetPasswordUseCase
 ) : ViewModel() {
 
-    private val _loginState = MutableStateFlow<Response<User>?>(null)
-
+    private val _authState = MutableStateFlow<Response<User>?>(null)
     private val _resetPasswordState = MutableStateFlow<Response<Unit>?>(null)
     val resetPasswordState: StateFlow<Response<Unit>?> = _resetPasswordState
+    val loginState : StateFlow<Response<User>?> = _authState
 
-    val loginState : StateFlow<Response<User>?> = _loginState
-
+    // Register and Login =========================================================================
     fun resetState() {
-        _loginState.value = null
+        _authState.value = null
     }
-
     fun login (email: String, password: String){
 
         viewModelScope.launch {
             val result = loginUseCases.invoke(email,password)
-            _loginState.value = result
+            _authState.value = result
         }
     }
-
     fun register(user: User, password: String) {
         viewModelScope.launch {
             val result = registerUseCase.invoke(user,password)
-            _loginState.value = result
+            _authState.value = result
         }
     }
-
     fun isUserLoggedIn(): Boolean {
         return isUserLoggedInUseCase.invoke()
     }
@@ -61,6 +57,10 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    // Reset Password =============================================================================
+    fun resetForgotPasswordState() {
+        _resetPasswordState.value = null
+    }
     fun resetPassword(email: String) {
         viewModelScope.launch {
             _resetPasswordState.value = Response.Loading
@@ -69,7 +69,5 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun resetForgotPasswordState() {
-        _resetPasswordState.value = null
-    }
+
 }

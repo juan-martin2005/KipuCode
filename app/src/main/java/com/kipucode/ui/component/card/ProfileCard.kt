@@ -99,26 +99,26 @@ fun ProfileMenuCard(
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFF3F4F6)
-@Composable
-fun ProfileMenuCardPreview() {
-    Column(
-        modifier = Modifier.padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(0.dp)
-    ) {
-        ProfileMenuCard(
-            text = "Feedback",
-            iconRes = R.drawable.ic_feedback,
-            isFirst = true,
-            onClick = {}
-        )
-
-        ProfileMenuCard(
-            text = "Cerrar sesión",
-            iconRes = R.drawable.ic_exit,
-            isRed = true,
-            isEnd = true,
-            onClick = {}
-        )
-    }
-}
+//@Preview(showBackground = true, backgroundColor = 0xFFF3F4F6)
+//@Composable
+//fun ProfileMenuCardPreview() {
+//    Column(
+//        modifier = Modifier.padding(16.dp),
+//        verticalArrangement = Arrangement.spacedBy(0.dp)
+//    ) {
+//        ProfileMenuCard(
+//            text = "Feedback",
+//            iconRes = R.drawable.ic_feedback,
+//            isFirst = true,
+//            onClick = {}
+//        )
+//
+//        ProfileMenuCard(
+//            text = "Cerrar sesión",
+//            iconRes = R.drawable.ic_exit,
+//            isRed = true,
+//            isEnd = true,
+//            onClick = {}
+//        )
+//    }
+//}

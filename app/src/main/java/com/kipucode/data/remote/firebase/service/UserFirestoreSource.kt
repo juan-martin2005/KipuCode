@@ -27,17 +27,18 @@ class UserFirestoreSource(
             .toObject<User>()
     }
 
-    suspend fun checkIfEmailExists(email: String): Boolean {
-        return try {
-            val query = firestore
-                .collection(USERS_COLLECTION)
-                .whereEqualTo("email", email)
-                .get()
-                .await()
-
-            !query.isEmpty
-        } catch (e: Exception) {
-            false
-        }
-    }
+    // REMOVIDO POR SEGURIDAD
+//    suspend fun checkIfEmailExists(email: String): Boolean {
+//        return try {
+//            val query = firestore
+//                .collection(USERS_COLLECTION)
+//                .whereEqualTo("email", email)
+//                .get()
+//                .await()
+//
+//            !query.isEmpty
+//        } catch (e: Exception) {
+//            false
+//        }
+//    }
 }

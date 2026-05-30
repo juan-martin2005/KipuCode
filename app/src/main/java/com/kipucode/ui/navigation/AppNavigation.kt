@@ -24,10 +24,13 @@ import com.kipucode.ui.screens.profile.ProfileScreen
 import com.kipucode.ui.screens.splash.SplashScreen
 import com.kipucode.viewmodel.AuthViewModel
 import com.kipucode.viewmodel.CoursesViewModel
+import com.kipucode.viewmodel.UserViewModel
 
 @Composable
 fun AppNavigation(){
     val navController = rememberNavController()
+
+    val userViewModel: UserViewModel = hiltViewModel()
 
     Scaffold(
         containerColor = Color(0xFF292929),
@@ -93,6 +96,7 @@ fun AppNavigation(){
                 val authViewModel: AuthViewModel = hiltViewModel()
                 LoginScreen(
                     onLoginSuccess = {
+                        userViewModel.loadUserProfile()
                         navController.navigate("home") { popUpTo(0) }
                     },
                     onNavigateToRegister = {
@@ -115,7 +119,7 @@ fun AppNavigation(){
             }
 
             composable("home"){
-                HomeScreen()
+                HomeScreen(userViewModel = userViewModel)
             }
 
             composable("explore"){
@@ -128,8 +132,13 @@ fun AppNavigation(){
             }
 
             composable("profile"){
+                val authViewModel: AuthViewModel = hiltViewModel()
+
                 ProfileScreen(
+                    userViewModel = userViewModel,
                     onLogoutClick = {
+                        authViewModel.logout()
+
                         navController.navigate("onboarding") {
                             popUpTo(0) { inclusive = true }
                         }

@@ -39,7 +39,6 @@ fun SplashScreen(
     authViewModel: AuthViewModel,
     onSplashFinished: (isUserLogged: Boolean) -> Unit
 ){
-    // Animación
     val animationState = remember { Animatable(0f) }
 
     LaunchedEffect(key1 = true) {
@@ -53,29 +52,38 @@ fun SplashScreen(
         onSplashFinished(isLogged)
     }
 
+    SplashContent(
+        animationScale = animationState.value
+    )
+}
+
+@Composable
+fun SplashContent(
+    animationScale: Float = 1f
+) {
     // Fondo
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF038da9),
-                        Color(0xFF07396e)
-                    )
+                colors = listOf(
+                    Color(0xFF038da9),
+                    Color(0xFF07396e)
                 )
+            )
             ),
         contentAlignment = Alignment.Center
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .alpha(animationState.value)
-                .scale(animationState.value)
+                .alpha(animationScale)
+                .scale(animationScale)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.img_kipu_logo_splashscreen),
                 contentDescription = stringResource(R.string.cd_logo),
-                modifier = Modifier.height(240.dp)
+                modifier = Modifier.height(210.dp)
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -91,7 +99,6 @@ fun SplashScreen(
                 fontSize = 20.sp,
                 textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                 lineHeight = 32.sp,
-
                 fontFamily = Nunito,
                 fontWeight = FontWeight.SemiBold
             )
@@ -106,15 +113,15 @@ fun SplashScreen(
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 80.dp)
-
-                .alpha(animationState.value)
-                .scale(animationState.value)
+                .alpha(animationScale)
+                .scale(animationScale)
         )
     }
 }
 
-//@Preview(showBackground = true, name = "Splash Inicial")
+// --- PREVIEW ---
+//@Preview(showBackground = true, showSystemUi = true, name = "Splash Inicial")
 //@Composable
-//fun OnboardingPreview() {
-//    SplashScreen { }
+//fun SplashScreenPreview() {
+//    SplashContent(animationScale = 1f)
 //}
