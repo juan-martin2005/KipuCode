@@ -30,7 +30,7 @@ class UserFirestoreSource(
     suspend fun checkIfEmailExists(email: String): Boolean {
         return try {
             val query = firestore
-                .collection("users")
+                .collection(USERS_COLLECTION)
                 .whereEqualTo("email", email)
                 .get()
                 .await()

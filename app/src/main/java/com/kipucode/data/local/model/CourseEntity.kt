@@ -12,6 +12,7 @@ data class CourseEntity(
     val description: String,
     @ColumnInfo(name = "order_index")
     val orderIndex: Int,
+    val completed: Boolean,
     @ColumnInfo(name = "created_at")
     val createdAt: Long?
 )

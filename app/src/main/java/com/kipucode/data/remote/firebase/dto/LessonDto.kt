@@ -6,5 +6,6 @@ data class LessonDto(
     val courseId: String,
     val title: String,
     val theoryContent: String,
+    val completed : Boolean,
     val orderIndex: Int
 )

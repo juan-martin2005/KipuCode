@@ -22,6 +22,7 @@ data class LessonEntity(
     val title: String,
     @ColumnInfo(name = "theory_content")
     val theoryContent: String,
+    val completed: Boolean,
     @ColumnInfo(name = "order_index")
     val orderIndex: Int
 )
