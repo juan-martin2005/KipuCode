@@ -27,10 +27,10 @@ class UserViewModel @Inject constructor(
         startObservingUser()
     }
 
-    private fun triggerRefresh(uid: String) {
+    private fun triggerRefresh() {
         viewModelScope.launch {
             _refreshState.value = Response.Loading
-            val result = userRepository.refreshUserProfile(uid)
+            val result = userRepository.refreshUserProfile()
             _refreshState.value = result
         }
     }
@@ -44,7 +44,7 @@ class UserViewModel @Inject constructor(
                     _userProfile.value = userLocal
                 }
             }
-            triggerRefresh(currentUid)
+            triggerRefresh()
         } else {
             _userProfile.value = null
         }
@@ -53,7 +53,7 @@ class UserViewModel @Inject constructor(
     fun swipeToRefresh() {
         val currentUid = FirebaseAuth.getInstance().currentUser?.uid
         if (currentUid != null) {
-            triggerRefresh(currentUid) // Reutiliza la lógica
+            triggerRefresh() // Reutiliza la lógica
         }
     }
 

@@ -7,13 +7,16 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.kipucode.data.local.dao.CourseDao
 import com.kipucode.data.local.dao.UserDao
 import com.kipucode.data.local.database.AppDatabase
-import com.kipucode.data.remote.firebase.service.FirebaseAuthSource
+import com.kipucode.data.remote.firebase.service.AuthRemoteDataSource
 import com.kipucode.data.remote.firebase.service.CourseFirestoreSource
-import com.kipucode.data.remote.firebase.service.UserFirestoreSource
+import com.kipucode.data.remote.firebase.service.UserRemoteDataSource
 import com.kipucode.data.repository.AuthRepositoryImpl
 import com.kipucode.data.repository.CourseRepositoryImpl
+import com.kipucode.data.repository.UserProgressRepositoryImpl
 import com.kipucode.domain.repository.AuthRepository
+import com.kipucode.domain.repository.UserProgressRepository
 import com.kipucode.domain.usecase.course.GetCourseUseCase
+import com.kipucode.domain.usecase.user.GetUserProgressUseCase
 import com.kipucode.domain.usecase.user.IsUserLoggedInUseCase
 import com.kipucode.domain.usecase.user.LoginUseCases
 import com.kipucode.domain.usecase.user.LogoutUseCase
@@ -32,28 +35,29 @@ class DiModule {
 
     @Provides
     @Singleton
-    fun provideFirebaseAuthSource(): FirebaseAuthSource {
-        val authSource = FirebaseAuth.getInstance()
-        return FirebaseAuthSource(authSource)
+    fun provideAuthRemoteDataSource(): AuthRemoteDataSource {
+        return AuthRemoteDataSource(FirebaseAuth.getInstance())
     }
 
     @Provides
     @Singleton
-    fun provideUserFirestoreSource(): UserFirestoreSource {
-        val firestoreInstance = FirebaseFirestore.getInstance()
-        return UserFirestoreSource(firestoreInstance)
+    fun provideUserRemoteDataSource(): UserRemoteDataSource {
+        return UserRemoteDataSource(
+            auth = FirebaseAuth.getInstance(),
+            firestore = FirebaseFirestore.getInstance()
+        )
     }
 
     @Provides
     @Singleton
     internal fun provideAuthRepository(
-        firebaseAuth: FirebaseAuthSource,
-        userFirestoreSource: UserFirestoreSource,
+        authRemoteDataSource: AuthRemoteDataSource,
+        userRemoteDataSource: UserRemoteDataSource,
         userDao: UserDao
     ): AuthRepository {
         return AuthRepositoryImpl(
-            remoteAuthSource = firebaseAuth,
-            userFirestoreSource = userFirestoreSource,
+            remoteAuthSource = authRemoteDataSource,
+            userRemoteDataSource = userRemoteDataSource,
             userDao = userDao
         )
     }
@@ -81,11 +85,13 @@ class DiModule {
     internal fun provideLogoutUseCase(authRepository: AuthRepository): LogoutUseCase {
         return LogoutUseCase(authRepository)
     }
+
     @Provides
     @Singleton
     internal fun provideResetPasswordUseCase(authRepository: AuthRepository): ResetPasswordUseCase {
         return ResetPasswordUseCase(authRepository)
     }
+
     @Provides
     @Singleton
     fun provideFirebaseDataSource(): CourseFirestoreSource {
@@ -118,12 +124,24 @@ class DiModule {
             context,
             AppDatabase::class.java,
             "Kipucode_database"
-        )
-            .build()
+        ).build()
     }
+
     @Provides
     @Singleton
     fun provideUserLocalDataSource(appDatabase: AppDatabase): UserDao {
         return appDatabase.userDao()
+    }
+
+    @Provides
+    @Singleton
+    internal fun provideUserProgressRepositoryImpl(remoteDataSource: UserRemoteDataSource): UserProgressRepositoryImpl {
+        return UserProgressRepositoryImpl(remoteDataSource)
+    }
+
+    @Provides
+    @Singleton
+    internal fun provideGetUserProgressUseCase(userProgressRepositoryImpl: UserProgressRepositoryImpl): GetUserProgressUseCase {
+        return GetUserProgressUseCase(userProgressRepositoryImpl)
     }
 }

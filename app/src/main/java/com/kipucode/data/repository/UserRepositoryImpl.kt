@@ -2,7 +2,7 @@ package com.kipucode.data.repository
 
 import com.kipucode.data.local.dao.UserDao
 import com.kipucode.data.local.model.UserEntity
-import com.kipucode.data.remote.firebase.service.UserFirestoreSource
+import com.kipucode.data.remote.firebase.service.UserRemoteDataSource
 import com.kipucode.domain.model.ErrorType
 import com.kipucode.domain.model.Response
 import com.kipucode.domain.model.User
@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
     private val userDao: UserDao,
-    private val userFirestoreSource: UserFirestoreSource
+    private val userRemoteDataSource: UserRemoteDataSource
 ) {
     fun getUserProfile(userId: String): Flow<User?> {
         return userDao.getUserByIdFlow(userId).map { entity ->
@@ -21,24 +21,20 @@ class UserRepositoryImpl @Inject constructor(
                     id = it.id,
                     name = it.name ?: "",
                     email = it.email ?: "",
-                    totalXp = it.totalXp,
-                    streakDay = it.streakDay
                 )
             }
         }
     }
 
-    suspend fun refreshUserProfile(userId: String): Response<Unit> {
+    suspend fun refreshUserProfile(): Response<Unit> {
         return try {
-            val remoteProfile = userFirestoreSource.getUserProfile(userId)
+            val remoteProfile = userRemoteDataSource.getUserProfile()
             if (remoteProfile != null) {
                 userDao.insert(
                     UserEntity(
                         id = remoteProfile.id,
                         name = remoteProfile.name,
                         email = remoteProfile.email,
-                        totalXp = remoteProfile.totalXp,
-                        streakDay = remoteProfile.streakDay
                     )
                 )
                 Response.Success(Unit)
