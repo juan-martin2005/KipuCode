@@ -4,7 +4,7 @@ import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.tasks.await
 
-class FirebaseAuthSource(
+class AuthRemoteDataSource(
     private val firebaseAuth: FirebaseAuth
 ) {
     suspend fun signInWithEmail(
@@ -15,9 +15,7 @@ class FirebaseAuthSource(
         email: String, password: String
     ): AuthResult {
         val result = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
-
         firebaseAuth.currentUser?.sendEmailVerification()?.await()
-
         return result
     }
 
@@ -25,9 +23,7 @@ class FirebaseAuthSource(
         firebaseAuth.sendPasswordResetEmail(email).await()
     }
 
-    fun isUserLoggedIn(): Boolean {
-        return firebaseAuth.currentUser != null
-    }
+    fun isUserLoggedIn(): Boolean = firebaseAuth.currentUser != null
 
     fun logoutUser() = firebaseAuth.signOut()
 }
