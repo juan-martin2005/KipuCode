@@ -36,9 +36,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kipucode.R
+import com.kipucode.ui.theme.Gray
+import com.kipucode.ui.theme.KipuDarkBlue
+import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.Nunito
-
-val darkBlue = Color(0xFF081c40)
+import com.kipucode.ui.theme.White
 
 @Composable
 fun HeadlineHome(
@@ -69,14 +71,14 @@ fun HeadlineHome(
                 modifier = Modifier
                     .size(44.dp)
                     .background(
-                        Color(0XFF338fa3),
+                        KipuTeal,
                         shape = CircleShape
                     )
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_user),
                     contentDescription = "Avatar de Usuario",
-                    tint = Color.White.copy(alpha = 0.7f),
+                    tint = White.copy(alpha = 0.85f),
                     modifier = Modifier.size(28.dp)
                 )
             }
@@ -92,7 +94,7 @@ fun HeadlineHome(
                     fontSize = 20.sp,
                     fontFamily = Nunito,
                     fontWeight = FontWeight.ExtraBold,
-                    color = darkBlue,
+                    color = KipuDarkBlue,
                     lineHeight = 24.sp
                 )
                 Text(
@@ -100,7 +102,7 @@ fun HeadlineHome(
                     modifier = Modifier.padding(start = 2.dp),
                     fontSize = 13.sp,
                     fontFamily = Nunito,
-                    color = Color.Gray,
+                    color = Gray,
                 )
             }
 
@@ -145,7 +147,7 @@ fun HeadlineHome(
                     Column {
                         Text(
                             text = "$textValue",
-                            color = darkBlue,
+                            color = KipuDarkBlue,
                             fontSize = 14.sp,
                             fontFamily = Nunito,
                             fontWeight = FontWeight.ExtraBold

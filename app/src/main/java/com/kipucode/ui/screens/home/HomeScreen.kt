@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -37,27 +38,14 @@ import com.kipucode.R
 import com.kipucode.domain.model.Response
 import com.kipucode.ui.component.card.HeadlineHome
 import com.kipucode.ui.component.card.HomeCard
+import com.kipucode.ui.theme.BackgroundGray
+import com.kipucode.ui.theme.BorderLightGray
+import com.kipucode.ui.theme.KipuDarkBlue
+import com.kipucode.ui.theme.KipuTeal
+import com.kipucode.ui.theme.LightGray
 import com.kipucode.ui.theme.Nunito
 import com.kipucode.viewmodel.UserViewModel
 
-enum class LessonStatus { COMPLETED, IN_PROGRESS, LOCKED }
-
-data class Lesson(
-    val id: Int,
-    val title: String,
-    val status: LessonStatus,
-    val progress: Float = 0f
-)
-
-val mockLessons = listOf(
-    Lesson(1, "1. Logic and Algorithms", LessonStatus.COMPLETED, 1f),
-    Lesson(2, "2. Variables and Data Types", LessonStatus.COMPLETED, 1f),
-    Lesson(3, "3. Control Structures", LessonStatus.IN_PROGRESS, 0.1f),
-    Lesson(4, "4. Functions", LessonStatus.LOCKED),
-    Lesson(5, "5. Lists and Tuples", LessonStatus.LOCKED),
-    Lesson(6, "6. Dictionaries and Sets", LessonStatus.LOCKED),
-    Lesson(7, "7. Object-Oriented Programming", LessonStatus.LOCKED),
-)
 @Composable
 fun HomeScreen(
     userViewModel: UserViewModel
@@ -91,7 +79,7 @@ fun HomeScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFFf6f7f9))
+                .background(BackgroundGray)
                 .padding(top = 16.dp)
         ) {
             HeadlineHome(
@@ -110,15 +98,15 @@ fun HomeScreen(
     }
 }
 @Composable
-fun LessonCard(lesson: Lesson, kipuTeal: Color, darkBlue: Color, lightGray: Color) {
+fun LessonCard(lesson: Lesson) {
 
-    val borderColor = if (lesson.status == LessonStatus.LOCKED) lightGray else kipuTeal
+    val borderColor = if (lesson.status == LessonStatus.LOCKED) LightGray else KipuTeal
     val statusText = when(lesson.status) {
         LessonStatus.COMPLETED -> "Completed"
         LessonStatus.IN_PROGRESS -> "In progress"
         LessonStatus.LOCKED -> "Locked"
     }
-    val statusColor = if (lesson.status == LessonStatus.COMPLETED) kipuTeal else Color.Gray
+    val statusColor = if (lesson.status == LessonStatus.COMPLETED) KipuTeal else Color.Gray
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -132,37 +120,36 @@ fun LessonCard(lesson: Lesson, kipuTeal: Color, darkBlue: Color, lightGray: Colo
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_lock),
-                contentDescription = null,
-                tint = borderColor,
-                modifier = Modifier.size(24.dp)
-            )
-
-            Spacer(modifier = Modifier.width(16.dp))
-
             Column(modifier = Modifier.weight(1f)) {
-                Text(text = lesson.title, fontWeight = FontWeight.Bold, color = darkBlue, fontSize = 15.sp)
+                Text(text = lesson.title, fontWeight = FontWeight.Bold, color = KipuDarkBlue, fontSize = 15.sp)
                 Text(text = statusText, color = statusColor, fontSize = 13.sp)
             }
 
             when (lesson.status) {
                 LessonStatus.COMPLETED -> {
-                    Icon(painter = painterResource(id = R.drawable.ic_lock), contentDescription = "Completado", tint = kipuTeal)
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_check),
+                        contentDescription = "Completed",
+                        tint = KipuTeal
+                    )
                 }
                 LessonStatus.IN_PROGRESS -> {
                     Box(contentAlignment = Alignment.Center) {
                         CircularProgressIndicator(
                             progress = { lesson.progress },
                             modifier = Modifier.size(36.dp),
-                            color = kipuTeal,
-                            trackColor = lightGray
+                            color = KipuTeal,
+                            trackColor = BorderLightGray
                         )
                         Text("${(lesson.progress * 100).toInt()}%", fontSize = 10.sp, fontWeight = FontWeight.Bold)
                     }
                 }
                 LessonStatus.LOCKED -> {
-                    Icon(painter = painterResource(id = R.drawable.ic_lock), contentDescription = "Bloqueado", tint = Color.LightGray)
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_lock),
+                        contentDescription = "Locked",
+                        tint = BorderLightGray
+                    )
                 }
             }
         }
@@ -173,10 +160,6 @@ fun LessonCard(lesson: Lesson, kipuTeal: Color, darkBlue: Color, lightGray: Colo
 fun HomeContent(
     lessons: List<Lesson>
 ) {
-    val darkBlue = Color(0xFF081c40)
-    val kipuTeal = Color(0xFF0293a8)
-    val lightGray = Color(0xFFE5E7EB)
-
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 24.dp)
@@ -195,22 +178,22 @@ fun HomeContent(
         // --- SECCIÓN 3: TÍTULO SEPARADOR ---
         item {
             Text(
-                text = "Ruta de Aprendizaje",
+                text = "Learning Journey",
                 fontSize = 20.sp,
                 fontFamily = Nunito,
                 fontWeight = FontWeight.ExtraBold,
-                color = darkBlue
+                color = KipuDarkBlue
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
 
         // --- SECCIÓN 4: LISTA DE LECCIONES ---
         itemsIndexed(lessons) { index, lesson ->
-            LessonCard(lesson = lesson, kipuTeal = kipuTeal, darkBlue = darkBlue, lightGray = lightGray)
+            LessonCard(lesson = lesson)
 
             if (index < lessons.size - 1) {
                 val nextIsLocked = lessons[index + 1].status == LessonStatus.LOCKED
-                val lineColor = if (nextIsLocked) lightGray else kipuTeal
+                val lineColor = if (nextIsLocked) LightGray else KipuTeal
 
                 Box(modifier = Modifier.padding(start = 28.dp)) {
                     Spacer(
@@ -225,26 +208,47 @@ fun HomeContent(
     }
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//fun HomePreview() {
-//    Column(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .background(Color(0xFFf6f7f9))
-//            .padding(top = 16.dp)
-//    ) {
-//        HeadlineHome(
-//            userName = "Marcelino Mamani Palma",
-//            userXp = 1000,
-//            userStreak = 365,
-//            modifier = Modifier.padding(horizontal = 16.dp)
-//        )
-//
-//        Spacer(modifier = Modifier.height(16.dp))
-//
-//        HomeContent(
-//            lessons = mockLessons
-//        )
-//    }
-//}
+
+enum class LessonStatus { COMPLETED, IN_PROGRESS, LOCKED }
+
+data class Lesson(
+    val id: Int,
+    val title: String,
+    val status: LessonStatus,
+    val progress: Float = 0f
+)
+
+val mockLessons = listOf(
+    Lesson(1, "1. Logic and Algorithms", LessonStatus.COMPLETED),
+    Lesson(2, "2. Variables and Data Types", LessonStatus.COMPLETED),
+    Lesson(3, "3. Control Structures", LessonStatus.IN_PROGRESS, 0.1f),
+    Lesson(4, "4. Functions", LessonStatus.LOCKED),
+    Lesson(5, "5. Lists and Tuples", LessonStatus.LOCKED),
+    Lesson(6, "6. Dictionaries and Sets", LessonStatus.LOCKED),
+    Lesson(7, "7. Object-Oriented Programming", LessonStatus.LOCKED),
+)
+
+
+@Preview(showBackground = true)
+@Composable
+fun HomePreview() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFf6f7f9))
+            .padding(top = 16.dp)
+    ) {
+        HeadlineHome(
+            userName = "Marcelino Mamani Palma",
+            userXp = 1000,
+            userStreak = 365,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        HomeContent(
+            lessons = mockLessons
+        )
+    }
+}

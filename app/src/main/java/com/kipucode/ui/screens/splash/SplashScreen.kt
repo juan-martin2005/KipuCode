@@ -25,12 +25,16 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kipucode.R
 import com.kipucode.ui.component.text_field.KipucodeText
+import com.kipucode.ui.theme.KipuDarkBlue
+import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.Nunito
+import com.kipucode.ui.theme.White
 import com.kipucode.viewmodel.AuthViewModel
 import kotlinx.coroutines.delay
 
@@ -65,12 +69,13 @@ fun SplashContent(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(brush = Brush.verticalGradient(
-                colors = listOf(
-                    Color(0xFF038da9),
-                    Color(0xFF07396e)
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        KipuTeal,
+                        KipuDarkBlue
+                    )
                 )
-            )
             ),
         contentAlignment = Alignment.Center
     ) {
@@ -95,9 +100,9 @@ fun SplashContent(
 
             Text(
                 text = stringResource(id = R.string.subline),
-                color = Color.White.copy(alpha = 0.8f),
+                color = White.copy(alpha = 0.8f),
                 fontSize = 20.sp,
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                textAlign = TextAlign.Center,
                 lineHeight = 32.sp,
                 fontFamily = Nunito,
                 fontWeight = FontWeight.SemiBold

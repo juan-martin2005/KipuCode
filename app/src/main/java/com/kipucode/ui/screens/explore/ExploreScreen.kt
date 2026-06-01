@@ -21,35 +21,30 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kipucode.R
 import com.kipucode.domain.model.Course
 import com.kipucode.domain.model.Response
+import com.kipucode.ui.theme.BackgroundGray
+import com.kipucode.ui.theme.KipuDarkBlue
+import com.kipucode.ui.theme.KipuTeal
+import com.kipucode.ui.theme.KipuTealDark
 import com.kipucode.ui.theme.Nunito
 import com.kipucode.viewmodel.CoursesViewModel
-
-// Modelo de datos para las lecciones detalladas
-data class DetailedLesson(
-    val id: String,
-    val title: String,
-    val isCompleted: Boolean
-)
 
 @Composable
 fun ExploreScreen(
     courseViewModel: CoursesViewModel = hiltViewModel()
 ) {
-    val kipuTeal = Color(0xFF0293a8)
-    val darkBlue = Color(0xFF081c40)
-    val bgColor = Color(0xFFf6f7f9)
+    val progressValue = 0.1f
 
     val courseState by courseViewModel.courseState.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(bgColor)
+            .background(BackgroundGray)
     ) {
         when(val state = courseState){
             is Response.Loading -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(color = kipuTeal)
+                    CircularProgressIndicator(color = KipuTeal)
                 }
             }
             is Response.Success -> {
@@ -62,7 +57,7 @@ fun ExploreScreen(
                         Card(
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(24.dp),
-                            colors = CardDefaults.cardColors(containerColor = kipuTeal)
+                            colors = CardDefaults.cardColors(containerColor = KipuTeal)
                         ) {
                             Column(modifier = Modifier.padding(24.dp)) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -76,13 +71,13 @@ fun ExploreScreen(
                                                 "1",
                                                 fontSize = 24.sp,
                                                 fontWeight = FontWeight.Bold,
-                                                color = kipuTeal
+                                                color = KipuTeal
                                             )
                                         }
                                     }
                                     Spacer(modifier = Modifier.width(16.dp))
                                     Text(
-                                        "Module 1 - Computational Thinking and First Steps in Python",
+                                        "Thinking and First Steps in Python",
                                         color = Color.White,
                                         fontSize = 18.sp,
                                         fontWeight = FontWeight.Bold,
@@ -123,7 +118,6 @@ fun ExploreScreen(
                                     fontSize = 13.sp,
                                     fontWeight = FontWeight.Bold
                                 )
-                                val progressValue = 0.5f // 50%
 
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
@@ -166,24 +160,23 @@ fun ExploreScreen(
                     item {
                         Spacer(modifier = Modifier.height(32.dp))
                         Text(
-                            "Lecciones",
+                            "Lessons",
                             fontSize = 20.sp,
                             fontWeight = FontWeight.ExtraBold,
                             fontFamily = Nunito,
-                            color = darkBlue
+                            color = KipuDarkBlue
                         )
                         Spacer(modifier = Modifier.height(16.dp))
                     }
 
                     // --- LISTA DE LECCIONES ---
                     items(courses) { course ->
-                        DetailedLessonItem(course, kipuTeal, darkBlue)
+                        DetailedLessonItem(course, KipuTeal, KipuDarkBlue)
                         Spacer(modifier = Modifier.height(12.dp))
                     }
                 }
             }
             is Response.Error -> {
-
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Text(text = "Error al cargar: ${state.message}", color = Color.Red)
                 }
@@ -204,7 +197,7 @@ fun DetailedLessonItem(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp) // Opcional, según diseño
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
         Row(
             modifier = Modifier

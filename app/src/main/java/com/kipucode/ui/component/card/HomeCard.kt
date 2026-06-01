@@ -1,13 +1,9 @@
 package com.kipucode.ui.component.card
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,7 +17,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kipucode.R
+import com.kipucode.ui.theme.KipuTealDark
 import com.kipucode.ui.theme.Nunito
+import com.kipucode.ui.theme.White
 
 @Composable
 fun HomeCard(
@@ -34,13 +32,13 @@ fun HomeCard(
     val horizontalProgressFactor = currentLessons.toFloat() / totalLessons.toFloat()
     val progressPercentage = (horizontalProgressFactor * 100).toInt()
 
-    val cardBackground = Color(0xFF007A93)
-    val whiteAlpha = Color.White.copy(alpha = 0.2f)
-
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(color = cardBackground, shape = RoundedCornerShape(24.dp))
+            .background(
+                color = KipuTealDark,
+                shape = RoundedCornerShape(24.dp)
+            )
             .padding(24.dp)
     ) {
         // --- SECCIÓN 1: CABECERA ---
@@ -52,7 +50,7 @@ fun HomeCard(
                 modifier = Modifier
                     .size(52.dp)
                     .background(
-                        whiteAlpha,
+                        White.copy(alpha = 0.2f),
                         shape = RoundedCornerShape(14.dp)
                     )
                     .padding(10.dp),
@@ -86,13 +84,15 @@ fun HomeCard(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Columna Derecha: Textos y Barra horizontal
             Column(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = stringResource(R.string.home_bar_lessons, currentLessons, totalLessons),
+                    text = stringResource(R.string.home_bar_lessons,
+                        currentLessons,
+                        totalLessons
+                    ),
                     color = Color.White,
                     fontSize = 15.sp,
                     fontFamily = Nunito,
@@ -105,13 +105,19 @@ fun HomeCard(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(8.dp)
-                        .background(whiteAlpha, shape = RoundedCornerShape(4.dp))
+                        .background(
+                            White.copy(alpha = 0.2f),
+                            shape = RoundedCornerShape(4.dp)
+                        )
                 ) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth(horizontalProgressFactor)
                             .height(8.dp)
-                            .background(Color.White, shape = RoundedCornerShape(4.dp))
+                            .background(
+                                White,
+                                shape = RoundedCornerShape(4.dp)
+                            )
                     )
                 }
 
@@ -119,7 +125,7 @@ fun HomeCard(
 
                 Text(
                     text = stringResource(R.string.home_underline_text_bar),
-                    color = Color.White.copy(alpha = 0.7f),
+                    color = White.copy(alpha = 0.8f),
                     fontSize = 13.sp,
                     fontFamily = Nunito,
                     fontWeight = FontWeight.Normal
@@ -130,7 +136,7 @@ fun HomeCard(
 
             Text(
                 text = "$progressPercentage%",
-                color = Color.White,
+                color = White,
                 fontSize = 16.sp,
                 fontFamily = Nunito,
                 fontWeight = FontWeight.Bold,
@@ -140,19 +146,19 @@ fun HomeCard(
     }
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//fun HomeCardPreview() {
-//    Box(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .background(Color(0xFFf6f7f9))
-//            .padding(16.dp)
-//    ) {
-//        HomeCard(
-//            courseName = "Fundamentos Básicos de Programación Python",
-//            currentLessons = 3,
-//            totalLessons = 10,
-//        )
-//    }
-//}
+@Preview(showBackground = true)
+@Composable
+fun HomeCardPreview() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color(0xFFf6f7f9))
+            .padding(16.dp)
+    ) {
+        HomeCard(
+            courseName = "Fundamentos Básicos de Programación Python",
+            currentLessons = 3,
+            totalLessons = 10,
+        )
+    }
+}

@@ -29,7 +29,6 @@ import com.kipucode.viewmodel.UserViewModel
 @Composable
 fun AppNavigation(){
     val navController = rememberNavController()
-
     val userViewModel: UserViewModel = hiltViewModel()
 
     Scaffold(

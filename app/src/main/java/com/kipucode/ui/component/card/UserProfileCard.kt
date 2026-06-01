@@ -16,7 +16,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kipucode.R
+import com.kipucode.ui.theme.KipuTealDark
 import com.kipucode.ui.theme.Nunito
+import com.kipucode.ui.theme.White
 
 @Composable
 fun UserProfileCard(
@@ -28,7 +30,7 @@ fun UserProfileCard(
         modifier = modifier
             .fillMaxWidth()
             .background(
-                color = Color(0xFF00738C),
+                color = KipuTealDark,
                 shape = RoundedCornerShape(20.dp)
             )
             .padding(24.dp)
@@ -43,14 +45,14 @@ fun UserProfileCard(
                 modifier = Modifier
                     .size(72.dp)
                     .background(
-                        Color.White.copy(alpha = 0.2f),
+                        White.copy(alpha = 0.2f),
                         shape = CircleShape
                     )
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_user),
                     contentDescription = "Avatar de Usuario",
-                    tint = Color.White.copy(alpha = 0.8f),
+                    tint = White.copy(alpha = 0.85f),
                     modifier = Modifier.size(50.dp)
                 )
             }
@@ -63,7 +65,7 @@ fun UserProfileCard(
             ) {
                 Text(
                     text = name,
-                    color = Color.White,
+                    color = White,
                     fontSize = 18.sp,
                     fontFamily = Nunito,
                     fontWeight = FontWeight.Bold,
@@ -71,7 +73,7 @@ fun UserProfileCard(
                 )
                 Text(
                     text = email,
-                    color = Color.White.copy(alpha = 0.85f),
+                    color = White.copy(alpha = 0.85f),
                     fontSize = 12.sp,
                     fontFamily = Nunito,
                     fontWeight = FontWeight.Normal
@@ -81,18 +83,18 @@ fun UserProfileCard(
     }
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//fun ProfileHeaderCardPreview() {
-//    Box(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .background(Color(0xFFf6f7f9))
-//            .padding(16.dp)
-//    ) {
-//        UserProfileCard(
-//            name = "User Test Alpha",
-//            email = "n00123456@upn.pe"
-//        )
-//    }
-//}
+@Preview(showBackground = true)
+@Composable
+fun ProfileHeaderCardPreview() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color(0xFFf6f7f9))
+            .padding(16.dp)
+    ) {
+        UserProfileCard(
+            name = "User Test Alpha",
+            email = "n00123456@upn.pe"
+        )
+    }
+}

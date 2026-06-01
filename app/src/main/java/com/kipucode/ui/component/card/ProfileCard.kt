@@ -25,7 +25,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kipucode.R
+import com.kipucode.ui.theme.BorderLightGray
+import com.kipucode.ui.theme.Gray
+import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.Nunito
+import com.kipucode.ui.theme.White
 
 @Composable
 fun ProfileMenuCard(
@@ -37,8 +41,7 @@ fun ProfileMenuCard(
     isEnd: Boolean = false,
     onClick: () -> Unit
 ) {
-    val lightGray = Color(0xFFE5E7EB)
-    val contentColor = if (isRed) Color(0xFF9d0007) else Color(0xFF081c40)
+    val contentColor = if (isRed) Color(0xFF9d0007) else KipuDarkBlue
 
     val cardShape = when {
         isFirst -> RoundedCornerShape(
@@ -57,8 +60,8 @@ fun ProfileMenuCard(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
         shape = cardShape,
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        border = BorderStroke(1.dp, lightGray)
+        colors = CardDefaults.cardColors(containerColor = White),
+        border = BorderStroke(1.5.dp, BorderLightGray)
     ) {
         Row(
             modifier = Modifier
@@ -91,7 +94,7 @@ fun ProfileMenuCard(
                 Icon(
                     painter = painterResource(id = R.drawable.ic_arrow_right),
                     contentDescription = "Go forward",
-                    tint = Color.Gray,
+                    tint = KipuDarkBlue,
                     modifier = Modifier.size(24.dp)
                 )
             }
@@ -99,26 +102,26 @@ fun ProfileMenuCard(
     }
 }
 
-//@Preview(showBackground = true, backgroundColor = 0xFFF3F4F6)
-//@Composable
-//fun ProfileMenuCardPreview() {
-//    Column(
-//        modifier = Modifier.padding(16.dp),
-//        verticalArrangement = Arrangement.spacedBy(0.dp)
-//    ) {
-//        ProfileMenuCard(
-//            text = "Feedback",
-//            iconRes = R.drawable.ic_feedback,
-//            isFirst = true,
-//            onClick = {}
-//        )
-//
-//        ProfileMenuCard(
-//            text = "Cerrar sesión",
-//            iconRes = R.drawable.ic_exit,
-//            isRed = true,
-//            isEnd = true,
-//            onClick = {}
-//        )
-//    }
-//}
+@Preview(showBackground = true, backgroundColor = 0xFFF3F4F6)
+@Composable
+fun ProfileMenuCardPreview() {
+    Column(
+        modifier = Modifier.padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(0.dp)
+    ) {
+        ProfileMenuCard(
+            text = "Feedback",
+            iconRes = R.drawable.ic_feedback,
+            isFirst = true,
+            onClick = {}
+        )
+
+        ProfileMenuCard(
+            text = "Cerrar sesión",
+            iconRes = R.drawable.ic_exit,
+            isRed = true,
+            isEnd = true,
+            onClick = {}
+        )
+    }
+}

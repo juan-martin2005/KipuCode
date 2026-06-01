@@ -2,13 +2,14 @@ package com.kipucode.ui.component.text_field
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.sp
+import com.kipucode.ui.theme.KipuCyan
 import com.kipucode.ui.theme.Nunito
+import com.kipucode.ui.theme.White
 
 // Banner KipuCode
 @Composable
@@ -18,7 +19,7 @@ fun KipucodeText(){
             withStyle(
                 style = SpanStyle(
                     fontWeight = FontWeight.Bold,
-                    color = Color.White,
+                    color = White,
                 )
             ) {
                 append("Kipu")
@@ -27,7 +28,7 @@ fun KipucodeText(){
             withStyle(
                 style = SpanStyle(
                     fontWeight = FontWeight.Normal,
-                    color = Color(0xFF0bb8cd),
+                    color = KipuCyan,
                 )
             ) {
                 append("Code")
