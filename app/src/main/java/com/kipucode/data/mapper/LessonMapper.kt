@@ -8,8 +8,9 @@ fun LessonDto.toEntity() = LessonEntity(
     id = id,
     courseId = courseId,
     title = title,
-    theoryContent = theoryContent,
-    completed = completed,
+    content = content,
+    points = points,
+    exp = exp,
     orderIndex = orderIndex
 )
 
@@ -17,7 +18,8 @@ fun LessonEntity.toDomain() = Lesson(
     id = id,
     courseId = courseId,
     title = title,
-    theoryContent = theoryContent,
-    completed = completed,
+    content = content,
+    points = points,
+    exp = exp,
     orderIndex = orderIndex
 )

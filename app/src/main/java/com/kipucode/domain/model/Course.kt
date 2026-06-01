@@ -5,6 +5,7 @@ data class Course(
     val title: String,
     val description: String,
     val orderIndex: Int,
-    val completed: Boolean,
+    val points: Int,
+    val exp: Int,
     val createdAt: Long?
 )

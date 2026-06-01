@@ -9,7 +9,8 @@ fun CourseDto.toEntity() = CourseEntity(
     title = title,
     description = description,
     orderIndex = orderIndex,
-    completed = completed,
+    points = points,
+    exp = exp,
     createdAt = createdAt?.toDate()?.time
 )
 
@@ -18,6 +19,7 @@ fun CourseEntity.toDomain() = Course(
     title = title,
     description = description,
     orderIndex = orderIndex,
-    completed = completed,
+    points = points,
+    exp = exp,
     createdAt = createdAt
 )

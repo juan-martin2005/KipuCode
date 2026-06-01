@@ -21,8 +21,9 @@ data class LessonEntity(
     val courseId: String,
     val title: String,
     @ColumnInfo(name = "theory_content")
-    val theoryContent: String,
-    val completed: Boolean,
+    val content: String,
+    val points: Int,
+    val exp: Int,
     @ColumnInfo(name = "order_index")
     val orderIndex: Int
 )
