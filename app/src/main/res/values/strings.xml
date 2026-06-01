@@ -60,6 +60,7 @@
     <string name="auth_repository_email_not_verified">Email verification required</string>
     <string name="auth_repository_credential_invalid">The credential is invalid</string>
     <string name="auth_repository_email_already_exist">The email is already registered</string>
+    <string name="auth_repository_network_error">Please check your network and try again</string>
 
     <!-- Home - Texts -->
     <string name="headline_home">Welcome back!</string>

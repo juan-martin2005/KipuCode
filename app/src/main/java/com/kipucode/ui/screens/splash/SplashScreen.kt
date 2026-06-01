@@ -46,7 +46,7 @@ fun SplashScreen(
             targetValue = 1f,
             animationSpec = tween(durationMillis = 1000)
         )
-        delay(1800)
+        delay(800)
 
         val isLogged = authViewModel.isUserLoggedIn()
         onSplashFinished(isLogged)

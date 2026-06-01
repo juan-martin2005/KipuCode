@@ -48,6 +48,7 @@ fun LoginScreen(
 
     val authMsgErrorEmailNotVerified = stringResource(id = R.string.auth_repository_email_not_verified)
     val authMsgErrorCredentialInvalid = stringResource(id = R.string.auth_repository_credential_invalid)
+    val authMsgErrorNetworkError = stringResource(id = R.string.auth_repository_network_error)
 
     LaunchedEffect(loginState) {
         when (loginState) {
@@ -64,6 +65,7 @@ fun LoginScreen(
                 when (errorType) {
                     ErrorType.EMAIL_NOT_VERIFIED -> authEmailError = authMsgErrorEmailNotVerified
                     ErrorType.CREDENTIAL_INVALID -> authPasswordError = authMsgErrorCredentialInvalid
+                    ErrorType.NETWORK_ERROR -> authPasswordError = authMsgErrorNetworkError
                     else -> Log.d("FIREBASE_ERROR", errorMessage)
                 }
             }

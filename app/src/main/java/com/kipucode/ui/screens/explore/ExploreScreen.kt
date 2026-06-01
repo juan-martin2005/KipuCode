@@ -41,13 +41,6 @@ fun ExploreScreen(
 
     val courseState by courseViewModel.courseState.collectAsStateWithLifecycle()
 
-    val lessons = listOf(
-        DetailedLesson("1.1", "¿Qué es la programación y por qué Python?", true),
-        DetailedLesson("1.2", "Instalación de Python y primeros comandos", true),
-        DetailedLesson("1.3", "Tipos de datos básicos: números y strings", true),
-        DetailedLesson("1.4", "Errores: sintaxis vs. semántica", true)
-    )
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -89,7 +82,7 @@ fun ExploreScreen(
                                     }
                                     Spacer(modifier = Modifier.width(16.dp))
                                     Text(
-                                        "Pensamiento Computacional y Primeros Pasos en Python",
+                                        "Module 1 - Computational Thinking and First Steps in Python",
                                         color = Color.White,
                                         fontSize = 18.sp,
                                         fontWeight = FontWeight.Bold,
@@ -105,7 +98,7 @@ fun ExploreScreen(
                                     shape = RoundedCornerShape(8.dp)
                                 ) {
                                     Text(
-                                        "Principiante",
+                                        "Beginner",
                                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
                                         color = Color.White,
                                         fontSize = 12.sp,
@@ -115,7 +108,7 @@ fun ExploreScreen(
 
                                 Spacer(modifier = Modifier.height(12.dp))
                                 Text(
-                                    "Aprende los fundamentos de la programación, la historia de Python y configura tu entorno de desarrollo.",
+                                    "Learn the fundamentals of programming, explore the history of Python, and set up your development environment..",
                                     color = Color.White.copy(alpha = 0.9f),
                                     fontSize = 14.sp,
                                     fontFamily = Nunito
@@ -125,7 +118,7 @@ fun ExploreScreen(
 
 
                                 Text(
-                                    "Progreso del módulo",
+                                    "Module Progress",
                                     color = Color.White,
                                     fontSize = 13.sp,
                                     fontWeight = FontWeight.Bold
@@ -268,8 +261,8 @@ fun DetailedLessonItem(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun ExplorePreview() {
-    ExploreScreen()
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun ExplorePreview() {
+//    ExploreScreen()
+//}

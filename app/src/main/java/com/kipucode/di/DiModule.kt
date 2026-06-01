@@ -1,8 +1,11 @@
 package com.kipucode.di
 
+import android.content.Context
+import androidx.room.Room
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.kipucode.data.local.dao.CourseDao
+import com.kipucode.data.local.dao.UserDao
 import com.kipucode.data.local.database.AppDatabase
 import com.kipucode.data.remote.firebase.service.FirebaseAuthSource
 import com.kipucode.data.remote.firebase.service.CourseFirestoreSource
@@ -19,6 +22,7 @@ import com.kipucode.domain.usecase.user.ResetPasswordUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -44,11 +48,13 @@ class DiModule {
     @Singleton
     internal fun provideAuthRepository(
         firebaseAuth: FirebaseAuthSource,
-        userFirestoreSource: UserFirestoreSource
+        userFirestoreSource: UserFirestoreSource,
+        userDao: UserDao
     ): AuthRepository {
         return AuthRepositoryImpl(
             remoteAuthSource = firebaseAuth,
-            userFirestoreSource = userFirestoreSource
+            userFirestoreSource = userFirestoreSource,
+            userDao = userDao
         )
     }
 
@@ -103,5 +109,21 @@ class DiModule {
     @Singleton
     internal fun provideGetCoursesUseCase(courseRepositoryImpl: CourseRepositoryImpl): GetCourseUseCase {
         return GetCourseUseCase(courseRepositoryImpl)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase {
+        return Room.databaseBuilder(
+            context,
+            AppDatabase::class.java,
+            "Kipucode_database"
+        )
+            .build()
+    }
+    @Provides
+    @Singleton
+    fun provideUserLocalDataSource(appDatabase: AppDatabase): UserDao {
+        return appDatabase.userDao()
     }
 }

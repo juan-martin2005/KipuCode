@@ -96,7 +96,7 @@ fun AppNavigation(){
                 val authViewModel: AuthViewModel = hiltViewModel()
                 LoginScreen(
                     onLoginSuccess = {
-                        userViewModel.loadUserProfile()
+                        userViewModel.startObservingUser()
                         navController.navigate("home") { popUpTo(0) }
                     },
                     onNavigateToRegister = {

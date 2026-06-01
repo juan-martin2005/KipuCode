@@ -1,11 +1,11 @@
 package com.kipucode.data.repository
 
 import android.util.Log
-import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
-import com.kipucode.R
+import com.kipucode.data.local.dao.UserDao
+import com.kipucode.data.local.model.UserEntity
 import com.kipucode.data.remote.firebase.service.FirebaseAuthSource
 import com.kipucode.data.remote.firebase.service.UserFirestoreSource
 import com.kipucode.domain.model.ErrorType
@@ -15,7 +15,8 @@ import com.kipucode.domain.repository.AuthRepository
 
 internal class AuthRepositoryImpl(
     private val remoteAuthSource: FirebaseAuthSource,
-    private val userFirestoreSource: UserFirestoreSource
+    private val userFirestoreSource: UserFirestoreSource,
+    private val userDao: UserDao
 ): AuthRepository {
 
     override suspend fun login(email: String, password: String): Response<User> {
@@ -28,6 +29,15 @@ internal class AuthRepositoryImpl(
                     val userProfile = userFirestoreSource.getUserProfile(currentUser.uid)
 
                     if (userProfile != null) {
+                        userDao.insert(
+                            UserEntity(
+                                id = userProfile.id,
+                                name = userProfile.name,
+                                email = userProfile.email,
+                                totalXp = userProfile.totalXp,
+                                streakDay = userProfile.streakDay
+                            )
+                        )
                         Response.Success(userProfile)
                     } else {
                         Response.Error(
@@ -46,6 +56,9 @@ internal class AuthRepositoryImpl(
         }catch (ex: FirebaseAuthInvalidCredentialsException){
             Response.Error("The credential is invalid",
                 ErrorType.CREDENTIAL_INVALID)
+        }catch (ex: FirebaseNetworkException) {
+            Response.Error("Please check your network and try again",
+                ErrorType.NETWORK_ERROR)
         }catch (ex: Exception){
             Response.Error("An unexpected error occurred while signing in",
                 ErrorType.FIRESTORE_ERROR)
@@ -59,13 +72,23 @@ internal class AuthRepositoryImpl(
             val currentUser = authResult.user
 
             if(currentUser != null){
-                val user = user.copy(
+                val updatedUser = user.copy(
                     id = currentUser.uid,
                     totalXp = 0,
                     streakDay = 0
                 )
 
-                userFirestoreSource.saveUserProfile(user)
+                userFirestoreSource.saveUserProfile(updatedUser)
+
+                userDao.insert(
+                    UserEntity(
+                        id = updatedUser.id,
+                        name = updatedUser.name,
+                        email = updatedUser.email,
+                        totalXp = updatedUser.totalXp,
+                        streakDay = updatedUser.streakDay
+                    )
+                )
 
                 Response.Success(user)
             } else {
@@ -73,8 +96,13 @@ internal class AuthRepositoryImpl(
                     ErrorType.FIRESTORE_ERROR)
             }
         }catch (ex: FirebaseAuthUserCollisionException) {
-            Response.Error("The email is already registered",
-                ErrorType.EMAIL_ALREADY_EXIST)
+            Response.Error(
+                "The email is already registered",
+                ErrorType.EMAIL_ALREADY_EXIST
+            )
+        }catch (ex: FirebaseNetworkException) {
+                Response.Error("Please check your network and try again",
+                    ErrorType.NETWORK_ERROR)
         }catch (ex: Exception){
             Response.Error("An unexpected error occurred during registration",
                 ErrorType.FIRESTORE_ERROR)
@@ -100,6 +128,7 @@ internal class AuthRepositoryImpl(
 
     override suspend fun logout() {
         remoteAuthSource.logoutUser()
+        userDao.clearUserData()
     }
 
 

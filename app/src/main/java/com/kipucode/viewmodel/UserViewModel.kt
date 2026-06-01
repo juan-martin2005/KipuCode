@@ -3,8 +3,7 @@ package com.kipucode.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
-import com.kipucode.data.remote.firebase.service.UserFirestoreSource
-import com.kipucode.domain.model.ErrorType
+import com.kipucode.data.repository.UserRepositoryImpl
 import com.kipucode.domain.model.Response
 import com.kipucode.domain.model.User
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,45 +14,50 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UserViewModel @Inject constructor(
-    private val userFirestoreSource: UserFirestoreSource
+    private val userRepository: UserRepositoryImpl
 ) : ViewModel() {
 
-    private val _userState = MutableStateFlow<Response<User>?>(null)
-    val userState: StateFlow<Response<User>?> = _userState
+    private val _userProfile = MutableStateFlow<User?>(null)
+    val userProfile: StateFlow<User?> = _userProfile
+
+    private val _refreshState = MutableStateFlow<Response<Unit>?>(null)
+    val refreshState: StateFlow<Response<Unit>?> = _refreshState
 
     init {
-        loadUserProfile()
+        startObservingUser()
     }
 
-    fun loadUserProfile() {
+    private fun triggerRefresh(uid: String) {
         viewModelScope.launch {
-            _userState.value = Response.Loading
-
-            val currentUid = FirebaseAuth.getInstance().currentUser?.uid
-
-            if (currentUid != null) {
-                try {
-                    val profile = userFirestoreSource.getUserProfile(currentUid)
-                    if (profile != null) {
-                        _userState.value = Response.Success(profile)
-                    } else {
-                        _userState.value = Response.Error(
-                            "User profile wasn't found",
-                            ErrorType.FIRESTORE_ERROR
-                        )
-                    }
-                } catch (e: Exception) {
-                    _userState.value = Response.Error(
-                        "An unexpected error occurred while loading user data",
-                        ErrorType.FIRESTORE_ERROR
-                    )
-                }
-            } else {
-                _userState.value = Response.Error(
-                    "The session has expired",
-                    ErrorType.FIRESTORE_ERROR
-                )
-            }
+            _refreshState.value = Response.Loading
+            val result = userRepository.refreshUserProfile(uid)
+            _refreshState.value = result
         }
+    }
+
+    fun startObservingUser() {
+        val currentUid = FirebaseAuth.getInstance().currentUser?.uid
+
+        if (currentUid != null) {
+            viewModelScope.launch {
+                userRepository.getUserProfile(currentUid).collect { userLocal ->
+                    _userProfile.value = userLocal
+                }
+            }
+            triggerRefresh(currentUid)
+        } else {
+            _userProfile.value = null
+        }
+    }
+
+    fun swipeToRefresh() {
+        val currentUid = FirebaseAuth.getInstance().currentUser?.uid
+        if (currentUid != null) {
+            triggerRefresh(currentUid) // Reutiliza la lógica
+        }
+    }
+
+    fun resetRefreshState() {
+        _refreshState.value = null
     }
 }

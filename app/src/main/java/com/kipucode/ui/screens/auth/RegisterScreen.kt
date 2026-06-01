@@ -39,7 +39,11 @@ fun RegisterScreen(
     val context = LocalContext.current
 
     var authEmailError by remember { mutableStateOf<String?>(null) }
+    var authconfirmPasswordError by remember { mutableStateOf<String?>(null) }
+
     val authMsgErrorEmailAlreadyExist = stringResource(id = R.string.auth_repository_email_already_exist)
+    val authMsgErrorNetworkError = stringResource(id = R.string.auth_repository_network_error)
+
 
     LaunchedEffect(loginState) {
         when (loginState) {
@@ -59,6 +63,7 @@ fun RegisterScreen(
 
                 when (errorType) {
                     ErrorType.EMAIL_ALREADY_EXIST -> authEmailError = authMsgErrorEmailAlreadyExist
+                    ErrorType.NETWORK_ERROR -> authconfirmPasswordError = authMsgErrorNetworkError
                     else -> Log.d("FIREBASE_ERROR", errorMessage)
                 }
             }
@@ -75,7 +80,9 @@ fun RegisterScreen(
 
             val user = User(name = name, email = email)
             authViewModel.register(user, password)
-        }
+        },
+        externalEmailError = authEmailError,
+        externalConfirmPasswordError = authconfirmPasswordError
     )
 }
 
@@ -84,6 +91,7 @@ fun RegisterContent(
     onNavigateToLogin: () -> Unit,
     onBack: () -> Unit,
     onRegisterClick: (String, String, String) -> Unit,
+
     externalNameError: String? = null,
     externalEmailError: String? = null,
     externalPasswordError: String? = null,
@@ -105,10 +113,10 @@ fun RegisterContent(
     var localPasswordError by remember { mutableStateOf<String?>(null) }
     var localConfirmPasswordError by remember { mutableStateOf<String?>(null) }
 
-    val nameError = localEmailError ?: externalNameError
+    val nameError = localNameError ?: externalNameError
     val emailError = localEmailError ?: externalEmailError
-    val passwordError = localEmailError ?: externalPasswordError
-    val confirmPasswordError = localEmailError ?: externalConfirmPasswordError
+    val passwordError = localPasswordError ?: externalPasswordError
+    val confirmPasswordError = localConfirmPasswordError ?: externalConfirmPasswordError
 
     val msgErrorNameRequired = stringResource(id = R.string.error_name_required)
     val msgErrorEmailRequired = stringResource(id = R.string.error_email_required)
