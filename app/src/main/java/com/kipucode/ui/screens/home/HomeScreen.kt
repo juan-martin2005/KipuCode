@@ -96,8 +96,8 @@ fun HomeScreen(
         ) {
             HeadlineHome(
                 userName = userProfile?.name ?: "",
-                userXp = userProfile?.totalXp ?: 0,
-                userStreak = userProfile?.streakDay ?: 0,
+                userXp = 0,
+                userStreak = 0,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
 
