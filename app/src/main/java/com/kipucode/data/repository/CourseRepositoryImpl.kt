@@ -1,17 +1,17 @@
 package com.kipucode.data.repository
 
-import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.kipucode.data.mapper.toDomain
 import com.kipucode.data.mapper.toEntity
-import com.kipucode.data.remote.firebase.service.CourseFirestoreSource
+import com.kipucode.data.remote.firebase.service.CourseRemoteDataSource
 import com.kipucode.domain.model.Course
 import com.kipucode.domain.model.ErrorType
 import com.kipucode.domain.model.Response
 import com.kipucode.domain.repository.CourseRepository
+import javax.inject.Inject
 
-internal class CourseRepositoryImpl(
-    private val remoteDataSource: CourseFirestoreSource,
+internal class CourseRepositoryImpl @Inject constructor(
+    private val remoteDataSource: CourseRemoteDataSource,
     //private val localDataSource: CourseDao
 ): CourseRepository {
 

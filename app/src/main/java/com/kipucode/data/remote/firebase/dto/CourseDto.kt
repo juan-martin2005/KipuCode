@@ -7,6 +7,7 @@ data class CourseDto(
     val title: String = "",
     val description: String = "",
     val orderIndex: Int = 0,
-    val completed: Boolean = false,
+    val points: Int = 0,
+    val exp: Int = 0,
     val createdAt: Timestamp? = null
 )

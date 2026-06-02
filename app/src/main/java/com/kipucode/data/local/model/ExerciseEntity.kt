@@ -21,7 +21,8 @@ data class ExerciseEntity(
     val lessonId: String?,
     val type: String?,
     val instruction: String?,
-    val isCompleted: Boolean,
+    val points: Int,
+    val exp: Int,
     @ColumnInfo(name = "order_index")
     val orderIndex: Int
 )

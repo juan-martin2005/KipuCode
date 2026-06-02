@@ -3,8 +3,9 @@ package com.kipucode.domain.usecase.user
 import com.kipucode.domain.model.Response
 import com.kipucode.domain.model.User
 import com.kipucode.domain.repository.AuthRepository
+import javax.inject.Inject
 
-class LoginUseCases(
+class LoginUseCases @Inject constructor(
     private val authRepository: AuthRepository
 ) {
     suspend operator fun invoke(email: String, password: String): Response<User> {
@@ -12,7 +13,7 @@ class LoginUseCases(
     }
 }
 
-class RegisterUseCase(
+class RegisterUseCase @Inject constructor(
     private val authRepository: AuthRepository
 ) {
     suspend operator fun invoke(user: User, password: String): Response<User> {
@@ -20,7 +21,7 @@ class RegisterUseCase(
     }
 }
 
-class IsUserLoggedInUseCase(
+class IsUserLoggedInUseCase @Inject constructor(
     private val authRepository: AuthRepository
 ) {
     operator fun invoke(): Boolean {
@@ -28,7 +29,7 @@ class IsUserLoggedInUseCase(
     }
 }
 
-class ResetPasswordUseCase(
+class ResetPasswordUseCase @Inject constructor(
     private val authRepository: AuthRepository
 ) {
     suspend operator fun invoke(email: String): Response<Unit> {
@@ -36,7 +37,7 @@ class ResetPasswordUseCase(
     }
 }
 
-class LogoutUseCase(
+class LogoutUseCase @Inject constructor(
     private val authRepository: AuthRepository
 ) {
     suspend fun invoke() {

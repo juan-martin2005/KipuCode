@@ -4,7 +4,8 @@ data class Lesson(
     val id: String,
     val courseId: String,
     val title: String,
-    val theoryContent: String,
-    val completed: Boolean,
+    val content: String,
+    val points: Int,
+    val exp: Int,
     val orderIndex: Int
 )

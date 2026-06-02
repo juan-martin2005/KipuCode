@@ -10,8 +10,4 @@ data class UserEntity(
     val id: String,
     val name: String?,
     val email: String?,
-    @ColumnInfo(name = "total_xp")
-    val totalXp: Int,
-    @ColumnInfo(name = "streak_day")
-    val streakDay: Int,
 )

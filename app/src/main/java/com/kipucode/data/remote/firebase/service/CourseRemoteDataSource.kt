@@ -5,8 +5,9 @@ import com.google.firebase.firestore.toObject
 import com.kipucode.data.remote.firebase.dto.CourseDto
 import com.kipucode.data.remote.firebase.dto.LessonDto
 import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
 
-class CourseFirestoreSource(
+class CourseRemoteDataSource @Inject constructor(
     private val firestore: FirebaseFirestore
 ) {
     companion object {
