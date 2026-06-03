@@ -226,30 +226,30 @@ fun DetailedLessonItem(
             Column(modifier = Modifier
                 .weight(1f)
                 .padding(end = 16.dp)) {
-                Text(
-                    text = "${lesson.title} ${lesson.description} ${lesson.completed} ",
-                    fontWeight = FontWeight.Bold,
-                    color = darkBlue,
-                    fontSize = 14.sp,
-                    fontFamily = Nunito
-                )
-                Text(
-                    text = if (lesson.completed) "Completado" else "Pendiente",
-                    color = if (lesson.completed) accentColor else Color.Gray,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    fontFamily = Nunito
-                )
+//                Text(
+//                    text = "${lesson.title} ${lesson.description} ${lesson.completed} ",
+//                    fontWeight = FontWeight.Bold,
+//                    color = darkBlue,
+//                    fontSize = 14.sp,
+//                    fontFamily = Nunito
+//                )
+//                Text(
+//                    text = if (lesson.completed) "Completado" else "Pendiente",
+//                    color = if (lesson.completed) accentColor else Color.Gray,
+//                    fontSize = 12.sp,
+//                    fontWeight = FontWeight.SemiBold,
+//                    fontFamily = Nunito
+//                )
             }
 
-            if (lesson.completed) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_check),
-                    contentDescription = "Completado",
-                    tint = accentColor,
-                    modifier = Modifier.size(24.dp)
-                )
-            }
+//            if (lesson.completed) {
+//                Icon(
+//                    painter = painterResource(id = R.drawable.ic_check),
+//                    contentDescription = "Completado",
+//                    tint = accentColor,
+//                    modifier = Modifier.size(24.dp)
+//                )
+//            }
         }
     }
 }

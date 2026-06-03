@@ -2,10 +2,12 @@ package com.kipucode.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.FirebaseAuth
-import com.kipucode.data.repository.UserRepositoryImpl
 import com.kipucode.domain.model.Response
 import com.kipucode.domain.model.User
+import com.kipucode.domain.model.UserProgress
+import com.kipucode.domain.usecase.user.GetUserProfileUseCase
+import com.kipucode.domain.usecase.user.GetUserProgressUseCase
+import com.kipucode.domain.usecase.user.RefreshUserProfileUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,47 +16,52 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UserViewModel @Inject constructor(
-    private val userRepository: UserRepositoryImpl
+    private val getUserProfileUseCase: GetUserProfileUseCase,
+    private val getUserProgressUseCase : GetUserProgressUseCase,
+    private val refreshUserProfileUseCase : RefreshUserProfileUseCase
 ) : ViewModel() {
 
     private val _userProfile = MutableStateFlow<User?>(null)
+    private val _userProgress = MutableStateFlow<Response<UserProgress>?>(null)
     val userProfile: StateFlow<User?> = _userProfile
+    val userProgress: StateFlow<Response<UserProgress>?> = _userProgress
 
     private val _refreshState = MutableStateFlow<Response<Unit>?>(null)
     val refreshState: StateFlow<Response<Unit>?> = _refreshState
 
     init {
         startObservingUser()
+        startObservingUserProgress()
+        triggerRefresh()
     }
 
     private fun triggerRefresh() {
         viewModelScope.launch {
             _refreshState.value = Response.Loading
-            val result = userRepository.refreshUserProfile()
+            val result = refreshUserProfileUseCase.invoke()
             _refreshState.value = result
         }
     }
 
     fun startObservingUser() {
-        val currentUid = FirebaseAuth.getInstance().currentUser?.uid
-
-        if (currentUid != null) {
-            viewModelScope.launch {
-                userRepository.getUserProfile(currentUid).collect { userLocal ->
-                    _userProfile.value = userLocal
-                }
+        viewModelScope.launch {
+            getUserProfileUseCase.invoke().collect { userLocal ->
+                _userProfile.value = userLocal
             }
-            triggerRefresh()
-        } else {
-            _userProfile.value = null
+        }
+
+    }
+
+    fun startObservingUserProgress(){
+        viewModelScope.launch {
+            _userProgress.value = Response.Loading
+            val result = getUserProgressUseCase.invoke()
+            _userProgress.value = result
         }
     }
 
     fun swipeToRefresh() {
-        val currentUid = FirebaseAuth.getInstance().currentUser?.uid
-        if (currentUid != null) {
-            triggerRefresh() // Reutiliza la lógica
-        }
+        triggerRefresh()
     }
 
     fun resetRefreshState() {

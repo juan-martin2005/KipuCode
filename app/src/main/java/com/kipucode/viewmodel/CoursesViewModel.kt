@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.kipucode.domain.model.Course
 import com.kipucode.domain.model.Response
 import com.kipucode.domain.usecase.course.GetCourseUseCase
+import com.kipucode.domain.usecase.user.GetUserProgressUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,7 +14,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CoursesViewModel @Inject constructor(
-    private val getAllCourseUseCase: GetCourseUseCase
+    private val getAllCourseUseCase: GetCourseUseCase,
+    private val getUserProgress : GetUserProgressUseCase
 ) : ViewModel(){
 
     private val _courseState = MutableStateFlow<Response<List<Course>>?>(null)

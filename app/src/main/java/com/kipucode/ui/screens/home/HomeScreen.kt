@@ -33,8 +33,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kipucode.R
+import com.kipucode.domain.model.Course
 import com.kipucode.domain.model.Response
 import com.kipucode.ui.component.card.HeadlineHome
 import com.kipucode.ui.component.card.HomeCard
@@ -44,14 +46,18 @@ import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.LightGray
 import com.kipucode.ui.theme.Nunito
+import com.kipucode.viewmodel.CoursesViewModel
 import com.kipucode.viewmodel.UserViewModel
 
 @Composable
 fun HomeScreen(
-    userViewModel: UserViewModel
+    userViewModel: UserViewModel,
+    courseViewModel: CoursesViewModel = hiltViewModel()
 ) {
     val userProfile by userViewModel.userProfile.collectAsStateWithLifecycle()
+    val userProgress by userViewModel.userProgress.collectAsStateWithLifecycle()
     val refreshState by userViewModel.refreshState.collectAsStateWithLifecycle()
+    val courseState by courseViewModel.courseState.collectAsStateWithLifecycle()
 
     val isRefreshing = refreshState is Response.Loading
 
@@ -71,6 +77,7 @@ fun HomeScreen(
         }
     }
 
+
     PullToRefreshBox(
         isRefreshing = isRefreshing,
         onRefresh = { userViewModel.swipeToRefresh() },
@@ -82,18 +89,58 @@ fun HomeScreen(
                 .background(BackgroundGray)
                 .padding(top = 16.dp)
         ) {
-            HeadlineHome(
-                userName = userProfile?.name ?: "",
-                userXp = userProfile?.totalXp ?: 0,
-                userStreak = userProfile?.streakDay ?: 0,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
+            when(val result = userProgress){
+                is Response.Loading -> {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator(color = KipuTeal)
+                    }
+                }
+                is Response.Success -> {
+                    val progress = result.data
+                    HeadlineHome(
+                        userName = userProfile?.name ?: "",
+                        userXp = progress.totalXp,
+                        userStreak = progress.streakDay,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                }
+                is Response.Error -> {
+                    result.message?.let {
+                        HeadlineHome(
+                            userName = it,
+                            userXp = 0,
+                            userStreak = 0,
+                            modifier = Modifier.padding(horizontal = 16.dp)
+                        )
+                    }
+                }
+                null -> {
+                    HeadlineHome(
+                        userName = "",
+                        userXp = 0,
+                        userStreak = 0,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            HomeContent(
-                lessons = mockLessons
-            )
+            when(val course = courseState){
+                is Response.Loading -> {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator(color = KipuTeal)
+                    }
+                }
+                is Response.Success -> {
+                    HomeContent(
+                        lessons = mockLessons,
+                        course = course.data[0]
+                    )
+                }
+                is Response.Error -> {}
+                null -> {}
+            }
         }
     }
 }
@@ -158,7 +205,8 @@ fun LessonCard(lesson: Lesson) {
 
 @Composable
 fun HomeContent(
-    lessons: List<Lesson>
+    lessons: List<Lesson>,
+    course: Course
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -167,9 +215,10 @@ fun HomeContent(
         // --- SECCIÓN 2: TARJETA DE PROGRESO ---
         item {
             HomeCard(
-                courseName = "Introduction to Python Programming",
+                courseName = course.title,
                 currentLessons = 1,
-                totalLessons = 9,
+                description = course.description,
+                totalLessons = lessons.size,
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -228,6 +277,8 @@ val mockLessons = listOf(
     Lesson(7, "7. Object-Oriented Programming", LessonStatus.LOCKED),
 )
 
+val mockCourse = Course("1", "Introduction to Python Programing", "Learning Python to beginner", 1,10,15,1231254112)
+
 
 @Preview(showBackground = true)
 @Composable
@@ -248,7 +299,8 @@ fun HomePreview() {
         Spacer(modifier = Modifier.height(16.dp))
 
         HomeContent(
-            lessons = mockLessons
+            lessons = mockLessons,
+            course = mockCourse
         )
     }
 }

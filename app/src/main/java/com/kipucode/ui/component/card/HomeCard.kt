@@ -26,7 +26,7 @@ fun HomeCard(
     courseName: String,
     currentLessons: Int,
     totalLessons: Int,
-
+    description: String,
     modifier: Modifier = Modifier
 ) {
     val horizontalProgressFactor = currentLessons.toFloat() / totalLessons.toFloat()
@@ -77,7 +77,22 @@ fun HomeCard(
             )
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(12.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Top
+        ) {
+            Text(
+                text = description,
+                color = Color.White,
+                fontSize = 14.sp,
+                fontFamily = Nunito,
+                fontWeight = FontWeight.Normal,
+                modifier = Modifier.weight(1f),
+                lineHeight = 15.sp
+            )
+        }
+        Spacer(modifier = Modifier.height(12.dp))
 
         // --- SECCIÓN 2: PROGRESO ---
         Row(
@@ -158,6 +173,7 @@ fun HomeCardPreview() {
         HomeCard(
             courseName = "Fundamentos Básicos de Programación Python",
             currentLessons = 3,
+            description = "Aprendiendo Python para principiantes",
             totalLessons = 10,
         )
     }
