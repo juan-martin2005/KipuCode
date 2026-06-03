@@ -1,5 +1,6 @@
 package com.kipucode.data.repository
 
+import android.util.Log
 import com.kipucode.data.mapper.toDomain
 import com.kipucode.data.remote.firebase.service.UserRemoteDataSource
 import com.kipucode.domain.model.ErrorType
@@ -17,10 +18,12 @@ internal class UserProgressRepositoryImpl @Inject constructor(
             if (userProgressDto != null) {
                 Response.Success(userProgressDto.toDomain())
             } else {
+                Log.d("USER_PROGRESS ERROR: ", "Progress not found")
                 Response.Error(message = "Progress not found", error = ErrorType.FIRESTORE_ERROR)
             }
         }
         catch (ex: Exception){
+            Log.d("FIREBASE ERROR: ", ex.toString())
             Response.Error(message = ex.message, error = ErrorType.FIRESTORE_ERROR)
         }
     }

@@ -11,7 +11,7 @@ fun UserProgressDto.toDomain(): UserProgress {
         currentLessonId = this.currentLessonId,
         status = "active", // Default status
         score = this.score,
-        completedAt = null,
+        completedAt = this.completedAt?.toDate()?.time,
         totalXp = this.totalXp,
         points = this.points,
         streakDay = this.streakDays,
