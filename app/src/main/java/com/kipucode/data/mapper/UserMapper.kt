@@ -12,8 +12,16 @@ fun UserDto.toDomain(): User{
     )
 }
 
-fun User.toEntity(): UserEntity{
+fun UserDto.toEntity(): UserEntity{
     return UserEntity(
+        id = this.id,
+        name = this.name,
+        email = this.email,
+    )
+}
+
+fun UserEntity.toDomain() : User{
+    return User(
         id = this.id,
         name = this.name,
         email = this.email,

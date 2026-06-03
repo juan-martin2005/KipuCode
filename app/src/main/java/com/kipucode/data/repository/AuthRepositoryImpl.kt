@@ -6,6 +6,8 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.kipucode.data.local.dao.UserDao
 import com.kipucode.data.local.model.UserEntity
+import com.kipucode.data.mapper.toDomain
+import com.kipucode.data.mapper.toEntity
 import com.kipucode.data.remote.firebase.service.AuthRemoteDataSource
 import com.kipucode.data.remote.firebase.service.UserRemoteDataSource
 import com.kipucode.domain.model.ErrorType
@@ -27,16 +29,10 @@ internal class AuthRepositoryImpl @Inject constructor(
 
             if (currentUser != null) {
                 if (currentUser.isEmailVerified) {
-                    val userProfile = userRemoteDataSource.getUserProfile()
-                    if (userProfile != null) {
-                        userDao.insert(
-                            UserEntity(
-                                id = userProfile.id,
-                                name = userProfile.name,
-                                email = userProfile.email,
-                            )
-                        )
-                        Response.Success(userProfile)
+                    val userEntity = userRemoteDataSource.getUserProfile()?.toEntity()
+                    if (userEntity != null) {
+                        userDao.insert(userEntity)
+                        Response.Success(userEntity.toDomain())
                     } else {
                         Response.Error(
                             "User profile data not found in database",
@@ -50,10 +46,13 @@ internal class AuthRepositoryImpl @Inject constructor(
                 Response.Error("Unexpected error retrieving user information", ErrorType.FIRESTORE_ERROR)
             }
         } catch (ex: FirebaseAuthInvalidCredentialsException) {
+            Log.d("ERROR FIREBASE", ex.toString())
             Response.Error("The credential is invalid", ErrorType.CREDENTIAL_INVALID)
         } catch (ex: FirebaseNetworkException) {
+            Log.d("ERROR FIREBASE", ex.toString())
             Response.Error("Please check your network and try again", ErrorType.NETWORK_ERROR)
         } catch (ex: Exception) {
+            Log.d("ERROR FIREBASE", ex.toString())
             Response.Error("An unexpected error occurred while signing in", ErrorType.FIRESTORE_ERROR)
         }
     }

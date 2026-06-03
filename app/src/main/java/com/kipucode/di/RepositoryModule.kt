@@ -3,9 +3,11 @@ package com.kipucode.di
 import com.kipucode.data.repository.AuthRepositoryImpl
 import com.kipucode.data.repository.CourseRepositoryImpl
 import com.kipucode.data.repository.UserProgressRepositoryImpl
+import com.kipucode.data.repository.UserRepositoryImpl
 import com.kipucode.domain.repository.AuthRepository
 import com.kipucode.domain.repository.CourseRepository
 import com.kipucode.domain.repository.UserProgressRepository
+import com.kipucode.domain.repository.UserRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -33,4 +35,10 @@ abstract class RepositoryModule {
     internal abstract fun bindUserProgressRepository(
         userProgressRepositoryImpl: UserProgressRepositoryImpl
     ): UserProgressRepository
+
+    @Binds
+    @Singleton
+    internal abstract fun bindUserRepository(
+        userRepository: UserRepositoryImpl
+    ): UserRepository
 }
