@@ -16,29 +16,35 @@ class CourseRemoteDataSource @Inject constructor(
     }
 
     // COURSE - GET
-    suspend fun getCourses(): List<CourseDto>{
-        return firestore.collection(COURSE_COLLECTION)
+    suspend fun getCourses(): List<CourseDto> =
+        firestore.collection(COURSE_COLLECTION)
             .get()
             .await()
             .map { it.toObject<CourseDto>().copy(id = it.id) }
+
+    suspend fun getCourseById(courseId: String): CourseDto? {
+        val snapshot = firestore.collection(COURSE_COLLECTION)
+            .document(courseId)
+            .get()
+            .await()
+
+        return snapshot.toObject<CourseDto>()?.copy(id = snapshot.id)
     }
 
-    suspend fun getLessonByCourseId(courseId: String): List<LessonDto>  = firestore.collection(LESSON_COLLECTION)
-        .whereEqualTo("courseId", courseId)
-        .get()
-        .await()
-        .map { it.toObject<LessonDto>().copy(id = it.id) }
+    suspend fun getLessonByCourseId(courseId: String): List<LessonDto>  =
+        firestore.collection(LESSON_COLLECTION)
+            .whereEqualTo("courseId", courseId)
+            .get()
+            .await()
+            .map { it.toObject<LessonDto>().copy(id = it.id) }
 
-    // COURSE - CREATE
-    suspend fun saveCourse(course: CourseDto){
-        val courseRef = firestore.collection(COURSE_COLLECTION).document()
-        courseRef.set(course.copy(id = courseRef.id)).await()
+    suspend fun getLessonById(lessonId: String): LessonDto? {
+        val snapshot = firestore.collection(LESSON_COLLECTION)
+            .document(lessonId)
+            .get()
+            .await()
+
+        return snapshot.toObject<LessonDto>()?.copy(id = snapshot.id)
     }
-
-
-    //LESSON
-
-    //EXERCISES
-
 
 }
