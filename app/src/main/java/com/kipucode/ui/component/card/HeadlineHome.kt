@@ -41,6 +41,7 @@ import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.Nunito
 import com.kipucode.ui.theme.White
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun HeadlineHome(
@@ -53,13 +54,14 @@ fun HeadlineHome(
 
     LaunchedEffect(Unit) {
         while (true) {
-            delay(10000)
+            delay(5000.milliseconds)
             showXp = !showXp
         }
     }
 
     Column(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp)
+
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),

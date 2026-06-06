@@ -3,7 +3,7 @@ package com.kipucode.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kipucode.domain.model.Response
-import com.kipucode.domain.model.User
+import com.kipucode.domain.model.UserDomain
 import com.kipucode.domain.usecase.user.IsUserLoggedInUseCase
 import com.kipucode.domain.usecase.user.LoginUseCases
 import com.kipucode.domain.usecase.user.LogoutUseCase
@@ -15,6 +15,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+// ============================================================================================
+//  VIEWMODEL DE AUTENTICACIÓN
+// ============================================================================================
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val loginUseCases: LoginUseCases,
@@ -24,28 +27,34 @@ class AuthViewModel @Inject constructor(
     private val resetPasswordUseCase: ResetPasswordUseCase
 ) : ViewModel() {
 
-    private val _authState = MutableStateFlow<Response<User>?>(null)
+    // Estados privados -> El estado solo puede cambiar en la clase AuthViewModel
+    private val _authState = MutableStateFlow<Response<UserDomain>?>(null)
     private val _resetPasswordState = MutableStateFlow<Response<Unit>?>(null)
-    val resetPasswordState: StateFlow<Response<Unit>?> = _resetPasswordState
-    val loginState : StateFlow<Response<User>?> = _authState
 
-    // Register and Login =========================================================================
+    // Estados públicos -> Permite reaccionar a los cambios sin modificarlos
+    val authState : StateFlow<Response<UserDomain>?> = _authState
+    val resetPasswordState: StateFlow<Response<Unit>?> = _resetPasswordState
+
     fun resetState() {
         _authState.value = null
     }
     fun login (email: String, password: String){
-
         viewModelScope.launch {
+            _authState.value = Response.Loading
+
             val result = loginUseCases.invoke(email,password)
             _authState.value = result
         }
     }
-    fun register(user: User, password: String) {
+    fun register(userDomain: UserDomain, password: String) {
         viewModelScope.launch {
-            val result = registerUseCase.invoke(user,password)
+            _authState.value = Response.Loading
+
+            val result = registerUseCase.invoke(userDomain,password)
             _authState.value = result
         }
     }
+
     fun isUserLoggedIn(): Boolean {
         return isUserLoggedInUseCase.invoke()
     }
@@ -53,21 +62,18 @@ class AuthViewModel @Inject constructor(
     fun logout() {
         viewModelScope.launch {
             logoutUseCase.invoke()
-            resetState()
         }
     }
 
-    // Reset Password =============================================================================
     fun resetForgotPasswordState() {
         _resetPasswordState.value = null
     }
     fun resetPassword(email: String) {
         viewModelScope.launch {
             _resetPasswordState.value = Response.Loading
+
             val result = resetPasswordUseCase.invoke(email)
             _resetPasswordState.value = result
         }
     }
-
-
 }

@@ -39,7 +39,7 @@ fun LoginScreen(
 
     authViewModel: AuthViewModel = hiltViewModel()
 ) {
-    val loginState by authViewModel.loginState.collectAsStateWithLifecycle()
+    val loginState by authViewModel.authState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
     // Estados para atrapar los errores del ViewModel

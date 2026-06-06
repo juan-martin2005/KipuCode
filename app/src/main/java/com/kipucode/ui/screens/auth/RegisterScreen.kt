@@ -21,7 +21,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.kipucode.R
 import com.kipucode.domain.model.ErrorType
 import com.kipucode.domain.model.Response
-import com.kipucode.domain.model.User
+import com.kipucode.domain.model.UserDomain
 import com.kipucode.ui.component.button.FilledButton
 import com.kipucode.ui.component.text_field.ClickableLink
 import com.kipucode.ui.component.text_field.KipuForm
@@ -33,9 +33,10 @@ fun RegisterScreen(
     onRegisterSuccess: () -> Unit,
     onNavigateToLogin: () -> Unit,
     onBack: () -> Unit,
+
     authViewModel: AuthViewModel = hiltViewModel()
 ) {
-    val loginState by authViewModel.loginState.collectAsStateWithLifecycle()
+    val loginState by authViewModel.authState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
     var authEmailError by remember { mutableStateOf<String?>(null) }
@@ -46,6 +47,7 @@ fun RegisterScreen(
 
 
     LaunchedEffect(loginState) {
+        Log.d("TEST_STATE", "$loginState")
         when (loginState) {
             is Response.Loading -> {
             }
@@ -78,8 +80,8 @@ fun RegisterScreen(
             authEmailError = null
             authViewModel.resetState()
 
-            val user = User(name = name, email = email)
-            authViewModel.register(user, password)
+            val userDomain = UserDomain(name = name, email = email)
+            authViewModel.register(userDomain, password)
         },
         externalEmailError = authEmailError,
         externalConfirmPasswordError = authconfirmPasswordError

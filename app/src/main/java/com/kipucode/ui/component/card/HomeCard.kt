@@ -17,17 +17,22 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kipucode.R
+import com.kipucode.ui.theme.BackgroundGray
+import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.KipuTealDark
 import com.kipucode.ui.theme.Nunito
 import com.kipucode.ui.theme.White
 
 @Composable
 fun HomeCard(
+    modifier: Modifier = Modifier,
+
     courseName: String,
     currentLessons: Int,
     totalLessons: Int,
-    description: String,
-    modifier: Modifier = Modifier
+    courseNumber: Int? = 0,
+
+    iconResId: Int? = null,
 ) {
     val horizontalProgressFactor = currentLessons.toFloat() / totalLessons.toFloat()
     val progressPercentage = (horizontalProgressFactor * 100).toInt()
@@ -56,12 +61,21 @@ fun HomeCard(
                     .padding(10.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_python),
-                    contentDescription = "Logo",
-                    tint = Color.Unspecified,
-                    modifier = Modifier.fillMaxSize()
-                )
+                if (iconResId != null) {
+                    Icon(
+                        painter = painterResource(id = iconResId),
+                        contentDescription = "Logo",
+                        tint = Color.Unspecified,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                } else if (courseNumber != null) {
+                    Text(
+                        text = courseNumber.toString(),
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = White.copy(alpha = 0.9f)
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.width(16.dp))
@@ -77,22 +91,7 @@ fun HomeCard(
             )
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.Top
-        ) {
-            Text(
-                text = description,
-                color = Color.White,
-                fontSize = 14.sp,
-                fontFamily = Nunito,
-                fontWeight = FontWeight.Normal,
-                modifier = Modifier.weight(1f),
-                lineHeight = 15.sp
-            )
-        }
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         // --- SECCIÓN 2: PROGRESO ---
         Row(
@@ -161,20 +160,38 @@ fun HomeCard(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, name = "Con Icono Drawable")
 @Composable
-fun HomeCardPreview() {
+fun HomeCardPreviewWithIcon() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color(0xFFf6f7f9))
+            .background(BackgroundGray)
             .padding(16.dp)
     ) {
         HomeCard(
             courseName = "Fundamentos Básicos de Programación Python",
             currentLessons = 3,
-            description = "Aprendiendo Python para principiantes",
             totalLessons = 10,
+            iconResId = R.drawable.ic_python
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Con Número de Curso")
+@Composable
+fun HomeCardPreviewWithNumber() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(BackgroundGray)
+            .padding(16.dp)
+    ) {
+        HomeCard(
+            courseName = "Fundamentos Básicos de Programación Python",
+            currentLessons = 3,
+            totalLessons = 10,
+            courseNumber = 1
         )
     }
 }
