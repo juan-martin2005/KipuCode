@@ -17,11 +17,8 @@ import androidx.room.PrimaryKey
 data class BlockOptionEntity(
     @PrimaryKey
     val id: String,
-    @ColumnInfo(name = "exercise_id")
-    val exerciseId: String?,
+    @ColumnInfo(name = "exercise_id") val exerciseId: String?,
     val content: String?,
-    @ColumnInfo(name = "is_correct")
-    val isCorrect: Boolean,
-    @ColumnInfo(name = "correct_position")
-    val correctPosition: Int
+    @ColumnInfo(name = "is_correct") val isCorrect: Boolean,
+//    @ColumnInfo(name = "correct_position") val correctPosition: Int
 )

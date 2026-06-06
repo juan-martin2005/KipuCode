@@ -2,24 +2,32 @@ package com.kipucode.data.mapper
 
 import com.kipucode.data.local.model.CourseEntity
 import com.kipucode.data.remote.firebase.dto.CourseDto
-import com.kipucode.domain.model.Course
+import com.kipucode.domain.model.CourseDomain
 
-fun CourseDto.toEntity() = CourseEntity(
-    id = id,
-    title = title,
-    description = description,
-    orderIndex = orderIndex,
-    points = points,
-    exp = exp,
-    createdAt = createdAt?.toDate()?.time
-)
+// ===================================
+//  Room (Entity) -> Dominio
+// ===================================
+fun CourseEntity.toDomain(): CourseDomain =
+    CourseDomain(
+        id = id,
+        title = title,
+        description = description,
+        orderIndex = orderIndex,
+        points = points,
+        exp = exp,
+        createdAt = createdAt
+    )
 
-fun CourseEntity.toDomain() = Course(
-    id = id,
-    title = title,
-    description = description,
-    orderIndex = orderIndex,
-    points = points,
-    exp = exp,
-    createdAt = createdAt
-)
+// ===================================
+//  Domain -> Room (Entity)
+// ===================================
+fun CourseDto.toEntity(): CourseEntity =
+    CourseEntity(
+        id = id,
+        title = title,
+        description = description,
+        orderIndex = orderIndex,
+        points = points,
+        exp = exp,
+        createdAt = createdAt?.toDate()?.time
+    )

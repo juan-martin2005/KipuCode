@@ -43,6 +43,9 @@ android {
 }
 
 dependencies {
+    // Traductor para ROOM List <-> String
+    implementation(libs.gson)
+
     // Enrutador
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.hilt.navigation.compose)

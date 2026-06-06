@@ -17,12 +17,10 @@ import androidx.room.PrimaryKey
 data class ExerciseEntity(
     @PrimaryKey
     val id: String,
-    @ColumnInfo(name = "lesson_id")
-    val lessonId: String?,
+    @ColumnInfo(name = "lesson_id") val lessonId: String?,
     val type: String?,
     val instruction: String?,
     val points: Int,
     val exp: Int,
-    @ColumnInfo(name = "order_index")
-    val orderIndex: Int
+    @ColumnInfo(name = "order_index") val orderIndex: Int
 )

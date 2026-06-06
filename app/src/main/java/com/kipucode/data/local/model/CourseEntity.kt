@@ -10,10 +10,8 @@ data class CourseEntity(
     val id: String,
     val title: String,
     val description: String,
-    @ColumnInfo(name = "order_index")
-    val orderIndex: Int,
+    @ColumnInfo(name = "order_index") val orderIndex: Int,
     val points: Int,
     val exp: Int,
-    @ColumnInfo(name = "created_at")
-    val createdAt: Long?
+    @ColumnInfo(name = "created_at") val createdAt: Long?
 )

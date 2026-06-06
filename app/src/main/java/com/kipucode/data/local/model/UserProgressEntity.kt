@@ -12,31 +12,26 @@ import androidx.room.PrimaryKey
             entity = UserEntity::class,
             parentColumns = ["id"],
             childColumns = ["user_id"],
-            onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
             entity = LessonEntity::class,
             parentColumns = ["id"],
             childColumns = ["lesson_id"],
-            onDelete = ForeignKey.CASCADE
         )
     ]
 )
 data class UserProgressEntity(
     @PrimaryKey
     val id: String,
-    @ColumnInfo(name = "user_id")
-    val userId: String?,
-    @ColumnInfo(name = "lesson_id")
-    val lessonId: String?,
+    @ColumnInfo(name = "user_id") val userId: String?,
+    @ColumnInfo(name = "lesson_id") val lessonId: String?,
     val status: String?,
     val score: Int,
-    @ColumnInfo(name = "total_xp")
-    val totalXp: Int,
+    @ColumnInfo(name = "total_xp") val totalXp: Int,
     val points: Int,
-    @ColumnInfo(name = "streak_day")
-    val streakDay: Int,
-    @ColumnInfo(name = "completed_at")
-    val completedAt: Long?,
+    @ColumnInfo(name = "streak_day") val streakDay: Int,
+    @ColumnInfo(name = "completed_at") val completedAt: Long?,
+    @ColumnInfo(name = "completed_lessons") val completedLessons: List<String>,
+    @ColumnInfo(name = "completed_courses") val completedCourses: List<String>
 
 )

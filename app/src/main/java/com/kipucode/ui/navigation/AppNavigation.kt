@@ -78,8 +78,7 @@ fun AppNavigation(){
                 RegisterScreen(
                     onRegisterSuccess = {
                         navController.navigate("login") {
-                            popUpTo(0)
-                        }
+                            popUpTo("register") { inclusive = true }                        }
                     },
                     onNavigateToLogin = {
                         navController.navigate("login") {
@@ -96,6 +95,7 @@ fun AppNavigation(){
                 LoginScreen(
                     onLoginSuccess = {
                         userViewModel.startObservingUser()
+                        userViewModel.startObservingUserProgress()
                         navController.navigate("home") { popUpTo(0) }
                     },
                     onNavigateToRegister = {
@@ -122,7 +122,7 @@ fun AppNavigation(){
             }
 
             composable("explore"){
-                ExploreScreen(
+                ExploreScreen(userViewModel = userViewModel
                 )
             }
 

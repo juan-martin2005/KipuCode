@@ -8,7 +8,7 @@ data class UserProgressDto(
     val points: Int = 0,
     val totalXp: Int = 0,
     val streakDays: Int = 0,
-    val score: Int = 0,
+    val score: Int = 0, // Para una tabla de Ranking - NO SE IMPLEMENTARA
     val completedLessons: List<String> = listOf(""),
     val completedCourses: List<String> = listOf(""),
     val completedAt : Timestamp? = null
