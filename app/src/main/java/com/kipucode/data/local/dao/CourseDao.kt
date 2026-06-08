@@ -32,12 +32,6 @@ interface CourseDao {
     suspend fun insertCourses(courses: List<CourseEntity>)
 
     // ========================================================================================
-    //  Guardar Lecciones -> Inserción de las lecciones vinculadas al curso
-    // ========================================================================================
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertLessons(lessons: List<LessonEntity>)
-
-    // ========================================================================================
     //  Obtener todos los cursos disponibles de la bd local (Flow)
     // ========================================================================================
     @Query("SELECT * FROM courses")
@@ -49,12 +43,6 @@ interface CourseDao {
     @Transaction
     @Query("SELECT * FROM courses ORDER BY order_index ASC")
     fun getCourseWithLessons(): Flow<List<CourseWithLessons>>
-
-    // ========================================================================================
-    //  Obtener lecciones de un curso específico ordenado
-    // ========================================================================================
-    @Query("SELECT * FROM lessons WHERE course_id = :courseId ORDER BY order_index ASC")
-    fun getLessonsByCourseId(courseId: String): Flow<List<LessonEntity>>
 
     // ========================================================================================
     //  Obtener la información de un solo curso mediante su ID

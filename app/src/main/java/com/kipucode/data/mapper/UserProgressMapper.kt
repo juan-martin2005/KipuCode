@@ -59,17 +59,19 @@ fun UserProgressDomain.toDto(): UserProgressDto {
     )
 }
 
-//fun UserProgressDomain.toEntity(): UserProgressEntity {
-//    return UserProgressEntity(
-//        id = this.id,
-//        userId = this.userId,
-//        lessonId = this.currentLessonId,
-//        status = this.status,
-//        score = this.score,
-//        totalXp = this.totalXp,
-//        points = this.points,
-//        streakDay = this.streakDay,
-//        completedAt = this.completedAt
-//    )
-//}
+fun UserProgressDomain.toEntity(): UserProgressEntity {
+    return UserProgressEntity(
+        id = this.id,
+        userId = this.userId,
+        lessonId = this.currentLessonId,
+        status = this.status,
+        score = this.score,
+        totalXp = this.totalXp,
+        points = this.points,
+        streakDay = this.streakDay,
+        completedAt = this.completedAt,
+        completedCourses = this.completedCourses,
+        completedLessons = this.completedLessons
+    )
+}
 //

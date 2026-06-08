@@ -46,13 +46,13 @@ interface LessonDao {
     //  Obtener información de una lección específica por ID
     // ========================================================================================
     @Query("SELECT * FROM lessons WHERE id = :lessonId")
-    fun getLessonByIdFlow(lessonId: String): Flow<LessonEntity?>
+    fun getLessonById(lessonId: String): Flow<LessonEntity?>
 
     // ========================================================================================
     //  Obtener las lecciones de un curso por su `course_id`
     // ========================================================================================
     @Query("SELECT * FROM lessons WHERE course_id = :courseId ORDER BY order_index ASC")
-    fun getLessonsByCourseIdFlow(courseId: String): Flow<List<LessonEntity>>
+    fun getLessonsByCourseId(courseId: String): Flow<List<LessonEntity>>
 
     // ========================================================================================
     //  Cargar las lecciones junto con sus ejercicios relacionados

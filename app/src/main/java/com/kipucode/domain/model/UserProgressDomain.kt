@@ -1,8 +1,8 @@
 package com.kipucode.domain.model
 
 data class UserProgressDomain(
-    val id: String = "",
-    val userId: String = "",
+    val id: String,
+    val userId: String,
     val currentLessonId: String = "",
     val status: String = "",
     val points: Int = 0,
