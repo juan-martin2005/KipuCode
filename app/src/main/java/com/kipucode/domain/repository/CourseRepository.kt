@@ -2,7 +2,6 @@ package com.kipucode.domain.repository
 
 import com.kipucode.domain.model.CourseDomain
 import com.kipucode.domain.model.CourseWithLessonsDomain
-import com.kipucode.domain.model.LessonDomain
 import com.kipucode.domain.model.Response
 import kotlinx.coroutines.flow.Flow
 
@@ -24,19 +23,10 @@ interface CourseRepository {
     fun getCourses(): Flow<List<CourseDomain>>
 
     // ========================================================================================
-    //  Obtener contenido del Curso -> Lecciones asociadas a `courseId`
-    // ========================================================================================
-    fun getLessonsByCourseId(courseId: String): Flow<List<LessonDomain>>
-
-    // ========================================================================================
     //  Obtener la información actualizada de un curso por `courseId`
     // ========================================================================================
     fun getCourseById(courseId: String): Flow<CourseDomain?>
 
-    // ========================================================================================
-    //  Obtener datos actualizados de una lección por `lessonId`
-    // ========================================================================================
-    fun getLessonById(lessonId: String): Flow<LessonDomain?>
 
     fun getCourseWithLessons(): Flow<List<CourseWithLessonsDomain>>
 
