@@ -17,6 +17,8 @@ import com.kipucode.domain.model.UserDomain
 import com.kipucode.domain.model.UserProgressDomain
 import com.kipucode.domain.repository.AuthRepository
 import com.kipucode.domain.repository.CourseRepository
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
 
 // ================================================================================================
@@ -36,77 +38,43 @@ internal class AuthRepositoryImpl @Inject constructor(
     private val courseRepository: CourseRepository
 ): AuthRepository {     // Equivalente en java a hacer el (implements)
 
+    companion object {
+        private const val DEFAULT_INITIAL_LESSON = "python_lesson_01"
+        private const val STATUS_IN_PROGRESS = "IN_PROGRESS"
+    }
+
     // ============================================================================================
     //  Iniciar Sesión -> FirebaseAuth autentificación (Correo y Contraseña)
     // ============================================================================================
     override suspend fun login(email: String, password: String): Response<UserDomain> {
-        return try {
-            // AUTENTICACIÓN solo usa (Correo y Contraseña)
+        return safeFirebaseCall("LOGIN_ERROR"){
             val authResult = authRemoteDataSource.signInWithEmail(email, password)
-            val currentUser = authResult.user
+            val currentUser = authResult.user ?: return@safeFirebaseCall Response.Error("An unexpected error occurred while signing in", ErrorType.FIRESTORE_ERROR)
 
-            // Si el usuario existe y las credenciales son correctas
-            if (currentUser != null) {
-                // Validación extra -> tener su correo verificado en FirebaseAuth
-                if (currentUser.isEmailVerified) {
-                    // FIRESTORE si esta verificado obtenemos los datos y progreso del usuario
-                    val userDto = userRemoteDataSource.getUserProfile()
-                    val progressDto = userRemoteDataSource.getUserProgress()
+            if(!currentUser.isEmailVerified) return@safeFirebaseCall Response.Error("Email verification required", ErrorType.EMAIL_NOT_VERIFIED)
 
-                    if (userDto != null && progressDto != null) {
-                        userDao.insert(userDto.toEntity())
 
-                        val syncResult = courseRepository.refreshCoursesAndLessons()
-                        if (syncResult is Response.Success) {
-                            userProgressDao.insert(progressDto.toEntity())
+            val (userDto, progressDto) = coroutineScope {
+                val userDtoDeferred = async { userRemoteDataSource.getUserProfile() }
+                val progressDtoDeferred = async { userRemoteDataSource.getUserProgress() }
 
-                            return Response.Success(userDto.toDomain())
-                        } else {
-                            return Response.Error(
-                                "Error syncing courses during login",
-                                ErrorType.FIRESTORE_ERROR
-                            )
-                        }
+                Pair(userDtoDeferred.await(), progressDtoDeferred.await())
+            }
 
-                    } else {
-                        Response.Error(
-                            "User profile data not found in database",
-                            ErrorType.FIRESTORE_ERROR
-                        )
-                    }
-                } else {
-                    Response.Error(
-                        "Email verification required",
-                        ErrorType.EMAIL_NOT_VERIFIED
-                    )
-                }
-            } else {
-                Response.Error(
-                    "An unexpected error occurred while signing in",
+            if(userDto == null || progressDto == null) {
+
+                return@safeFirebaseCall Response.Error(
+                    "User profile data not found",
                     ErrorType.FIRESTORE_ERROR
                 )
             }
-        } catch (ex: FirebaseAuthInvalidCredentialsException) {
-            Log.d("FIREBASE_LOGIN_ERROR", ex.toString())
+            val syncResult = courseRepository.refreshCoursesAndLessons()
+            if(syncResult !is Response.Success) return@safeFirebaseCall Response.Error("Error syncing courses during login", ErrorType.FIRESTORE_ERROR)
 
-            Response.Error(
-                "The credential is invalid",
-                ErrorType.CREDENTIAL_INVALID
-            )
-        } catch (ex: FirebaseNetworkException) {
-            Log.d("FIREBASE_LOGIN_ERROR", ex.toString())
+            userDao.insert(userDto.toEntity())
+            userProgressDao.insert(progressDto.toEntity())
 
-            Response.Error(
-                "Please check your network and try again",
-                ErrorType.NETWORK_ERROR
-            )
-        } catch (ex: Exception) {
-            Log.d("FIREBASE_LOGIN_ERROR", ex.toString())
-
-            Response.Error(
-                "An unexpected error occurred while signing in",
-                ErrorType.FIRESTORE_ERROR
-            )
+            Response.Success(userDto.toDomain())
         }
     }
 
@@ -114,56 +82,26 @@ internal class AuthRepositoryImpl @Inject constructor(
     //  Registro de Usuario -> FirebaseAuth autentificación / Firestore almacenar datos extra.
     // ============================================================================================
     override suspend fun register(userDomain: UserDomain, password: String): Response<UserDomain> {
-        return try {
-            // AUTENTICACIÓN solo usa (Correo y Contraseña)
+        return safeFirebaseCall("REGISTER_ERROR"){
             val authResult = authRemoteDataSource.registerUserWithEmail(userDomain.email, password)
-            val currentUser = authResult.user // Almacenamos el usuario registrado
+            val currentUser = authResult.user ?: return@safeFirebaseCall Response.Error("An unexpected error occurred while signing in", ErrorType.FIRESTORE_ERROR)
 
-            // Si se registro correctamente
-            if (currentUser != null) {
-                // FIRESTORE creamos una hoja con los datos del usuario
-                val updatedUser = userDomain.copy(id = currentUser.uid)
-                userRemoteDataSource.saveUserProfile(updatedUser.toDto())
+            val user = userDomain.copy(id = currentUser.uid)
 
-                // FIRESTORE creamos una hoja con el progreso del usuario
-                val initialProgress = UserProgressDomain(
-                    id = updatedUser.id,
-                    userId = updatedUser.id,
-                    currentLessonId = "python_lesson_01",
-                    status = "IN_PROGRESS"
-                )
-                userRemoteDataSource.createUserProgress(initialProgress.toDto())
-
-                // Punto importante -> Eliminar el UID almacenado de FirebaseAuth por defecto
-                authRemoteDataSource.logoutUser()
-                Response.Success(userDomain)
-            } else {
-                Response.Error(
-                    "An unexpected error occurred during registration",
-                    ErrorType.FIRESTORE_ERROR
-                )
-            }
-        } catch (ex: FirebaseAuthUserCollisionException) {
-            Log.d("FIREBASE_REGISTER_ERROR", ex.toString())
-
-            Response.Error(
-                "The email is already registered",
-                ErrorType.EMAIL_ALREADY_EXIST
+            val initialProgress = UserProgressDomain(
+                id = user.id,
+                userId = user.id,
+                currentLessonId = DEFAULT_INITIAL_LESSON,
+                status = STATUS_IN_PROGRESS
             )
-        } catch (ex: FirebaseNetworkException) {
-            Log.d("FIREBASE_REGISTER_ERROR", ex.toString())
 
-            Response.Error(
-                "Please check your network and try again",
-                ErrorType.NETWORK_ERROR
-            )
-        } catch (ex: Exception) {
-            Log.d("FIREBASE_REGISTER_ERROR", ex.toString())
+            userRemoteDataSource.saveUserProfile(user.toDto())
+            userRemoteDataSource.createUserProgress(initialProgress.toDto())
 
-            Response.Error(
-                "An unexpected error occurred during registration",
-                ErrorType.FIRESTORE_ERROR
-            )
+            userDao.insert(user.toEntity())
+            userProgressDao.insert(initialProgress.toEntity())
+
+            Response.Success(user)
         }
     }
 
@@ -196,5 +134,26 @@ internal class AuthRepositoryImpl @Inject constructor(
         authRemoteDataSource.logoutUser()
         userProgressDao.clearProgressData()
         userDao.clearUserData()
+    }
+
+    private suspend fun <T> safeFirebaseCall(
+        logTag: String,
+        apiCall: suspend () -> Response<T>
+    ): Response<T> {
+        return try {
+         apiCall()
+         } catch (ex: FirebaseAuthInvalidCredentialsException) {
+            Log.e(logTag, "Invalid Credentials", ex)
+            Response.Error("The credential is invalid", ErrorType.CREDENTIAL_INVALID)
+         } catch (ex: FirebaseAuthUserCollisionException) {
+            Log.e(logTag, "User Collision", ex)
+            Response.Error("The email is already registered", ErrorType.EMAIL_ALREADY_EXIST)
+         } catch (ex: FirebaseNetworkException) {
+            Log.e(logTag, "Network Error", ex)
+            Response.Error("Please check your network and try again", ErrorType.NETWORK_ERROR)
+         } catch (ex: Exception) {
+            Log.e(logTag, "Unexpected Error", ex)
+            Response.Error("An unexpected error occurred", ErrorType.FIRESTORE_ERROR)
+         }
     }
 }
