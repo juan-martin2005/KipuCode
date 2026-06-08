@@ -45,7 +45,8 @@ import com.kipucode.viewmodel.UserViewModel
 @Composable
 fun HomeScreen(
     userViewModel: UserViewModel,
-    courseViewModel: CoursesViewModel = hiltViewModel()
+    courseViewModel: CoursesViewModel = hiltViewModel(),
+    onNavigateToCode: (String) -> Unit
 ) {
     val userProfile by userViewModel.userProfileState.collectAsStateWithLifecycle()
     val userProgress by userViewModel.userProgressState.collectAsStateWithLifecycle()
@@ -114,6 +115,7 @@ fun HomeScreen(
                     lessons = lessonsData,
                     currentLessonOrderIndex = currentLessonOrderIndex,
                     courseTitle = courseData?.title ?: "No Course Found",
+                    onLessonClick = onNavigateToCode
                 )
             }
         }
@@ -124,7 +126,8 @@ fun HomeScreen(
 fun HomeContent(
     courseTitle: String,
     lessons: List<LessonDomain>,
-    currentLessonOrderIndex: Int
+    currentLessonOrderIndex: Int,
+    onLessonClick : (String) -> Unit
     ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -163,7 +166,9 @@ fun HomeContent(
             LessonCard(
                 title = lesson.title,
                 isCompleted = isCompleted,
-                isLocked = isLocked
+                isLocked = isLocked,
+                contentLesson = lesson.content,
+                onLessonClick = onLessonClick
             )
 
             if (index < lessons.size - 1) {
@@ -234,7 +239,8 @@ fun HomePreview() {
         HomeContent(
             courseTitle = "Introduction to Python Programing",
             lessons = mockDomainLessons,
-            currentLessonOrderIndex = 2
+            currentLessonOrderIndex = 2,
+            onLessonClick = {}
         )
     }
 }

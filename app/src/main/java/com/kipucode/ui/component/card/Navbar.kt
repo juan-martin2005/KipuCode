@@ -6,8 +6,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.kipucode.ui.theme.Nunito
 import com.kipucode.R
 
@@ -73,9 +75,9 @@ fun KipuBottomBar(navController: NavController) {
     }
 }
 
-//@Preview(showBackground = true, name = "Vista del Navbar")
-//@Composable
-//fun NavbarPreview() {
-//    val navController = rememberNavController()
-//    KipuBottomBar(navController = navController)
-//}
+@Preview(showBackground = true, name = "Vista del Navbar")
+@Composable
+fun NavbarPreview() {
+    val navController = rememberNavController()
+    KipuBottomBar(navController = navController)
+}

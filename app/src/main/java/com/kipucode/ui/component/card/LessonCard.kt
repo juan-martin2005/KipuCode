@@ -31,7 +31,9 @@ import com.kipucode.ui.theme.Nunito
 fun LessonCard(
     title: String,
     isCompleted: Boolean,
-    isLocked: Boolean
+    isLocked: Boolean,
+    contentLesson: String,
+    onLessonClick: (String) -> Unit
 ) {
     val borderColor = if (isLocked) LightGray else KipuTeal
 
@@ -47,7 +49,12 @@ fun LessonCard(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        border = BorderStroke(1.5.dp, borderColor)
+        border = BorderStroke(1.5.dp, borderColor),
+        onClick = { 
+            if (!isLocked) {
+                onLessonClick(contentLesson)
+            }
+        }
     ) {
         Row(
             modifier = Modifier
@@ -110,17 +117,23 @@ fun LessonCardPreview() {
         LessonCard(
             title = "Pensamiento Computacional y Lenguajes Formales",
             isCompleted = true,
-            isLocked = false
+            isLocked = false,
+            contentLesson = "",
+            onLessonClick = {}
         )
         LessonCard(
             title = "El Intérprete de Python y tu Primer Script",
             isCompleted = false,
-            isLocked = false
+            isLocked = false,
+            contentLesson = "",
+            onLessonClick = {}
         )
         LessonCard(
             title = "Tipos de Datos Fundamentales",
             isCompleted = false,
-            isLocked = true
+            isLocked = true,
+            contentLesson = "",
+            onLessonClick = {}
         )
     }
 }

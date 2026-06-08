@@ -1,5 +1,6 @@
 package com.kipucode.ui.navigation
 
+import android.net.Uri
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -13,10 +14,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import com.kipucode.ui.component.card.KipuBottomBar
 import com.kipucode.ui.screens.auth.ForgotPasswordScreen
 import com.kipucode.ui.screens.auth.LoginScreen
 import com.kipucode.ui.screens.auth.RegisterScreen
+import com.kipucode.ui.screens.code.CodeScreen
 import com.kipucode.ui.screens.explore.ExploreScreen
 import com.kipucode.ui.screens.home.HomeScreen
 import com.kipucode.ui.screens.onboarding.OnboardingScreen
@@ -36,8 +40,8 @@ fun AppNavigation(){
         bottomBar = {
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentRoute = navBackStackEntry?.destination?.route
-
-            if (currentRoute in listOf("home", "explore", "code", "profile")) {
+            val baseRoute = currentRoute?.substringBefore("?") ?: ""
+            if (baseRoute in listOf("home", "explore", "code", "profile")) {
                 KipuBottomBar(navController = navController)
             }
         }
@@ -118,7 +122,13 @@ fun AppNavigation(){
             }
 
             composable("home"){
-                HomeScreen(userViewModel = userViewModel)
+                HomeScreen(
+                    userViewModel = userViewModel,
+                    onNavigateToCode = { contentLesson ->
+                        val encodedContent = Uri.encode(contentLesson)
+                        navController.navigate("code?contentLesson=${encodedContent}")
+                    }
+                )
             }
 
             composable("explore"){
@@ -126,8 +136,16 @@ fun AppNavigation(){
                 )
             }
 
-            composable("code"){
-                Text(text = "Pantalla de Código - TEST")
+            composable(route = "code?contentLesson={contentLesson}",
+                arguments = listOf(navArgument("contentLesson"){
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                })
+            )
+            {
+                val contentLesson = it.arguments?.getString("contentLesson")
+                CodeScreen(contentLesson)
             }
 
             composable("profile"){
