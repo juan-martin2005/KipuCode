@@ -1,5 +1,6 @@
 [versions]
 agp = "9.2.1"
+composeMarkdown = "0.5.0"
 coreKtx = "1.18.0"
 gson = "2.14.0"
 hiltAndroid = "2.59.2"
@@ -21,6 +22,7 @@ hiltNavigationCompose = "1.2.0"
 [libraries]
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
+compose-markdown = { module = "com.github.jeziellago:compose-markdown", version.ref = "composeMarkdown" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-auth = { module = "com.google.firebase:firebase-auth" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
