@@ -63,7 +63,8 @@ fun OnboardingScreen(
             textAlign = TextAlign.Center,
             lineHeight = 40.sp,
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp),
             color = Color(0xFF081c40),
 
             )

@@ -131,21 +131,24 @@ fun AppNavigation(){
                 )
             }
 
-            composable("explore"){
-                ExploreScreen(userViewModel = userViewModel
-                )
-            }
-
-            composable(route = "code?contentLesson={contentLesson}",
+            composable("code?contentLesson={contentLesson}",
                 arguments = listOf(navArgument("contentLesson"){
                     type = NavType.StringType
                     nullable = true
                     defaultValue = null
                 })
-            )
-            {
+            ){
                 val contentLesson = it.arguments?.getString("contentLesson")
                 CodeScreen(contentLesson)
+            }
+
+            composable("lesson?contentLessons={contentLesson}"){
+
+            }
+
+            composable("explore"){
+                ExploreScreen(userViewModel = userViewModel
+                )
             }
 
             composable("profile"){
@@ -162,6 +165,7 @@ fun AppNavigation(){
                     }
                 )
             }
+
         }
     }
 }

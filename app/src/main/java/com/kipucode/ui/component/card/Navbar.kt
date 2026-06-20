@@ -51,7 +51,7 @@ fun KipuBottomBar(navController: NavController) {
                         fontWeight = FontWeight.Bold
                     )
                 },
-                selected = currentRoute == item.route,
+                selected = currentRoute?.substringBefore('?') == item.route,
                 onClick = {
                     if (currentRoute != item.route) {
                         navController.navigate(item.route) {

@@ -30,17 +30,47 @@ internal class AuthRepositoryImpl @Inject constructor(
     //  Instancia de UserRemoteDataSource   ->  Acceso a datos de FireStore (USER & USER_PROGRESS)
     //  Instancia de UserDao                ->  Acceso a datos de UserDao (Room)
     //  Instancia de UserProgressDao        ->  Acceso a datos de UserProgressDao (Room)
+    //  Instancia de CourseRepository       ->  Sincronización de cursos al iniciar sesión
     // ============================================================================================
     private val authRemoteDataSource: AuthRemoteDataSource,
     private val userRemoteDataSource: UserRemoteDataSource,
     private val userDao: UserDao,
     private val userProgressDao: UserProgressDao,
     private val courseRepository: CourseRepository
-): AuthRepository {     // Equivalente en java a hacer el (implements)
+): AuthRepository {     // Equivalente en java a hacer él (implements)
+
+    //  ! IMPORTANTE
+    //  Early Returns: Se utiliza `retornos tempranos` (return@safeFirebaseCall) en funciones
+    //     como login() y register(). Esto evita anidar múltiples if/else, validando primero
+    //     los errores y dejando el camino exitoso (SUCCESS) al final del bloque.
+
+    //  safeFirebaseCall: Es una función envoltorio (wrapper) que centraliza la captura de
+    //     excepciones de Firebase.
 
     companion object {
         private const val DEFAULT_INITIAL_LESSON = "python_lesson_01"
         private const val STATUS_IN_PROGRESS = "IN_PROGRESS"
+    }
+
+    private suspend fun <T> safeFirebaseCall(
+        logTag: String,
+        apiCall: suspend () -> Response<T>
+    ): Response<T> {
+        return try {
+            apiCall()
+        } catch (ex: FirebaseAuthInvalidCredentialsException) {
+            Log.e(logTag, "Invalid Credentials", ex)
+            Response.Error("The credential is invalid", ErrorType.CREDENTIAL_INVALID)
+        } catch (ex: FirebaseAuthUserCollisionException) {
+            Log.e(logTag, "User Collision", ex)
+            Response.Error("The email is already registered", ErrorType.EMAIL_ALREADY_EXIST)
+        } catch (ex: FirebaseNetworkException) {
+            Log.e(logTag, "Network Error", ex)
+            Response.Error("Please check your network and try again", ErrorType.NETWORK_ERROR)
+        } catch (ex: Exception) {
+            Log.e(logTag, "Unexpected Error", ex)
+            Response.Error("An unexpected error occurred", ErrorType.FIRESTORE_ERROR)
+        }
     }
 
     // ============================================================================================
@@ -49,9 +79,14 @@ internal class AuthRepositoryImpl @Inject constructor(
     override suspend fun login(email: String, password: String): Response<UserDomain> {
         return safeFirebaseCall("LOGIN_ERROR"){
             val authResult = authRemoteDataSource.signInWithEmail(email, password)
-            val currentUser = authResult.user ?: return@safeFirebaseCall Response.Error("An unexpected error occurred while signing in", ErrorType.FIRESTORE_ERROR)
 
-            if(!currentUser.isEmailVerified) return@safeFirebaseCall Response.Error("Email verification required", ErrorType.EMAIL_NOT_VERIFIED)
+            val currentUser = authResult.user
+                ?: return@safeFirebaseCall Response
+                    .Error("An unexpected error occurred while signing in", ErrorType.FIRESTORE_ERROR)
+
+            if(!currentUser.isEmailVerified)
+                return@safeFirebaseCall Response
+                    .Error("Email verification required", ErrorType.EMAIL_NOT_VERIFIED)
 
 
             val (userDto, progressDto) = coroutineScope {
@@ -62,14 +97,16 @@ internal class AuthRepositoryImpl @Inject constructor(
             }
 
             if(userDto == null || progressDto == null) {
-
                 return@safeFirebaseCall Response.Error(
                     "User profile data not found",
                     ErrorType.FIRESTORE_ERROR
                 )
             }
+
             val syncResult = courseRepository.refreshCoursesAndLessons()
-            if(syncResult !is Response.Success) return@safeFirebaseCall Response.Error("Error syncing courses during login", ErrorType.FIRESTORE_ERROR)
+            if(syncResult !is Response.Success)
+                return@safeFirebaseCall Response
+                    .Error("Error syncing courses during login", ErrorType.FIRESTORE_ERROR)
 
             userDao.insert(userDto.toEntity())
             userProgressDao.insert(progressDto.toEntity())
@@ -84,7 +121,9 @@ internal class AuthRepositoryImpl @Inject constructor(
     override suspend fun register(userDomain: UserDomain, password: String): Response<UserDomain> {
         return safeFirebaseCall("REGISTER_ERROR"){
             val authResult = authRemoteDataSource.registerUserWithEmail(userDomain.email, password)
-            val currentUser = authResult.user ?: return@safeFirebaseCall Response.Error("An unexpected error occurred while signing in", ErrorType.FIRESTORE_ERROR)
+            val currentUser = authResult.user
+                ?: return@safeFirebaseCall Response
+                    .Error("An unexpected error occurred while signing in", ErrorType.FIRESTORE_ERROR)
 
             val user = userDomain.copy(id = currentUser.uid)
 
@@ -134,26 +173,5 @@ internal class AuthRepositoryImpl @Inject constructor(
         authRemoteDataSource.logoutUser()
         userProgressDao.clearProgressData()
         userDao.clearUserData()
-    }
-
-    private suspend fun <T> safeFirebaseCall(
-        logTag: String,
-        apiCall: suspend () -> Response<T>
-    ): Response<T> {
-        return try {
-         apiCall()
-         } catch (ex: FirebaseAuthInvalidCredentialsException) {
-            Log.e(logTag, "Invalid Credentials", ex)
-            Response.Error("The credential is invalid", ErrorType.CREDENTIAL_INVALID)
-         } catch (ex: FirebaseAuthUserCollisionException) {
-            Log.e(logTag, "User Collision", ex)
-            Response.Error("The email is already registered", ErrorType.EMAIL_ALREADY_EXIST)
-         } catch (ex: FirebaseNetworkException) {
-            Log.e(logTag, "Network Error", ex)
-            Response.Error("Please check your network and try again", ErrorType.NETWORK_ERROR)
-         } catch (ex: Exception) {
-            Log.e(logTag, "Unexpected Error", ex)
-            Response.Error("An unexpected error occurred", ErrorType.FIRESTORE_ERROR)
-         }
     }
 }

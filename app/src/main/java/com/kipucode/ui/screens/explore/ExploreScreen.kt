@@ -53,7 +53,7 @@ fun ExploreScreen(
         coursesWithLessons = coursesWithLessons,
         activeCourseId = activeCourseId,
         completedCourses = completedCourses,
-        activeCourseCurrentLessons = (currentLessonOrderIndex - 1).coerceAtLeast(0)
+        activeCourseCurrentLessons = currentLessonOrderIndex
     )
 }
 

@@ -1,16 +1,32 @@
 package com.kipucode.ui.screens.code
 
+import dev.snipme.highlights.Highlights
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.kipucode.ui.theme.BackgroundGray
-import dev.jeziellago.compose.markdowntext.MarkdownText
-
+import com.kipucode.ui.theme.KipuDarkBlue
+import com.kipucode.ui.theme.KipuTeal
+import com.kipucode.ui.theme.MoonFrost
+import com.kipucode.ui.theme.Nunito
+import com.mikepenz.markdown.compose.components.markdownComponents
+import com.mikepenz.markdown.compose.elements.MarkdownHighlightedCodeBlock
+import com.mikepenz.markdown.compose.elements.MarkdownHighlightedCodeFence
+import com.mikepenz.markdown.m3.Markdown
+import com.mikepenz.markdown.m3.markdownColor
+import com.mikepenz.markdown.m3.markdownTypography
+import com.mikepenz.markdown.model.markdownPadding
+import dev.snipme.highlights.model.SyntaxThemes
 
 @Composable
 fun CodeScreen(
@@ -19,10 +35,6 @@ fun CodeScreen(
     LazyColumn(
         Modifier.fillMaxSize().background(BackgroundGray),
     ) {
-        item {
-
-
-        }
 
         item {
             if(contentLesson != null){
@@ -34,6 +46,18 @@ fun CodeScreen(
                     Vuelve a la pantalla de inicio y elige una lección para sumergirte en el mundo de la programación. 
                     Cada lección está diseñada para guiarte paso a paso, desde los conceptos básicos hasta temas más avanzados.
                     ¡Tu aventura de aprendizaje comienza aquí!
+                    
+                    ```java
+                    public DbHelper(@Nullable Context context) {
+                        super(context, "nombre.db", null, 1);
+                    }
+                    ```
+                    > **Logro del módulo**
+                    > 
+                    > Comprender la estructura interna de Android y reconocer el papel de sus componentes fundamentales en la construcción de aplicaciones.
+                    > 
+                    > **Duración estimada:** 1 semana
+
                 """.trimIndent())
                 }
         }
@@ -42,11 +66,68 @@ fun CodeScreen(
 
 @Composable
 fun ContentMarkdown(content: String){
-
     val markdown = content.trimIndent()
-    MarkdownText(
+
+    val highlightsBuilder = remember {
+        Highlights.Builder().theme(SyntaxThemes.atom())
+    }
+
+    Markdown(
+        content = markdown,
         modifier = Modifier.padding(16.dp),
-        markdown = markdown
+        padding = markdownPadding(
+            block = 4.dp,
+            list = 2.dp
+        ),
+        colors = markdownColor(
+            text = KipuDarkBlue,
+            codeBackground = MoonFrost
+        ),
+        typography = markdownTypography(
+            h1 = TextStyle(
+                fontFamily = Nunito,
+                fontWeight = FontWeight.Black,
+                fontSize = 28.sp,
+                color = KipuTeal
+            ),
+            h2 = TextStyle(
+                fontFamily = Nunito,
+                fontWeight = FontWeight.ExtraBold,
+                fontSize = 22.sp,
+                color = KipuTeal
+            ),
+            h3 = TextStyle(
+                fontFamily = Nunito,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+                color = KipuDarkBlue
+            ),
+            paragraph = TextStyle(
+                fontFamily = Nunito,
+                fontWeight = FontWeight.Medium,
+                fontSize = 16.sp,
+                textAlign = TextAlign.Justify,
+                color = KipuDarkBlue
+            )
+        ),
+        components = markdownComponents(
+            codeFence = { model ->
+                MarkdownHighlightedCodeFence(
+                    content = model.content,
+                    node = model.node,
+                    highlightsBuilder = highlightsBuilder,
+                    showHeader = true
+                )
+            },
+            codeBlock = { model ->
+                MarkdownHighlightedCodeBlock(
+                    content = model.content,
+                    node = model.node,
+                    highlightsBuilder = highlightsBuilder,
+                    showHeader = true
+                )
+            }
+        )
     )
 }
 

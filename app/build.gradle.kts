@@ -77,4 +77,6 @@ dependencies {
     // Markdown dependency
     implementation(libs.compose.markdown)
 
+    implementation(libs.multiplatform.markdown)
+    implementation(libs.multiplatform.markdown.code)
 }

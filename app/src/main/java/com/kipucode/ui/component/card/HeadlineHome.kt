@@ -162,20 +162,19 @@ fun HeadlineHome(
     }
 }
 
-// --- VISTA PREVIA ---
-//@Preview(showBackground = true)
-//@Composable
-//fun HeadlineHomePreview() {
-//    Box(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .background(Color(0xFFf6f7f9))
-//            .padding(16.dp)
-//    ) {
-//        HeadlineHome(
-//            userName = "Juan Martin Gonzales Sinarahua",
-//            userXp = 1250,
-//            userStreak = 365
-//        )
-//    }
-//}
+@Preview(showBackground = true)
+@Composable
+fun HeadlineHomePreview() {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color(0xFFf6f7f9))
+            .padding(16.dp)
+    ) {
+        HeadlineHome(
+            userName = "Juan Martin Gonzales Sinarahua",
+            userXp = 1250,
+            userStreak = 365
+        )
+    }
+}
