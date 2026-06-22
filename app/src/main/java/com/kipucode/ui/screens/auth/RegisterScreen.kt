@@ -2,6 +2,9 @@ package com.kipucode.ui.screens.auth
 
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -22,9 +25,12 @@ import com.kipucode.R
 import com.kipucode.domain.model.ErrorType
 import com.kipucode.domain.model.Response
 import com.kipucode.domain.model.UserDomain
-import com.kipucode.ui.component.button.FilledButton
-import com.kipucode.ui.component.text_field.ClickableLink
-import com.kipucode.ui.component.text_field.KipuForm
+import com.kipucode.ui.components.button.FilledButton
+import com.kipucode.ui.components.text_field.ClickableLink
+import com.kipucode.ui.components.text_field.KipuForm
+import com.kipucode.ui.screens.lesson.ExerciseScreenContent
+import com.kipucode.ui.screens.lesson.FeedbackDialog
+import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.Nunito
 import com.kipucode.viewmodel.AuthViewModel
 
@@ -72,25 +78,30 @@ fun RegisterScreen(
             null -> {}
         }
     }
+    Scaffold(
+        containerColor = BackgroundGray,
+    ) { paddingValues ->
+        RegisterContent(
+            onNavigateToLogin = onNavigateToLogin,
+            onBack = onBack,
+            onRegisterClick = { name, email, password ->
+                authEmailError = null
+                authViewModel.resetState()
 
-    RegisterContent(
-        onNavigateToLogin = onNavigateToLogin,
-        onBack = onBack,
-        onRegisterClick = { name, email, password ->
-            authEmailError = null
-            authViewModel.resetState()
-
-            val userDomain = UserDomain(name = name, email = email)
-            authViewModel.register(userDomain, password)
-        },
-        externalEmailError = authEmailError,
-        externalConfirmPasswordError = authconfirmPasswordError
-    )
+                val userDomain = UserDomain(name = name, email = email)
+                authViewModel.register(userDomain, password)
+            },
+            externalEmailError = authEmailError,
+            externalConfirmPasswordError = authconfirmPasswordError,
+            modifier = Modifier.padding(paddingValues)
+        )
+    }
 }
 
 @Composable
 fun RegisterContent(
-    onNavigateToLogin: () -> Unit,
+    modifier: Modifier = Modifier,
+            onNavigateToLogin: () -> Unit,
     onBack: () -> Unit,
     onRegisterClick: (String, String, String) -> Unit,
 
@@ -128,7 +139,7 @@ fun RegisterContent(
     val msgErrorPasswordMismatch = stringResource(id = R.string.error_password_mismatch)
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(Color(0xFFf6f7f9))
             .padding(12.dp),

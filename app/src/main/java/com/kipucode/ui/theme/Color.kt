@@ -15,4 +15,7 @@ val KipuDarkBlue = Color(0xFF081C40)
 // Colores de Fondo y Superficie
 val BackgroundGray = Color(0xFFF6F7F9)
 val BorderLightGray = Color(0xFFE5E7EB)
-val MoonFrost = Color(0xFFF0F0F0)
+val MoonFrost = Color(0xB3E0E0E0)
+
+val Red = Color(0xFFE90C00)
+val Green = Color(0xFF418b24)

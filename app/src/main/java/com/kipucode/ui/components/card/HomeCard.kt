@@ -1,4 +1,4 @@
-package com.kipucode.ui.component.card
+package com.kipucode.ui.components.card
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kipucode.R
 import com.kipucode.ui.theme.BackgroundGray
-import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.KipuTealDark
 import com.kipucode.ui.theme.Nunito
 import com.kipucode.ui.theme.White

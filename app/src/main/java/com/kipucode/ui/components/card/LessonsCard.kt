@@ -1,4 +1,4 @@
-package com.kipucode.ui.component.card
+package com.kipucode.ui.components.card
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -29,10 +29,10 @@ import com.kipucode.ui.theme.Nunito
 
 @Composable
 fun LessonCard(
+    lessonId: String,
     title: String,
     isCompleted: Boolean,
     isLocked: Boolean,
-    contentLesson: String,
     onLessonClick: (String) -> Unit
 ) {
     val borderColor = if (isLocked) LightGray else KipuTeal
@@ -52,7 +52,7 @@ fun LessonCard(
         border = BorderStroke(1.5.dp, borderColor),
         onClick = { 
             if (!isLocked) {
-                onLessonClick(contentLesson)
+                onLessonClick(lessonId)
             }
         }
     ) {
@@ -115,24 +115,24 @@ fun LessonCardPreview() {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         LessonCard(
+            lessonId = "",
             title = "Pensamiento Computacional y Lenguajes Formales",
             isCompleted = true,
             isLocked = false,
-            contentLesson = "",
             onLessonClick = {}
         )
         LessonCard(
+            lessonId = "",
             title = "El Intérprete de Python y tu Primer Script",
             isCompleted = false,
             isLocked = false,
-            contentLesson = "",
             onLessonClick = {}
         )
         LessonCard(
+            lessonId = "",
             title = "Tipos de Datos Fundamentales",
             isCompleted = false,
             isLocked = true,
-            contentLesson = "",
             onLessonClick = {}
         )
     }

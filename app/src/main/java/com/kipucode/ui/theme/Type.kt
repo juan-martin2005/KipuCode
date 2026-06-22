@@ -19,8 +19,11 @@ Font(R.font.nunito_bold, FontWeight.Bold),
         Font(R.font.nunito_black, FontWeight.Black),
         Font(R.font.nunito_extralight, FontWeight.ExtraLight),
         Font(R.font.nunito_light, FontWeight.Light),
+    )
 
-)
+val JetBrains = FontFamily(
+    Font(R.font.jetbrainsmono_nf, FontWeight.Normal),
+    )
 val Typography = Typography(
     bodyLarge = TextStyle(
         fontFamily = FontFamily.Default,

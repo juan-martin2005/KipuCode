@@ -1,4 +1,4 @@
-package com.kipucode.ui.component.button
+package com.kipucode.ui.components.button
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,15 +12,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.Nunito
 
 @Composable
 fun FilledButton(
     textButton: String,
     onClickFilledButton:() -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    fontSize: TextUnit = 18.sp
 ){
     Button(
         onClick = {
@@ -30,13 +33,13 @@ fun FilledButton(
             .fillMaxWidth()
             .height(50.dp),
         shape = RoundedCornerShape(14.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0293a8))
+        colors = ButtonDefaults.buttonColors(containerColor = KipuTeal)
     ) {
         Text(
             text = textButton,
             fontFamily = Nunito,
             fontWeight = FontWeight.Bold,
-            fontSize = 18.sp,
+            fontSize = fontSize,
             color = Color.White
         )
     }
@@ -46,7 +49,9 @@ fun FilledButton(
 fun OutlineButton(
     textButton: String,
     onClickFilledButton:() -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    fontSize: TextUnit = 18.sp
+
 ){
     OutlinedButton(
         onClick = {
@@ -56,15 +61,15 @@ fun OutlineButton(
             .fillMaxWidth()
             .height(50.dp),
         shape = RoundedCornerShape(14.dp),
-        border = BorderStroke(width = 2.dp, color = Color(0xFF0293a8)),
-        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color(0xFF0293a8))
+        border = BorderStroke(width = 2.dp, color = KipuTeal),
+        colors = ButtonDefaults.outlinedButtonColors(contentColor = KipuTeal)
     ) {
         Text(
             text = textButton,
             fontFamily = Nunito,
             fontWeight = FontWeight.Bold,
-            fontSize = 18.sp,
-            color = Color(0xFF0293a8)
+            fontSize = fontSize,
+            color = KipuTeal
         )
     }
 }

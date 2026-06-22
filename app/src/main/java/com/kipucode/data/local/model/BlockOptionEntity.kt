@@ -20,5 +20,4 @@ data class BlockOptionEntity(
     @ColumnInfo(name = "exercise_id") val exerciseId: String?,
     val content: String?,
     @ColumnInfo(name = "is_correct") val isCorrect: Boolean,
-//    @ColumnInfo(name = "correct_position") val correctPosition: Int
 )

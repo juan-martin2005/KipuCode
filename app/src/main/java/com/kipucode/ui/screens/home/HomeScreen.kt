@@ -6,14 +6,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
@@ -28,12 +27,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.kipucode.R
 import com.kipucode.domain.model.LessonDomain
 import com.kipucode.domain.model.Response
-import com.kipucode.ui.component.card.HeadlineHome
-import com.kipucode.ui.component.card.HomeCard
-import com.kipucode.ui.component.card.LessonCard
+import com.kipucode.ui.components.KipuBottomBar
+import com.kipucode.ui.components.card.HeadlineHome
+import com.kipucode.ui.components.card.HomeCard
+import com.kipucode.ui.components.card.LessonCard
 import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuTeal
@@ -46,6 +47,7 @@ import com.kipucode.viewmodel.UserViewModel
 fun HomeScreen(
     userViewModel: UserViewModel,
     courseViewModel: CoursesViewModel = hiltViewModel(),
+    navController: NavController,
     onNavigateToCode: (String) -> Unit
 ) {
     val userProfile by userViewModel.userProfileState.collectAsStateWithLifecycle()
@@ -66,57 +68,64 @@ fun HomeScreen(
             courseViewModel.resetRefreshState()
         }
     }
-
-    PullToRefreshBox(
-        isRefreshing = isRefreshing,
-        onRefresh = {
-            userViewModel.swipeToRefresh()
-            courseViewModel.swipeToRefresh()
-        },
-        modifier = Modifier.fillMaxSize()
-    ) {
+    Scaffold(
+        bottomBar = { KipuBottomBar(navController = navController) },
+        containerColor = BackgroundGray
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(BackgroundGray)
-                .padding(top = 16.dp)
+                .padding(paddingValues)
         ) {
-            val progressData = userProgress
-
-            val activeCourseWithLessons = coursesWithLessons.find { courseItem ->
-                courseItem.lessons.any { it.id == progressData?.currentLessonId }
-            }
-
-            val courseData = activeCourseWithLessons?.course
-            val lessonsData = activeCourseWithLessons?.lessons?.sortedBy { it.orderIndex } ?: emptyList()
-
-            val currentLessonOrderIndex = lessonsData.find {
-                it.id == progressData?.currentLessonId
-            }?.orderIndex ?: 0
-
-
-            HeadlineHome(
-                userName = userProfile?.name ?: "Test_HomeScreen_Null",
-                userXp = progressData?.totalXp ?: 999,
-                userStreak = progressData?.streakDay ?: 999,
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            if (coursesWithLessons.isEmpty()) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
+            PullToRefreshBox(
+                isRefreshing = isRefreshing,
+                onRefresh = {
+                    userViewModel.swipeToRefresh()
+                    courseViewModel.swipeToRefresh()
+                },
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(BackgroundGray)
                 ) {
-                    CircularProgressIndicator(color = KipuTeal)
+                    val userData = userProfile
+                    val progressData = userProgress
+
+                    val activeCourseWithLessons = coursesWithLessons.find { courseItem ->
+                        courseItem.lessons.any { it.id == progressData?.currentLessonId }
+                    }
+
+                    val courseData = activeCourseWithLessons?.course
+                    val lessonsData = activeCourseWithLessons?.lessons?.sortedBy { it.orderIndex } ?: emptyList()
+
+                    val currentLessonOrderIndex = lessonsData.find {
+                        it.id == progressData?.currentLessonId
+                    }?.orderIndex ?: 0
+
+
+                    if (coursesWithLessons.isEmpty()) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(color = KipuTeal)
+                        }
+                    } else {
+                        HomeContent(
+                            userName = userData?.name ?: "Test_User_Full_Name",
+                            totalXp = progressData?.totalXp ?: 999,
+                            streakDay = progressData?.streakDay ?: 999,
+
+                            courseTitle = courseData?.title ?: "Test_Course_Title",
+                            lessons = lessonsData,
+                            currentLessonOrderIndex = currentLessonOrderIndex,
+                            onLessonClick = onNavigateToCode
+                        )
+                    }
                 }
-            } else {
-                HomeContent(
-                    lessons = lessonsData,
-                    currentLessonOrderIndex = currentLessonOrderIndex,
-                    courseTitle = courseData?.title ?: "No Course Found",
-                    onLessonClick = onNavigateToCode
-                )
             }
         }
     }
@@ -124,6 +133,10 @@ fun HomeScreen(
 
 @Composable
 fun HomeContent(
+    userName: String,
+    totalXp: Int,
+    streakDay: Int,
+
     courseTitle: String,
     lessons: List<LessonDomain>,
     currentLessonOrderIndex: Int,
@@ -131,18 +144,27 @@ fun HomeContent(
     ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 24.dp)
+        contentPadding = PaddingValues(horizontal = 16.dp)
     ) {
+        // --- SECCIÓN 1: TOP BAR ---
+        item {
+            HeadlineHome(
+                userName = userName,
+                userXp = totalXp,
+                userStreak = streakDay,
+                modifier = Modifier.padding(vertical = 16.dp)
+            )
+        }
+
         // --- SECCIÓN 2: TARJETA DE PROGRESO ---
         item {
             HomeCard(
                 courseName = courseTitle,
                 currentLessons = (currentLessonOrderIndex - 1).coerceAtLeast(0),
                 totalLessons = lessons.size,
-                iconResId = R.drawable.ic_python
+                iconResId = R.drawable.ic_python,
+                modifier = Modifier.padding(bottom = 24.dp)
             )
-
-            Spacer(modifier = Modifier.height(24.dp))
         }
 
         // --- SECCIÓN 3: TÍTULO SEPARADOR ---
@@ -152,9 +174,9 @@ fun HomeContent(
                 fontSize = 20.sp,
                 fontFamily = Nunito,
                 fontWeight = FontWeight.ExtraBold,
-                color = KipuDarkBlue
+                color = KipuDarkBlue,
+                modifier = Modifier.padding(bottom = 16.dp)
             )
-            Spacer(modifier = Modifier.height(16.dp))
         }
 
         // --- SECCIÓN 4: LISTA DE LECCIONES ---
@@ -164,10 +186,10 @@ fun HomeContent(
             val isLocked = lesson.orderIndex > currentLessonOrderIndex
 
             LessonCard(
+                lessonId = lesson.id,
                 title = lesson.title,
                 isCompleted = isCompleted,
                 isLocked = isLocked,
-                contentLesson = lesson.content,
                 onLessonClick = onLessonClick
             )
 
@@ -191,7 +213,6 @@ fun HomeContent(
 @Preview(showBackground = true)
 @Composable
 fun HomePreview() {
-
     val mockDomainLessons = listOf(
         LessonDomain(
             id = "1",
@@ -226,17 +247,11 @@ fun HomePreview() {
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFf6f7f9))
-            .padding(top = 16.dp)
     ) {
-        HeadlineHome(
-            userName = "Test_User_Full_Name",
-            userXp = 999,
-            userStreak = 999,
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
         HomeContent(
+            userName = "Test_User_Full_Name",
+            totalXp = 999,
+            streakDay = 999,
             courseTitle = "Introduction to Python Programing",
             lessons = mockDomainLessons,
             currentLessonOrderIndex = 2,

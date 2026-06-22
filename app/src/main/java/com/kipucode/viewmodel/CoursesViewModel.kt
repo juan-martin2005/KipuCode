@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kipucode.domain.model.CourseWithLessonsDomain
 import com.kipucode.domain.model.Response
-import com.kipucode.domain.usecase.course.GetCourseWithLessonsUseCase
-import com.kipucode.domain.usecase.course.RefreshCoursesUseCase
+import com.kipucode.domain.usecase.GetCourseWithLessonsUseCase
+import com.kipucode.domain.usecase.RefreshCoursesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
