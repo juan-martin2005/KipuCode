@@ -15,31 +15,29 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kipucode.R
-import com.kipucode.domain.model.ErrorType
 import com.kipucode.domain.model.Response
-import com.kipucode.ui.component.button.FilledButton
-import com.kipucode.ui.component.text_field.KipuForm
+import com.kipucode.ui.components.button.FilledButton
+import com.kipucode.ui.components.text_field.KipuForm
+import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.Nunito
 import com.kipucode.viewmodel.AuthViewModel
 
+// --- SCREEN ---
 @Composable
 fun ForgotPasswordScreen(
     onBack: () -> Unit,
-    authViewModel: AuthViewModel? = hiltViewModel()
+    authViewModel: AuthViewModel = hiltViewModel()
 ) {
     var email by remember { mutableStateOf("") }
     var emailError by remember { mutableStateOf<String?>(null) }
 
-    val authMsgErrorCredentialInvalid = stringResource(id = R.string.auth_repository_credential_invalid)
-
-    val resetStateFlow = authViewModel?.resetPasswordState
-    val resetState = resetStateFlow?.collectAsStateWithLifecycle()?.value
-
+    val resetState by authViewModel.resetPasswordState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
     LaunchedEffect(resetState) {
@@ -51,21 +49,63 @@ fun ForgotPasswordScreen(
                 onBack()
             }
             is Response.Error -> {
-                emailError = resetState.message ?: "Ocurrió un error inesperado"
-                Log.d("FIREBASE_ERROR", resetState.message ?: "Unknown Error")
+                val errorMsg = (resetState as Response.Error).message
+                emailError = errorMsg ?: "Ocurrió un error inesperado"
+                Log.d("FIREBASE_ERROR", errorMsg ?: "Unknown Error")
             }
             null -> {}
         }
     }
 
+    Scaffold(
+        containerColor = BackgroundGray,
+    ) { paddingValues ->
+        ForgotPasswordScreenContent(
+            email = email,
+            emailError = emailError,
+            onEmailChange = {
+                email = it
+                emailError = null
+            },
+            onBackClick = onBack,
+            onSendClick = {
+                var hasError = false
+                val emailTrimmed = email.trim().lowercase()
+
+                if (emailTrimmed.isBlank()) {
+                    emailError = "El correo es obligatorio"
+                    hasError = true
+                } else if (!emailTrimmed.endsWith("@upn.pe")) {
+                    emailError = "Debe usar el correo institucional"
+                    hasError = true
+                }
+
+                if (!hasError) {
+                    authViewModel.resetPassword(emailTrimmed)
+                }
+            },
+            modifier = Modifier.padding(paddingValues)
+        )
+    }
+}
+
+// --- CONTENT ---
+@Composable
+fun ForgotPasswordScreenContent(
+    email: String,
+    emailError: String?,
+    onEmailChange: (String) -> Unit,
+    onBackClick: () -> Unit,
+    onSendClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFFf6f7f9))
             .padding(12.dp)
     ) {
         // Botón Atrás
-        IconButton(onClick = onBack, modifier = Modifier.size(48.dp)) {
+        IconButton(onClick = onBackClick, modifier = Modifier.size(48.dp)) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_arrow_left),
                 contentDescription = "Atrás",
@@ -106,10 +146,7 @@ fun ForgotPasswordScreen(
             KipuForm(
                 label = stringResource(R.string.email),
                 value = email,
-                onValueChange = {
-                    email = it
-                    emailError = null
-                },
+                onValueChange = onEmailChange,
                 placeholder = "n00123456@upn.pe",
                 iconRes = R.drawable.ic_mail,
                 keyboardType = KeyboardType.Email,
@@ -121,35 +158,43 @@ fun ForgotPasswordScreen(
 
             FilledButton(
                 textButton = stringResource(R.string.send_email),
-                onClickFilledButton = {
-                    var hasError = false
-                    val emailTrimmed = email.trim().lowercase()
-
-                    if (emailTrimmed.isBlank()) {
-                        emailError = "El correo es obligatorio"
-                        hasError = true
-                    } else if (!emailTrimmed.endsWith("@upn.pe")) {
-                        emailError = "Debe usar el correo institucional"
-                        hasError = true
-                    }
-
-                    if (!hasError) {
-                        authViewModel?.resetPassword(emailTrimmed)
-                    }
-                }
+                onClickFilledButton = onSendClick
             )
         }
     }
 }
 
-//// PREVIEWS
-//@Preview(showBackground = true, name = "Recuperar Contraseña")
-//@Composable
-//fun ForgotPasswordScreenPreview() {
-//    MaterialTheme {
-//        ForgotPasswordScreen(
-//            onBack = {},
-//            authViewModel = null
-//        )
-//    }
-//}
+// --- PREVIEW ---
+@Preview(showBackground = true, name = "Recuperar Contraseña")
+@Composable
+fun ForgotPasswordScreenPreview() {
+    MaterialTheme {
+        Scaffold(containerColor = BackgroundGray) { padding ->
+            ForgotPasswordScreenContent(
+                email = "",
+                emailError = null,
+                onEmailChange = {},
+                onBackClick = {},
+                onSendClick = {},
+                modifier = Modifier.padding(padding)
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, name = "Recuperar Contraseña (Con Error)")
+@Composable
+fun ForgotPasswordScreenErrorPreview() {
+    MaterialTheme {
+        Scaffold(containerColor = BackgroundGray) { padding ->
+            ForgotPasswordScreenContent(
+                email = "usuario@gmail.com",
+                emailError = "Debe usar el correo institucional",
+                onEmailChange = {},
+                onBackClick = {},
+                onSendClick = {},
+                modifier = Modifier.padding(padding)
+            )
+        }
+    }
+}

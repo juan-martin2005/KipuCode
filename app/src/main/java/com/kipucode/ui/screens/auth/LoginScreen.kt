@@ -24,9 +24,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.kipucode.R
 import com.kipucode.domain.model.ErrorType
 import com.kipucode.domain.model.Response
-import com.kipucode.ui.component.button.FilledButton
-import com.kipucode.ui.component.text_field.ClickableLink
-import com.kipucode.ui.component.text_field.KipuForm
+import com.kipucode.domain.model.UserDomain
+import com.kipucode.ui.components.button.FilledButton
+import com.kipucode.ui.components.text_field.ClickableLink
+import com.kipucode.ui.components.text_field.KipuForm
+import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.Nunito
 import com.kipucode.viewmodel.AuthViewModel
 
@@ -73,23 +75,30 @@ fun LoginScreen(
         }
     }
 
-    LoginContent(
-        onNavigateToRegister = onNavigateToRegister,
-        onBack = onBack,
-        onNavigateToForgotPassword = onNavigateToForgotPassword,
-        onLoginClick = { email, password ->
-            authEmailError = null
-            authPasswordError = null
-            authViewModel.resetState()
-            authViewModel.login(email, password)
-        },
-        externalEmailError = authEmailError,
-        externalPasswordError = authPasswordError
-    )
+    Scaffold(
+        containerColor = BackgroundGray,
+    ) { paddingValues ->
+        LoginContent(
+            onNavigateToRegister = onNavigateToRegister,
+            onBack = onBack,
+            onNavigateToForgotPassword = onNavigateToForgotPassword,
+            onLoginClick = { email, password ->
+                authEmailError = null
+                authPasswordError = null
+                authViewModel.resetState()
+                authViewModel.login(email, password)
+            },
+            externalEmailError = authEmailError,
+            externalPasswordError = authPasswordError,
+            modifier = Modifier.padding(paddingValues)
+
+        )
+    }
 }
 
 @Composable
 fun LoginContent(
+    modifier: Modifier,
     onNavigateToRegister: () -> Unit,
     onBack: () -> Unit,
     onNavigateToForgotPassword: () -> Unit,
@@ -117,7 +126,7 @@ fun LoginContent(
     val msgErrorPassRequired = stringResource(id = R.string.error_password_required)
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(Color(0xFFf6f7f9))
             .padding(12.dp),

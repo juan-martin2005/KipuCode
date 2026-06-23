@@ -1,4 +1,4 @@
-package com.kipucode.ui.component.card
+package com.kipucode.ui.components.card
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
@@ -60,7 +60,7 @@ fun HeadlineHome(
     }
 
     Column(
-        modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp)
+        modifier = modifier.fillMaxWidth()
 
     ) {
         Row(

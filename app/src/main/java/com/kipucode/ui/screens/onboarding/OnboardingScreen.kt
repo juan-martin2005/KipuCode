@@ -1,7 +1,6 @@
 package com.kipucode.ui.screens.onboarding
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -26,21 +26,40 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kipucode.R
-import com.kipucode.ui.component.button.FilledButton
-import com.kipucode.ui.component.button.OutlineButton
+import com.kipucode.ui.components.button.FilledButton
+import com.kipucode.ui.components.button.OutlineButton
+import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.Nunito
 
+// --- SCREEN ---
 @Composable
 fun OnboardingScreen(
     onNavigateToLogin: () -> Unit,
     onNavigateToRegister: () -> Unit
 ) {
+    Scaffold(
+        containerColor = BackgroundGray,
+    ) { paddingValues ->
+        OnboardingScreenContent(
+            onLoginClick = onNavigateToLogin,
+            onRegisterClick = onNavigateToRegister,
+            modifier = Modifier.padding(paddingValues)
+        )
+    }
+}
+
+// --- CONTENT---
+@Composable
+fun OnboardingScreenContent(
+    onLoginClick: () -> Unit,
+    onRegisterClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     val pagerState = rememberPagerState(pageCount = { onboardingPages.size })
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFFf6f7f9))
             .padding(vertical = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -54,7 +73,7 @@ fun OnboardingScreen(
                 .size(180.dp)
                 .align(Alignment.CenterHorizontally)
         )
-        
+
         Text(
             text = stringResource(id = R.string.banner),
             fontFamily = Nunito,
@@ -65,9 +84,8 @@ fun OnboardingScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp),
-            color = Color(0xFF081c40),
-
-            )
+            color = Color(0xFF081c40)
+        )
 
         HorizontalPager(
             state = pagerState,
@@ -78,7 +96,8 @@ fun OnboardingScreen(
             val page = onboardingPages[position]
 
             Column(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
                     .padding(horizontal = 24.dp),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -114,27 +133,32 @@ fun OnboardingScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         FilledButton(
-            stringResource(id = R.string.logIn),
-            {onNavigateToLogin()},
+            textButton = stringResource(id = R.string.logIn),
+            onClickFilledButton = onLoginClick,
             modifier = Modifier.padding(horizontal = 24.dp)
         )
 
         Spacer(modifier = Modifier.height(10.dp))
 
         OutlineButton(
-            stringResource(id = R.string.register),
-            { onNavigateToRegister()},
+            textButton = stringResource(id = R.string.register),
+            onRegisterClick,
             modifier = Modifier.padding(horizontal = 24.dp)
-
         )
     }
 }
 
+// --- PREVIEW ---
 @Preview(showBackground = true, name = "Pantalla de Onboarding")
 @Composable
 fun OnboardingPreview() {
-    OnboardingScreen(
-        onNavigateToLogin = {},
-        onNavigateToRegister = {}
-    )
+    Scaffold(
+        containerColor = BackgroundGray
+    ) { paddingValues ->
+        OnboardingScreenContent(
+            onLoginClick = {},
+            onRegisterClick = {},
+            modifier = Modifier.padding(paddingValues)
+        )
+    }
 }

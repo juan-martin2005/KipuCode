@@ -8,18 +8,18 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.kipucode.domain.model.CourseDomain
 import com.kipucode.domain.model.CourseWithLessonsDomain
 import com.kipucode.domain.model.LessonDomain
-import com.kipucode.domain.model.Response
-import com.kipucode.ui.component.card.HomeCard
+import com.kipucode.ui.components.KipuBottomBar
+import com.kipucode.ui.components.card.HomeCard
 import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuTeal
@@ -30,7 +30,8 @@ import com.kipucode.viewmodel.UserViewModel
 @Composable
 fun ExploreScreen(
     userViewModel: UserViewModel,
-    courseViewModel: CoursesViewModel = hiltViewModel()
+    courseViewModel: CoursesViewModel = hiltViewModel(),
+    navController: NavController
 ) {
     val userProgress by userViewModel.userProgressState.collectAsStateWithLifecycle()
     val coursesWithLessons by courseViewModel.coursesWithLessonsState.collectAsStateWithLifecycle()
@@ -49,12 +50,25 @@ fun ExploreScreen(
 
     val completedCourses = progressData?.completedCourses ?: emptyList()
 
-    ExploreContent(
-        coursesWithLessons = coursesWithLessons,
-        activeCourseId = activeCourseId,
-        completedCourses = completedCourses,
-        activeCourseCurrentLessons = currentLessonOrderIndex
-    )
+    Scaffold(
+        bottomBar = { KipuBottomBar(navController = navController) },
+        containerColor = BackgroundGray
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(BackgroundGray)
+                .padding(paddingValues)
+        ) {
+            ExploreContent(
+                coursesWithLessons = coursesWithLessons,
+                activeCourseId = activeCourseId,
+                completedCourses = completedCourses,
+                activeCourseCurrentLessons = currentLessonOrderIndex
+            )
+        }
+    }
+
 }
 
 @Composable
@@ -78,22 +92,22 @@ fun ExploreContent(
             }
         } else {
             LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(
-                    start = 16.dp,
-                    end = 16.dp,
-                    top = 16.dp
-                )
+                modifier = Modifier.fillMaxSize()
+                    .padding(horizontal = 24.dp),
             ) {
                 item {
+                    Spacer(modifier = Modifier.height(40.dp))
+
+                    // --- SECCIÓN 1: TÍTULO ---
                     Text(
-                        "Lessons",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.ExtraBold,
+                        text = "Modules",
+                        fontSize = 28.sp,
                         fontFamily = Nunito,
+                        fontWeight = FontWeight.ExtraBold,
                         color = KipuDarkBlue
                     )
-                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Spacer(modifier = Modifier.height(24.dp))
                 }
 
                 // --- LISTA DE CURSOS ---
