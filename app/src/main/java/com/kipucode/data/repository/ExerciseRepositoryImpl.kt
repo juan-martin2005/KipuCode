@@ -31,6 +31,8 @@ internal class ExerciseRepositoryImpl @Inject constructor(
         return try {
             val remoteExercises = exerciseRemoteDataSource.getExercisesByLessonId(lessonId)
 
+            exerciseDao.deleteAll()
+
             // Convertimos y guardamos los ejercicios
             exerciseDao.insertAll(remoteExercises.map { it.toEntity() })
 
