@@ -21,7 +21,6 @@ interface ExerciseDao {
     @Query("SELECT * FROM exercises WHERE lesson_id = :lessonId ORDER BY order_index ASC")
     fun getExercisesByLessonId(lessonId: String): Flow<List<ExerciseWithOptions>>
 
-    // ExerciseDao
-    @Query("DELETE FROM exercises")
-    suspend fun deleteAll()
+    @Query("DELETE FROM exercises WHERE lesson_id = :lessonId")
+    suspend fun deleteExercisesByLessonId(lessonId: String)
 }
