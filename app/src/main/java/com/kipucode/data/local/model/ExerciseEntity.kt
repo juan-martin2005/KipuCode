@@ -20,6 +20,7 @@ data class ExerciseEntity(
     @ColumnInfo(name = "lesson_id") val lessonId: String?,
     val type: String?,
     val instruction: String?,
+    val answer: String?,
     val points: Int,
     val exp: Int,
     @ColumnInfo(name = "order_index") val orderIndex: Int

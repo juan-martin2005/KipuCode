@@ -23,7 +23,9 @@ import com.kipucode.data.local.model.*
         LessonEntity::class,
         ExerciseEntity::class,
         BlockOptionEntity::class,
-        SyncQueueEntity::class
+        SyncQueueEntity::class,
+
+        FlashcardProgressEntity::class
     ],
     version = 1
 )
@@ -38,20 +40,20 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun blockOptionDao(): BlockOptionDao
     abstract fun syncQueueDao(): SyncQueueDao
 
-    companion object {
-        @Volatile
-        private var INSTANCE: AppDatabase? = null
-
-        fun getDatabase(context: Context): AppDatabase {
-            return INSTANCE ?: synchronized(this) {
-                val instance = Room.databaseBuilder(
-                    context.applicationContext,
-                    AppDatabase::class.java,
-                    "Kipucode_database"
-                ).build()
-                INSTANCE = instance
-                instance
-            }
-        }
-    }
+//    companion object {
+//        @Volatile
+//        private var INSTANCE: AppDatabase? = null
+//
+//        fun getDatabase(context: Context): AppDatabase {
+//            return INSTANCE ?: synchronized(this) {
+//                val instance = Room.databaseBuilder(
+//                    context.applicationContext,
+//                    AppDatabase::class.java,
+//                    "Kipucode_database"
+//                ).build()
+//                INSTANCE = instance
+//                instance
+//            }
+//        }
+//    }
 }
