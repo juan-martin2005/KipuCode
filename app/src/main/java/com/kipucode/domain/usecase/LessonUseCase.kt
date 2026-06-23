@@ -1,4 +1,4 @@
-package com.kipucode.domain.usecase.lesson
+package com.kipucode.domain.usecase
 
 import com.kipucode.domain.model.LessonDomain
 import com.kipucode.domain.repository.LessonRepository
@@ -9,7 +9,7 @@ import javax.inject.Inject
 class GetLessonByCourseUseCase @Inject constructor(
     private val lessonRepository: LessonRepository
 ){
-    suspend operator fun invoke(lessonId : String) : Flow<LessonDomain?>{
+    operator fun invoke(lessonId: String): Flow<LessonDomain?> {
         return lessonRepository.getLessonById(lessonId)
     }
 }
