@@ -3,82 +3,112 @@
     <string name="app_name">KipuCode</string>
 
     <!-- Onboarding-Screen -->
-    <string name="subline">Learn. Understand.\nProgram. Create.</string>
+    <string name="subline">Decodificando el Pasado.\nProgramando el Futuro</string>
     <string name="cd_logo">Logo KipuCode</string>
 
     <!-- Onboarding-Screen -->
-    <string name="banner">Learn to code with clarity, practice and purpose</string>
+    <string name="banner">Aprende a programar con claridad, práctica y propósito</string>
 
     <string name="cd_banner">Logo KipuCode</string>
-    <string name="cd_kipu">"Loading Bar Kipu"</string>
+    <string name="cd_kipu">Barra de carga Kipu</string>
 
-    <string name="cd_go_back">Go back</string>
+    <string name="cd_go_back">Volver</string>
 
-
-    <string name="slider_1">Build real programming skills through guided lessons and hands on experience</string>
-    <string name="slider_2">Master fundamental logic through structured and easy to follow learning paths</string>
-    <string name="slider_3">Transition from theory to execution with interactive coding challenges</string>
-    <string name="slider_4">Transform basic knowledge into advanced &amp; professional engineering skills</string>
+    <string name="slider_1">Desarrolla habilidades reales de programación a través de lecciones guiadas y experiencia práctica</string>
+    <string name="slider_2">Domina la lógica fundamental a través de rutas de aprendizaje estructuradas y fáciles de seguir</string>
+    <string name="slider_3">Pasa de la teoría a la ejecución con retos de programación interactivos</string>
+    <string name="slider_4">Transforma el conocimiento básico en habilidades de ingeniería avanzadas y profesionales</string>
 
     <!-- Buttons & Texts -->
-    <string name="logIn">Log In</string>
-    <string name="log_in">Log in</string>
-    <string name="register">Register</string>
+    <string name="logIn">Iniciar Sesión</string>
+    <string name="log_in">Iniciar sesión</string>
+    <string name="register">Registrarse</string>
 
-    <string name="password">Password</string>
-    <string name="email">Email</string>
-    <string name="confirm_password">Confirm Password</string>
-    <string name="full_name">Full Name</string>
+    <string name="password">Contraseña</string>
+    <string name="email">Correo electrónico</string>
+    <string name="confirm_password">Confirmar Contraseña</string>
+    <string name="full_name">Nombre Completo</string>
 
-    <string name="ph_full_name">Your name</string>
+    <string name="ph_full_name">Tu nombre</string>
 
     <!-- Login-Screen -->
-    <string name="login_title">Welcome back!</string>
-    <string name="login_desc">Continue your programming journey. Ready to learn something new?</string>
+    <string name="good_morning">Buenos días!</string>
+    <string name="good_afternoon">Buenas tardes!</string>
+    <string name="good_night">Buenas noches!</string>
+    <string name="login_title">¡Bienvenido de nuevo!</string>
+    <string name="login_desc">Continúa tu viaje de programación. ¿Listo para aprender algo nuevo?</string>
 
-    <string name="login_clickable_start">"Don't have an account yet?, "</string>
-    <string name="login_clickable_end">Register</string>
+    <string name="login_clickable_start">"¿Aún no tienes una cuenta?, "</string>
+    <string name="login_clickable_end">Regístrate</string>
 
 
     <!-- Register-Screen -->
-    <string name="register_title">Create account</string>
-    <string name="register_desc">Join KipuCode and start your journey into the world of programming</string>
+    <string name="register_title">Crear cuenta</string>
+    <string name="register_desc">Únete a KipuCode y comienza tu viaje en el mundo de la programación</string>
 
-    <string name="register_clickable_start">"Do you already have an account?, "</string>
-    <string name="register_clickable_end">" Log in"</string>
+    <string name="register_clickable_start">"¿Ya tienes una cuenta?, "</string>
+    <string name="register_clickable_end">" Iniciar sesión"</string>
 
     <!-- Login & Register - Validaciones -->
-    <string name="error_name_required">Full Name is required</string>
-    <string name="error_email_required">Email is required</string>
-    <string name="error_email_domain">Please use your institutional email (@upn.pe)</string>
-    <string name="error_password_required">Password is required</string>
-    <string name="error_confirm_password_required">Confirm Password is required</string>
-    <string name="error_password_mismatch">Confirm Password don\'t match Password</string>
+    <string name="error_name_required">El Nombre Completo es obligatorio</string>
+    <string name="error_email_required">El Correo electrónico es obligatorio</string>
+    <string name="error_email_domain">Por favor, usa tu correo institucional (@upn.pe)</string>
+    <string name="error_password_required">La Contraseña es obligatoria</string>
+    <string name="error_confirm_password_required">Confirmar Contraseña es obligatorio</string>
+    <string name="error_password_mismatch">Las contraseñas no coinciden</string>
 
 
     <!-- Auth Firebase - Validaciones -->
-    <string name="auth_repository_email_not_verified">Email verification required</string>
-    <string name="auth_repository_credential_invalid">The credential is invalid</string>
-    <string name="auth_repository_email_already_exist">The email is already registered</string>
-    <string name="auth_repository_network_error">Please check your network and try again</string>
+    <string name="auth_repository_email_not_verified">Verificación de correo electrónico requerida</string>
+    <string name="auth_repository_credential_invalid">La credencial es inválida</string>
+    <string name="auth_repository_email_already_exist">El correo electrónico ya está registrado</string>
+    <string name="auth_repository_network_error">Por favor, comprueba tu conexión a internet e inténtalo de nuevo</string>
 
     <!-- Home - Texts -->
-    <string name="headline_home">Welcome back!</string>
+    <string name="headline_home">¡Bienvenido de nuevo!</string>
     <string name="sub_headline_home">%1$s</string>
 
-    <string name="home_bar_lessons">%1$d of %2$d lessons completed</string>
-    <string name="home_underline_text_bar">Overall progress</string>
+    <string name="home_bar_lessons">%1$d de %2$d lecciones completadas</string>
+    <string name="home_underline_text_bar">Progreso general</string>
 
-    <string name="home_xp_text">Total XP</string>
+    <string name="home_xp_text">XP Total</string>
     <string name="home_xp_value">%1$d</string>
 
-    <string name="home_streak_text">Streak</string>
+    <string name="home_streak_text">Racha</string>
     <string name="home_streak_value">%1$d</string>
 
     <!-- ForgotPassword-Screen -->
 
-    <string name="reset_password">Reset Password</string>
-    <string name="subheadline_forgot_password">Enter your institutional email address. We’ll send you a secure link to reset your password</string>
-    <string name="send_email">Send Email</string>
-    <string name="text_forgot_password">Forgot your password?</string>
+    <string name="reset_password">Restablecer Contraseña</string>
+    <string name="subheadline_forgot_password">Te enviaremos un enlace seguro para restablecer tu contraseña</string>
+    <string name="send_email">Enviar Correo</string>
+    <string name="text_forgot_password">¿Olvidaste tu contraseña?</string>
+
+    <!-- Home-Screen -->
+    <string name="learning_journey">Ruta de Aprendizaje</string>
+    <string name="back_to_modules">Volver a Módulos</string>
+
+    <!-- Explore-Screen -->
+    <string name="lessons">Lecciones</string>
+    <string name="modules">Módulos</string>
+
+    <!-- Profile-Screen -->
+    <string name="my_profile">Mi Perfil</string>
+    <string name="feedback">Feedback</string>
+    <string name="logout_title">Cerrar Sesión</string>
+    <string name="logout_desc">¿Estás seguro de que quieres cerrar sesión en tu cuenta?</string>
+    <string name="cancel">Cancelar</string>
+    <string name="confirm">Confirmar</string>
+
+    <!-- Lesson Status -->
+    <string name="status_completed">Completado</string>
+    <string name="status_locked">Bloqueado</string>
+    <string name="status_in_progress">En progreso</string>
+
+    <!-- Nav-Bar -->
+    <string name="nav_home">Inicio</string>
+    <string name="nav_explore">Explorar</string>
+    <string name="nav_code">Código</string>
+    <string name="nav_profile">Perfil</string>
+
 </resources>

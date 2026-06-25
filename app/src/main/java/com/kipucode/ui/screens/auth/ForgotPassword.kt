@@ -25,6 +25,8 @@ import com.kipucode.domain.model.Response
 import com.kipucode.ui.components.button.FilledButton
 import com.kipucode.ui.components.text_field.KipuForm
 import com.kipucode.ui.theme.BackgroundGray
+import com.kipucode.ui.theme.Gray
+import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.Nunito
 import com.kipucode.viewmodel.AuthViewModel
 
@@ -44,7 +46,7 @@ fun ForgotPasswordScreen(
         when (resetState) {
             is Response.Loading -> {}
             is Response.Success -> {
-                Toast.makeText(context, "Correo de recuperación enviado. Revisa tu bandeja de entrada.", Toast.LENGTH_LONG).show()
+//                Toast.makeText(context, "Correo de recuperación enviado. Revisa tu bandeja de entrada.", Toast.LENGTH_LONG).show()
                 authViewModel.resetForgotPasswordState()
                 onBack()
             }
@@ -125,8 +127,9 @@ fun ForgotPasswordScreenContent(
                 text = stringResource(R.string.reset_password),
                 fontSize = 32.sp,
                 fontFamily = Nunito,
+                lineHeight = 34.sp,
                 fontWeight = FontWeight.ExtraBold,
-                color = Color(0xFF081c40),
+                color = KipuDarkBlue,
                 textAlign = TextAlign.Center
             )
 
@@ -136,7 +139,8 @@ fun ForgotPasswordScreenContent(
                 text = stringResource(R.string.subheadline_forgot_password),
                 fontSize = 16.sp,
                 fontFamily = Nunito,
-                color = Color(0xFF686b75),
+                lineHeight = 18.sp,
+                color = Gray,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
             )

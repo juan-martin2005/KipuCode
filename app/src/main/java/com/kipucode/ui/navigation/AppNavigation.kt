@@ -118,7 +118,10 @@ fun AppNavigation(){
         composable("explore"){
             ExploreScreen(
                 userViewModel = userViewModel,
-                navController = navController
+                navController = navController,
+                onNavigateToCode = { lessonId ->
+                    navController.navigate("lesson?lessonId=${lessonId}")
+                }
             )
         }
 

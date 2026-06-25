@@ -10,6 +10,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -26,7 +27,6 @@ import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.Nunito
 import com.kipucode.viewmodel.UserViewModel
-
 
 @Composable
 fun ProfileScreen(
@@ -59,10 +59,10 @@ fun ProfileScreen(
 
             if (showLogoutDialog) {
                 KipuDialog(
-                    title = "Log Out",
-                    description = "Are you sure you want to log out of your account?",
-                    dismissButtonText = "Cancel",
-                    confirmButtonText = "Confirm",
+                    title = stringResource(id = R.string.logout_title),
+                    description = stringResource(id = R.string.logout_desc),
+                    dismissButtonText = stringResource(id = R.string.cancel),
+                    confirmButtonText = stringResource(id = R.string.confirm),
                     iconRes = R.drawable.ic_exit,
                     onDismissRequest = {
                         showLogoutDialog = false
@@ -99,7 +99,7 @@ fun ProfileContent(
 
         // --- SECCIÓN 1: TÍTULO ---
         Text(
-            text = "Mi Perfil",
+            text = stringResource(id = R.string.my_profile),
             fontSize = 28.sp,
             fontFamily = Nunito,
             fontWeight = FontWeight.ExtraBold,
@@ -118,13 +118,13 @@ fun ProfileContent(
 
         // --- SECCIÓN 3: MENÚ EN BLOQUE ---
         MultipleChoicesCard(
-            text = "Feedback",
+            text = stringResource(id = R.string.feedback),
             iconRes = R.drawable.ic_feedback,
             isFirst = true,
             onClick = onFeedbackClick
         )
         MultipleChoicesCard(
-            text = "Log Out",
+            text = stringResource(id = R.string.logout_title),
             iconRes = R.drawable.ic_exit,
             disableArrow = true,
             isRed = true,

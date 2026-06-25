@@ -1,5 +1,7 @@
 package com.kipucode
 
+import android.annotation.SuppressLint
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
@@ -11,6 +13,7 @@ import com.kipucode.ui.navigation.AppNavigation
 import com.kipucode.ui.theme.KipuCodeTheme
 import dagger.hilt.android.AndroidEntryPoint
 
+@SuppressLint("SourceLockedOrientationActivity")
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,7 +40,7 @@ class MainActivity : ComponentActivity() {
         )
 
         super.onCreate(savedInstanceState)
-
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         setContent {
             KipuCodeTheme {
                 AppNavigation()

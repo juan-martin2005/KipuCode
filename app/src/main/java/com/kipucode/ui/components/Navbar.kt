@@ -1,5 +1,6 @@
 package com.kipucode.ui.components
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -24,13 +26,13 @@ import androidx.navigation.compose.rememberNavController
 import com.kipucode.ui.theme.Nunito
 import com.kipucode.R
 import com.kipucode.ui.theme.KipuDarkBlue
+import com.kipucode.ui.theme.KipuTeal
 
-sealed class NavBarItem(val route: String, val title: String, val icon: Int) {
-    object Home : NavBarItem("home", "Home", R.drawable.ic_home)
-    object Explore : NavBarItem("explore", "Explore", R.drawable.ic_explore)
-    object Code : NavBarItem("code", "Code", R.drawable.ic_code)
-    object Profile : NavBarItem("profile", "Profile", R.drawable.ic_user)
-
+sealed class NavBarItem(val route: String, @param:StringRes val titleRes: Int, val icon: Int) {
+    object Home    : NavBarItem("home",    R.string.nav_home,    R.drawable.ic_home)
+    object Explore : NavBarItem("explore", R.string.nav_explore, R.drawable.ic_explore)
+    object Code    : NavBarItem("code",    R.string.nav_code,    R.drawable.ic_code)
+    object Profile : NavBarItem("profile", R.string.nav_profile, R.drawable.ic_user)
 }
 
 @Composable
@@ -47,19 +49,19 @@ fun KipuBottomBar(navController: NavController) {
 
     NavigationBar(
         containerColor = Color.White,
-        contentColor = Color(0xFF0293a8)
+        contentColor = KipuTeal
     ) {
         items.forEach { item ->
             NavigationBarItem(
                 icon = {
                     Icon(
                         painter = painterResource(id = item.icon),
-                        contentDescription = item.title,
+                        contentDescription = stringResource(id = item.titleRes),
                     )
                 },
                 label = {
                     Text(
-                        text = item.title,
+                        text = stringResource(id = item.titleRes),
                         fontFamily = Nunito,
                         fontWeight = FontWeight.Bold
                     )
@@ -76,8 +78,8 @@ fun KipuBottomBar(navController: NavController) {
                 },
 
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = Color(0xFF0293a8),
-                    selectedTextColor = Color(0xFF0293a8),
+                    selectedIconColor = KipuTeal,
+                    selectedTextColor = KipuTeal,
                     unselectedIconColor = Color.Gray,
                     unselectedTextColor = Color.Gray,
                     indicatorColor = Color.White

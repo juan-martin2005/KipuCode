@@ -55,7 +55,7 @@ fun LessonScreen(
         ) {
             if (currentLesson != null) {
                 LessonContent(
-                    title = "",
+                    title = "Volver al Inicio",
                     content = currentLesson.content,
                     onClickBack = onBack,
                     onClickNext = {
@@ -106,7 +106,7 @@ fun LessonContent(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 FilledButton(
-                    textButton = "Next",
+                    textButton = "Siguiente",
                     onClickFilledButton = onClickNext,
                     modifier = Modifier.weight(1f).padding(bottom = 24.dp)
                 )

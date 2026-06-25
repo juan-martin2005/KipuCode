@@ -1,6 +1,7 @@
 package com.kipucode.ui.screens.explore
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -8,6 +9,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -15,11 +17,13 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.kipucode.R
 import com.kipucode.domain.model.CourseDomain
 import com.kipucode.domain.model.CourseWithLessonsDomain
 import com.kipucode.domain.model.LessonDomain
 import com.kipucode.ui.components.KipuBottomBar
 import com.kipucode.ui.components.card.HomeCard
+import com.kipucode.ui.screens.home.HomeContent
 import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuTeal
@@ -31,7 +35,8 @@ import com.kipucode.viewmodel.UserViewModel
 fun ExploreScreen(
     userViewModel: UserViewModel,
     courseViewModel: CoursesViewModel = hiltViewModel(),
-    navController: NavController
+    navController: NavController,
+    onNavigateToCode: (String) -> Unit
 ) {
     val userProgress by userViewModel.userProgressState.collectAsStateWithLifecycle()
     val coursesWithLessons by courseViewModel.coursesWithLessonsState.collectAsStateWithLifecycle()
@@ -50,6 +55,10 @@ fun ExploreScreen(
 
     val completedCourses = progressData?.completedCourses ?: emptyList()
 
+    // Estado local para manejar el módulo seleccionado
+    var selectedCourseWithLessons by remember { mutableStateOf<CourseWithLessonsDomain?>(null) }
+
+
     Scaffold(
         bottomBar = { KipuBottomBar(navController = navController) },
         containerColor = BackgroundGray
@@ -60,15 +69,58 @@ fun ExploreScreen(
                 .background(BackgroundGray)
                 .padding(paddingValues)
         ) {
-            ExploreContent(
-                coursesWithLessons = coursesWithLessons,
-                activeCourseId = activeCourseId,
-                completedCourses = completedCourses,
-                activeCourseCurrentLessons = currentLessonOrderIndex
-            )
+            val selectedCourse = selectedCourseWithLessons
+
+            if (selectedCourse != null) {
+                val course = selectedCourse.course
+                val lessons = selectedCourse.lessons.sortedBy { it.orderIndex }
+
+                val isActiveCourse = course.id == activeCourseId
+                val isCompletedCourse = completedCourses.contains(course.id)
+
+                val currentProgressCount = when {
+                    isCompletedCourse -> lessons.size
+                    isActiveCourse -> (currentLessonOrderIndex - 1).coerceAtLeast(0)
+                    else -> 0
+                }
+                HomeContent(
+                    onBackClick = { selectedCourseWithLessons = null },
+
+                    sectionTitle = stringResource(id = R.string.lessons),
+                    courseTitle = course.title,
+                    courseNumber = course.orderIndex,
+                    currentLessonsProgress = currentProgressCount,
+                    totalLessons = lessons.size,
+                    lessons = lessons,
+
+                    isLessonCompleted = { lesson ->
+                        when {
+                            isCompletedCourse -> true
+                            isActiveCourse -> lesson.orderIndex < currentLessonOrderIndex
+                            else -> false
+                        }
+                    },
+                    isLessonLocked = { lesson ->
+                        when {
+                            isCompletedCourse -> false
+                            isActiveCourse -> lesson.orderIndex > currentLessonOrderIndex
+                            else -> true
+                        }
+                    },
+
+                    onLessonClick = onNavigateToCode
+                )
+            } else {
+                ExploreContent(
+                    coursesWithLessons = coursesWithLessons,
+                    activeCourseId = activeCourseId,
+                    completedCourses = completedCourses,
+                    activeCourseCurrentLessons = currentLessonOrderIndex,
+                    onCourseClick = { selectedCourseWithLessons = it }
+                )
+            }
         }
     }
-
 }
 
 @Composable
@@ -76,7 +128,8 @@ fun ExploreContent(
     coursesWithLessons: List<CourseWithLessonsDomain>,
     activeCourseId: String?,
     completedCourses: List<String>,
-    activeCourseCurrentLessons: Int
+    activeCourseCurrentLessons: Int,
+    onCourseClick: (CourseWithLessonsDomain) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -92,7 +145,8 @@ fun ExploreContent(
             }
         } else {
             LazyColumn(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
                     .padding(horizontal = 24.dp),
             ) {
                 item {
@@ -100,7 +154,7 @@ fun ExploreContent(
 
                     // --- SECCIÓN 1: TÍTULO ---
                     Text(
-                        text = "Modules",
+                        text = stringResource(id = R.string.modules),
                         fontSize = 28.sp,
                         fontFamily = Nunito,
                         fontWeight = FontWeight.ExtraBold,
@@ -129,6 +183,7 @@ fun ExploreContent(
                         currentLessons = current,
                         totalLessons = totalLessons,
                         courseNumber = course.orderIndex,
+                        modifier = Modifier.clickable { onCourseClick(item) }
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
@@ -187,7 +242,8 @@ fun ExplorePreview() {
             coursesWithLessons = mockCoursesWithLessons,
             activeCourseId = "python_module_03",
             completedCourses = listOf("python_module_01", "python_module_02"),
-            activeCourseCurrentLessons = 1
+            activeCourseCurrentLessons = 1,
+            onCourseClick = {}
         )
     }
 }

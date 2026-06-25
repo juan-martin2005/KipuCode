@@ -104,7 +104,7 @@ fun OnboardingScreenContent(
             ) {
                 Text(
                     text = stringResource(id = page.descriptionRes),
-                    color = Color(0xFF4B5563),
+                    color = Color.DarkGray,
                     fontFamily = Nunito,
                     fontWeight = FontWeight.Normal,
                     fontSize = 16.sp,

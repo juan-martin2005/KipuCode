@@ -20,7 +20,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -32,6 +32,7 @@ import com.kipucode.R
 import com.kipucode.domain.model.LessonDomain
 import com.kipucode.domain.model.Response
 import com.kipucode.ui.components.KipuBottomBar
+import com.kipucode.ui.components.KipuTopBar
 import com.kipucode.ui.components.card.HeadlineHome
 import com.kipucode.ui.components.card.HomeCard
 import com.kipucode.ui.components.card.LessonCard
@@ -119,16 +120,23 @@ fun HomeScreen(
                         }
                     } else {
                         HomeContent(
-                            userName = userData?.name ?: "Test_User_Full_Name",
-                            totalXp = progressData?.totalXp ?: 999,
-                            streakDay =
-                                getActiveStreak(
-                                    progressData?.completedAt,
-                                    progressData?.streakDay ?: 999),
+                            userName = userData?.name ?: "Usuario",
+                            totalXp = progressData?.totalXp ?: 0,
+                            streakDay = getActiveStreak(
+                                progressData?.completedAt,
+                                progressData?.streakDay ?: 0),
 
-                            courseTitle = courseData?.title ?: "Test_Course_Title",
+                            sectionTitle = stringResource(id = R.string.learning_journey),
+                            courseTitle = courseData?.title ?: "Curso",
+                            currentLessonsProgress = (currentLessonOrderIndex - 1).coerceAtLeast(0),
+                            totalLessons = lessonsData.size,
                             lessons = lessonsData,
-                            currentLessonOrderIndex = currentLessonOrderIndex,
+
+                            courseNumber = courseData?.orderIndex ?: 1,
+
+                            isLessonCompleted = { lesson -> lesson.orderIndex < currentLessonOrderIndex },
+                            isLessonLocked = { lesson -> lesson.orderIndex > currentLessonOrderIndex },
+
                             onLessonClick = onNavigateToCode
                         )
                     }
@@ -140,36 +148,55 @@ fun HomeScreen(
 
 @Composable
 fun HomeContent(
-    userName: String,
-    totalXp: Int,
-    streakDay: Int,
+    userName: String? = null,
+    totalXp: Int? = null,
+    streakDay: Int? = null,
 
+    onBackClick: (() -> Unit)? = null,
+
+    sectionTitle: String = stringResource(id = R.string.learning_journey),
     courseTitle: String,
+    courseNumber: Int = 0,
+    currentLessonsProgress: Int,
+    totalLessons: Int,
     lessons: List<LessonDomain>,
-    currentLessonOrderIndex: Int,
+
+    // Lógica inyectada para estados de lecciones
+    isLessonCompleted: (LessonDomain) -> Boolean,
+    isLessonLocked: (LessonDomain) -> Boolean,
+
     onLessonClick : (String) -> Unit
-    ) {
+) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(horizontal = 16.dp)
     ) {
-        // --- SECCIÓN 1: TOP BAR ---
+        // --- SECCIÓN 1: HEADER CONDICIONAL ---
         item {
-            HeadlineHome(
-                userName = userName,
-                userXp = totalXp,
-                userStreak = streakDay,
-                modifier = Modifier.padding(vertical = 16.dp)
-            )
+            if (userName != null && totalXp != null && streakDay != null) {
+                HeadlineHome(
+                    userName = userName,
+                    userXp = totalXp,
+                    userStreak = streakDay,
+                    modifier = Modifier.padding(vertical = 16.dp)
+                )
+            } else if (onBackClick != null) {
+                KipuTopBar(
+                    title = stringResource(id = R.string.back_to_modules),
+                    onBackClick = onBackClick,
+                    modifier = Modifier.padding(top = 16.dp, bottom = 16.dp)
+                )
+            }
         }
 
         // --- SECCIÓN 2: TARJETA DE PROGRESO ---
         item {
             HomeCard(
                 courseName = courseTitle,
-                currentLessons = (currentLessonOrderIndex - 1).coerceAtLeast(0),
-                totalLessons = lessons.size,
-                iconResId = R.drawable.ic_python,
+                currentLessons = currentLessonsProgress,
+                totalLessons = totalLessons,
+                courseNumber = courseNumber,
+//                iconResId = R.drawable.ic_python,
                 modifier = Modifier.padding(bottom = 24.dp)
             )
         }
@@ -177,7 +204,7 @@ fun HomeContent(
         // --- SECCIÓN 3: TÍTULO SEPARADOR ---
         item {
             Text(
-                text = "Learning Journey",
+                text = sectionTitle,
                 fontSize = 20.sp,
                 fontFamily = Nunito,
                 fontWeight = FontWeight.ExtraBold,
@@ -189,8 +216,8 @@ fun HomeContent(
         // --- SECCIÓN 4: LISTA DE LECCIONES ---
         itemsIndexed(lessons) { index, lesson ->
 
-            val isCompleted = lesson.orderIndex < currentLessonOrderIndex
-            val isLocked = lesson.orderIndex > currentLessonOrderIndex
+            val isCompleted = isLessonCompleted(lesson)
+            val isLocked = isLessonLocked(lesson)
 
             LessonCard(
                 lessonId = lesson.id,
@@ -201,7 +228,7 @@ fun HomeContent(
             )
 
             if (index < lessons.size - 1) {
-                val nextIsLocked = lessons[index + 1].orderIndex > currentLessonOrderIndex
+                val nextIsLocked = isLessonLocked(lessons[index + 1])
                 val lineColor = if (nextIsLocked) LightGray else KipuTeal
 
                 Box(modifier = Modifier.padding(start = 28.dp)) {
@@ -216,7 +243,6 @@ fun HomeContent(
         }
     }
 }
-
 fun getActiveStreak(lastCompletedMillis: Long?, databaseStreak: Int): Int {
     if (lastCompletedMillis == null) return 0
 
@@ -266,15 +292,23 @@ fun HomePreview() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFf6f7f9))
+            .background(BackgroundGray)
     ) {
+        val previewCurrentLessonOrderIndex = 2
+
         HomeContent(
             userName = "Test_User_Full_Name",
             totalXp = 999,
             streakDay = 999,
             courseTitle = "Introduction to Python Programing",
+
+            currentLessonsProgress = previewCurrentLessonOrderIndex - 1,
+            totalLessons = mockDomainLessons.size,
             lessons = mockDomainLessons,
-            currentLessonOrderIndex = 2,
+
+            isLessonCompleted = { lesson -> lesson.orderIndex < previewCurrentLessonOrderIndex },
+            isLessonLocked = { lesson -> lesson.orderIndex > previewCurrentLessonOrderIndex },
+
             onLessonClick = {}
         )
     }

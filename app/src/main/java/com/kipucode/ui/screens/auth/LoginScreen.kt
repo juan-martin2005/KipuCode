@@ -17,6 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -24,7 +25,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.kipucode.R
 import com.kipucode.domain.model.ErrorType
 import com.kipucode.domain.model.Response
-import com.kipucode.domain.model.UserDomain
 import com.kipucode.ui.components.button.FilledButton
 import com.kipucode.ui.components.text_field.ClickableLink
 import com.kipucode.ui.components.text_field.KipuForm
@@ -285,18 +285,18 @@ fun LoginContent(
     }
 }
 
-//// PREVIEWS
-//@Preview(showBackground = true, name = "Login")
-//@Composable
-//fun LoginScreenPreview() {
-//    MaterialTheme {
-//        LoginContent(
-//            onNavigateToRegister = {},
-//            onBack = {},
-//            onNavigateToForgotPassword = {},
-//            onLoginClick = { _, _ -> },
-////            externalEmailError = "Email is required",
-////            externalPasswordError = "Password is required"
-//        )
-//    }
-//}
+@Preview(showBackground = true, name = "Login Screen")
+@Composable
+fun LoginScreenPreview() {
+    Scaffold(
+        containerColor = BackgroundGray
+    ) { paddingValues ->
+        LoginContent(
+            onNavigateToRegister = {},
+            onBack = {},
+            onNavigateToForgotPassword = {},
+            onLoginClick = { _, _ -> },
+            modifier = Modifier.padding(paddingValues)
+        )
+    }
+}

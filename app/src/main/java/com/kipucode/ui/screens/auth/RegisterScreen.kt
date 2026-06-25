@@ -2,9 +2,6 @@ package com.kipucode.ui.screens.auth
 
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -17,6 +14,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -28,8 +26,6 @@ import com.kipucode.domain.model.UserDomain
 import com.kipucode.ui.components.button.FilledButton
 import com.kipucode.ui.components.text_field.ClickableLink
 import com.kipucode.ui.components.text_field.KipuForm
-import com.kipucode.ui.screens.lesson.ExerciseScreenContent
-import com.kipucode.ui.screens.lesson.FeedbackDialog
 import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.Nunito
 import com.kipucode.viewmodel.AuthViewModel
@@ -313,19 +309,18 @@ fun RegisterContent(
     }
 }
 
-//// PREVIEWS
-//@Preview(showBackground = true, name = "Registro - Estado Normal")
-//@Composable
-//fun RegisterScreenPreview() {
-//    MaterialTheme {
-//        RegisterContent(
-//            onNavigateToLogin = {},
-//            onBack = {},
-//            onRegisterClick = { _, _, _ -> },
-////            externalNameError = "Full Name is required",
-////            externalEmailError = "Email is required",
-////            externalPasswordError = "Password is required",
-////            externalConfirmPasswordError = "Confirm Password is required"
-//        )
-//    }
-//}
+// PREVIEWS
+@Preview(showBackground = true, name = "Registro - Estado Normal")
+@Composable
+fun RegisterScreenPreview() {
+    Scaffold(
+        containerColor = BackgroundGray
+    ) { paddingValues ->
+        RegisterContent(
+            onNavigateToLogin = {},
+            onBack = {},
+            onRegisterClick = { _, _, _ -> },
+            modifier = Modifier.padding(paddingValues)
+        )
+    }
+}
