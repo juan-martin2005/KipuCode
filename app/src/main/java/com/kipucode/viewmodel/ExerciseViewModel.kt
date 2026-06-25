@@ -54,6 +54,9 @@ class ExerciseViewModel @Inject constructor(
                     _exercisesState.value = filtered
                         .shuffled()
                         .take(EXERCISES_PER_SESSION)
+                        .map { exercise ->
+                            exercise.copy(options = exercise.options.shuffled())
+                        }
                 }
             }
         }
