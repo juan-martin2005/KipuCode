@@ -21,7 +21,8 @@ fun UserProgressEntity.toDomain(): UserProgressDomain {
         points = this.points,
         streakDay = this.streakDay,
         completedLessons = this.completedLessons,
-        completedCourses = this.completedCourses
+        completedCourses = this.completedCourses,
+        lessonsXpRecord = this.lessonsXpRecord
     )
 }
 
@@ -40,7 +41,8 @@ fun UserProgressDto.toEntity(): UserProgressEntity {
         streakDay = this.streakDay,
         completedAt = this.completedAt?.toDate()?.time,
         completedLessons = this.completedLessons,
-        completedCourses = this.completedCourses
+        completedCourses = this.completedCourses,
+        lessonsXpRecord = this.lessonsXpRecord ?: emptyMap()
     )
 }
 
@@ -55,7 +57,8 @@ fun UserProgressDomain.toDto(): UserProgressDto {
         points = this.points,
         streakDay = this.streakDay,
         completedLessons = this.completedLessons,
-        completedCourses = this.completedCourses
+        completedCourses = this.completedCourses,
+        lessonsXpRecord = this.lessonsXpRecord
     )
 }
 
@@ -71,7 +74,8 @@ fun UserProgressDomain.toEntity(): UserProgressEntity {
         streakDay = this.streakDay,
         completedAt = this.completedAt,
         completedCourses = this.completedCourses,
-        completedLessons = this.completedLessons
+        completedLessons = this.completedLessons,
+        lessonsXpRecord = this.lessonsXpRecord
     )
 }
-//
+

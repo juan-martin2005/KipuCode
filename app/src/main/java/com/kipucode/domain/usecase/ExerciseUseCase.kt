@@ -14,12 +14,3 @@ class GetExercisesByLessonUseCase @Inject constructor(
         return exerciseRepository.getExercisesByLessonId(lessonId)
     }
 }
-
-// Forzar sincronización desde la nube (Firestore)
-class RefreshExercisesUseCase @Inject constructor(
-    private val exerciseRepository: ExerciseRepository
-) {
-    suspend operator fun invoke(courseId: String, lessonId: String): Response<Unit> {
-        return exerciseRepository.refreshExercises(courseId, lessonId)
-    }
-}

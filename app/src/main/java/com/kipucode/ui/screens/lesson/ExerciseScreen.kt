@@ -22,10 +22,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -37,10 +33,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kipucode.R
 import com.kipucode.domain.model.BlockOptionDomain
+import com.kipucode.domain.model.Response
 import com.kipucode.ui.components.KipuTopBar
 import com.kipucode.ui.components.button.FilledButton
-import com.kipucode.ui.components.card.HeadlineHome
-import com.kipucode.ui.components.card.KipuDialog
 import com.kipucode.ui.screens.lesson.components.UniqueChoice
 import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.Green
@@ -56,8 +51,15 @@ fun ExerciseScreen(
     onFinished: () -> Unit,
     exerciseViewModel: ExerciseViewModel = hiltViewModel()
 ) {
+    val completeState by exerciseViewModel.completeState.collectAsStateWithLifecycle()
+
     LaunchedEffect(lessonId) {
+        exerciseViewModel.resetExerciseProgress()
         exerciseViewModel.loadExercises(lessonId, type = "UNIQUE_CHOICE")
+    }
+    if (completeState is Response.Success) {
+        exerciseViewModel.resetCompleteState()
+        onFinished()
     }
 
     val exercises by exerciseViewModel.exercisesState.collectAsStateWithLifecycle()
@@ -82,7 +84,7 @@ fun ExerciseScreen(
                             if (currentIndex < exercises.size - 1) {
                                 exerciseViewModel.nextExercise()
                             } else {
-                                onFinished()
+                                exerciseViewModel.finishLessonExercises(lessonId)
                             }
                         }
                     )

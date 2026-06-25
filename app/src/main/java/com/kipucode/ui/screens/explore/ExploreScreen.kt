@@ -185,8 +185,8 @@ fun ExplorePreview() {
 
         ExploreContent(
             coursesWithLessons = mockCoursesWithLessons,
-            activeCourseId = "python_module_02",
-            completedCourses = listOf("python_module_01"),
+            activeCourseId = "python_module_03",
+            completedCourses = listOf("python_module_01", "python_module_02"),
             activeCourseCurrentLessons = 1
         )
     }

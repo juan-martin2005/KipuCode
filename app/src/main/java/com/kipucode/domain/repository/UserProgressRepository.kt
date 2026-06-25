@@ -1,5 +1,6 @@
 package com.kipucode.domain.repository
 
+import com.kipucode.domain.model.CourseWithLessonsDomain
 import com.kipucode.domain.model.Response
 import com.kipucode.domain.model.UserProgressDomain
 import kotlinx.coroutines.flow.Flow
@@ -25,4 +26,9 @@ interface UserProgressRepository {
     //  Sincronización Remota -> Descarga datos desde la red y actualiza la DB local
     // ========================================================================================
     suspend fun refreshUserProgress(): Response<Unit>
+
+    suspend fun saveUserProgress(userProgress: UserProgressDomain): Response<Unit>
+
+    suspend fun completeLesson(completedLessonId: String, xpEarned: Int,
+                               coursesWithLessons: List<CourseWithLessonsDomain>): Response<Unit>
 }

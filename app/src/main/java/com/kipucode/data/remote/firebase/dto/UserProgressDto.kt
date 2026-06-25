@@ -13,4 +13,5 @@ data class UserProgressDto(
     val completedAt : Timestamp? = null,
     val completedLessons: List<String> = listOf(""),
     val completedCourses: List<String> = listOf(""),
+    val lessonsXpRecord: Map<String, Int> = emptyMap()
 )

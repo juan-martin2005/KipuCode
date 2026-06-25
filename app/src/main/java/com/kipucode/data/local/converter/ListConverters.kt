@@ -21,4 +21,17 @@ class ListConverters{
     fun fromList(list: List<String>?): String =
         gson.toJson(list)
 
+    // De Map a String
+    @TypeConverter
+    fun fromMapString(value: String?): Map<String, Int> {
+        if (value == null) return emptyMap()
+        val mapType = object : TypeToken<Map<String, Int>>() {}.type
+        return gson.fromJson(value, mapType)
+    }
+
+    // De String a Map
+    @TypeConverter
+    fun fromMap(map: Map<String, Int>?): String {
+        return gson.toJson(map ?: emptyMap<String, Int>())
+    }
 }

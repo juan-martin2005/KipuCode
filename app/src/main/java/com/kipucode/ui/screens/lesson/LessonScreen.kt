@@ -25,6 +25,7 @@ import com.kipucode.ui.components.KipuTopBar
 import com.kipucode.ui.components.button.FilledButton
 import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.KipuTeal
+import com.kipucode.viewmodel.ExerciseViewModel
 import com.kipucode.viewmodel.LessonViewModel
 
 @Composable
@@ -34,14 +35,14 @@ fun LessonScreen(
     onBack: () -> Unit,
     onNavigateToExercises: (lessonId: String) -> Unit
 ) {
+    val lesson by lessonViewModel.lessonState.collectAsStateWithLifecycle()
+    val currentLesson = lesson
+
     LaunchedEffect(lessonId) {
         if (lessonId != null) {
             lessonViewModel.getLessonById(lessonId)
         }
     }
-
-    val lesson by lessonViewModel.lessonState.collectAsStateWithLifecycle()
-    val currentLesson = lesson
 
     Scaffold(
         containerColor = BackgroundGray

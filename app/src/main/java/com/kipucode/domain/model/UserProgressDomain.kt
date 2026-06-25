@@ -11,5 +11,6 @@ data class UserProgressDomain(
     val score: Int = 0,
     val completedAt: Long? = null,
     val completedLessons: List<String> = emptyList(),
-    val completedCourses: List<String> = emptyList()
+    val completedCourses: List<String> = emptyList(),
+    val lessonsXpRecord: Map<String, Int> = emptyMap()
 )

@@ -32,6 +32,7 @@ data class UserProgressEntity(
     @ColumnInfo(name = "streak_day") val streakDay: Int,
     @ColumnInfo(name = "completed_at") val completedAt: Long?,
     @ColumnInfo(name = "completed_lessons") val completedLessons: List<String>,
-    @ColumnInfo(name = "completed_courses") val completedCourses: List<String>
+    @ColumnInfo(name = "completed_courses") val completedCourses: List<String>,
+    @ColumnInfo(name = "lessons_xp_record") val lessonsXpRecord: Map<String, Int>
 
 )

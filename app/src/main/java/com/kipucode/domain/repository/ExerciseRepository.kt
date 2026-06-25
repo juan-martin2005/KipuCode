@@ -9,5 +9,5 @@ interface ExerciseRepository {
     fun getExercisesByLessonId(lessonId: String): Flow<List<ExerciseDomain>>
 
     // Descarga los ejercicios de Firestore para una lección y los almacena en Room
-    suspend fun refreshExercises(courseId: String, lessonId: String): Response<Unit>
+    suspend fun refreshExercises(lessonId: String): Response<Unit>
 }

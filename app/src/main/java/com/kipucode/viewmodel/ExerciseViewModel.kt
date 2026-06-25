@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.kipucode.domain.model.BlockOptionDomain
 import com.kipucode.domain.model.ExerciseDomain
 import com.kipucode.domain.model.Response
+import com.kipucode.domain.usecase.CompleteLessonUseCase
 import com.kipucode.domain.usecase.GetExercisesByLessonUseCase
-import com.kipucode.domain.usecase.RefreshExercisesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ExerciseViewModel @Inject constructor(
     private val getExercisesUseCase: GetExercisesByLessonUseCase,
-    private val refreshExercisesUseCase: RefreshExercisesUseCase
+    private val completeLessonUseCase: CompleteLessonUseCase,
 ) : ViewModel() {
     companion object {
         private const val EXERCISES_PER_SESSION = 10
@@ -32,11 +32,13 @@ class ExerciseViewModel @Inject constructor(
     private val _exercisesState = MutableStateFlow<List<ExerciseDomain>>(emptyList())
     val exercisesState: StateFlow<List<ExerciseDomain>> = _exercisesState
 
-    private val _refreshState = MutableStateFlow<Response<Unit>?>(null)
-    val refreshState: StateFlow<Response<Unit>?> = _refreshState
+    private val _completeState = MutableStateFlow<Response<Unit>?>(null)
+    val completeState: StateFlow<Response<Unit>?> = _completeState
 
     private val _currentExerciseIndex = MutableStateFlow(0)
     val currentExerciseIndex: StateFlow<Int> = _currentExerciseIndex
+
+    private val correctExerciseIds = mutableSetOf<String>()
 
 
     fun loadExercises(lessonId: String, type: String? = null) {
@@ -57,18 +59,26 @@ class ExerciseViewModel @Inject constructor(
         }
     }
 
-    // Descarga los ejercicios desde Firebase
-    fun refreshExercises(courseId: String, lessonId: String) {
-        viewModelScope.launch {
-            _refreshState.value = Response.Loading
-            val result = refreshExercisesUseCase(courseId, lessonId)
-            _refreshState.value = result
-        }
-    }
-
     fun submitAnswer(option: BlockOptionDomain) {
         _selectedOptionId.value = option.id
         _answerFeedback.value = AnswerFeedback(isCorrect = option.isCorrect)
+
+        if (option.isCorrect) {
+            val currentExercise = _exercisesState.value.getOrNull(_currentExerciseIndex.value)
+            currentExercise?.let { correctExerciseIds.add(it.id) }
+        }
+    }
+
+    fun finishLessonExercises(lessonId: String) {
+        viewModelScope.launch {
+            _completeState.value = Response.Loading
+            val totalXp = _exercisesState.value
+                .filter { correctExerciseIds.contains(it.id) }
+                .sumOf { it.exp }
+
+            val result = completeLessonUseCase(lessonId, totalXp)
+            _completeState.value = result
+        }
     }
 
     // Avanza al siguiente ejercicio en la lista
@@ -93,9 +103,11 @@ class ExerciseViewModel @Inject constructor(
         _selectedOptionId.value = null
         _answerFeedback.value = null
         _exercisesState.value = emptyList()
+        correctExerciseIds.clear()
     }
 
-    fun resetRefreshState() {
-        _refreshState.value = null
+    fun resetCompleteState() {
+        _completeState.value = null
+        correctExerciseIds.clear()
     }
 }

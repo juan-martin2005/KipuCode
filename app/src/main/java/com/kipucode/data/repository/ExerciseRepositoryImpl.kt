@@ -27,7 +27,7 @@ internal class ExerciseRepositoryImpl @Inject constructor(
     }
 
     // Descarga desde Firestore y guarda en local (Room)
-    override suspend fun refreshExercises(courseId: String, lessonId: String): Response<Unit> {
+    override suspend fun refreshExercises(lessonId: String): Response<Unit> {
         return try {
             val remoteExercises = exerciseRemoteDataSource.getExercisesByLessonId(lessonId)
 
@@ -49,4 +49,6 @@ internal class ExerciseRepositoryImpl @Inject constructor(
             Response.Error("Error al sincronizar: ${ex.message}", ErrorType.FIRESTORE_ERROR)
         }
     }
+
+
 }
