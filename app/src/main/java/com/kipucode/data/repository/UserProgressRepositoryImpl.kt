@@ -15,9 +15,14 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withTimeout
+import java.time.Instant
+import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import kotlin.collections.all
 import kotlin.collections.map
+import kotlin.time.Duration.Companion.milliseconds
 
 // ===============================================================================================
 //  IMPLEMENTACIÓN DEL CONTRATO USER_PROGRESS_REPOSITORY
@@ -179,6 +184,14 @@ internal class UserProgressRepositoryImpl @Inject constructor(
                 }
             }
 
+            val now = System.currentTimeMillis()
+
+            val newStreak = calculateStreak(
+                lastCompletedMillis = currentProgress.completedAt,
+                currentMillis = now,
+                currentStreak = currentProgress.streakDay
+            )
+
             val updatedProgress = currentProgress.copy(
                 completedLessons = updatedLessons,
                 completedCourses = updatedCourses,
@@ -186,18 +199,46 @@ internal class UserProgressRepositoryImpl @Inject constructor(
                 points = updatedPoints,
                 score = updatedPoints, // Temporalmente igual que los puntos.
                 lessonsXpRecord = updatedLessonsXpRecord,
+                streakDay = newStreak,
                 currentLessonId = newCurrentLessonId,
                 status = newStatus,
-                completedAt = if (newStatus == "COMPLETED") System.currentTimeMillis() else currentProgress.completedAt
+                completedAt = now
             )
 
             userProgressDao.insert(updatedProgress.toEntity())
-            userRemoteDataSource.createUserProgress(updatedProgress.toDto())
+            try {
+                withTimeout(2000L.milliseconds) {
+                    userRemoteDataSource.createUserProgress(updatedProgress.toDto())
+                }
+            } catch (e: Exception) {
+            }
 
             Response.Success(Unit)
 
         } catch (e: Exception) {
             Response.Error("${e.localizedMessage}", ErrorType.FIRESTORE_ERROR)
+        }
+    }
+
+    private fun calculateStreak(lastCompletedMillis: Long?, currentMillis: Long, currentStreak: Int): Int {
+        if (lastCompletedMillis == null) return 1 // Primera lección completada, empieza en 1
+
+        // Convertir los timestamps en milisegundos a fechas locales (LocalDate) del dispositivo (ZoneId)
+        val lastDate = Instant.ofEpochMilli(lastCompletedMillis)
+            .atZone(ZoneId.systemDefault())
+            .toLocalDate()
+
+        val todayDate = Instant.ofEpochMilli(currentMillis)
+            .atZone(ZoneId.systemDefault())
+            .toLocalDate()
+
+        // Calcular la diferencia exacta en días calendarios
+        val daysBetween = ChronoUnit.DAYS.between(lastDate, todayDate)
+
+        return when (daysBetween) {
+            0L -> currentStreak       // Completo Hoy -> La racha se mantiene
+            1L -> currentStreak + 1   // Completó Ayer -> la racha aumenta
+            else -> 1                                // Se rompió la racha (más de 1 día) == 1
         }
     }
 }

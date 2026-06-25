@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.kipucode.ui.screens.auth.ForgotPasswordScreen
@@ -150,12 +151,18 @@ fun AppNavigation(){
                 defaultValue = null
             })
         ) { backStackEntry ->
-            val lessonId = backStackEntry.arguments?.getString("lessonId")
+            val lessonIdArg = backStackEntry.arguments?.getString("lessonId")
             LessonScreen(
-                lessonId = lessonId,
-                onBack = { navController.popBackStack() },
-                onNavigateToExercises = {lessonId ->
-                    navController.navigate("exercise?lessonId=${lessonId}")
+                lessonId = lessonIdArg,
+                onBack = {
+                    if (backStackEntry.lifecycle.currentState == Lifecycle.State.RESUMED) {
+                        navController.popBackStack()
+                    }
+                },
+                onNavigateToExercises = { id ->
+                    if (backStackEntry.lifecycle.currentState == Lifecycle.State.RESUMED) {
+                        navController.navigate("exercise?lessonId=${id}")
+                    }
                 }
             )
         }
@@ -166,13 +173,19 @@ fun AppNavigation(){
                 navArgument("lessonId") { type = NavType.StringType }
             )
         ) { backStackEntry ->
-            val lessonId = backStackEntry.arguments?.getString("lessonId") ?: ""
+            val lessonIdArg = backStackEntry.arguments?.getString("lessonId") ?: ""
             ExerciseScreen(
-                lessonId = lessonId,
-                onBack = { navController.popBackStack() },
+                lessonId = lessonIdArg,
+                onBack = {
+                    if (backStackEntry.lifecycle.currentState == Lifecycle.State.RESUMED) {
+                        navController.popBackStack()
+                    }
+                },
                 onFinished = {
-                    navController.navigate("home") {
-                        popUpTo("home") { inclusive = false }
+                    if (backStackEntry.lifecycle.currentState == Lifecycle.State.RESUMED) {
+                        navController.navigate("home") {
+                            popUpTo("home") { inclusive = false }
+                        }
                     }
                 }
             )

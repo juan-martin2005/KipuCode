@@ -42,6 +42,10 @@ import com.kipucode.ui.theme.LightGray
 import com.kipucode.ui.theme.Nunito
 import com.kipucode.viewmodel.CoursesViewModel
 import com.kipucode.viewmodel.UserViewModel
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 
 @Composable
 fun HomeScreen(
@@ -117,7 +121,10 @@ fun HomeScreen(
                         HomeContent(
                             userName = userData?.name ?: "Test_User_Full_Name",
                             totalXp = progressData?.totalXp ?: 999,
-                            streakDay = progressData?.streakDay ?: 999,
+                            streakDay =
+                                getActiveStreak(
+                                    progressData?.completedAt,
+                                    progressData?.streakDay ?: 999),
 
                             courseTitle = courseData?.title ?: "Test_Course_Title",
                             lessons = lessonsData,
@@ -208,6 +215,19 @@ fun HomeContent(
             }
         }
     }
+}
+
+fun getActiveStreak(lastCompletedMillis: Long?, databaseStreak: Int): Int {
+    if (lastCompletedMillis == null) return 0
+
+    val lastDate = Instant.ofEpochMilli(lastCompletedMillis)
+        .atZone(ZoneId.systemDefault())
+        .toLocalDate()
+
+    val todayDate = LocalDate.now()
+    val daysBetween = ChronoUnit.DAYS.between(lastDate, todayDate)
+
+    return if (daysBetween > 1L) 0 else databaseStreak
 }
 
 @Preview(showBackground = true)

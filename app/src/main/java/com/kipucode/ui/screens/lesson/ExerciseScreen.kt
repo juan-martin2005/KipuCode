@@ -52,11 +52,13 @@ fun ExerciseScreen(
     exerciseViewModel: ExerciseViewModel = hiltViewModel()
 ) {
     val completeState by exerciseViewModel.completeState.collectAsStateWithLifecycle()
+    val isLoading = completeState is Response.Loading
 
     LaunchedEffect(lessonId) {
         exerciseViewModel.resetExerciseProgress()
         exerciseViewModel.loadExercises(lessonId, type = "UNIQUE_CHOICE")
     }
+
     if (completeState is Response.Success) {
         exerciseViewModel.resetCompleteState()
         onFinished()
@@ -80,6 +82,7 @@ fun ExerciseScreen(
                 feedback?.let {
                     FeedbackDialog(
                         isCorrect = it.isCorrect,
+                        isLoading = isLoading,
                         onContinue = {
                             if (currentIndex < exercises.size - 1) {
                                 exerciseViewModel.nextExercise()
@@ -164,6 +167,7 @@ fun ExerciseScreenContent(
 @Composable
 fun FeedbackDialog(
     isCorrect: Boolean,
+    isLoading: Boolean = false,
     onContinue: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -199,8 +203,8 @@ fun FeedbackDialog(
         }
 
         FilledButton(
-            "Continuar",
-            onContinue
+            if (isLoading) "Guardando..." else "Continuar",
+            { if (!isLoading) onContinue() }
         )
     }
 }

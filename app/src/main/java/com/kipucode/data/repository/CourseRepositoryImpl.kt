@@ -19,6 +19,9 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.time.Instant
+import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import kotlin.collections.map
 
@@ -57,45 +60,54 @@ internal class CourseRepositoryImpl @Inject constructor(
         }
 
     // ===========================================================================================
-    //  Sincronización Remota -> Descarga y actualiza toda la estructura desde Firestore a Room
+    //  Sincronización Remota a Firebase
     // ===========================================================================================
     override suspend fun refreshCoursesAndLessons(): Response<Unit> = coroutineScope {
         try {
-            // Descargamos y guardamos todos los cursos desde Firebase a Room
+            // Descargar y guardar Cursos
             val remoteCourses = courseRemoteDataSource.getCourses()
             courseDao.insertCourses(remoteCourses.map { it.toEntity() })
 
-            // Para cada curso descargamos sus lecciones en paralelo (ASYNC)
-            val courseDeferredList = remoteCourses.map { course ->
-                async {
-                    val remoteLessons = lessonRemoteDataSource.getLessonByCourseId(course.id)
-                    lessonDao.insertAll(remoteLessons.map { it.toEntity() })
-
-                    // Para cada lección del curso, descargamos y guardamos los ejercicios
-                    val lessonDeferredList = remoteLessons.map { lesson ->
-                        async {
-                            val remoteExercises = exerciseRemoteDataSource.getExercisesByLessonId(lesson.id)
-
-                            exerciseDao.deleteExercisesByLessonId(lesson.id)
-
-                            exerciseDao.insertAll(remoteExercises.map { it.toEntity() })
-
-                            for (exerciseDto in remoteExercises) {
-                                val blockOptionEntities = exerciseDto.options.map { optionDto ->
-                                    optionDto.toEntity(exerciseId = exerciseDto.id)
-                                }
-                                blockOptionDao.insertAll(blockOptionEntities)
-                            }
-                        }
-                    }
-                    lessonDeferredList.awaitAll()
-                }
-            }
-            courseDeferredList.awaitAll()
+            // Descargar Lecciones y Ejercicios en paralelo delegando la responsabilidad
+            remoteCourses.map { course ->
+                async { syncLessonsAndExercisesForCourse(course.id) }
+            }.awaitAll()
 
             Response.Success(Unit)
         } catch (ex: Exception){
             Response.Error("Error syncing courses and exercises: ${ex.message}", ErrorType.FIRESTORE_ERROR)
+        }
+    }
+
+    // ===========================================================================================
+    //  Sincronización 'functions'
+    // ===========================================================================================
+    private suspend fun syncLessonsAndExercisesForCourse(courseId: String) = coroutineScope {
+        val remoteLessons = lessonRemoteDataSource.getLessonByCourseId(courseId)
+        lessonDao.insertAll(remoteLessons.map { it.toEntity() })
+
+        // Ejecutar la sincronización de ejercicios de forma concurrente por cada lección
+        remoteLessons.map { lesson ->
+            async { syncExercisesForLesson(lesson.id) }
+        }.awaitAll()
+    }
+
+    private suspend fun syncExercisesForLesson(lessonId: String) {
+        val remoteExercises = exerciseRemoteDataSource.getExercisesByLessonId(lessonId)
+
+        // Limpiar ejercicios antiguos y guardar los nuevos de la lección
+        exerciseDao.deleteExercisesByLessonId(lessonId)
+        exerciseDao.insertAll(remoteExercises.map { it.toEntity() })
+
+        // Extraer y agrupar todas las opciones (BlockOptions) en una sola lista para un insert masivo
+        val allBlockOptions = remoteExercises.flatMap { exerciseDto ->
+            exerciseDto.options.map { optionDto ->
+                optionDto.toEntity(exerciseId = exerciseDto.id)
+            }
+        }
+
+        if (allBlockOptions.isNotEmpty()) {
+            blockOptionDao.insertAll(allBlockOptions)
         }
     }
 }
