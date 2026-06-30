@@ -88,10 +88,10 @@ fun LoginScreen(
                 authViewModel.resetState()
                 authViewModel.login(email, password)
             },
+            isLoading = loginState is Response.Loading,
             externalEmailError = authEmailError,
             externalPasswordError = authPasswordError,
             modifier = Modifier.padding(paddingValues)
-
         )
     }
 }
@@ -104,6 +104,7 @@ fun LoginContent(
     onNavigateToForgotPassword: () -> Unit,
     onLoginClick: (String, String) -> Unit,
 
+    isLoading: Boolean = false,
     externalEmailError: String? = null,
     externalPasswordError: String? = null
 ) {
@@ -246,8 +247,8 @@ fun LoginContent(
             Spacer(modifier = Modifier.height(16.dp))
 
             FilledButton(
-                stringResource(id = R.string.logIn),
-                {
+                textButton = stringResource(id = R.string.logIn),
+                onClickFilledButton = {
                     var hasError = false
                     val emailTrimmed = email.trim().lowercase()
 
@@ -270,7 +271,8 @@ fun LoginContent(
                     if (!hasError) {
                         onLoginClick(emailTrimmed, password)
                     }
-                }
+                },
+                isLoading = isLoading
             )
 
             ClickableLink(

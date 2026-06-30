@@ -86,6 +86,7 @@ fun ForgotPasswordScreen(
                     authViewModel.resetPassword(emailTrimmed)
                 }
             },
+            isLoading = resetState is Response.Loading,
             modifier = Modifier.padding(paddingValues)
         )
     }
@@ -99,6 +100,7 @@ fun ForgotPasswordScreenContent(
     onEmailChange: (String) -> Unit,
     onBackClick: () -> Unit,
     onSendClick: () -> Unit,
+    isLoading: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -162,7 +164,8 @@ fun ForgotPasswordScreenContent(
 
             FilledButton(
                 textButton = stringResource(R.string.send_email),
-                onClickFilledButton = onSendClick
+                onClickFilledButton = onSendClick,
+                isLoading = isLoading
             )
         }
     }

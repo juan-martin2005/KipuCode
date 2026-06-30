@@ -87,6 +87,7 @@ fun RegisterScreen(
                 val userDomain = UserDomain(name = name, email = email)
                 authViewModel.register(userDomain, password)
             },
+            isLoading = loginState is Response.Loading,
             externalEmailError = authEmailError,
             externalConfirmPasswordError = authconfirmPasswordError,
             modifier = Modifier.padding(paddingValues)
@@ -97,10 +98,11 @@ fun RegisterScreen(
 @Composable
 fun RegisterContent(
     modifier: Modifier = Modifier,
-            onNavigateToLogin: () -> Unit,
+    onNavigateToLogin: () -> Unit,
     onBack: () -> Unit,
     onRegisterClick: (String, String, String) -> Unit,
 
+    isLoading: Boolean = false,
     externalNameError: String? = null,
     externalEmailError: String? = null,
     externalPasswordError: String? = null,
@@ -255,8 +257,8 @@ fun RegisterContent(
             Spacer(modifier = Modifier.height(16.dp))
 
             FilledButton(
-                stringResource(id = R.string.register),
-                {
+                textButton = stringResource(id = R.string.register),
+                onClickFilledButton = {
                     var hasError = false
                     val emailTrimmed = email.trim().lowercase()
 
@@ -294,7 +296,8 @@ fun RegisterContent(
                     if (!hasError) {
                         onRegisterClick(name, emailTrimmed, password)
                     }
-                }
+                },
+                isLoading = isLoading
             )
 
             ClickableLink(
