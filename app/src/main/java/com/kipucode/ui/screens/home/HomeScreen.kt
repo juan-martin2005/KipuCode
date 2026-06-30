@@ -161,7 +161,6 @@ fun HomeContent(
     totalLessons: Int,
     lessons: List<LessonDomain>,
 
-    // Lógica inyectada para estados de lecciones
     isLessonCompleted: (LessonDomain) -> Boolean,
     isLessonLocked: (LessonDomain) -> Boolean,
 
@@ -178,13 +177,13 @@ fun HomeContent(
                     userName = userName,
                     userXp = totalXp,
                     userStreak = streakDay,
-                    modifier = Modifier.padding(vertical = 16.dp)
+                    modifier = Modifier.padding(vertical = 24.dp)
                 )
             } else if (onBackClick != null) {
                 KipuTopBar(
                     title = stringResource(id = R.string.back_to_modules),
                     onBackClick = onBackClick,
-                    modifier = Modifier.padding(top = 16.dp, bottom = 16.dp)
+                    modifier = Modifier.padding(24.dp)
                 )
             }
         }
