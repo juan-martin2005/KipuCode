@@ -117,18 +117,17 @@ fun ProfileContent(
         Spacer(modifier = Modifier.height(32.dp))
 
         // --- SECCIÓN 3: MENÚ EN BLOQUE ---
-        MultipleChoicesCard(
-            text = stringResource(id = R.string.feedback),
-            iconRes = R.drawable.ic_feedback,
-            isFirst = true,
-            onClick = onFeedbackClick
-        )
+//        MultipleChoicesCard(
+//            text = stringResource(id = R.string.feedback),
+//            iconRes = R.drawable.ic_feedback,
+//            isFirst = true,
+//            onClick = onFeedbackClick
+//        )
         MultipleChoicesCard(
             text = stringResource(id = R.string.logout_title),
             iconRes = R.drawable.ic_exit,
             disableArrow = true,
             isRed = true,
-            isEnd = true,
             onClick = onLogoutClick
         )
     }
