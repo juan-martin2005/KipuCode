@@ -1,31 +1,70 @@
 package com.kipucode.ui.screens.code
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Icon
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.kipucode.R
 import com.kipucode.ui.components.KipuBottomBar
+import com.kipucode.ui.components.card.MultipleChoicesCard
+import com.kipucode.ui.components.card.UserProfileCard
+import com.kipucode.ui.screens.code.components.LessonRowItem
 import com.kipucode.ui.theme.BackgroundGray
-import com.kipucode.ui.theme.KipuTealDark
+import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.Nunito
+import com.kipucode.viewmodel.CoursesViewModel
+import com.kipucode.viewmodel.UserViewModel
+import kotlin.String
+import kotlin.collections.flatMap
 
+// --- MODEL ---
+data class LessonUiModel(
+    val id: String,
+    val title: String,
+    val earnedPoints: Int,
+    val maxPoints: Int
+)
+
+// --- SCREEN ---
 @Composable
 fun CodeScreen(
     navController: NavController,
+    coursesViewModel: CoursesViewModel = hiltViewModel(),
+    userViewModel: UserViewModel = hiltViewModel()
 ) {
+    val coursesWithLessons by coursesViewModel.coursesWithLessonsState.collectAsStateWithLifecycle()
+    val userProgress by userViewModel.userProgressState.collectAsStateWithLifecycle()
+
+    val lessonsUiList = remember(coursesWithLessons, userProgress) {
+        coursesWithLessons.flatMap { courseWithLessons ->
+            courseWithLessons.lessons.map { lesson ->
+                val earnedXp = userProgress?.lessonsXpRecord?.get(lesson.id) ?: 0
+
+                LessonUiModel(
+                    id = lesson.id,
+                    title = lesson.title,
+                    earnedPoints = earnedXp,
+                    maxPoints = lesson.exp
+                )
+            }
+        }
+    }
+
     Scaffold(
         bottomBar = { KipuBottomBar(navController = navController) },
         containerColor = BackgroundGray
@@ -33,80 +72,101 @@ fun CodeScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(BackgroundGray)
-                .padding(paddingValues),
-            contentAlignment = Alignment.Center
+                .padding(paddingValues)
         ) {
-            ComingSoonContent()
+            CodeContent(lessons = lessonsUiList)
         }
     }
 }
 
+// --- CONTENIDO ---
 @Composable
-private fun ComingSoonContent(
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+fun CodeContent(
+    lessons: List<LessonUiModel>
+){
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 24.dp),
     ) {
-        // --- ÍCONO PRINCIPAL ---
-        Icon(
-            painter = painterResource(id = R.drawable.ic_maintenance),
-            contentDescription = null,
-            tint = KipuTealDark,
-            modifier = Modifier.size(86.dp)
-        )
+        item {
+            Spacer(modifier = Modifier.height(40.dp))
 
+            // Título
+            Text(
+                text = "Ejercicios",
+                fontSize = 28.sp,
+                fontFamily = Nunito,
+                fontWeight = FontWeight.ExtraBold,
+                color = KipuDarkBlue
+            )
 
-        // --- TÍTULO PRINCIPAL ---
-        Text(
-            text = "Próximamente!",
-            fontFamily = Nunito,
-            fontWeight = FontWeight.ExtraBold,
-            fontSize = 40.sp,
-            color = Color(0xFF1A1A1A),
-            textAlign = TextAlign.Center,
-            lineHeight = 52.sp
-        )
+            Spacer(modifier = Modifier.height(24.dp))
+        }
 
-        // --- SUBTÍTULO DESTACADO ---
-        Text(
-            text = "Se vienen cositas",
-            fontFamily = Nunito,
-            fontWeight = FontWeight.Bold,
-            fontSize = 24.sp,
-            color = KipuTealDark,
-            textAlign = TextAlign.Center
-        )
-
-        Spacer(modifier = Modifier.height(6.dp))
-
-        // --- DESCRIPCIÓN ---
-        Text(
-            text = "Trabajamos para DARTE\nlo mejor. ¡No te lo pierdas!",
-            fontFamily = Nunito,
-            fontWeight = FontWeight.Normal,
-            fontSize = 18.sp,
-            color = Color(0xFF8A8A8A),
-            textAlign = TextAlign.Center,
-            lineHeight = 22.sp
-        )
+        itemsIndexed(lessons) { index, lesson ->
+            LessonRowItem(
+                index = index + 1,
+                title = lesson.title,
+                earnedPoints = lesson.earnedPoints,
+                maxPoints = lesson.maxPoints
+            )
+        }
     }
 }
 
-@Preview(showBackground = true)
+// --- DATOS PARA EL PREVIEW ---
+fun getMockExercises(): List<LessonUiModel> {
+    return listOf(
+        LessonUiModel(
+            id = "1",
+            title = "¿Quién fue el creador de Python a principios de la década de 1990?",
+            earnedPoints = 200,
+            maxPoints = 200
+        ),
+        LessonUiModel(
+            id = "2",
+            title = "¿Qué significa Python?",
+            earnedPoints = 200,
+            maxPoints = 200
+        ),
+        LessonUiModel(
+            id = "3",
+            title = "¿En qué año se lanzó la primera versión de Python (0.9.0)?",
+            earnedPoints = 100,
+            maxPoints = 200
+        ),
+        LessonUiModel(
+            id = "4",
+            title = "Selecciona dos características principales de Python.",
+            earnedPoints = 200,
+            maxPoints = 200
+        ),
+        LessonUiModel(
+            id = "5",
+            title = "¿Para qué se utiliza principalmente Python hoy en día?",
+            earnedPoints = 0,
+            maxPoints = 200
+        )
+    )
+}
+
+// --- PREVIEW ---
+@Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable
 fun CodeScreenPreview() {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(BackgroundGray),
-        contentAlignment = Alignment.Center
-    ) {
-        ComingSoonContent()
+    val mockNavController = rememberNavController()
+
+    Scaffold(
+        bottomBar = { KipuBottomBar(navController = mockNavController) },
+        containerColor = Color.White
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            CodeContent(lessons = getMockExercises())
+        }
     }
 }
