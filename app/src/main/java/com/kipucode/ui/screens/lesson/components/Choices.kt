@@ -19,7 +19,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -97,20 +96,8 @@ fun UniqueChoice(
         Spacer(modifier = Modifier.height(8.dp))
 
         // --- PREGUNTA (INSTRUCTION) ---
-        Box(
-            modifier = Modifier
-                .fillMaxWidth(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = instruction,
-                fontSize = 24.sp,
-                lineHeight = 26.sp,
-                fontWeight = FontWeight.Bold,
-                color = KipuDarkBlue,
-                textAlign = TextAlign.Start
-            )
-        }
+        ContentMarkdown(Modifier, instruction.trimIndent())
+
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -154,7 +141,15 @@ fun MultipleChoiceExercisePreview() {
             UniqueChoice(
                 currentEx = 3,
                 totalEx = 10,
-                instruction = "¿Qué comando utilizas en Python para mostrar texto en la consola?",
+                instruction = """
+                       #### ¿Que imprime este codigo?
+
+                       ```java
+                       public DbHelper(@Nullable Context context) {
+                           super(context, "nombre.db", null, 1);
+                       }
+                       ```
+        """.trimIndent(),
                 options = listOf(
                     BlockOptionDomain(id = "1", exerciseId = "ex1", content = "console.log()", isCorrect = false),
                     BlockOptionDomain(id = "2", exerciseId = "ex1", content = "print()", isCorrect = true),

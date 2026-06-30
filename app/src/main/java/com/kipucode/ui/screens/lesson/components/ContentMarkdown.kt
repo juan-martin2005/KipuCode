@@ -1,5 +1,6 @@
 package com.kipucode.ui.screens.lesson.components
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -27,7 +28,10 @@ import dev.snipme.highlights.Highlights
 import dev.snipme.highlights.model.SyntaxThemes
 
 @Composable
-fun ContentMarkdown(content: String){
+fun ContentMarkdown(
+    modifier: Modifier = Modifier,
+    content: String
+){
     val markdown = content.trimIndent()
 
     val highlightsBuilder = remember {
@@ -36,7 +40,7 @@ fun ContentMarkdown(content: String){
 
     Markdown(
         content = markdown,
-        modifier = Modifier.padding(vertical = 16.dp, horizontal = 24.dp),
+        modifier = modifier,
         padding = markdownPadding(
             block = 4.dp,
             list = 3.dp
@@ -66,6 +70,13 @@ fun ContentMarkdown(content: String){
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp,
                 textAlign = TextAlign.Justify,
+                color = KipuDarkBlue
+            ),
+            h4 = TextStyle(
+                fontFamily = Nunito,
+                fontWeight = FontWeight.ExtraBold,
+                fontSize = 22.sp,
+                textAlign = TextAlign.Start,
                 color = KipuDarkBlue
             ),
             paragraph = TextStyle(
@@ -117,6 +128,9 @@ fun ContentMarkdown(content: String){
 @Composable
 fun PreviewMarkdown() {
     ContentMarkdown(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp, 24.dp),
         content = """
             # 01 - Historia, Visión y Ecosistema de Python
             
