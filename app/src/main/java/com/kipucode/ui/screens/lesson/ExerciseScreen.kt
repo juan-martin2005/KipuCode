@@ -22,9 +22,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,9 +40,11 @@ import com.kipucode.domain.model.BlockOptionDomain
 import com.kipucode.domain.model.Response
 import com.kipucode.ui.components.KipuTopBar
 import com.kipucode.ui.components.button.FilledButton
+import com.kipucode.ui.components.card.KipuDialog
 import com.kipucode.ui.screens.lesson.components.UniqueChoice
 import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.Green
+import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.Nunito
 import com.kipucode.ui.theme.Red
 import com.kipucode.viewmodel.ExerciseViewModel
@@ -51,6 +57,8 @@ fun ExerciseScreen(
     onFinished: () -> Unit,
     exerciseViewModel: ExerciseViewModel = hiltViewModel()
 ) {
+    var showBackDialog by remember { mutableStateOf(false) }
+
     val completeState by exerciseViewModel.completeState.collectAsStateWithLifecycle()
     val isLoading = completeState is Response.Loading
 
@@ -102,9 +110,32 @@ fun ExerciseScreen(
             currentIndex = currentIndex,
             totalExercises = exercises.size,
             selectedOptionId = selectedOptionId,
-            onBackClick = onBack,
+            onBackClick = {
+                showBackDialog = true
+                },
             onOptionSelected = { exerciseViewModel.submitAnswer(it) },
             modifier = Modifier.padding(paddingValues)
+        )
+    }
+
+    if (showBackDialog) {
+        KipuDialog(
+            title = stringResource(R.string.exit_exercise_title),
+            description = stringResource(R.string.exit_exercise_desc),
+            dismissButtonText = stringResource(R.string.exit_exercise_cancel),
+            confirmButtonText = stringResource(R.string.exit_exercise_confirm),
+            iconRes = R.drawable.ic_warning,
+            onDismissRequest = {
+                showBackDialog = false
+            },
+            onDismissClick = {
+                showBackDialog = false
+            },
+            onConfirmClick = {
+                showBackDialog = false
+                onBack()
+            },
+            iconTint = KipuTeal
         )
     }
 }
@@ -112,6 +143,7 @@ fun ExerciseScreen(
 // ---  CONTENT ---
 @Composable
 fun ExerciseScreenContent(
+    modifier: Modifier = Modifier,
     currentExerciseId: String?,
     instruction: String?,
     options: List<BlockOptionDomain>?,
@@ -119,8 +151,7 @@ fun ExerciseScreenContent(
     totalExercises: Int,
     selectedOptionId: String?,
     onBackClick: () -> Unit,
-    onOptionSelected: (BlockOptionDomain) -> Unit,
-    modifier: Modifier = Modifier
+    onOptionSelected: (BlockOptionDomain) -> Unit
 ) {
     if (currentExerciseId == null || instruction == null || options == null) {
         Box(
@@ -156,6 +187,7 @@ fun ExerciseScreenContent(
                 modifier = Modifier.padding(horizontal = 24.dp)
             )
         }
+
         item {
             Spacer(modifier = Modifier.height(24.dp))
         }
@@ -166,10 +198,10 @@ fun ExerciseScreenContent(
 // --- DIALOG ---
 @Composable
 fun FeedbackDialog(
+    modifier: Modifier = Modifier,
     isCorrect: Boolean,
     isLoading: Boolean = false,
     onContinue: () -> Unit,
-    modifier: Modifier = Modifier
 ) {
     val backgroundColor = if (isCorrect) Green.copy(alpha = 0.1f) else Red.copy(alpha = 0.1f)
     val accentColor = if (isCorrect) Green else Red
@@ -203,8 +235,9 @@ fun FeedbackDialog(
         }
 
         FilledButton(
-            if (isLoading) "Guardando..." else "Continuar",
-            { if (!isLoading) onContinue() }
+            textButton = "Continuar",
+            onClickFilledButton = onContinue,
+            isLoading = isLoading
         )
     }
 }
@@ -215,7 +248,7 @@ fun FeedbackDialog(
 fun ExerciseScreenContentPreview() {
     ExerciseScreenContent(
         currentExerciseId = "ex_01",
-        instruction = "¿Qué comando utilizas en Python para mostrar texto en la consola?",
+        instruction = "#### ¿Qué comando utilizas en Python para mostrar texto en la consola?",
         options = listOf(
             BlockOptionDomain(id = "1", exerciseId = "ex_01", content = "console.log()", isCorrect = false),
             BlockOptionDomain(id = "2", exerciseId = "ex_01", content = "print()", isCorrect = true),

@@ -14,15 +14,21 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kipucode.R
 import com.kipucode.ui.screens.lesson.components.ContentMarkdown
 import com.kipucode.ui.components.KipuTopBar
 import com.kipucode.ui.components.button.FilledButton
+import com.kipucode.ui.components.card.KipuDialog
 import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.viewmodel.ExerciseViewModel
@@ -35,6 +41,8 @@ fun LessonScreen(
     onBack: () -> Unit,
     onNavigateToExercises: (lessonId: String) -> Unit
 ) {
+    var showExerciseDialog by remember { mutableStateOf(false) }
+
     val lesson by lessonViewModel.lessonState.collectAsStateWithLifecycle()
     val currentLesson = lesson
 
@@ -59,7 +67,7 @@ fun LessonScreen(
                     content = currentLesson.content,
                     onClickBack = onBack,
                     onClickNext = {
-                        onNavigateToExercises(currentLesson.id)
+                        showExerciseDialog = true
                     }
                 )
             } else {
@@ -73,6 +81,27 @@ fun LessonScreen(
                 }
             }
         }
+    }
+
+    if (showExerciseDialog && currentLesson != null) {
+        KipuDialog(
+            title = stringResource(R.string.enter_exercise_title),
+            description = stringResource(R.string.enter_exercise_desc),
+            dismissButtonText = stringResource(R.string.enter_exercise_cancel),
+            confirmButtonText = stringResource(R.string.enter_exercise_confirm),
+            iconRes = R.drawable.ic_quiz,
+            onDismissRequest = {
+                showExerciseDialog = false
+            },
+            onDismissClick = {
+                showExerciseDialog = false
+            },
+            onConfirmClick = {
+                showExerciseDialog = false
+                onNavigateToExercises(currentLesson.id)
+            },
+            iconTint = KipuTeal
+        )
     }
 }
 
@@ -95,7 +124,10 @@ fun LessonContent(
         }
 
         item {
-            ContentMarkdown(content)
+            ContentMarkdown(
+                Modifier.padding(24.dp),
+                content
+            )
         }
 
         item {

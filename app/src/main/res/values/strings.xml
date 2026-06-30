@@ -78,7 +78,6 @@
     <string name="home_streak_value">%1$d</string>
 
     <!-- ForgotPassword-Screen -->
-
     <string name="reset_password">Restablecer Contraseña</string>
     <string name="subheadline_forgot_password">Te enviaremos un enlace seguro para restablecer tu contraseña</string>
     <string name="send_email">Enviar Correo</string>
@@ -110,5 +109,17 @@
     <string name="nav_explore">Explorar</string>
     <string name="nav_code">Código</string>
     <string name="nav_profile">Perfil</string>
+
+    <!-- Exercise-Screen -->
+    <string name="exit_exercise_title">Aún no has terminado</string>
+    <string name="exit_exercise_desc">El progreso de este ejercicio no se guardará si sales antes de completarlo</string>
+    <string name="exit_exercise_confirm">Salir</string>
+    <string name="exit_exercise_cancel">Continuar</string>
+
+    <!-- Lesson-Screen -->
+    <string name="enter_exercise_title">Es momento de practicar</string>
+    <string name="enter_exercise_desc">Completa los ejercicios para reforzar los conceptos aprendidos</string>
+    <string name="enter_exercise_confirm">Comenzar</string>
+    <string name="enter_exercise_cancel">Volver</string>
 
 </resources>
