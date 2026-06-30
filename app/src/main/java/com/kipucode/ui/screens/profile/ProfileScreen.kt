@@ -1,7 +1,10 @@
 package com.kipucode.ui.screens.profile
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,6 +22,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.kipucode.R
 import com.kipucode.ui.components.KipuBottomBar
+import com.kipucode.ui.components.card.HomeCard
 import com.kipucode.ui.components.card.KipuDialog
 import com.kipucode.ui.components.card.MultipleChoicesCard
 import com.kipucode.ui.components.card.UserProfileCard
@@ -50,8 +54,6 @@ fun ProfileScreen(
             ProfileContent(
                 name = userProfile?.name ?: "",
                 email = userProfile?.email ?: "",
-                onFeedbackClick = {
-                },
                 onLogoutClick = {
                     showLogoutDialog = true
                 }
@@ -85,51 +87,46 @@ fun ProfileScreen(
 fun ProfileContent(
     name: String,
     email: String,
-    onFeedbackClick: () -> Unit,
     onLogoutClick: () -> Unit
 ) {
-
-    Column(
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundGray)
             .padding(horizontal = 24.dp),
     ) {
-        Spacer(modifier = Modifier.height(40.dp))
+        item {
+            Spacer(modifier = Modifier.height(40.dp))
 
-        // --- SECCIÓN 1: TÍTULO ---
-        Text(
-            text = stringResource(id = R.string.my_profile),
-            fontSize = 28.sp,
-            fontFamily = Nunito,
-            fontWeight = FontWeight.ExtraBold,
-            color = KipuDarkBlue
-        )
+            // --- SECCIÓN 1: TÍTULO ---
+            Text(
+                text = stringResource(id = R.string.my_profile),
+                fontSize = 28.sp,
+                fontFamily = Nunito,
+                fontWeight = FontWeight.ExtraBold,
+                color = KipuDarkBlue
+            )
 
-        Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(24.dp))
+        }
 
-        // --- SECCIÓN 2: TARJETA DE USUARIO ---
-        UserProfileCard(
-            name = name,
-            email = email,
-        )
+        item {
+            UserProfileCard(
+                name = name,
+                email = email,
+            )
 
-        Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(32.dp))
+        }
 
-        // --- SECCIÓN 3: MENÚ EN BLOQUE ---
-//        MultipleChoicesCard(
-//            text = stringResource(id = R.string.feedback),
-//            iconRes = R.drawable.ic_feedback,
-//            isFirst = true,
-//            onClick = onFeedbackClick
-//        )
-        MultipleChoicesCard(
-            text = stringResource(id = R.string.logout_title),
-            iconRes = R.drawable.ic_exit,
-            disableArrow = true,
-            isRed = true,
-            onClick = onLogoutClick
-        )
+        item {
+            MultipleChoicesCard(
+                text = stringResource(id = R.string.logout_title),
+                iconRes = R.drawable.ic_exit,
+                disableArrow = true,
+                isRed = true,
+                onClick = onLogoutClick
+            )
+        }
     }
 }
 
@@ -139,7 +136,6 @@ fun ProfileScreenPreview() {
     ProfileContent(
         name = "Pepeito Gonzles",
         email = "pedro@upn.pe",
-        onFeedbackClick = {},
         onLogoutClick = {}
     )
 }
