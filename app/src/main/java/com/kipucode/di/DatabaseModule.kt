@@ -42,7 +42,4 @@ object DatabaseModule {
 
     @Provides
     fun provideBlockOptionDao(appDatabase: AppDatabase): BlockOptionDao = appDatabase.blockOptionDao()
-
-    @Provides
-    fun provideSyncQueueDao(appDatabase: AppDatabase): SyncQueueDao = appDatabase.syncQueueDao()
 }
