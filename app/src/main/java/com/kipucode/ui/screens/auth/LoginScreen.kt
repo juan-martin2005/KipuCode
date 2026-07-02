@@ -258,7 +258,7 @@ fun LoginContent(
                     if (emailTrimmed.isBlank()) {
                         localEmailError = msgErrorEmailRequired
                         hasError = true
-                    } else if (!emailTrimmed.endsWith("@upn.pe")) {
+                    }else if (!emailTrimmed.endsWith("@upn.pe")) {
                         localEmailError = msgErrorEmailDomain
                         hasError = true
                     }

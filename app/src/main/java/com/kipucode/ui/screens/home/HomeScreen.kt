@@ -177,7 +177,7 @@ fun HomeContent(
                     userName = userName,
                     userXp = totalXp,
                     userStreak = streakDay,
-                    modifier = Modifier.padding(vertical = 24.dp)
+                    modifier = Modifier.padding(vertical = 16.dp)
                 )
             } else if (onBackClick != null) {
                 KipuTopBar(

@@ -20,13 +20,13 @@ class LessonRemoteDataSource @Inject constructor(
             .await()
             .map { it.toObject<LessonDto>().copy(id = it.id) }
 
-    suspend fun getLessonById(lessonId: String): LessonDto? {
-        val snapshot = firestore.collection(LESSON_COLLECTION)
-            .document(lessonId)
-            .get()
-            .await()
-
-        return snapshot.toObject<LessonDto>()?.copy(id = snapshot.id)
-    }
+//    suspend fun getLessonById(lessonId: String): LessonDto? {
+//        val snapshot = firestore.collection(LESSON_COLLECTION)
+//            .document(lessonId)
+//            .get()
+//            .await()
+//
+//        return snapshot.toObject<LessonDto>()?.copy(id = snapshot.id)
+//    }
 
 }

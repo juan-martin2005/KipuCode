@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -41,6 +42,7 @@ import com.kipucode.domain.model.Response
 import com.kipucode.ui.components.KipuTopBar
 import com.kipucode.ui.components.button.FilledButton
 import com.kipucode.ui.components.card.KipuDialog
+import com.kipucode.ui.screens.lesson.components.FeedbackDialog
 import com.kipucode.ui.screens.lesson.components.UniqueChoice
 import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.Green
@@ -104,17 +106,15 @@ fun ExerciseScreen(
         }
     ) { paddingValues ->
         ExerciseScreenContent(
+            modifier = Modifier.padding(paddingValues),
             currentExerciseId = currentExercise?.id,
             instruction = currentExercise?.instruction,
             options = currentExercise?.options,
             currentIndex = currentIndex,
             totalExercises = exercises.size,
             selectedOptionId = selectedOptionId,
-            onBackClick = {
-                showBackDialog = true
-                },
+            onBackClick = { showBackDialog = true },
             onOptionSelected = { exerciseViewModel.submitAnswer(it) },
-            modifier = Modifier.padding(paddingValues)
         )
     }
 
@@ -192,53 +192,6 @@ fun ExerciseScreenContent(
             Spacer(modifier = Modifier.height(24.dp))
         }
 
-    }
-}
-
-// --- DIALOG ---
-@Composable
-fun FeedbackDialog(
-    modifier: Modifier = Modifier,
-    isCorrect: Boolean,
-    isLoading: Boolean = false,
-    onContinue: () -> Unit,
-) {
-    val backgroundColor = if (isCorrect) Green.copy(alpha = 0.1f) else Red.copy(alpha = 0.1f)
-    val accentColor = if (isCorrect) Green else Red
-    val iconRes = if (isCorrect) R.drawable.ic_correct else R.drawable.ic_incorrect
-    val label = if (isCorrect) "¡Correcto!" else "Incorrecto"
-
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(backgroundColor)
-            .padding(horizontal = 24.dp, vertical = 20.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Icon(
-                painter = painterResource(iconRes),
-                contentDescription = null,
-                tint = accentColor,
-                modifier = Modifier.size(24.dp)
-            )
-            Text(
-                text = label,
-                fontFamily = Nunito,
-                fontWeight = FontWeight.ExtraBold,
-                fontSize = 18.sp,
-                color = accentColor
-            )
-        }
-
-        FilledButton(
-            textButton = "Continuar",
-            onClickFilledButton = onContinue,
-            isLoading = isLoading
-        )
     }
 }
 

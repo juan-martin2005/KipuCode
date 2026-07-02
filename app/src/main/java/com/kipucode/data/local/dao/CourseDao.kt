@@ -7,7 +7,6 @@ import androidx.room.Query
 import androidx.room.Transaction
 import com.kipucode.data.local.dao.relation.CourseWithLessons
 import com.kipucode.data.local.model.CourseEntity
-import com.kipucode.data.local.model.LessonEntity
 import kotlinx.coroutines.flow.Flow
 
 // ============================================================================================

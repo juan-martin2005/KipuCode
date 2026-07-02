@@ -6,11 +6,14 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -30,6 +33,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kipucode.R
 import com.kipucode.ui.components.text_field.KipucodeText
+import com.kipucode.ui.screens.lesson.LessonContent
+import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.Nunito
@@ -56,13 +61,20 @@ fun SplashScreen(
         onSplashFinished(isLogged)
     }
 
-    SplashContent(
-        animationScale = animationState.value
-    )
+    Scaffold(
+        containerColor = BackgroundGray
+    ) { paddingValues ->
+        SplashContent(
+            animationScale = animationState.value,
+            contentPadding = paddingValues
+        )
+    }
+
 }
 
 @Composable
 fun SplashContent(
+    contentPadding: PaddingValues = PaddingValues(),
     animationScale: Float = 1f
 ) {
     // Fondo
@@ -82,6 +94,7 @@ fun SplashContent(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
+                .padding(contentPadding)
                 .alpha(animationScale)
                 .scale(animationScale)
         ) {

@@ -305,11 +305,10 @@ fun RegisterContent(
                     if (emailTrimmed.isBlank()) {
                         localEmailError = msgErrorEmailRequired
                         hasError = true
+                    }else if (!emailTrimmed.endsWith("@upn.pe")) {
+                        localEmailError = msgErrorEmailDomain
+                        hasError = true
                     }
-//                    else if (!emailTrimmed.endsWith("@upn.pe")) {
-//                        localEmailError = msgErrorEmailDomain
-//                        hasError = true
-//                    }
 
                     if (password.isBlank()) {
                         localPasswordError = msgErrorPassRequired
