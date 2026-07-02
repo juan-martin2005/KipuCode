@@ -31,7 +31,6 @@ import com.kipucode.ui.components.button.FilledButton
 import com.kipucode.ui.components.card.KipuDialog
 import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.KipuTeal
-import com.kipucode.viewmodel.ExerciseViewModel
 import com.kipucode.viewmodel.LessonViewModel
 
 @Composable

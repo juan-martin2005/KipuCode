@@ -10,7 +10,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -19,10 +18,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.kipucode.R
 import com.kipucode.ui.components.KipuBottomBar
-import com.kipucode.ui.components.card.MultipleChoicesCard
-import com.kipucode.ui.components.card.UserProfileCard
 import com.kipucode.ui.screens.code.components.LessonRowItem
 import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.KipuDarkBlue
@@ -50,8 +46,17 @@ fun CodeScreen(
     val coursesWithLessons by coursesViewModel.coursesWithLessonsState.collectAsStateWithLifecycle()
     val userProgress by userViewModel.userProgressState.collectAsStateWithLifecycle()
 
-    val lessonsUiList = remember(coursesWithLessons, userProgress) {
-        coursesWithLessons.flatMap { courseWithLessons ->
+    val activeTrack = userProgress?.currentLessonId?.substringBefore("_")
+
+
+    val lessonsUiList = remember(coursesWithLessons, userProgress, activeTrack ) {
+        val filteredCourses = if (activeTrack != null) {
+            coursesWithLessons.filter { it.course.id.startsWith(activeTrack) }
+        } else {
+            coursesWithLessons
+        }
+
+        filteredCourses.flatMap { courseWithLessons ->
             courseWithLessons.lessons.map { lesson ->
                 val earnedXp = userProgress?.lessonsXpRecord?.get(lesson.id) ?: 0
 

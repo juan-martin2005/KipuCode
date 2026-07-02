@@ -80,7 +80,7 @@ fun LessonRowItem(
             Text(
                 text = title,
                 fontFamily = Nunito,
-                fontWeight = FontWeight.Normal,
+                fontWeight = FontWeight.Medium,
                 fontSize = 16.sp,
                 color = KipuDarkBlue,
                 maxLines = 2,

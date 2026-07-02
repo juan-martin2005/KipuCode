@@ -106,7 +106,7 @@ fun OutlineButton(
                 fontFamily = Nunito,
                 fontWeight = FontWeight.Bold,
                 fontSize = fontSize,
-                color = if (enabled && !isLoading) KipuTeal else KipuTeal.copy(alpha = 0.5f)
+                color = if (enabled) KipuTeal else KipuTeal.copy(alpha = 0.5f)
             )
         }
     }

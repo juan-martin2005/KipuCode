@@ -1,15 +1,12 @@
 package com.kipucode.ui.screens.auth
 
 import android.util.Log
-import android.widget.Toast
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -40,7 +37,6 @@ fun ForgotPasswordScreen(
     var emailError by remember { mutableStateOf<String?>(null) }
 
     val resetState by authViewModel.resetPasswordState.collectAsStateWithLifecycle()
-    val context = LocalContext.current
 
     LaunchedEffect(resetState) {
         when (resetState) {
@@ -95,13 +91,13 @@ fun ForgotPasswordScreen(
 // --- CONTENT ---
 @Composable
 fun ForgotPasswordScreenContent(
+    modifier: Modifier = Modifier,
     email: String,
     emailError: String?,
     onEmailChange: (String) -> Unit,
     onBackClick: () -> Unit,
     onSendClick: () -> Unit,
     isLoading: Boolean = false,
-    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
