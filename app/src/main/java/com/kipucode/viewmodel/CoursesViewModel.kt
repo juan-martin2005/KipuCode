@@ -25,6 +25,7 @@ class CoursesViewModel @Inject constructor(
 
     init {
         startObservingCourses()
+        syncCoursesInBackground()
     }
 
     private fun startObservingCourses() {
@@ -32,6 +33,12 @@ class CoursesViewModel @Inject constructor(
             getCourseWithLessonsUseCase.invoke().collect { data ->
                 _coursesWithLessonsState.value = data
             }
+        }
+    }
+
+    private fun syncCoursesInBackground() {
+        viewModelScope.launch {
+            refreshCoursesUseCase.invoke()
         }
     }
 

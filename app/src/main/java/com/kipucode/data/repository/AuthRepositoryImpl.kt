@@ -36,7 +36,6 @@ internal class AuthRepositoryImpl @Inject constructor(
     private val userRemoteDataSource: UserRemoteDataSource,
     private val userDao: UserDao,
     private val userProgressDao: UserProgressDao,
-    private val courseRepository: CourseRepository
 ): AuthRepository {     // Equivalente en java a hacer él (implements)
 
     //  ! IMPORTANTE
@@ -46,11 +45,6 @@ internal class AuthRepositoryImpl @Inject constructor(
 
     //  safeFirebaseCall: Es una función envoltorio (wrapper) que centraliza la captura de
     //     excepciones de Firebase.
-
-    companion object {
-        private const val DEFAULT_INITIAL_LESSON = "python_lesson_01"
-        private const val STATUS_IN_PROGRESS = "IN_PROGRESS"
-    }
 
     private suspend fun <T> safeFirebaseCall(
         logTag: String,
@@ -103,10 +97,10 @@ internal class AuthRepositoryImpl @Inject constructor(
                 )
             }
 
-            val syncResult = courseRepository.refreshCoursesAndLessons()
-            if(syncResult !is Response.Success)
-                return@safeFirebaseCall Response
-                    .Error("Error syncing courses during login", ErrorType.FIRESTORE_ERROR)
+//            val syncResult = courseRepository.refreshCoursesAndLessons()
+//            if(syncResult !is Response.Success)
+//                return@safeFirebaseCall Response
+//                    .Error("Error syncing courses during login", ErrorType.FIRESTORE_ERROR)
 
             userDao.insert(userDto.toEntity())
             userProgressDao.insert(progressDto.toEntity())
@@ -118,8 +112,10 @@ internal class AuthRepositoryImpl @Inject constructor(
     // ============================================================================================
     //  Registro de Usuario -> FirebaseAuth autentificación / Firestore almacenar datos extra.
     // ============================================================================================
-    override suspend fun register(userDomain: UserDomain, password: String): Response<UserDomain> {
+    override suspend fun register(userDomain: UserDomain, password: String, courseSelected: String): Response<UserDomain> {
         return safeFirebaseCall("REGISTER_ERROR"){
+            val initialLessonId = "${courseSelected.lowercase()}_lesson_01"
+
             val authResult = authRemoteDataSource.registerUserWithEmail(userDomain.email, password)
             val currentUser = authResult.user
                 ?: return@safeFirebaseCall Response
@@ -130,15 +126,17 @@ internal class AuthRepositoryImpl @Inject constructor(
             val initialProgress = UserProgressDomain(
                 id = user.id,
                 userId = user.id,
-                currentLessonId = DEFAULT_INITIAL_LESSON,
-                status = STATUS_IN_PROGRESS
+                currentLessonId = initialLessonId,
+                status = "IN_PROGRESS",
+                streakDay = 1
             )
 
             userRemoteDataSource.saveUserProfile(user.toDto())
             userRemoteDataSource.createUserProgress(initialProgress.toDto())
 
-            userDao.insert(user.toEntity())
-            userProgressDao.insert(initialProgress.toEntity())
+//            userDao.insert(user.toEntity())
+//            userProgressDao.insert(initialProgress.toEntity())
+            logout()
 
             Response.Success(user)
         }
