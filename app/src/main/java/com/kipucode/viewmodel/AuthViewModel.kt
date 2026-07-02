@@ -46,11 +46,11 @@ class AuthViewModel @Inject constructor(
             _authState.value = result
         }
     }
-    fun register(userDomain: UserDomain, password: String) {
+    fun register(userDomain: UserDomain, password: String, courseSelected: String) {
         viewModelScope.launch {
             _authState.value = Response.Loading
 
-            val result = registerUseCase.invoke(userDomain,password)
+            val result = registerUseCase.invoke(userDomain,password, courseSelected)
             _authState.value = result
         }
     }

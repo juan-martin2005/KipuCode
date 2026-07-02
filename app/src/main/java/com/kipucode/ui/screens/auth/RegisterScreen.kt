@@ -26,6 +26,7 @@ import com.kipucode.domain.model.UserDomain
 import com.kipucode.ui.components.button.FilledButton
 import com.kipucode.ui.components.text_field.ClickableLink
 import com.kipucode.ui.components.text_field.KipuForm
+import com.kipucode.ui.screens.auth.components.CourseChoices
 import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.Nunito
 import com.kipucode.viewmodel.AuthViewModel
@@ -38,6 +39,13 @@ fun RegisterScreen(
 
     authViewModel: AuthViewModel = hiltViewModel()
 ) {
+    var isCourseSelectionStep by remember { mutableStateOf(false) }
+    var selectedCourse by remember { mutableStateOf("") }
+
+    var pendingName by remember { mutableStateOf("") }
+    var pendingEmail by remember { mutableStateOf("") }
+    var pendingPassword by remember { mutableStateOf("") }
+
     val loginState by authViewModel.authState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
@@ -70,28 +78,47 @@ fun RegisterScreen(
                     ErrorType.NETWORK_ERROR -> authconfirmPasswordError = authMsgErrorNetworkError
                     else -> Log.d("FIREBASE_ERROR", errorMessage)
                 }
+
+                isCourseSelectionStep = false
             }
             null -> {}
         }
     }
-    Scaffold(
-        containerColor = BackgroundGray,
-    ) { paddingValues ->
-        RegisterContent(
-            onNavigateToLogin = onNavigateToLogin,
-            onBack = onBack,
-            onRegisterClick = { name, email, password ->
-                authEmailError = null
-                authViewModel.resetState()
 
-                val userDomain = UserDomain(name = name, email = email)
-                authViewModel.register(userDomain, password)
-            },
-            isLoading = loginState is Response.Loading,
-            externalEmailError = authEmailError,
-            externalConfirmPasswordError = authconfirmPasswordError,
-            modifier = Modifier.padding(paddingValues)
-        )
+    Scaffold(containerColor = BackgroundGray) { paddingValues ->
+        if (isCourseSelectionStep) {
+            CourseChoices(
+                modifier = Modifier.padding(paddingValues),
+                selectedCourse = selectedCourse,
+                onCourseSelected = { selectedCourse = it },
+                onConfirm = {
+                    authEmailError = null
+                    authViewModel.resetState()
+
+                    val userDomain = UserDomain(name = pendingName, email = pendingEmail)
+                    authViewModel.register(userDomain, pendingPassword, selectedCourse)
+                },
+                onBack = { isCourseSelectionStep = false },
+                isLoading = loginState is Response.Loading
+            )
+        } else {
+            RegisterContent(
+                modifier = Modifier.padding(paddingValues),
+                onNavigateToLogin = onNavigateToLogin,
+                onBack = onBack,
+                onRegisterClick = { name, email, password ->
+                    pendingName = name
+                    pendingEmail = email
+                    pendingPassword = password
+                    isCourseSelectionStep = true
+                },
+                initialName = pendingName,
+                initialEmail = pendingEmail,
+                initialPassword = pendingPassword,
+                externalEmailError = authEmailError,
+                externalConfirmPasswordError = authconfirmPasswordError,
+            )
+        }
     }
 }
 
@@ -102,17 +129,20 @@ fun RegisterContent(
     onBack: () -> Unit,
     onRegisterClick: (String, String, String) -> Unit,
 
-    isLoading: Boolean = false,
+    initialName: String = "",
+    initialEmail: String = "",
+    initialPassword: String = "",
+
     externalNameError: String? = null,
     externalEmailError: String? = null,
     externalPasswordError: String? = null,
     externalConfirmPasswordError: String? = null
 ) {
     // ESTADOS PARA LOS CAMPOS
-    var name by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
+    var name by remember { mutableStateOf(initialName) }
+    var email by remember { mutableStateOf(initialEmail) }
+    var password by remember { mutableStateOf(initialPassword) }
+    var confirmPassword by remember { mutableStateOf(initialPassword) } // Temporalmente
 
     // ESTADOS PARA LAS CONTRASEÑAS
     var passwordVisible by remember { mutableStateOf(false) }
@@ -257,7 +287,7 @@ fun RegisterContent(
             Spacer(modifier = Modifier.height(16.dp))
 
             FilledButton(
-                textButton = stringResource(id = R.string.register),
+                textButton = stringResource(id = R.string.register_next),
                 onClickFilledButton = {
                     var hasError = false
                     val emailTrimmed = email.trim().lowercase()
@@ -275,10 +305,11 @@ fun RegisterContent(
                     if (emailTrimmed.isBlank()) {
                         localEmailError = msgErrorEmailRequired
                         hasError = true
-                    } else if (!emailTrimmed.endsWith("@upn.pe")) {
-                        localEmailError = msgErrorEmailDomain
-                        hasError = true
                     }
+//                    else if (!emailTrimmed.endsWith("@upn.pe")) {
+//                        localEmailError = msgErrorEmailDomain
+//                        hasError = true
+//                    }
 
                     if (password.isBlank()) {
                         localPasswordError = msgErrorPassRequired
@@ -294,10 +325,10 @@ fun RegisterContent(
                     }
 
                     if (!hasError) {
-                        onRegisterClick(name, emailTrimmed, password)
+                        onRegisterClick(name.trim(), emailTrimmed, password)
                     }
                 },
-                isLoading = isLoading
+                isLoading = false
             )
 
             ClickableLink(

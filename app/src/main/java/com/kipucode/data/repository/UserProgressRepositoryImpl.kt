@@ -1,5 +1,6 @@
 package com.kipucode.data.repository
 
+import android.util.Log
 import com.kipucode.data.local.dao.UserProgressDao
 import com.kipucode.data.mapper.toDomain
 import com.kipucode.data.mapper.toDto
@@ -9,7 +10,6 @@ import com.kipucode.domain.model.CourseWithLessonsDomain
 import com.kipucode.domain.model.ErrorType
 import com.kipucode.domain.model.Response
 import com.kipucode.domain.model.UserProgressDomain
-import com.kipucode.domain.repository.CourseRepository
 import com.kipucode.domain.repository.UserProgressRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -21,7 +21,6 @@ import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import kotlin.collections.all
-import kotlin.collections.map
 import kotlin.time.Duration.Companion.milliseconds
 
 // ===============================================================================================
@@ -99,146 +98,129 @@ internal class UserProgressRepositoryImpl @Inject constructor(
         coursesWithLessons: List<CourseWithLessonsDomain>
     ): Response<Unit> {
         return try {
-            // Obtener el Uid actual de Firebase
             val currentUid = userRemoteDataSource.currentUserId
                 ?: return Response.Error("Usuario no autenticado", ErrorType.FIRESTORE_ERROR)
 
-            // Obtener el progreso local
             val currentProgress = userProgressDao.getUserProgress(currentUid).first()?.toDomain()
                 ?: return Response.Error("No se encontró el progreso del usuario", ErrorType.FIRESTORE_ERROR)
 
-            val previousXp = currentProgress.lessonsXpRecord[completedLessonId] ?: 0
-            val xpDifference = if (xpEarned > previousXp) xpEarned - previousXp else 0
+            val currentCourseWithLessons = coursesWithLessons.find { c -> c.lessons.any { it.id == completedLessonId } }
+                ?: return Response.Error("Lección no mapeada en ningún curso", ErrorType.FIRESTORE_ERROR)
 
+            // Calcular XP y Puntos
+            val previousXp = currentProgress.lessonsXpRecord[completedLessonId] ?: 0
+            val xpDifference = maxOf(0, xpEarned - previousXp)
             val updatedXp = currentProgress.totalXp + xpDifference
             val updatedPoints = currentProgress.points + xpDifference
-            val updatedLessonsXpRecord = currentProgress.lessonsXpRecord + (completedLessonId to maxOf(previousXp,
-                xpEarned))
+            val updatedLessonsXpRecord = currentProgress.lessonsXpRecord +
+                    (completedLessonId to maxOf(previousXp, xpEarned))
 
+            // Actualizar Lecciones y Cursos completados
             val isAlreadyCompleted = currentProgress.completedLessons.contains(completedLessonId)
+            val updatedLessons = if (isAlreadyCompleted) currentProgress.completedLessons else currentProgress.completedLessons + completedLessonId
 
-            val updatedLessons = if (!isAlreadyCompleted) {
-                currentProgress.completedLessons + completedLessonId
-            } else {
-                currentProgress.completedLessons
-            }
+            val isCourseCompleted = currentCourseWithLessons.lessons.all { updatedLessons.contains(it.id) }
+            val updatedCourses = if (isCourseCompleted && !currentProgress.completedCourses.contains(currentCourseWithLessons.course.id)) {
+                currentProgress.completedCourses + currentCourseWithLessons.course.id
+            } else currentProgress.completedCourses
 
-
-            if (coursesWithLessons.isEmpty()) {
-                return Response.Error("El mapa de cursos está vacío", ErrorType.FIRESTORE_ERROR)
-            }
-
-            val allLessonsOrdered = coursesWithLessons
-                .sortedBy { it.course.orderIndex }
-                .flatMap { item -> item.lessons.sortedBy { it.orderIndex } }
-
-            val currentCourseWithLessons = coursesWithLessons.find { item ->
-                item.lessons.any { it.id == completedLessonId }
-            } ?: return Response.Error("Lección no mapeada en ningún curso", ErrorType.FIRESTORE_ERROR)
-
-            val currentCourse = currentCourseWithLessons.course
-
-            val allLessonsInCurrentCourse = currentCourseWithLessons.lessons.map { it.id }
-            val allCompletedInCourse = allLessonsInCurrentCourse.all { updatedLessons.contains(it) }
-
-            val updatedCourses = if (allCompletedInCourse && !currentProgress.completedCourses.contains(currentCourse.id)) {
-                currentProgress.completedCourses + currentCourse.id
-            } else {
-                currentProgress.completedCourses
-            }
-
-            val currentLessonIdx = allLessonsOrdered.indexOfFirst { it.id == completedLessonId }
-            val nextLesson = if (currentLessonIdx != -1 && currentLessonIdx < allLessonsOrdered.size - 1) {
-                allLessonsOrdered[currentLessonIdx + 1]
-            } else {
-                null
-            }
-
-            var newCurrentLessonId = currentProgress.currentLessonId
-            var newStatus = currentProgress.status
-
-            if (nextLesson != null) {
-                val nextLessonCourse = coursesWithLessons.find { item ->
-                    item.lessons.any { it.id == nextLesson.id }
-                }?.course
-
-                val calculatedNextLessonId = if (nextLessonCourse != null && nextLessonCourse.id != currentCourse.id) {
-                    if (updatedXp >= nextLessonCourse.exp) {
-                        nextLesson.id
-                    } else {
-                        completedLessonId
-                    }
-                } else {
-                    nextLesson.id
-                }
-
-                newCurrentLessonId = if (!isAlreadyCompleted || currentProgress.currentLessonId == completedLessonId) {
-                    calculatedNextLessonId
-                } else {
-                    currentProgress.currentLessonId
-                }
-
-            } else {
-                if (!isAlreadyCompleted || currentProgress.currentLessonId == completedLessonId) {
-                    newStatus = "COMPLETED"
-                }
-            }
-
-            val now = System.currentTimeMillis()
-
-            val newStreak = calculateStreak(
-                lastCompletedMillis = currentProgress.completedAt,
-                currentMillis = now,
-                currentStreak = currentProgress.streakDay
+            // Determinar siguiente lección y estado
+            val (nextLessonId, newStatus) = determineNextStep(
+                currentProgress = currentProgress,
+                coursesWithLessons = coursesWithLessons,
+                currentCourseWithLessons = currentCourseWithLessons,
+                completedLessonId = completedLessonId,
+                updatedXp = updatedXp
             )
 
+            // Calcular Racha
+            val now = System.currentTimeMillis()
+            val newStreak = calculateStreak(currentProgress.completedAt, now, currentProgress.streakDay)
+
+            // Construir y guardar el nuevo estado
             val updatedProgress = currentProgress.copy(
                 completedLessons = updatedLessons,
                 completedCourses = updatedCourses,
                 totalXp = updatedXp,
                 points = updatedPoints,
-                score = updatedPoints, // Temporalmente igual que los puntos.
+                score = updatedPoints,
                 lessonsXpRecord = updatedLessonsXpRecord,
                 streakDay = newStreak,
-                currentLessonId = newCurrentLessonId,
+                currentLessonId = nextLessonId,
                 status = newStatus,
                 completedAt = now
             )
 
-            userProgressDao.insert(updatedProgress.toEntity())
-            try {
-                withTimeout(2000L.milliseconds) {
-                    userRemoteDataSource.createUserProgress(updatedProgress.toDto())
-                }
-            } catch (e: Exception) {
-            }
-
+            persistProgress(updatedProgress)
             Response.Success(Unit)
 
         } catch (e: Exception) {
-            Response.Error("${e.localizedMessage}", ErrorType.FIRESTORE_ERROR)
+            Response.Error(e.localizedMessage ?: "Error desconocido", ErrorType.FIRESTORE_ERROR)
+        }
+    }
+
+    // ===========================================================================================
+    //  Funciones Privadas
+    // ===========================================================================================
+    private fun determineNextStep(
+        currentProgress: UserProgressDomain,
+        coursesWithLessons: List<CourseWithLessonsDomain>,
+        currentCourseWithLessons: CourseWithLessonsDomain,
+        completedLessonId: String,
+        updatedXp: Int
+    ): Pair<String, String> {
+        // Si ya había completado esta lección y NO es la lección actual -> no avanzamos
+        val shouldAdvance = !currentProgress.completedLessons
+            .contains(completedLessonId) || currentProgress.currentLessonId == completedLessonId
+
+        if (!shouldAdvance) return currentProgress.currentLessonId to currentProgress.status
+
+        val courseIdx = coursesWithLessons.indexOfFirst { it.course.id == currentCourseWithLessons.course.id }
+        val lessonIdx = currentCourseWithLessons.lessons.indexOfFirst { it.id == completedLessonId }
+
+        // Hay una siguiente lección en el MISMO curso
+        if (lessonIdx != -1 && lessonIdx < currentCourseWithLessons.lessons.size - 1) {
+            return currentCourseWithLessons.lessons[lessonIdx + 1].id to currentProgress.status
+        }
+
+        // Es la última lección del curso. Buscamos el SIGUIENTE curso
+        if (courseIdx != -1 && courseIdx < coursesWithLessons.size - 1) {
+            val nextCourse = coursesWithLessons[courseIdx + 1]
+
+            // Validar si tiene la experiencia necesaria para el siguiente curso
+            return if (updatedXp >= nextCourse.course.exp) {
+                val nextLessonId = nextCourse.lessons.firstOrNull()?.id ?: completedLessonId
+                nextLessonId to currentProgress.status
+            } else {
+                completedLessonId to currentProgress.status // Se queda estancado por falta de XP
+            }
+        }
+
+        // No hay más cursos ni lecciones
+        return currentProgress.currentLessonId to "COMPLETED"
+    }
+
+    private suspend fun persistProgress(updatedProgress: UserProgressDomain) {
+        userProgressDao.insert(updatedProgress.toEntity())
+        try {
+            withTimeout(2000L.milliseconds) {
+                userRemoteDataSource.createUserProgress(updatedProgress.toDto())
+            }
+        } catch (e: Exception) {
+            Log.e("UserProgressRepository", "Error en sync remoto (Offline-first activo): ${e.message}")
         }
     }
 
     private fun calculateStreak(lastCompletedMillis: Long?, currentMillis: Long, currentStreak: Int): Int {
-        if (lastCompletedMillis == null) return 1 // Primera lección completada, empieza en 1
+        if (lastCompletedMillis == null) return 1
 
-        // Convertir los timestamps en milisegundos a fechas locales (LocalDate) del dispositivo (ZoneId)
-        val lastDate = Instant.ofEpochMilli(lastCompletedMillis)
-            .atZone(ZoneId.systemDefault())
-            .toLocalDate()
+        val lastDate = Instant.ofEpochMilli(lastCompletedMillis).atZone(ZoneId.systemDefault()).toLocalDate()
+        val todayDate = Instant.ofEpochMilli(currentMillis).atZone(ZoneId.systemDefault()).toLocalDate()
 
-        val todayDate = Instant.ofEpochMilli(currentMillis)
-            .atZone(ZoneId.systemDefault())
-            .toLocalDate()
-
-        // Calcular la diferencia exacta en días calendarios
-        val daysBetween = ChronoUnit.DAYS.between(lastDate, todayDate)
-
-        return when (daysBetween) {
-            0L -> currentStreak       // Completo Hoy -> La racha se mantiene
-            1L -> currentStreak + 1   // Completó Ayer -> la racha aumenta
-            else -> 1                                // Se rompió la racha (más de 1 día) == 1
+        return when (ChronoUnit.DAYS.between(lastDate, todayDate)) {
+            0L -> currentStreak       // Mismo día
+            1L -> currentStreak + 1   // Día siguiente
+            else -> 1                 // Racha rota
         }
     }
 }

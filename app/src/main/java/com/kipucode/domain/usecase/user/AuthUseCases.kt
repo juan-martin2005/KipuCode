@@ -16,8 +16,8 @@ class LoginUseCases @Inject constructor(
 class RegisterUseCase @Inject constructor(
     private val authRepository: AuthRepository
 ) {
-    suspend operator fun invoke(userDomain: UserDomain, password: String): Response<UserDomain> {
-        return authRepository.register(userDomain, password)
+    suspend operator fun invoke(userDomain: UserDomain, password: String, courseSelected: String): Response<UserDomain> {
+        return authRepository.register(userDomain, password, courseSelected)
     }
 }
 

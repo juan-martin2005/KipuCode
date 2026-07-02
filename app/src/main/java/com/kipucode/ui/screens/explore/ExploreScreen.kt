@@ -43,7 +43,19 @@ fun ExploreScreen(
 
     val progressData = userProgress
 
-    val activeCourseWithLessons = coursesWithLessons.find { courseItem ->
+    // Extraer el curso activo del usuario
+    val activeTrack = progressData?.currentLessonId?.substringBefore("_")
+
+    // Filtrar para que solo se consideren los cursos del lenguaje actual
+    val filteredCoursesWithLessons = remember(coursesWithLessons, activeTrack) {
+        if (activeTrack != null) {
+            coursesWithLessons.filter { it.course.id.startsWith(activeTrack) }
+        } else {
+            coursesWithLessons
+        }
+    }
+
+    val activeCourseWithLessons = filteredCoursesWithLessons.find { courseItem ->
         courseItem.lessons.any { it.id == progressData?.currentLessonId }
     }
 
@@ -60,7 +72,9 @@ fun ExploreScreen(
 
 
     Scaffold(
-        bottomBar = { KipuBottomBar(navController = navController) },
+        bottomBar = {
+            KipuBottomBar(navController = navController)
+            },
         containerColor = BackgroundGray
     ) { paddingValues ->
         Box(
@@ -112,7 +126,7 @@ fun ExploreScreen(
                 )
             } else {
                 ExploreContent(
-                    coursesWithLessons = coursesWithLessons,
+                    coursesWithLessons = filteredCoursesWithLessons,
                     activeCourseId = activeCourseId,
                     completedCourses = completedCourses,
                     activeCourseCurrentLessons = currentLessonOrderIndex,

@@ -1,5 +1,6 @@
 package com.kipucode.data.remote.firebase.service
 
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
 import com.kipucode.data.remote.firebase.dto.CourseDto
@@ -12,7 +13,6 @@ class CourseRemoteDataSource @Inject constructor(
 ) {
     companion object {
         const val COURSE_COLLECTION = "courses"
-        const val LESSON_COLLECTION = "lessons"
     }
 
     // COURSE - GET
@@ -22,12 +22,12 @@ class CourseRemoteDataSource @Inject constructor(
             .await()
             .map { it.toObject<CourseDto>().copy(id = it.id) }
 
-    suspend fun getCourseById(courseId: String): CourseDto? {
-        val snapshot = firestore.collection(COURSE_COLLECTION)
-            .document(courseId)
-            .get()
-            .await()
-
-        return snapshot.toObject<CourseDto>()?.copy(id = snapshot.id)
-    }
+//    suspend fun getCourseById(courseId: String): CourseDto? {
+//        val snapshot = firestore.collection(COURSE_COLLECTION)
+//            .document(courseId)
+//            .get()
+//            .await()
+//
+//        return snapshot.toObject<CourseDto>()?.copy(id = snapshot.id)
+//    }
 }
