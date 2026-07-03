@@ -142,13 +142,8 @@ fun MultipleChoiceExercisePreview() {
                 currentEx = 3,
                 totalEx = 10,
                 instruction = """
-                       #### ¿Que imprime este codigo?
-
-                       ```java
-                       public DbHelper(@Nullable Context context) {
-                           super(context, "nombre.db", null, 1);
-                       }
-                       ```
+                    #### ¿En qué año nació Java?
+                    ```
         """.trimIndent(),
                 options = listOf(
                     BlockOptionDomain(id = "1", exerciseId = "ex1", content = "console.log()", isCorrect = false),

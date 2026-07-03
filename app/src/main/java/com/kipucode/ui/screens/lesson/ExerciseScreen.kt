@@ -186,7 +186,7 @@ fun ExerciseScreenContent(
 fun ExerciseScreenContentPreview() {
     ExerciseScreenContent(
         currentExerciseId = "ex_01",
-        instruction = "#### ¿Qué comando utilizas en Python para mostrar texto en la consola?",
+        instruction = "#### ¿En qué año nació Java?",
         options = listOf(
             BlockOptionDomain(id = "1", exerciseId = "ex_01", content = "console.log()", isCorrect = false),
             BlockOptionDomain(id = "2", exerciseId = "ex_01", content = "print()", isCorrect = true),

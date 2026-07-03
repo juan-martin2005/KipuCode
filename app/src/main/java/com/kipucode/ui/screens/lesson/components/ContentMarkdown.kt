@@ -1,6 +1,7 @@
 package com.kipucode.ui.screens.lesson.components
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -39,7 +40,7 @@ fun ContentMarkdown(
 
     Markdown(
         content = markdown,
-        modifier = modifier,
+        modifier = modifier.fillMaxWidth(),
         padding = markdownPadding(
             block = 4.dp,
             list = 3.dp

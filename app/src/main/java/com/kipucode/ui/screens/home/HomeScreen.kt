@@ -183,7 +183,7 @@ fun HomeContent(
                 KipuTopBar(
                     title = stringResource(id = R.string.back_to_modules),
                     onBackClick = onBackClick,
-                    modifier = Modifier.padding(24.dp)
+                    modifier = Modifier.padding(vertical = 16.dp)
                 )
             }
         }

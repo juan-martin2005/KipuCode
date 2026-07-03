@@ -55,28 +55,28 @@ fun ProfileScreen(
                     showLogoutDialog = true
                 }
             )
-
-            if (showLogoutDialog) {
-                KipuDialog(
-                    title = stringResource(id = R.string.logout_title),
-                    description = stringResource(id = R.string.logout_desc),
-                    dismissButtonText = stringResource(id = R.string.cancel),
-                    confirmButtonText = stringResource(id = R.string.confirm),
-                    iconRes = R.drawable.ic_exit,
-                    onDismissRequest = {
-                        showLogoutDialog = false
-                    },
-                    onDismissClick = {
-                        showLogoutDialog = false
-                    },
-                    onConfirmClick = {
-                        showLogoutDialog = false
-                        onLogoutClick()
-                    },
-                    iconTint = KipuTeal
-                )
-            }
         }
+    }
+
+    if (showLogoutDialog) {
+        KipuDialog(
+            title = stringResource(id = R.string.logout_title),
+            description = stringResource(id = R.string.logout_desc),
+            dismissButtonText = stringResource(id = R.string.cancel),
+            confirmButtonText = stringResource(id = R.string.confirm),
+            iconRes = R.drawable.ic_exit,
+            onDismissRequest = {
+                showLogoutDialog = false
+            },
+            onDismissClick = {
+                showLogoutDialog = false
+            },
+            onConfirmClick = {
+                showLogoutDialog = false
+                onLogoutClick()
+            },
+            iconTint = KipuTeal
+        )
     }
 }
 
