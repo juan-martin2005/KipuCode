@@ -64,6 +64,11 @@
     <string name="error_confirm_password_required">Confirmar Contraseña es obligatorio</string>
     <string name="error_password_mismatch">Las contraseñas no coinciden</string>
 
+    <string name="register_test_title">Aviso importante</string>
+    <string name="register_test_desc">Temporalmente no podrás cambiar de curso. Esta función estará disponible en una futura actualización.</string>
+    <string name="register_test_confirm">Confirmar</string>
+    <string name="register_test_cancel">Cancelar</string>
+
 
     <!-- Auth Firebase - Validaciones -->
     <string name="auth_repository_email_not_verified">Verificación de correo electrónico requerida</string>

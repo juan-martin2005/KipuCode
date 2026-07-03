@@ -24,10 +24,12 @@ import com.kipucode.domain.model.ErrorType
 import com.kipucode.domain.model.Response
 import com.kipucode.domain.model.UserDomain
 import com.kipucode.ui.components.button.FilledButton
+import com.kipucode.ui.components.card.KipuDialog
 import com.kipucode.ui.components.text_field.ClickableLink
 import com.kipucode.ui.components.text_field.KipuForm
 import com.kipucode.ui.screens.auth.components.CourseChoices
 import com.kipucode.ui.theme.BackgroundGray
+import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.Nunito
 import com.kipucode.viewmodel.AuthViewModel
 
@@ -39,6 +41,8 @@ fun RegisterScreen(
 
     authViewModel: AuthViewModel = hiltViewModel()
 ) {
+    var showAlertDialog by remember { mutableStateOf(false) }
+
     var isCourseSelectionStep by remember { mutableStateOf(false) }
     var selectedCourse by remember { mutableStateOf("") }
 
@@ -92,11 +96,7 @@ fun RegisterScreen(
                 selectedCourse = selectedCourse,
                 onCourseSelected = { selectedCourse = it },
                 onConfirm = {
-                    authEmailError = null
-                    authViewModel.resetState()
-
-                    val userDomain = UserDomain(name = pendingName, email = pendingEmail)
-                    authViewModel.register(userDomain, pendingPassword, selectedCourse)
+                    showAlertDialog = true
                 },
                 onBack = { isCourseSelectionStep = false },
                 isLoading = loginState is Response.Loading
@@ -119,6 +119,31 @@ fun RegisterScreen(
                 externalConfirmPasswordError = authconfirmPasswordError,
             )
         }
+    }
+
+    if (showAlertDialog) {
+        KipuDialog(
+            title = stringResource(id = R.string.register_test_title),
+            description = stringResource(id = R.string.register_test_desc),
+            dismissButtonText = stringResource(id = R.string.register_test_cancel),
+            confirmButtonText = stringResource(id = R.string.register_test_confirm),
+            iconRes = R.drawable.ic_warning,
+            onDismissRequest = {
+                showAlertDialog = false
+            },
+            onDismissClick = {
+                showAlertDialog = false
+            },
+            onConfirmClick = {
+                showAlertDialog = false
+                authEmailError = null
+                authViewModel.resetState()
+
+                val userDomain = UserDomain(name = pendingName, email = pendingEmail)
+                authViewModel.register(userDomain, pendingPassword, selectedCourse)
+            },
+            iconTint = KipuTeal
+        )
     }
 }
 
