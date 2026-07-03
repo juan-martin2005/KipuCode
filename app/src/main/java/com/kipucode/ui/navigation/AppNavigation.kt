@@ -40,6 +40,9 @@ fun AppNavigation(){
                 authViewModel = authViewModel,
                 onSplashFinished = { isUserLogged ->
                     if (isUserLogged) {
+                        userViewModel.startObservingUser()
+                        userViewModel.startObservingUserProgress()
+
                         navController.navigate("home") {
                             popUpTo("splash") { inclusive = true }
                         }
@@ -83,6 +86,7 @@ fun AppNavigation(){
                 onLoginSuccess = {
                     userViewModel.startObservingUser()
                     userViewModel.startObservingUserProgress()
+
                     navController.navigate("home") { popUpTo(0) }
                 },
                 onNavigateToRegister = {

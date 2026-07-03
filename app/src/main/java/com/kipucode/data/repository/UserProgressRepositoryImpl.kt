@@ -128,8 +128,7 @@ internal class UserProgressRepositoryImpl @Inject constructor(
             val (nextLessonId, newStatus) = determineNextStep(
                 currentProgress = currentProgress,
                 coursesWithLessons = coursesWithLessons,
-                currentCourseWithLessons = currentCourseWithLessons,
-                completedLessonId = completedLessonId,
+                updatedLessons = updatedLessons,
                 updatedXp = updatedXp
             )
 
@@ -165,39 +164,49 @@ internal class UserProgressRepositoryImpl @Inject constructor(
     private fun determineNextStep(
         currentProgress: UserProgressDomain,
         coursesWithLessons: List<CourseWithLessonsDomain>,
-        currentCourseWithLessons: CourseWithLessonsDomain,
-        completedLessonId: String,
+        updatedLessons: List<String>,
         updatedXp: Int
     ): Pair<String, String> {
-        // Si ya había completado esta lección y NO es la lección actual -> no avanzamos
-        val shouldAdvance = !currentProgress.completedLessons
-            .contains(completedLessonId) || currentProgress.currentLessonId == completedLessonId
+        val frontierLessonId = currentProgress.currentLessonId
 
-        if (!shouldAdvance) return currentProgress.currentLessonId to currentProgress.status
-
-        val courseIdx = coursesWithLessons.indexOfFirst { it.course.id == currentCourseWithLessons.course.id }
-        val lessonIdx = currentCourseWithLessons.lessons.indexOfFirst { it.id == completedLessonId }
-
-        // Hay una siguiente lección en el MISMO curso
-        if (lessonIdx != -1 && lessonIdx < currentCourseWithLessons.lessons.size - 1) {
-            return currentCourseWithLessons.lessons[lessonIdx + 1].id to currentProgress.status
+        if (currentProgress.status == "COMPLETED") {
+            return frontierLessonId to currentProgress.status
         }
 
-        // Es la última lección del curso. Buscamos el SIGUIENTE curso
-        if (courseIdx != -1 && courseIdx < coursesWithLessons.size - 1) {
-            val nextCourse = coursesWithLessons[courseIdx + 1]
+        // Si la frontera todavía no está completada, no hay nada que avanzar
+        if (!updatedLessons.contains(frontierLessonId)) {
+            return frontierLessonId to currentProgress.status
+        }
 
-            // Validar si tiene la experiencia necesaria para el siguiente curso
+        val frontierCourse = coursesWithLessons.find { c -> c.lessons.any { it.id == frontierLessonId } }
+            ?: return frontierLessonId to currentProgress.status
+
+        val lessonIdx = frontierCourse.lessons.indexOfFirst { it.id == frontierLessonId }
+
+        // Hay una siguiente lección en el mismo curso
+        if (lessonIdx != -1 && lessonIdx < frontierCourse.lessons.size - 1) {
+            return frontierCourse.lessons[lessonIdx + 1].id to currentProgress.status
+        }
+
+        // Última lección del curso -> revisar el siguiente curso del mismo track
+        val trackPrefix = frontierCourse.course.id.substringBefore("_module")
+        val sameTrackCourses = coursesWithLessons
+            .filter { it.course.id.substringBefore("_module") == trackPrefix }
+            .sortedBy { it.course.orderIndex }
+
+        val courseIdx = sameTrackCourses.indexOfFirst { it.course.id == frontierCourse.course.id }
+
+        if (courseIdx != -1 && courseIdx < sameTrackCourses.size - 1) {
+            val nextCourse = sameTrackCourses[courseIdx + 1]
             return if (updatedXp >= nextCourse.course.exp) {
-                val nextLessonId = nextCourse.lessons.firstOrNull()?.id ?: completedLessonId
+                val nextLessonId = nextCourse.lessons.firstOrNull()?.id ?: frontierLessonId
                 nextLessonId to currentProgress.status
             } else {
-                completedLessonId to currentProgress.status // Se queda estancado por falta de XP
+                frontierLessonId to currentProgress.status
             }
         }
 
-        // No hay más cursos ni lecciones
-        return currentProgress.currentLessonId to "COMPLETED"
+        return frontierLessonId to "COMPLETED"
     }
 
     private suspend fun persistProgress(updatedProgress: UserProgressDomain) {

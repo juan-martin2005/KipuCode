@@ -16,7 +16,6 @@ import com.kipucode.domain.model.Response
 import com.kipucode.domain.model.UserDomain
 import com.kipucode.domain.model.UserProgressDomain
 import com.kipucode.domain.repository.AuthRepository
-import com.kipucode.domain.repository.CourseRepository
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
