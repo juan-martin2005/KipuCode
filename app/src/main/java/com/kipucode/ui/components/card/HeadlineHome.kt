@@ -56,8 +56,8 @@ fun HeadlineHome(
     val currentHour = remember { LocalTime.now().hour }
 
     val greetingResId = when (currentHour) {
-        in 5..11 -> R.string.good_morning     // 05:00 a 11:00
-        in 12..18 -> R.string.good_afternoon  // 12:00 a 18:00
+        in 5..11 -> R.string.good_morning     // 05:00 a 12:00
+        in 12..18 -> R.string.good_afternoon  // 12:00 a 19:00
         else -> R.string.good_night         // 19:00 màs
     }
 
