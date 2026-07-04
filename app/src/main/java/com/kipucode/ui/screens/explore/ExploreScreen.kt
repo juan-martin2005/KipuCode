@@ -67,7 +67,6 @@ fun ExploreScreen(
 
     val completedCourses = progressData?.completedCourses ?: emptyList()
 
-    // Estado local para manejar el módulo seleccionado
     var selectedCourseWithLessons by remember { mutableStateOf<CourseWithLessonsDomain?>(null) }
 
 

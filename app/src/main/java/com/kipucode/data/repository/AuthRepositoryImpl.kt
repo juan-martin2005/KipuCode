@@ -91,8 +91,7 @@ internal class AuthRepositoryImpl @Inject constructor(
 
             if(userDto == null || progressDto == null) {
                 return@safeFirebaseCall Response.Error(
-                    "User profile data not found",
-                    ErrorType.FIRESTORE_ERROR
+                    "User profile data not found", ErrorType.FIRESTORE_ERROR
                 )
             }
 
@@ -152,9 +151,7 @@ internal class AuthRepositoryImpl @Inject constructor(
             Log.d("FIREBASE_RESET_PASSWORD_ERROR", ex.toString())
 
             Response.Error(
-                "An error occurred while sending the email",
-                ErrorType.FIRESTORE_ERROR
-            )
+                "An error occurred while sending the email", ErrorType.FIRESTORE_ERROR )
         }
     }
 

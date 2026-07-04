@@ -46,12 +46,12 @@ fun CodeScreen(
     val coursesWithLessons by coursesViewModel.coursesWithLessonsState.collectAsStateWithLifecycle()
     val userProgress by userViewModel.userProgressState.collectAsStateWithLifecycle()
 
-    val activeTrack = userProgress?.currentLessonId?.substringBefore("_")
-
+    val activeCourse = coursesWithLessons.find { c -> c.lessons.any { it.id == userProgress?.currentLessonId } }
+    val activeTrack = activeCourse?.course?.track
 
     val lessonsUiList = remember(coursesWithLessons, userProgress, activeTrack ) {
         val filteredCourses = if (activeTrack != null) {
-            coursesWithLessons.filter { it.course.id.startsWith(activeTrack) }
+            coursesWithLessons.filter { it.course.track == activeTrack }
         } else {
             coursesWithLessons
         }

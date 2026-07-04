@@ -111,7 +111,7 @@ internal class UserProgressRepositoryImpl @Inject constructor(
             val previousXp = currentProgress.lessonsXpRecord[completedLessonId] ?: 0
             val xpDifference = maxOf(0, xpEarned - previousXp)
             val updatedXp = currentProgress.totalXp + xpDifference
-            val updatedPoints = currentProgress.points + xpDifference
+
             val updatedLessonsXpRecord = currentProgress.lessonsXpRecord +
                     (completedLessonId to maxOf(previousXp, xpEarned))
 
@@ -141,8 +141,8 @@ internal class UserProgressRepositoryImpl @Inject constructor(
                 completedLessons = updatedLessons,
                 completedCourses = updatedCourses,
                 totalXp = updatedXp,
-                points = updatedPoints,
-                score = updatedPoints,
+                points = updatedXp,
+                score = updatedXp,
                 lessonsXpRecord = updatedLessonsXpRecord,
                 streakDay = newStreak,
                 currentLessonId = nextLessonId,
