@@ -40,7 +40,7 @@ interface CourseDao {
     //  Obtener cursos con sus respectivas Lecciones ordenados por posición
     // ========================================================================================
     @Transaction
-    @Query("SELECT * FROM courses ORDER BY order_index ASC")
+    @Query("SELECT * FROM courses ORDER BY id ASC")
     fun getCourseWithLessons(): Flow<List<CourseWithLessons>>
 
     // ========================================================================================
