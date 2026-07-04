@@ -189,15 +189,12 @@ internal class UserProgressRepositoryImpl @Inject constructor(
         }
 
         // Última lección del curso -> revisar el siguiente curso del mismo track
-        val trackPrefix = frontierCourse.course.id.substringBefore("_module")
-        val sameTrackCourses = coursesWithLessons
-            .filter { it.course.id.substringBefore("_module") == trackPrefix }
-            .sortedBy { it.course.orderIndex }
+        val activeTrack = frontierCourse.course.track
+        val trackCourses = coursesWithLessons.filter { it.course.track == activeTrack }.sortedBy { it.course.orderIndex }
+        val courseIdx = trackCourses.indexOfFirst { it.course.id == frontierCourse.course.id }
 
-        val courseIdx = sameTrackCourses.indexOfFirst { it.course.id == frontierCourse.course.id }
-
-        if (courseIdx != -1 && courseIdx < sameTrackCourses.size - 1) {
-            val nextCourse = sameTrackCourses[courseIdx + 1]
+        if (courseIdx != -1 && courseIdx < trackCourses.size - 1) {
+            val nextCourse = trackCourses[courseIdx + 1]
             return if (updatedXp >= nextCourse.course.exp) {
                 val nextLessonId = nextCourse.lessons.firstOrNull()?.id ?: frontierLessonId
                 nextLessonId to currentProgress.status

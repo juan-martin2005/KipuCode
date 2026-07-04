@@ -51,7 +51,7 @@ internal class CourseRepositoryImpl @Inject constructor(
             list.map { item ->
                 CourseWithLessonsDomain(
                     course = item.course.toDomain(),
-                    lessons = item.lessons.map { lesson -> lesson.toDomain() }
+                    lessons = item.lessons.sortedBy { it.orderIndex }.map { lesson -> lesson.toDomain() }
                 )
             }
         }
