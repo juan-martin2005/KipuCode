@@ -22,7 +22,7 @@ import com.kipucode.data.local.model.*
         BlockOptionEntity::class,
         FlashcardProgressEntity::class
     ],
-    version = 1
+    version = 2
 )
 
 @TypeConverters(ListConverters::class)

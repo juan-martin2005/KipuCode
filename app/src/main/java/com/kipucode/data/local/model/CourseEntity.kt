@@ -10,6 +10,7 @@ data class CourseEntity(
     val id: String,
     val title: String,
     val description: String,
+    val track: String = "",
     @ColumnInfo(name = "order_index") val orderIndex: Int,
     val points: Int,
     val exp: Int,
