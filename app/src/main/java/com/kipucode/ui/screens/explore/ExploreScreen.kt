@@ -43,20 +43,20 @@ fun ExploreScreen(
 
     val progressData = userProgress
 
-    // Extraer el curso activo del usuario
-    val activeTrack = progressData?.currentLessonId?.substringBefore("_")
+    // Buscar el curso que contiene la lección actual para saber cuál es el track activo
+    val activeCourseWithLessons = coursesWithLessons.find { courseItem ->
+        courseItem.lessons.any { it.id == progressData?.currentLessonId }
+    }
 
-    // Filtrar para que solo se consideren los cursos del lenguaje actual
+    val activeTrack = activeCourseWithLessons?.course?.track
+
+    // Filtrar para que solo se consideren los cursos del track actual
     val filteredCoursesWithLessons = remember(coursesWithLessons, activeTrack) {
         if (activeTrack != null) {
-            coursesWithLessons.filter { it.course.id.startsWith(activeTrack) }
+            coursesWithLessons.filter { it.course.track == activeTrack }
         } else {
             coursesWithLessons
         }
-    }
-
-    val activeCourseWithLessons = filteredCoursesWithLessons.find { courseItem ->
-        courseItem.lessons.any { it.id == progressData?.currentLessonId }
     }
 
     val activeCourseId = activeCourseWithLessons?.course?.id
