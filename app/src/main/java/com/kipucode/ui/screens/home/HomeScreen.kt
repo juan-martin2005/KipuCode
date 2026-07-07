@@ -1,5 +1,6 @@
 package com.kipucode.ui.screens.home
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -96,20 +97,22 @@ fun HomeScreen(
                         .fillMaxSize()
                         .background(BackgroundGray)
                 ) {
-                    val userData = userProfile
-                    val progressData = userProgress
 
                     val activeCourseWithLessons = coursesWithLessons.find { courseItem ->
-                        courseItem.lessons.any { it.id == progressData?.currentLessonId }
+                        courseItem.lessons.any { it.id == userProgress?.currentLessonId }
                     }
 
                     val courseData = activeCourseWithLessons?.course
                     val lessonsData = activeCourseWithLessons?.lessons?.sortedBy { it.orderIndex } ?: emptyList()
 
                     val currentLessonOrderIndex = lessonsData.find {
-                        it.id == progressData?.currentLessonId
+                        it.id == userProgress?.currentLessonId
                     }?.orderIndex ?: 0
 
+                    val isCompletedCourse = userProgress?.completedCourses?.contains(courseData?.id) ?: false
+
+                    val currentLessonProgress = if (isCompletedCourse) {lessonsData.size}
+                    else {(currentLessonOrderIndex - 1).coerceAtLeast(0)                    }
 
                     if (coursesWithLessons.isEmpty()) {
                         Box(
@@ -120,21 +123,21 @@ fun HomeScreen(
                         }
                     } else {
                         HomeContent(
-                            userName = userData?.name ?: "Usuario",
-                            totalXp = progressData?.totalXp ?: 0,
+                            userName = userProfile?.name ?: "Usuario",
+                            totalXp = userProgress?.totalXp ?: 0,
                             streakDay = getActiveStreak(
-                                progressData?.completedAt,
-                                progressData?.streakDay ?: 0),
+                                userProgress?.completedAt,
+                                userProgress?.streakDay ?: 0),
 
                             sectionTitle = stringResource(id = R.string.learning_journey),
                             courseTitle = courseData?.title ?: "Curso",
-                            currentLessonsProgress = (currentLessonOrderIndex - 1).coerceAtLeast(0),
+                            currentLessonsProgress = currentLessonProgress,
                             totalLessons = lessonsData.size,
                             lessons = lessonsData,
 
                             courseNumber = courseData?.orderIndex ?: 1,
 
-                            isLessonCompleted = { lesson -> lesson.orderIndex < currentLessonOrderIndex },
+                            isLessonCompleted = { lesson -> userProgress?.completedLessons?.contains(lesson.id) == true },
                             isLessonLocked = { lesson -> lesson.orderIndex > currentLessonOrderIndex },
 
                             onLessonClick = onNavigateToCode
@@ -195,7 +198,6 @@ fun HomeContent(
                 currentLessons = currentLessonsProgress,
                 totalLessons = totalLessons,
                 courseNumber = courseNumber,
-//                iconResId = R.drawable.ic_python,
                 modifier = Modifier.padding(bottom = 24.dp)
             )
         }
@@ -293,7 +295,7 @@ fun HomePreview() {
             .fillMaxSize()
             .background(BackgroundGray)
     ) {
-        val previewCurrentLessonOrderIndex = 2
+        val previewCurrentLessonOrderIndex = 3
 
         HomeContent(
             userName = "Test_User_Full_Name",
@@ -301,11 +303,11 @@ fun HomePreview() {
             streakDay = 999,
             courseTitle = "Introduction to Python Programing",
 
-            currentLessonsProgress = previewCurrentLessonOrderIndex - 1,
+            currentLessonsProgress = previewCurrentLessonOrderIndex,
             totalLessons = mockDomainLessons.size,
             lessons = mockDomainLessons,
 
-            isLessonCompleted = { lesson -> lesson.orderIndex < previewCurrentLessonOrderIndex },
+            isLessonCompleted = { lesson -> lesson.orderIndex <= previewCurrentLessonOrderIndex },
             isLessonLocked = { lesson -> lesson.orderIndex > previewCurrentLessonOrderIndex },
 
             onLessonClick = {}

@@ -71,16 +71,16 @@ fun OptionCard(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 18.dp),
+                .padding(horizontal = 14.dp, vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
                 text = text,
                 color = contentColor,
-                fontSize = 18.sp,
+                fontSize = 16.sp,
                 fontFamily = Nunito,
-                fontWeight = FontWeight.SemiBold,
+                fontWeight = FontWeight.Medium,
                 modifier = Modifier.weight(1f)
             )
 

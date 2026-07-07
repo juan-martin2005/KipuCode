@@ -114,7 +114,7 @@ fun LessonCardPreview() {
         LessonCard(
             lessonId = "",
             title = "El Intérprete de Python y tu Primer Script",
-            isCompleted = false,
+            isCompleted = true,
             isLocked = false,
             onLessonClick = {}
         )

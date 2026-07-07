@@ -48,7 +48,7 @@ fun HomeCard(
         // --- SECCIÓN 1: CABECERA ---
         Row(
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.Top
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
                 modifier = Modifier
@@ -188,8 +188,8 @@ fun HomeCardPreviewWithNumber() {
     ) {
         HomeCard(
             courseName = "Fundamentos Básicos de Programación Python",
-            currentLessons = 3,
-            totalLessons = 10,
+            currentLessons = 4,
+            totalLessons = 4,
             courseNumber = 1
         )
     }

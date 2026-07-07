@@ -228,7 +228,7 @@ fun FlashcardPreview() {
     )
 
     Flashcard(
-        currentFc = 5,
+        currentFc = 1,
         totalFc = 10,
         instruction = "Zen de Python: ¿Qué principio promueve 'Explicit is better than implicit'?",
         answer = "Significa que el código debe ser claro, directo y evitar 'magia' o comportamientos ocultos.",
