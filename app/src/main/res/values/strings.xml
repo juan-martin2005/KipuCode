@@ -61,6 +61,7 @@
     <string name="error_email_required">El Correo electrónico es obligatorio</string>
     <string name="error_email_domain">Por favor, usa tu correo institucional (@upn.pe)</string>
     <string name="error_password_required">La Contraseña es obligatoria</string>
+    <string name="error_password_too_short">La contraseña debe tener al menos 6 caracteres</string>
     <string name="error_confirm_password_required">Confirmar Contraseña es obligatorio</string>
     <string name="error_password_mismatch">Las contraseñas no coinciden</string>
 

@@ -1,6 +1,5 @@
 package com.kipucode.ui.screens.auth
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -20,129 +19,90 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kipucode.R
-import com.kipucode.domain.model.ErrorType
+import com.kipucode.domain.model.ServerErrorType
 import com.kipucode.domain.model.Response
 import com.kipucode.domain.model.UserDomain
+import com.kipucode.domain.model.ValidationErrorType
 import com.kipucode.ui.components.button.FilledButton
-import com.kipucode.ui.components.card.KipuDialog
 import com.kipucode.ui.components.text_field.ClickableLink
 import com.kipucode.ui.components.text_field.KipuForm
-import com.kipucode.ui.screens.auth.components.CourseChoices
 import com.kipucode.ui.theme.BackgroundGray
-import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.Nunito
 import com.kipucode.viewmodel.AuthViewModel
+import com.kipucode.viewmodel.RegisterFormErrors
 
 @Composable
 fun RegisterScreen(
     onRegisterSuccess: () -> Unit,
     onNavigateToLogin: () -> Unit,
     onBack: () -> Unit,
-
     authViewModel: AuthViewModel = hiltViewModel()
 ) {
-    var showAlertDialog by remember { mutableStateOf(false) }
-
-    var isCourseSelectionStep by remember { mutableStateOf(false) }
-    var selectedCourse by remember { mutableStateOf("") }
-
-    var pendingName by remember { mutableStateOf("") }
-    var pendingEmail by remember { mutableStateOf("") }
-    var pendingPassword by remember { mutableStateOf("") }
-
-    val loginState by authViewModel.authState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
-    var authEmailError by remember { mutableStateOf<String?>(null) }
-    var authconfirmPasswordError by remember { mutableStateOf<String?>(null) }
+    val registerState by authViewModel.authState.collectAsStateWithLifecycle()
+    val formErrors by authViewModel.registerFormErrorsState.collectAsStateWithLifecycle()
+
+    var serverEmailError by remember { mutableStateOf<String?>(null) }
 
     val authMsgErrorEmailAlreadyExist = stringResource(id = R.string.auth_repository_email_already_exist)
     val authMsgErrorNetworkError = stringResource(id = R.string.auth_repository_network_error)
 
 
-    LaunchedEffect(loginState) {
-        Log.d("TEST_STATE", "$loginState")
-        when (loginState) {
+    LaunchedEffect(registerState) {
+        when (registerState) {
             is Response.Loading -> {
             }
             is Response.Success -> {
                 Toast.makeText(
                     context,
-                    "¡Estudiante registrado!\n revisa tu correo para ser verificado",
-                    Toast.LENGTH_SHORT
+                    "¡Estudiante registrado!\nRevisa tu correo para ser verificado",
+                    Toast.LENGTH_LONG
                 ).show()
+                authViewModel.resetState()
                 onRegisterSuccess()
             }
             is Response.Error -> {
-                val errorMessage = (loginState as Response.Error).message ?: "Internal Error"
-                val errorType = (loginState as Response.Error).error
-
+                val errorType = (registerState as Response.Error).error
                 when (errorType) {
-                    ErrorType.EMAIL_ALREADY_EXIST -> authEmailError = authMsgErrorEmailAlreadyExist
-                    ErrorType.NETWORK_ERROR -> authconfirmPasswordError = authMsgErrorNetworkError
-                    else -> Log.d("FIREBASE_ERROR", errorMessage)
+                    ServerErrorType.EMAIL_ALREADY_EXIST -> {
+                        serverEmailError = authMsgErrorEmailAlreadyExist
+                    }
+                    ServerErrorType.NETWORK_ERROR -> {
+                        Toast.makeText(context, authMsgErrorNetworkError, Toast.LENGTH_SHORT).show()
+                    }
+                    else -> {
+                        val msg = (registerState as Response.Error).message ?: "Error al registrarse"
+                        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+                    }
                 }
-
-                isCourseSelectionStep = false
             }
             null -> {}
         }
     }
 
     Scaffold(containerColor = BackgroundGray) { paddingValues ->
-        if (isCourseSelectionStep) {
-            CourseChoices(
-                modifier = Modifier.padding(paddingValues),
-                selectedCourse = selectedCourse,
-                onCourseSelected = { selectedCourse = it },
-                onConfirm = {
-                    showAlertDialog = true
-                },
-                onBack = { isCourseSelectionStep = false },
-                isLoading = loginState is Response.Loading
-            )
-        } else {
-            RegisterContent(
-                modifier = Modifier.padding(paddingValues),
-                onNavigateToLogin = onNavigateToLogin,
-                onBack = onBack,
-                onRegisterClick = { name, email, password ->
-                    pendingName = name
-                    pendingEmail = email
-                    pendingPassword = password
-                    isCourseSelectionStep = true
-                },
-                initialName = pendingName,
-                initialEmail = pendingEmail,
-                initialPassword = pendingPassword,
-                externalEmailError = authEmailError,
-                externalConfirmPasswordError = authconfirmPasswordError,
-            )
-        }
-    }
+        RegisterContent(
+            modifier = Modifier.padding(paddingValues),
+            onNavigateToLogin = onNavigateToLogin,
+            onBack = onBack,
 
-    if (showAlertDialog) {
-        KipuDialog(
-            title = stringResource(id = R.string.register_test_title),
-            description = stringResource(id = R.string.register_test_desc),
-            dismissButtonText = stringResource(id = R.string.register_test_cancel),
-            confirmButtonText = stringResource(id = R.string.register_test_confirm),
-            iconRes = R.drawable.ic_warning,
-            onDismissRequest = {
-                showAlertDialog = false
-            },
-            onDismissClick = {
-                showAlertDialog = false
-            },
-            onConfirmClick = {
-                showAlertDialog = false
-                authEmailError = null
-                authViewModel.resetState()
+            formErrors = formErrors,
+            serverEmailError = serverEmailError,
+            onClearServerEmailError = { serverEmailError = null },
 
-                val userDomain = UserDomain(name = pendingName, email = pendingEmail)
-                authViewModel.register(userDomain, pendingPassword, selectedCourse)
+            onClearNameError = { authViewModel.clearNameError() },
+            onClearEmailError = { authViewModel.clearEmailError() },
+            onClearPasswordError = { authViewModel.clearPasswordError() },
+            onClearConfirmPasswordError = { authViewModel.clearConfirmPasswordError() },
+
+            onValidate = { name, email, pass, confirmPass ->
+                authViewModel.validateRegisterForm(name, email, pass, confirmPass)
             },
-            iconTint = KipuTeal
+            onRegisterClick = { name, email, password ->
+                val userDomain = UserDomain(name = name.trim(), email = email.trim().lowercase())
+                authViewModel.register(userDomain, password)
+            }
         )
     }
 }
@@ -152,44 +112,52 @@ fun RegisterContent(
     modifier: Modifier = Modifier,
     onNavigateToLogin: () -> Unit,
     onBack: () -> Unit,
+
+    formErrors: RegisterFormErrors = RegisterFormErrors(),
+    serverEmailError: String? = null,
+    onClearServerEmailError: () -> Unit = {},
+
+    onClearNameError: () -> Unit = {},
+    onClearEmailError: () -> Unit = {},
+    onClearPasswordError: () -> Unit = {},
+    onClearConfirmPasswordError: () -> Unit = {},
+
+    onValidate: (name: String, email: String, pass: String, confirmPass: String) -> Boolean,
     onRegisterClick: (String, String, String) -> Unit,
-
-    initialName: String = "",
-    initialEmail: String = "",
-    initialPassword: String = "",
-
-    externalNameError: String? = null,
-    externalEmailError: String? = null,
-    externalPasswordError: String? = null,
-    externalConfirmPasswordError: String? = null
 ) {
     // ESTADOS PARA LOS CAMPOS
-    var name by remember { mutableStateOf(initialName) }
-    var email by remember { mutableStateOf(initialEmail) }
-    var password by remember { mutableStateOf(initialPassword) }
-    var confirmPassword by remember { mutableStateOf(initialPassword) } // Temporalmente
+    var name by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
 
     // ESTADOS PARA LAS CONTRASEÑAS
     var passwordVisible by remember { mutableStateOf(false) }
     var confirmPasswordVisible by remember { mutableStateOf(false) }
 
-    // ESTADOS DE ERROR (VALIDACIONES LOCALES)
-    var localNameError by remember { mutableStateOf<String?>(null) }
-    var localEmailError by remember { mutableStateOf<String?>(null) }
-    var localPasswordError by remember { mutableStateOf<String?>(null) }
-    var localConfirmPasswordError by remember { mutableStateOf<String?>(null) }
+    val nameErrorText = when (formErrors.nameError) {
+        ValidationErrorType.EMPTY_FIELD -> stringResource(R.string.error_name_required)
+        else -> null
+    }
 
-    val nameError = localNameError ?: externalNameError
-    val emailError = localEmailError ?: externalEmailError
-    val passwordError = localPasswordError ?: externalPasswordError
-    val confirmPasswordError = localConfirmPasswordError ?: externalConfirmPasswordError
+    val localEmailErrorText = when (formErrors.emailError) {
+        ValidationErrorType.EMPTY_FIELD -> stringResource(R.string.error_email_required)
+        ValidationErrorType.INVALID_EMAIL_DOMAIN -> stringResource(R.string.error_email_domain)
+        else -> null
+    }
+    val emailErrorText = localEmailErrorText ?: serverEmailError
 
-    val msgErrorNameRequired = stringResource(id = R.string.error_name_required)
-    val msgErrorEmailRequired = stringResource(id = R.string.error_email_required)
-    val msgErrorEmailDomain = stringResource(id = R.string.error_email_domain)
-    val msgErrorPassRequired = stringResource(id = R.string.error_password_required)
-    val msgErrorConfirmPassRequired = stringResource(id = R.string.error_confirm_password_required)
-    val msgErrorPasswordMismatch = stringResource(id = R.string.error_password_mismatch)
+    val passwordErrorText = when (formErrors.passwordError) {
+        ValidationErrorType.EMPTY_FIELD -> stringResource(R.string.error_password_required)
+        ValidationErrorType.PASSWORD_TOO_SHORT -> stringResource(R.string.error_password_too_short)
+        else -> null
+    }
+
+    val confirmPasswordErrorText = when (formErrors.confirmPasswordError) {
+        ValidationErrorType.EMPTY_FIELD -> stringResource(R.string.error_confirm_password_required)
+        ValidationErrorType.PASSWORDS_DONT_MATCH -> stringResource(R.string.error_password_mismatch)
+        else -> null
+    }
 
     Column(
         modifier = modifier
@@ -250,12 +218,12 @@ fun RegisterContent(
                 value = name,
                 onValueChange = {
                     name = it
-                    localNameError = null
+                    onClearNameError()
                 },
                 placeholder = stringResource(R.string.ph_full_name),
                 iconRes = R.drawable.ic_user,
-                isError = nameError != null,
-                errorMessage = nameError
+                isError = nameErrorText != null,
+                errorMessage = nameErrorText
             )
 
             // --- CAMPO: EMAIL ---
@@ -264,13 +232,14 @@ fun RegisterContent(
                 value = email,
                 onValueChange = {
                     email = it
-                    localEmailError = null
+                    onClearEmailError()
+                    onClearServerEmailError()
                 },
                 placeholder = "n00123456@upn.pe",
                 iconRes = R.drawable.ic_mail,
                 keyboardType = KeyboardType.Email,
-                isError = emailError != null,
-                errorMessage = emailError
+                isError = emailErrorText != null,
+                errorMessage = emailErrorText
             )
 
             // --- CAMPO: PASSWORD ---
@@ -279,7 +248,7 @@ fun RegisterContent(
                 value = password,
                 onValueChange = {
                     password = it
-                    localPasswordError = null
+                    onClearPasswordError()
                 },
                 placeholder = if (passwordVisible) stringResource(R.string.password).lowercase() else "••••••••",
                 iconRes = if (passwordVisible) R.drawable.ic_unlock else R.drawable.ic_lock,
@@ -287,8 +256,8 @@ fun RegisterContent(
                 isPasswordVisible = passwordVisible,
                 onVisibilityChange = { passwordVisible = !passwordVisible },
                 keyboardType = KeyboardType.Password,
-                isError = passwordError != null,
-                errorMessage = passwordError
+                isError = passwordErrorText != null,
+                errorMessage = passwordErrorText
             )
 
             // --- CAMPO: CONFIRM PASSWORD ---
@@ -297,7 +266,7 @@ fun RegisterContent(
                 value = confirmPassword,
                 onValueChange = {
                     confirmPassword = it
-                    localConfirmPasswordError = null
+                    onClearConfirmPasswordError()
                 },
                 placeholder = if (confirmPasswordVisible) stringResource(R.string.confirm_password).lowercase() else "••••••••",
                 iconRes = if (confirmPasswordVisible) R.drawable.ic_unlock else R.drawable.ic_lock,
@@ -305,8 +274,8 @@ fun RegisterContent(
                 isPasswordVisible = confirmPasswordVisible,
                 onVisibilityChange = { confirmPasswordVisible = !confirmPasswordVisible },
                 keyboardType = KeyboardType.Password,
-                isError = confirmPasswordError != null,
-                errorMessage = confirmPasswordError
+                isError = confirmPasswordErrorText != null,
+                errorMessage = confirmPasswordErrorText
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -314,42 +283,9 @@ fun RegisterContent(
             FilledButton(
                 textButton = stringResource(id = R.string.register_next),
                 onClickFilledButton = {
-                    var hasError = false
-                    val emailTrimmed = email.trim().lowercase()
-
-                    localNameError = null
-                    localEmailError = null
-                    localPasswordError = null
-                    localConfirmPasswordError = null
-
-                    if (name.isBlank()) {
-                        localNameError = msgErrorNameRequired
-                        hasError = true
-                    }
-
-                    if (emailTrimmed.isBlank()) {
-                        localEmailError = msgErrorEmailRequired
-                        hasError = true
-                    }else if (!emailTrimmed.endsWith("@upn.pe")) {
-                        localEmailError = msgErrorEmailDomain
-                        hasError = true
-                    }
-
-                    if (password.isBlank()) {
-                        localPasswordError = msgErrorPassRequired
-                        hasError = true
-                    }
-
-                    if (confirmPassword.isBlank()) {
-                        localConfirmPasswordError = msgErrorConfirmPassRequired
-                        hasError = true
-                    } else if (password != confirmPassword) {
-                        localConfirmPasswordError = msgErrorPasswordMismatch
-                        hasError = true
-                    }
-
-                    if (!hasError) {
-                        onRegisterClick(name.trim(), emailTrimmed, password)
+                    val isValid = onValidate(name, email, password, confirmPassword)
+                    if (isValid) {
+                        onRegisterClick(name, email, password)
                     }
                 },
                 isLoading = false
@@ -368,7 +304,7 @@ fun RegisterContent(
 }
 
 // PREVIEWS
-@Preview(showBackground = true, name = "Registro - Estado Normal")
+@Preview(showBackground = true, name = "Register Screen")
 @Composable
 fun RegisterScreenPreview() {
     Scaffold(
@@ -377,6 +313,7 @@ fun RegisterScreenPreview() {
         RegisterContent(
             onNavigateToLogin = {},
             onBack = {},
+            onValidate = { _, _, _, _ -> true },
             onRegisterClick = { _, _, _ -> },
             modifier = Modifier.padding(paddingValues)
         )

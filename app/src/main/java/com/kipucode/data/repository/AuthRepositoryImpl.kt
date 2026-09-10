@@ -11,7 +11,7 @@ import com.kipucode.data.mapper.toDto
 import com.kipucode.data.mapper.toEntity
 import com.kipucode.data.remote.firebase.service.AuthRemoteDataSource
 import com.kipucode.data.remote.firebase.service.UserRemoteDataSource
-import com.kipucode.domain.model.ErrorType
+import com.kipucode.domain.model.ServerErrorType
 import com.kipucode.domain.model.Response
 import com.kipucode.domain.model.UserDomain
 import com.kipucode.domain.model.UserProgressDomain
@@ -53,16 +53,19 @@ internal class AuthRepositoryImpl @Inject constructor(
             apiCall()
         } catch (ex: FirebaseAuthInvalidCredentialsException) {
             Log.e(logTag, "Invalid Credentials", ex)
-            Response.Error("The credential is invalid", ErrorType.CREDENTIAL_INVALID)
+            Response.Error("The credential is invalid", ServerErrorType.CREDENTIAL_INVALID)
         } catch (ex: FirebaseAuthUserCollisionException) {
             Log.e(logTag, "User Collision", ex)
-            Response.Error("The email is already registered", ErrorType.EMAIL_ALREADY_EXIST)
+            Response.Error("The email is already registered", ServerErrorType.EMAIL_ALREADY_EXIST)
         } catch (ex: FirebaseNetworkException) {
             Log.e(logTag, "Network Error", ex)
-            Response.Error("Please check your network and try again", ErrorType.NETWORK_ERROR)
+            Response.Error("Please check your network and try again", ServerErrorType.NETWORK_ERROR)
         } catch (ex: Exception) {
-            Log.e(logTag, "Unexpected Error", ex)
-            Response.Error("An unexpected error occurred", ErrorType.FIRESTORE_ERROR)
+            Log.e(logTag, "Unexpected Error: ${ex::class.java.simpleName} - ${ex.message}", ex)
+            Response.Error(
+                message = "${ex::class.java.simpleName}: ${ex.localizedMessage}",
+                error = ServerErrorType.FIRESTORE_ERROR
+            )
         }
     }
 
@@ -75,11 +78,11 @@ internal class AuthRepositoryImpl @Inject constructor(
 
             val currentUser = authResult.user
                 ?: return@safeFirebaseCall Response
-                    .Error("An unexpected error occurred while signing in", ErrorType.FIRESTORE_ERROR)
+                    .Error("An unexpected error occurred while signing in", ServerErrorType.FIRESTORE_ERROR)
 
             if(!currentUser.isEmailVerified)
                 return@safeFirebaseCall Response
-                    .Error("Email verification required", ErrorType.EMAIL_NOT_VERIFIED)
+                    .Error("Email verification required", ServerErrorType.EMAIL_NOT_VERIFIED)
 
 
             val (userDto, progressDto) = coroutineScope {
@@ -91,7 +94,7 @@ internal class AuthRepositoryImpl @Inject constructor(
 
             if(userDto == null || progressDto == null) {
                 return@safeFirebaseCall Response.Error(
-                    "User profile data not found", ErrorType.FIRESTORE_ERROR
+                    "User profile data not found", ServerErrorType.FIRESTORE_ERROR
                 )
             }
 
@@ -110,14 +113,14 @@ internal class AuthRepositoryImpl @Inject constructor(
     // ============================================================================================
     //  Registro de Usuario -> FirebaseAuth autentificación / Firestore almacenar datos extra.
     // ============================================================================================
-    override suspend fun register(userDomain: UserDomain, password: String, courseSelected: String): Response<UserDomain> {
+    override suspend fun register(userDomain: UserDomain, password: String): Response<UserDomain> {
         return safeFirebaseCall("REGISTER_ERROR"){
-            val initialLessonId = "${courseSelected.lowercase()}_lesson_01"
+            val initialLessonId = "java_lesson_01"
 
             val authResult = authRemoteDataSource.registerUserWithEmail(userDomain.email, password)
             val currentUser = authResult.user
                 ?: return@safeFirebaseCall Response
-                    .Error("An unexpected error occurred while signing in", ErrorType.FIRESTORE_ERROR)
+                    .Error("An unexpected error occurred while signing in", ServerErrorType.FIRESTORE_ERROR)
 
             val user = userDomain.copy(id = currentUser.uid)
 
@@ -151,7 +154,7 @@ internal class AuthRepositoryImpl @Inject constructor(
             Log.d("FIREBASE_RESET_PASSWORD_ERROR", ex.toString())
 
             Response.Error(
-                "An error occurred while sending the email", ErrorType.FIRESTORE_ERROR )
+                "An error occurred while sending the email", ServerErrorType.FIRESTORE_ERROR )
         }
     }
 
