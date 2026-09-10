@@ -7,7 +7,7 @@ import com.kipucode.data.mapper.toDto
 import com.kipucode.data.mapper.toEntity
 import com.kipucode.data.remote.firebase.service.UserRemoteDataSource
 import com.kipucode.domain.model.CourseWithLessonsDomain
-import com.kipucode.domain.model.ErrorType
+import com.kipucode.domain.model.ServerErrorType
 import com.kipucode.domain.model.Response
 import com.kipucode.domain.model.UserProgressDomain
 import com.kipucode.domain.repository.UserProgressRepository
@@ -66,10 +66,10 @@ internal class UserProgressRepositoryImpl @Inject constructor(
                 userProgressDao.insert(userProgressDto.toEntity())
                 Response.Success(Unit)
             }else{
-                Response.Error(message = "Progress not found", error = ErrorType.FIRESTORE_ERROR)
+                Response.Error(message = "Progress not found", error = ServerErrorType.FIRESTORE_ERROR)
             }
         }catch (ex: Exception){
-            Response.Error(message = ex.message, error = ErrorType.FIRESTORE_ERROR)
+            Response.Error(message = ex.message, error = ServerErrorType.FIRESTORE_ERROR)
         }
     }
 
@@ -85,10 +85,10 @@ internal class UserProgressRepositoryImpl @Inject constructor(
                 userRemoteDataSource.createUserProgress(userProgress.toDto())
                 Response.Success(Unit)
             } else {
-                Response.Error("User_Progress Sync Error", ErrorType.FIRESTORE_ERROR)
+                Response.Error("User_Progress Sync Error", ServerErrorType.FIRESTORE_ERROR)
             }
         } catch (ex: Exception) {
-            Response.Error(ex.message, ErrorType.FIRESTORE_ERROR)
+            Response.Error(ex.message, ServerErrorType.FIRESTORE_ERROR)
         }
     }
 
@@ -99,13 +99,13 @@ internal class UserProgressRepositoryImpl @Inject constructor(
     ): Response<Unit> {
         return try {
             val currentUid = userRemoteDataSource.currentUserId
-                ?: return Response.Error("Usuario no autenticado", ErrorType.FIRESTORE_ERROR)
+                ?: return Response.Error("Usuario no autenticado", ServerErrorType.FIRESTORE_ERROR)
 
             val currentProgress = userProgressDao.getUserProgress(currentUid).first()?.toDomain()
-                ?: return Response.Error("No se encontró el progreso del usuario", ErrorType.FIRESTORE_ERROR)
+                ?: return Response.Error("No se encontró el progreso del usuario", ServerErrorType.FIRESTORE_ERROR)
 
             val currentCourseWithLessons = coursesWithLessons.find { c -> c.lessons.any { it.id == completedLessonId } }
-                ?: return Response.Error("Lección no mapeada en ningún curso", ErrorType.FIRESTORE_ERROR)
+                ?: return Response.Error("Lección no mapeada en ningún curso", ServerErrorType.FIRESTORE_ERROR)
 
             // Calcular XP y Puntos
             val previousXp = currentProgress.lessonsXpRecord[completedLessonId] ?: 0
@@ -154,7 +154,7 @@ internal class UserProgressRepositoryImpl @Inject constructor(
             Response.Success(Unit)
 
         } catch (e: Exception) {
-            Response.Error(e.localizedMessage ?: "Error desconocido", ErrorType.FIRESTORE_ERROR)
+            Response.Error(e.localizedMessage ?: "Error desconocido", ServerErrorType.FIRESTORE_ERROR)
         }
     }
 

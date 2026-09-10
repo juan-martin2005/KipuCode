@@ -11,7 +11,7 @@ import com.kipucode.data.remote.firebase.service.ExerciseRemoteDataSource
 import com.kipucode.data.remote.firebase.service.LessonRemoteDataSource
 import com.kipucode.domain.model.CourseDomain
 import com.kipucode.domain.model.CourseWithLessonsDomain
-import com.kipucode.domain.model.ErrorType
+import com.kipucode.domain.model.ServerErrorType
 import com.kipucode.domain.model.Response
 import com.kipucode.domain.repository.CourseRepository
 import kotlinx.coroutines.async
@@ -72,7 +72,7 @@ internal class CourseRepositoryImpl @Inject constructor(
 
             Response.Success(Unit)
         } catch (ex: Exception){
-            Response.Error("Error syncing courses and exercises: ${ex.message}", ErrorType.FIRESTORE_ERROR)
+            Response.Error("Error syncing courses and exercises: ${ex.message}", ServerErrorType.FIRESTORE_ERROR)
         }
     }
 

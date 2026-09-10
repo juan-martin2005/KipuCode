@@ -2,7 +2,7 @@ package com.kipucode.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kipucode.domain.model.ErrorType
+import com.kipucode.domain.model.ServerErrorType
 import com.kipucode.domain.model.Response
 import com.kipucode.domain.model.UserDomain
 import com.kipucode.domain.model.UserProgressDomain
@@ -94,7 +94,7 @@ class UserViewModel @Inject constructor(
             if(profileResult is Response.Success && progressResult is Response.Success) {
                 _refreshState.value = Response.Success(Unit)
             } else {
-                _refreshState.value = Response.Error("Error refreshing", ErrorType.NETWORK_ERROR)
+                _refreshState.value = Response.Error("Error refreshing", ServerErrorType.NETWORK_ERROR)
             }
         }
     }

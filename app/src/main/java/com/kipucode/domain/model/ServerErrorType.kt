@@ -1,6 +1,6 @@
 package com.kipucode.domain.model
 
-enum class ErrorType {
+enum class ServerErrorType {
     EMAIL_ALREADY_EXIST,
     EMAIL_NOT_VERIFIED,
     CREDENTIAL_INVALID,

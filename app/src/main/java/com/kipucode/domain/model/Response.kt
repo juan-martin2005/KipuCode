@@ -7,7 +7,6 @@ sealed class Response<out T>{
 
     data class Error(
         val message : String? = null,
-        val error: ErrorType
+        val error: ServerErrorType
     ): Response<Nothing>()
-
 }

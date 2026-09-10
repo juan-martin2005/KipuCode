@@ -1,6 +1,6 @@
 package com.kipucode.domain.usecase
 
-import com.kipucode.domain.model.ErrorType
+import com.kipucode.domain.model.ServerErrorType
 import com.kipucode.domain.model.LessonDomain
 import com.kipucode.domain.model.Response
 import com.kipucode.domain.repository.CourseRepository
@@ -30,7 +30,7 @@ class CompleteLessonUseCase @Inject constructor(
             userProgressRepository.completeLesson(completedLessonId, xpEarned, coursesWithLessons)
 
         } catch (e: Exception) {
-            Response.Error("${e.localizedMessage}", ErrorType.FIRESTORE_ERROR)
+            Response.Error("${e.localizedMessage}", ServerErrorType.FIRESTORE_ERROR)
         }
     }
 }

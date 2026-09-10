@@ -5,7 +5,7 @@ import com.kipucode.data.local.dao.ExerciseDao
 import com.kipucode.data.mapper.toDomain
 import com.kipucode.data.mapper.toEntity
 import com.kipucode.data.remote.firebase.service.ExerciseRemoteDataSource
-import com.kipucode.domain.model.ErrorType
+import com.kipucode.domain.model.ServerErrorType
 import com.kipucode.domain.model.ExerciseDomain
 import com.kipucode.domain.model.Response
 import com.kipucode.domain.repository.ExerciseRepository
@@ -46,7 +46,7 @@ internal class ExerciseRepositoryImpl @Inject constructor(
 
             Response.Success(Unit)
         } catch (ex: Exception) {
-            Response.Error("Error al sincronizar: ${ex.message}", ErrorType.FIRESTORE_ERROR)
+            Response.Error("Error al sincronizar: ${ex.message}", ServerErrorType.FIRESTORE_ERROR)
         }
     }
 
