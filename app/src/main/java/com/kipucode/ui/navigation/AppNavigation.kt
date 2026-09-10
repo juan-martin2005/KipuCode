@@ -111,7 +111,6 @@ fun AppNavigation(){
 
         composable("home"){
             HomeScreen(
-                userViewModel = userViewModel,
                 navController = navController,
                 onNavigateToCode = { lessonId ->
                     navController.navigate("lesson?lessonId=${lessonId}")

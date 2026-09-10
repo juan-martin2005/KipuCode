@@ -1,6 +1,5 @@
 package com.kipucode.ui.screens.home
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,7 +16,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,7 +29,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.kipucode.R
 import com.kipucode.domain.model.LessonDomain
-import com.kipucode.domain.model.Response
 import com.kipucode.ui.components.KipuBottomBar
 import com.kipucode.ui.components.KipuTopBar
 import com.kipucode.ui.components.card.HeadlineHome
@@ -42,38 +39,16 @@ import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.LightGray
 import com.kipucode.ui.theme.Nunito
-import com.kipucode.viewmodel.CoursesViewModel
-import com.kipucode.viewmodel.UserViewModel
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
-import java.time.temporal.ChronoUnit
+import com.kipucode.viewmodel.HomeViewModel
 
 @Composable
 fun HomeScreen(
-    userViewModel: UserViewModel,
-    courseViewModel: CoursesViewModel = hiltViewModel(),
+    homeViewModel: HomeViewModel = hiltViewModel(),
     navController: NavController,
     onNavigateToCode: (String) -> Unit
 ) {
-    val userProfile by userViewModel.userProfileState.collectAsStateWithLifecycle()
-    val userProgress by userViewModel.userProgressState.collectAsStateWithLifecycle()
+    val uiState by homeViewModel.uiState.collectAsStateWithLifecycle()
 
-    val coursesWithLessons by courseViewModel.coursesWithLessonsState.collectAsStateWithLifecycle()
-
-    val userRefreshState by userViewModel.refreshState.collectAsStateWithLifecycle()
-    val courseRefreshState by courseViewModel.refreshState.collectAsStateWithLifecycle()
-    val isRefreshing = userRefreshState is Response.Loading || courseRefreshState is Response.Loading
-
-    LaunchedEffect(userRefreshState, courseRefreshState) {
-        if (userRefreshState is Response.Success || userRefreshState is Response.Error) {
-            userViewModel.resetRefreshState()
-        }
-
-        if (courseRefreshState is Response.Success || courseRefreshState is Response.Error) {
-            courseViewModel.resetRefreshState()
-        }
-    }
     Scaffold(
         bottomBar = { KipuBottomBar(navController = navController) },
         containerColor = BackgroundGray
@@ -85,64 +60,34 @@ fun HomeScreen(
                 .padding(paddingValues)
         ) {
             PullToRefreshBox(
-                isRefreshing = isRefreshing,
-                onRefresh = {
-                    userViewModel.swipeToRefresh()
-                    courseViewModel.swipeToRefresh()
-                },
+                isRefreshing = uiState.isRefreshing,
+                onRefresh = { homeViewModel.swipeToRefresh() },
                 modifier = Modifier.fillMaxSize()
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(BackgroundGray)
-                ) {
-
-                    val activeCourseWithLessons = coursesWithLessons.find { courseItem ->
-                        courseItem.lessons.any { it.id == userProgress?.currentLessonId }
+                if (uiState.isLoading) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(color = KipuTeal)
                     }
+                } else {
+                    HomeContent(
+                        userName = uiState.userName,
+                        totalXp = uiState.totalXp,
+                        streakDay = uiState.streakDay,
+                        sectionTitle = stringResource(id = R.string.learning_journey),
+                        courseTitle = uiState.courseTitle,
+                        courseNumber = uiState.courseNumber,
+                        currentLessonsProgress = uiState.currentLessonsProgress,
+                        totalLessons = uiState.totalLessons,
+                        lessons = uiState.lessons,
 
-                    val courseData = activeCourseWithLessons?.course
-                    val lessonsData = activeCourseWithLessons?.lessons?.sortedBy { it.orderIndex } ?: emptyList()
+                        isLessonCompleted = { lesson -> lesson.id in uiState.completedLessonIds },
+                        isLessonLocked = { lesson -> lesson.orderIndex > uiState.currentLessonOrderIndex },
 
-                    val currentLessonOrderIndex = lessonsData.find {
-                        it.id == userProgress?.currentLessonId
-                    }?.orderIndex ?: 0
-
-                    val isCompletedCourse = userProgress?.completedCourses?.contains(courseData?.id) ?: false
-
-                    val currentLessonProgress = if (isCompletedCourse) {lessonsData.size}
-                    else {(currentLessonOrderIndex - 1).coerceAtLeast(0)                    }
-
-                    if (coursesWithLessons.isEmpty()) {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator(color = KipuTeal)
-                        }
-                    } else {
-                        HomeContent(
-                            userName = userProfile?.name ?: "Usuario",
-                            totalXp = userProgress?.totalXp ?: 0,
-                            streakDay = getActiveStreak(
-                                userProgress?.completedAt,
-                                userProgress?.streakDay ?: 0),
-
-                            sectionTitle = stringResource(id = R.string.learning_journey),
-                            courseTitle = courseData?.title ?: "Curso",
-                            currentLessonsProgress = currentLessonProgress,
-                            totalLessons = lessonsData.size,
-                            lessons = lessonsData,
-
-                            courseNumber = courseData?.orderIndex ?: 1,
-
-                            isLessonCompleted = { lesson -> userProgress?.completedLessons?.contains(lesson.id) == true },
-                            isLessonLocked = { lesson -> lesson.orderIndex > currentLessonOrderIndex },
-
-                            onLessonClick = onNavigateToCode
-                        )
-                    }
+                        onLessonClick = onNavigateToCode
+                    )
                 }
             }
         }
@@ -244,18 +189,7 @@ fun HomeContent(
         }
     }
 }
-fun getActiveStreak(lastCompletedMillis: Long?, databaseStreak: Int): Int {
-    if (lastCompletedMillis == null) return 0
 
-    val lastDate = Instant.ofEpochMilli(lastCompletedMillis)
-        .atZone(ZoneId.systemDefault())
-        .toLocalDate()
-
-    val todayDate = LocalDate.now()
-    val daysBetween = ChronoUnit.DAYS.between(lastDate, todayDate)
-
-    return if (daysBetween > 1L) 0 else databaseStreak
-}
 
 @Preview(showBackground = true)
 @Composable
