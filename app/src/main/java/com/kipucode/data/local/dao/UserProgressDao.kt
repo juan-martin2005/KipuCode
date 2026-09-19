@@ -1,9 +1,8 @@
 package com.kipucode.data.local.dao
 
 import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Upsert
 import com.kipucode.data.local.model.UserProgressEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -16,7 +15,7 @@ interface UserProgressDao {
     //  FLOW (Asíncrono): Mantiene la UI actualizada en tiempo real ante cualquier cambio
     //     en la base de datos sin bloquear el hilo principal. No requiere 'suspend'.
 
-    //  SUSPEND (Corrutinas): Obliga a ejecutar las operaciones de escritura (INSERT) y borrado
+    //  SUSPEND (Corrutinas): Obliga a ejecutar las operaciones de escritura (INSERT/UPDATE) y borrado
     //     (DELETE) dentro de un entorno asíncrono para NO congelar la pantalla del usuario.
 
     // ========================================================================================
@@ -26,9 +25,9 @@ interface UserProgressDao {
     fun getUserProgress(userId: String): Flow<UserProgressEntity?>
 
     // ========================================================================================
-    //  Guardar o Actualizar Avance -> REPLACE para actualizar el estado de la lección actual
+    //  Guardar o Actualizar Avance -> UPSERT para inserción o actualización limpia
     // ========================================================================================
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insert(userProgress: UserProgressEntity)
 
     // ========================================================================================

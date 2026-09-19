@@ -1,9 +1,8 @@
 package com.kipucode.data.local.dao
 
 import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Upsert
 import com.kipucode.data.local.model.UserEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -16,7 +15,7 @@ interface UserDao {
     //  FLOW (Asíncrono): Mantiene la UI actualizada en tiempo real ante cualquier cambio
     //     en la base de datos sin bloquear el hilo principal. No requiere 'suspend'.
 
-    //  SUSPEND (Corrutinas): Obliga a ejecutar las operaciones de escritura (INSERT) y borrado
+    //  SUSPEND (Corrutinas): Obliga a ejecutar las operaciones de escritura (INSERT/UPDATE) y borrado
     //     (DELETE) dentro de un entorno asíncrono para NO congelar la pantalla del usuario.
 
     // ========================================================================================
@@ -26,9 +25,9 @@ interface UserDao {
     fun getUserByIdFlow(userId: String): Flow<UserEntity?>
 
     // ========================================================================================
-    //  Guardar o Actualizar Usuario -> REPLACE para sobreescribir datos viejos
+    //  Guardar o Actualizar Usuario -> UPSERT (Inserta o Actualiza sin borrar ni disparar CASCADE)
     // ========================================================================================
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insert(user: UserEntity)
 
     // ========================================================================================

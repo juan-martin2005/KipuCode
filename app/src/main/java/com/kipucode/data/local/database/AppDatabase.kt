@@ -7,6 +7,7 @@ import com.kipucode.data.local.converter.ListConverters
 import com.kipucode.data.local.dao.BlockOptionDao
 import com.kipucode.data.local.dao.CourseDao
 import com.kipucode.data.local.dao.ExerciseDao
+import com.kipucode.data.local.dao.FlashcardProgressDao
 import com.kipucode.data.local.dao.LessonDao
 import com.kipucode.data.local.dao.UserDao
 import com.kipucode.data.local.dao.UserProgressDao
@@ -22,7 +23,8 @@ import com.kipucode.data.local.model.*
         BlockOptionEntity::class,
         FlashcardProgressEntity::class
     ],
-    version = 2
+    version = 3,
+    exportSchema = false
 )
 
 @TypeConverters(ListConverters::class)
@@ -33,6 +35,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun lessonDao(): LessonDao
     abstract fun exerciseDao(): ExerciseDao
     abstract fun blockOptionDao(): BlockOptionDao
+    abstract fun flashcardProgressDao(): FlashcardProgressDao
 
 //    companion object {
 //        @Volatile

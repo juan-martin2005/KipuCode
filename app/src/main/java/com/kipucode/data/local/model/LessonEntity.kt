@@ -3,6 +3,7 @@ package com.kipucode.data.local.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
@@ -11,7 +12,9 @@ import androidx.room.PrimaryKey
         entity = CourseEntity::class,
         parentColumns = ["id"],
         childColumns = ["course_id"],
-    )]
+        onDelete = ForeignKey.CASCADE
+    )],
+    indices = [Index(value = ["course_id"])]
 )
 data class LessonEntity(
     @PrimaryKey
@@ -19,7 +22,6 @@ data class LessonEntity(
     @ColumnInfo(name = "course_id") val courseId: String,
     val title: String,
     @ColumnInfo(name = "theory_content") val content: String,
-    val points: Int,
-    val exp: Int,
+    val xp: Int = 0,
     @ColumnInfo(name = "order_index") val orderIndex: Int
 )

@@ -43,6 +43,12 @@ interface LessonDao {
     fun getAllLessons(): Flow<List<LessonEntity>>
 
     // ========================================================================================
+    //  Contador de lecciones para verificar pre-poblado
+    // ========================================================================================
+    @Query("SELECT COUNT(*) FROM lessons")
+    suspend fun getLessonsCount(): Int
+
+    // ========================================================================================
     //  Obtener información de una lección específica por ID
     // ========================================================================================
     @Query("SELECT * FROM lessons WHERE id = :lessonId")

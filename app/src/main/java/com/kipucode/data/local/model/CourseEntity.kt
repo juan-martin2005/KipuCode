@@ -12,7 +12,6 @@ data class CourseEntity(
     val description: String,
     val track: String = "",
     @ColumnInfo(name = "order_index") val orderIndex: Int,
-    val points: Int,
-    val exp: Int,
-    @ColumnInfo(name = "created_at") val createdAt: Long?
+    val xp: Int = 0,
+    @ColumnInfo(name = "created_at") val createdAt: Long? = null
 )

@@ -33,14 +33,20 @@ interface CourseDao {
     // ========================================================================================
     //  Obtener todos los cursos disponibles de la bd local (Flow)
     // ========================================================================================
-    @Query("SELECT * FROM courses")
+    @Query("SELECT * FROM courses ORDER BY order_index ASC")
     fun getAllCourses(): Flow<List<CourseEntity>>
+
+    // ========================================================================================
+    //  Contador de cursos locales para verificar pre-poblado
+    // ========================================================================================
+    @Query("SELECT COUNT(*) FROM courses")
+    suspend fun getCoursesCount(): Int
 
     // ========================================================================================
     //  Obtener cursos con sus respectivas Lecciones ordenados por posición
     // ========================================================================================
     @Transaction
-    @Query("SELECT * FROM courses ORDER BY id ASC")
+    @Query("SELECT * FROM courses ORDER BY order_index ASC")
     fun getCourseWithLessons(): Flow<List<CourseWithLessons>>
 
     // ========================================================================================
