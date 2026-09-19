@@ -1,0 +1,62 @@
+{
+  "courses": [
+    {
+      "id": "java_module_01",
+      "title": "Introducción al Ecosistema Java",
+      "description": "Conocer la historia de Java, sus estándares actuales, el paradigma 'escribe una vez, ejecuta donde sea' y el funcionamiento del compilador. El alumno será capaz de configurar el JDK, comprender qué es la Máquina Virtual de Java (JVM) y ejecutar comandos básicos usando JShell sin necesidad de clases complejas.",
+      "track": "java",
+      "orderIndex": 1,
+      "xp": 0
+    }
+  ],
+  "lessons": [
+    {
+      "id": "java_lesson_01",
+      "courseId": "java_module_01",
+      "title": "Historia y Filosofía",
+      "content": "# 01 - Historia y Filosofía de Java\n\n> **Objetivo de Aprendizaje:**\n> Conocer el origen de Java, comprender su propósito multiplataforma y entender cómo el **bytecode** junto con la **JVM (Máquina Virtual de Java)** permite portabilidad, seguridad y alto rendimiento en distintos sistemas operativos.\n\n---\n\n## El origen de Java\n\nJava comenzó su historia en 1991 bajo el nombre de *Proyecto Green*. Fue desarrollado por un grupo de ingenieros de Sun Microsystems liderados por Patrick Naughton y James Gosling.\n\nEl objetivo inicial no era la web, sino crear un lenguaje para dispositivos electrónicos inteligentes como televisores y decodificadores.\n\n### Filosofía: WORA\n\nEl principio fundamental de Java es **Write Once, Run Anywhere** (Escribe una vez, ejecuta en cualquier lugar). Esto se logra compilando el código fuente (`.java`) en **Bytecode** (`.class`), el cual es interpretado y ejecutado por la **JVM** en cualquier sistema operativo sin necesidad de recompilar.",
+      "orderIndex": 1,
+      "xp": 200
+    }
+  ],
+  "exercises": [
+    {
+      "id": "exercise_java_01",
+      "lessonId": "java_lesson_01",
+      "type": "UNIQUE_CHOICE",
+      "instruction": "#### ¿En qué año comenzó el Proyecto Green, origen de Java?",
+      "answer": "",
+      "orderIndex": 1,
+      "xp": 20
+    },
+    {
+      "id": "exercise_java_02",
+      "lessonId": "java_lesson_01",
+      "type": "UNIQUE_CHOICE",
+      "instruction": "#### ¿Qué significa el principio WORA en Java?",
+      "answer": "",
+      "orderIndex": 2,
+      "xp": 20
+    },
+    {
+      "id": "exercise_java_03",
+      "lessonId": "java_lesson_01",
+      "type": "FLASHCARD",
+      "instruction": "### ¿Qué es el Bytecode en Java?",
+      "answer": "Es el código intermedio independiente de la plataforma generado por el compilador (`javac`). Tiene extensión `.class` y es ejecutado directamente por la Máquina Virtual de Java (JVM).",
+      "orderIndex": 3,
+      "xp": 20
+    }
+  ],
+  "blocksOptions": [
+    { "id": "exercise_java_01_opt_1", "exerciseId": "exercise_java_01", "content": "1991", "isCorrect": true, "orderIndex": 1 },
+    { "id": "exercise_java_01_opt_2", "exerciseId": "exercise_java_01", "content": "1995", "isCorrect": false, "orderIndex": 2 },
+    { "id": "exercise_java_01_opt_3", "exerciseId": "exercise_java_01", "content": "1989", "isCorrect": false, "orderIndex": 3 },
+    { "id": "exercise_java_01_opt_4", "exerciseId": "exercise_java_01", "content": "2000", "isCorrect": false, "orderIndex": 4 },
+
+    { "id": "exercise_java_02_opt_1", "exerciseId": "exercise_java_02", "content": "Write Once, Run Anywhere", "isCorrect": true, "orderIndex": 1 },
+    { "id": "exercise_java_02_opt_2", "exerciseId": "exercise_java_02", "content": "Write Only, Read Always", "isCorrect": false, "orderIndex": 2 },
+    { "id": "exercise_java_02_opt_3", "exerciseId": "exercise_java_02", "content": "Work Often, Relax Always", "isCorrect": false, "orderIndex": 3 },
+    { "id": "exercise_java_02_opt_4", "exerciseId": "exercise_java_02", "content": "Windows Only Runtime Architecture", "isCorrect": false, "orderIndex": 4 }
+  ]
+}

@@ -141,8 +141,6 @@ internal class UserProgressRepositoryImpl @Inject constructor(
                 completedLessons = updatedLessons,
                 completedCourses = updatedCourses,
                 totalXp = updatedXp,
-                points = updatedXp,
-                score = updatedXp,
                 lessonsXpRecord = updatedLessonsXpRecord,
                 streakDay = newStreak,
                 currentLessonId = nextLessonId,
@@ -195,7 +193,7 @@ internal class UserProgressRepositoryImpl @Inject constructor(
 
         if (courseIdx != -1 && courseIdx < trackCourses.size - 1) {
             val nextCourse = trackCourses[courseIdx + 1]
-            return if (updatedXp >= nextCourse.course.exp) {
+            return if (updatedXp >= nextCourse.course.xp) {
                 val nextLessonId = nextCourse.lessons.firstOrNull()?.id ?: frontierLessonId
                 nextLessonId to currentProgress.status
             } else {
