@@ -1,8 +1,11 @@
 package com.kipucode.ui.components.button
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -14,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -109,5 +113,39 @@ fun OutlineButton(
                 color = if (enabled) KipuTeal else KipuTeal.copy(alpha = 0.5f)
             )
         }
+    }
+}
+
+@Preview(showBackground = true, name = "Vista de Botones")
+@Composable
+fun ButtonsPreview() {
+    Column(
+        modifier = Modifier.padding(16.dp)
+    ) {
+        // --- Filled Button ---
+        FilledButton(
+            textButton = "Botón Principal",
+            onClickFilledButton = {}
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        FilledButton(
+            textButton = "Cargando...",
+            isLoading = true,
+            onClickFilledButton = {}
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // --- Outline Button ---
+        OutlineButton(
+            textButton = "Botón Secundario",
+            onClickFilledButton = {}
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        OutlineButton(
+            textButton = "Cargando...",
+            isLoading = true,
+            onClickFilledButton = {}
+        )
     }
 }

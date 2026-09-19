@@ -136,7 +136,7 @@ fun SplashContent(
 }
 
 // --- PREVIEW ---
-@Preview(showBackground = true, showSystemUi = true, name = "Splash Inicial")
+@Preview(showBackground = true, name = "Splash Inicial")
 @Composable
 fun SplashScreenPreview() {
     SplashContent(animationScale = 1f)

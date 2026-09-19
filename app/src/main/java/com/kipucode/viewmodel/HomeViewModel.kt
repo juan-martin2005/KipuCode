@@ -50,15 +50,15 @@ class HomeViewModel @Inject constructor(
         _isRefreshing
     ) { userProfile, userProgress, coursesWithLessons, isRefreshing ->
 
-        // Si aún no tenemos ni cursos ni usuario, indicamos Loading
-        if (coursesWithLessons.isEmpty() && userProfile == null) {
+        // Si aún no tenemos cursos cargados, indicamos Loading
+        if (coursesWithLessons.isEmpty()) {
             return@combine HomeUiState(isLoading = true, isRefreshing = isRefreshing)
         }
 
-        // 1. Encontrar el curso activo en el que está el alumno
+        // 1. Encontrar el curso activo en el que está el alumno (con fallback al primer curso disponible)
         val activeCourseWithLessons = coursesWithLessons.find { courseItem ->
             courseItem.lessons.any { it.id == userProgress?.currentLessonId }
-        }
+        } ?: coursesWithLessons.firstOrNull()
 
         val courseData = activeCourseWithLessons?.course
         val lessonsData = activeCourseWithLessons?.lessons?.sortedBy { it.orderIndex } ?: emptyList()
@@ -120,16 +120,14 @@ class HomeViewModel @Inject constructor(
     fun swipeToRefresh() {
         viewModelScope.launch {
             _isRefreshing.value = true
-            // Descargamos todo en paralelo para máxima velocidad
-            val coursesJob = async { refreshCoursesUseCase() }
-            val profileJob = async { refreshUserProfileUseCase() }
-            val progressJob = async { refreshUserProgressUseCase() }
-
-            coursesJob.await()
-            profileJob.await()
-            progressJob.await()
-
-            _isRefreshing.value = false
+            try {
+                // Sincronización secuencial ordenada para evitar condiciones de carrera entre tablas
+                refreshCoursesUseCase()
+                refreshUserProfileUseCase()
+                refreshUserProgressUseCase()
+            } finally {
+                _isRefreshing.value = false
+            }
         }
     }
 

@@ -21,6 +21,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kipucode.R
@@ -113,5 +114,51 @@ fun KipuForm(
             )
         }
         if (isError) Spacer(modifier = Modifier.height(4.dp)) else Spacer(modifier = Modifier.height(16.dp))
+    }
+}
+
+@Preview(showBackground = true, name = "Vista del KipuForm (Texto Normal)")
+@Composable
+fun KipuFormNormalPreview() {
+    Column(modifier = Modifier.padding(16.dp)) {
+        KipuForm(
+            label = "Correo Electrónico",
+            value = "",
+            onValueChange = {},
+            placeholder = "ejemplo@correo.com",
+            iconRes = R.drawable.ic_mail
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Vista del KipuForm (Contraseña)")
+@Composable
+fun KipuFormPasswordPreview() {
+    Column(modifier = Modifier.padding(16.dp)) {
+        KipuForm(
+            label = "Contraseña",
+            value = "miSuperClave123",
+            onValueChange = {},
+            placeholder = "Ingresa tu contraseña",
+            iconRes = R.drawable.ic_lock,
+            isPasswordField = true,
+            isPasswordVisible = false
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Vista del KipuForm (Error)")
+@Composable
+fun KipuFormErrorPreview() {
+    Column(modifier = Modifier.padding(16.dp)) {
+        KipuForm(
+            label = "Nombre de Usuario",
+            value = "abc",
+            onValueChange = {},
+            placeholder = "Ingresa tu usuario",
+            iconRes = R.drawable.ic_user,
+            isError = true,
+            errorMessage = "El nombre de usuario debe tener al menos 6 caracteres."
+        )
     }
 }
