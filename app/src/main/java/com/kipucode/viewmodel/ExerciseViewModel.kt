@@ -77,7 +77,7 @@ class ExerciseViewModel @Inject constructor(
             _completeState.value = Response.Loading
             val totalXp = _exercisesState.value
                 .filter { correctExerciseIds.contains(it.id) }
-                .sumOf { it.exp }
+                .sumOf { it.xp }
 
             val result = completeLessonUseCase(lessonId, totalXp)
             _completeState.value = result

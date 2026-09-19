@@ -200,8 +200,7 @@ fun HomePreview() {
             courseId = "1",
             title = "1. Logic and Algorithms",
             content = "",
-            points = 10,
-            exp = 10,
+            xp = 10,
             orderIndex = 1
         ),
         LessonDomain(
@@ -209,8 +208,7 @@ fun HomePreview() {
             courseId = "1",
             title = "2. Variables and Data Types",
             content = "",
-            points = 10,
-            exp = 10,
+            xp = 10,
             orderIndex = 2
         ),
         LessonDomain(
@@ -218,8 +216,7 @@ fun HomePreview() {
             courseId = "1",
             title = "3. Control Structures",
             content = "",
-            points = 10,
-            exp = 10,
+            xp = 10,
             orderIndex = 3
         ),
     )

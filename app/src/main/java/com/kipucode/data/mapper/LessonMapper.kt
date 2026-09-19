@@ -13,8 +13,7 @@ fun LessonEntity.toDomain() =
         courseId = courseId,
         title = title,
         content = content,
-        points = points,
-        exp = exp,
+        xp = xp,
         orderIndex = orderIndex
     )
 
@@ -27,7 +26,6 @@ fun LessonDto.toEntity() =
         courseId = courseId,
         title = title,
         content = content,
-        points = points,
-        exp = exp,
+        xp = xp,
         orderIndex = orderIndex
     )

@@ -5,7 +5,6 @@ data class LessonDomain(
     val courseId: String = "",
     val title: String = "",
     val content: String = "",
-    val points: Int = 0,
-    val exp: Int = 0,
+    val xp: Int = 0,
     val orderIndex: Int = 0
 )

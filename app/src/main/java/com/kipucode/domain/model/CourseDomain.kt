@@ -6,7 +6,6 @@ data class CourseDomain(
     val description: String = "",
     val track: String = "",
     val orderIndex: Int = 0,
-    val points: Int = 0,
-    val exp: Int = 0,
+    val xp: Int = 0,
     val createdAt: Long? = 0
 )

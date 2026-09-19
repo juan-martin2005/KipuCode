@@ -5,4 +5,5 @@ data class BlockOptionDomain(
     val exerciseId: String,
     val content: String,
     val isCorrect: Boolean,
+    val orderIndex: Int = 0
 )

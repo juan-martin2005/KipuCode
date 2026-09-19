@@ -6,8 +6,7 @@ data class ExerciseDomain(
     val type: String,
     val instruction: String,
     val answer: String = "",
-    val points: Int,
-    val exp: Int,
+    val xp: Int = 0,
     val orderIndex: Int,
 
     val options: List<BlockOptionDomain> = emptyList()

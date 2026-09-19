@@ -64,7 +64,7 @@ fun CodeScreen(
                     id = lesson.id,
                     title = lesson.title,
                     earnedPoints = earnedXp,
-                    maxPoints = lesson.exp
+                    maxPoints = lesson.xp
                 )
             }
         }

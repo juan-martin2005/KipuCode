@@ -12,13 +12,11 @@ import java.util.Date
 fun UserProgressEntity.toDomain(): UserProgressDomain {
     return UserProgressDomain(
         id = this.id,
-        userId = this.userId ?: "",
+        userId = this.userId,
         currentLessonId = this.lessonId ?: "",
         status = this.status ?: "",
-        score = this.score,
         completedAt = this.completedAt,
         totalXp = this.totalXp,
-        points = this.points,
         streakDay = this.streakDay,
         completedLessons = this.completedLessons,
         completedCourses = this.completedCourses,
@@ -35,14 +33,12 @@ fun UserProgressDto.toEntity(): UserProgressEntity {
         userId = this.userId,
         lessonId = this.currentLessonId,
         status = this.status,
-        score = this.score,
         totalXp = this.totalXp,
-        points = this.points,
         streakDay = this.streakDay,
         completedAt = this.completedAt?.toDate()?.time,
         completedLessons = this.completedLessons,
         completedCourses = this.completedCourses,
-        lessonsXpRecord = this.lessonsXpRecord ?: emptyMap()
+        lessonsXpRecord = this.lessonsXpRecord
     )
 }
 
@@ -51,10 +47,8 @@ fun UserProgressDomain.toDto(): UserProgressDto {
         userId = this.userId,
         currentLessonId = this.currentLessonId,
         status = this.status,
-        score = this.score,
         completedAt = this.completedAt?.let { Timestamp(Date(it)) },
         totalXp = this.totalXp,
-        points = this.points,
         streakDay = this.streakDay,
         completedLessons = this.completedLessons,
         completedCourses = this.completedCourses,
@@ -68,9 +62,7 @@ fun UserProgressDomain.toEntity(): UserProgressEntity {
         userId = this.userId,
         lessonId = this.currentLessonId,
         status = this.status,
-        score = this.score,
         totalXp = this.totalXp,
-        points = this.points,
         streakDay = this.streakDay,
         completedAt = this.completedAt,
         completedCourses = this.completedCourses,

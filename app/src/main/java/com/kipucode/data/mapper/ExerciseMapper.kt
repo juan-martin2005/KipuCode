@@ -15,11 +15,10 @@ fun ExerciseDto.toEntity(): ExerciseEntity {
     return ExerciseEntity(
         id = this.id,
         lessonId = this.lessonId,
-        type = this.type ?: "",
+        type = this.type ?: "UNIQUE_CHOICE",
         instruction = this.instruction,
         answer = this.answer,
-        points = this.points,
-        exp = this.exp,
+        xp = this.xp,
         orderIndex = this.orderIndex
     )
 }
@@ -29,7 +28,8 @@ fun BlockOptionDto.toEntity(exerciseId: String): BlockOptionEntity {
         id = "${exerciseId}_${this.id}",
         exerciseId = exerciseId,
         content = this.content,
-        isCorrect = this.correct
+        isCorrect = this.correct,
+        orderIndex = this.orderIndex
     )
 }
 
@@ -39,22 +39,22 @@ fun BlockOptionDto.toEntity(exerciseId: String): BlockOptionEntity {
 fun ExerciseWithOptions.toDomain(): ExerciseDomain {
     return ExerciseDomain(
         id = this.exercise.id,
-        lessonId = this.exercise.lessonId ?: "",
-        type = this.exercise.type ?: "",
-        instruction = this.exercise.instruction ?: "",
-        answer = this.exercise.answer ?: "",
-        points = this.exercise.points,
-        exp = this.exercise.exp,
+        lessonId = this.exercise.lessonId,
+        type = this.exercise.type,
+        instruction = this.exercise.instruction,
+        answer = this.exercise.answer,
+        xp = this.exercise.xp,
         orderIndex = this.exercise.orderIndex,
-        options = this.options.map { it.toDomain() }
+        options = this.options.sortedBy { it.orderIndex }.map { it.toDomain() }
     )
 }
 
 fun BlockOptionEntity.toDomain(): BlockOptionDomain {
     return BlockOptionDomain(
         id = this.id,
-        exerciseId = this.exerciseId ?: "",
-        content = this.content ?: "",
+        exerciseId = this.exerciseId,
+        content = this.content,
         isCorrect = this.isCorrect,
+        orderIndex = this.orderIndex
     )
 }

@@ -14,8 +14,7 @@ fun CourseEntity.toDomain(): CourseDomain =
         description = description,
         track = track,
         orderIndex = orderIndex,
-        points = points,
-        exp = exp,
+        xp = xp,
         createdAt = createdAt
     )
 
@@ -29,7 +28,6 @@ fun CourseDto.toEntity(): CourseEntity =
         description = description,
         track = track,
         orderIndex = orderIndex,
-        points = points,
-        exp = exp,
+        xp = xp,
         createdAt = createdAt?.toDate()?.time
     )

@@ -7,8 +7,7 @@ data class ExerciseDto(
     val instruction: String = "",
     val answer: String = "",
     val orderIndex : Int = 0,
-    val exp : Int = 0,
-    val points : Int = 0,
+    val xp : Int = 0,
 
     val options: List<BlockOptionDto> = emptyList()
 )

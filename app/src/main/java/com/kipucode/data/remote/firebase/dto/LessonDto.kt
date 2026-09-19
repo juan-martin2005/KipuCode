@@ -6,6 +6,5 @@ data class LessonDto(
     val title: String = "",
     val content: String = "",
     val orderIndex: Int = 0,
-    val points: Int = 0,
-    val exp: Int = 0
+    val xp: Int = 0
 )
