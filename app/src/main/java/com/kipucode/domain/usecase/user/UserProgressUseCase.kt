@@ -1,13 +1,13 @@
 package com.kipucode.domain.usecase.user
 
 import com.kipucode.domain.model.Response
-import com.kipucode.domain.model.UserDomain
-import com.kipucode.domain.repository.UserRepository
+import com.kipucode.domain.model.UserProgressDomain
+import com.kipucode.domain.repository.UserProgressRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 // ============================================================================================
-//  CASOS DE USO ENCAPSULADOS EN EL USER_REPOSITORY (PERFIL DE USUARIO)
+//  CASOS DE USO ENCAPSULADOS EN EL USER_PROGRESS_REPOSITORY (PROGRESO GLOBAL DEL USUARIO)
 // ============================================================================================
 
 //  ! IMPORTANTE
@@ -17,23 +17,23 @@ import javax.inject.Inject
 //  INVOKE: Habilita la llamada directa de la clase como si fuese una función.
 
 // ============================================================================================
-//  CASO DE USO: OBTENER PERFIL DE USUARIO
+//  CASO DE USO: OBTENER PROGRESO DEL USUARIO
 // ============================================================================================
-class GetUserProfileUseCase @Inject constructor (
-    private val userRepository: UserRepository
+class GetUserProgressUseCase @Inject constructor(
+    private val userProgressRepository: UserProgressRepository
 ) {
-    operator fun invoke (): Flow<UserDomain?>{
-        return userRepository.getUserProfile()
+    operator fun invoke(): Flow<UserProgressDomain?> {
+        return userProgressRepository.getUserProgress()
     }
 }
 
 // ============================================================================================
-//  CASO DE USO: REFRESCAR PERFIL DE USUARIO
+//  CASO DE USO: REFRESCAR PROGRESO DEL USUARIO
 // ============================================================================================
-class RefreshUserProfileUseCase @Inject constructor (
-    private val userRepository: UserRepository
+class RefreshUserProgressUseCase @Inject constructor(
+    private val userProgressRepository: UserProgressRepository
 ) {
-    suspend operator fun invoke (): Response<Unit>{
-        return userRepository.refreshUserProfile()
+    suspend operator fun invoke(): Response<Unit> {
+        return userProgressRepository.refreshUserProgress()
     }
 }
