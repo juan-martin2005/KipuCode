@@ -19,9 +19,11 @@ firebaseBom = "34.13.0"
 hiltNavigationCompose = "1.2.0"
 
 multiplatformMarkdown = "0.41.0"
+fsrs = "1.0.0"
 
 
 [libraries]
+fsrs = { module = "io.github.open-spaced-repetition:fsrs", version.ref = "fsrs" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 compose-markdown = { module = "com.github.jeziellago:compose-markdown", version.ref = "composeMarkdown" }

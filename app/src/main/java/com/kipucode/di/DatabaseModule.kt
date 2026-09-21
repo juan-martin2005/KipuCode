@@ -46,5 +46,5 @@ object DatabaseModule {
     fun provideBlockOptionDao(appDatabase: AppDatabase): BlockOptionDao = appDatabase.blockOptionDao()
 
     @Provides
-    fun provideFlashcardProgressDao(appDatabase: AppDatabase): FlashcardProgressDao = appDatabase.flashcardProgressDao()
+    fun provideLearningProgressDao(appDatabase: AppDatabase): LearningProgressDao = appDatabase.learningProgressDao()
 }

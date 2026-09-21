@@ -74,9 +74,12 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
+
     // Markdown dependency
     implementation(libs.compose.markdown)
-
     implementation(libs.multiplatform.markdown)
     implementation(libs.multiplatform.markdown.code)
+
+    // FSRS Spaced Repetition Engine
+    implementation(libs.fsrs)
 }

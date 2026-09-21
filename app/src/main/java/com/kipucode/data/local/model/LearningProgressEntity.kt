@@ -6,7 +6,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 
 @Entity(
-    tableName = "flashcard_progress",
+    tableName = "learning_progress",
     primaryKeys = ["exercise_id", "user_id"],
     foreignKeys = [
         ForeignKey(
@@ -27,12 +27,14 @@ import androidx.room.Index
         Index(value = ["user_id"])
     ]
 )
-data class FlashcardProgressEntity(
+data class LearningProgressEntity(
     @ColumnInfo(name = "exercise_id") val exerciseId: String,
     @ColumnInfo(name = "user_id") val userId: String,
-    val repetitions: Int = 0,
-    val interval: Int = 1,
-    @ColumnInfo(name = "ease_factor") val easeFactor: Double = 2.5,
-    @ColumnInfo(name = "next_review_date") val nextReview: Long,
-    @ColumnInfo(name = "last_reviewed") val lastReview: Long
+    val difficulty: Double = 0.0,
+    val stability: Double = 0.0,
+    val reps: Int = 0,
+    val lapses: Int = 0,
+    val state: Int = 0, // 0=New, 1=Learning, 2=Review, 3=Relearning
+    @ColumnInfo(name = "due_date") val dueDate: Long = System.currentTimeMillis(),
+    @ColumnInfo(name = "last_reviewed") val lastReviewed: Long? = null
 )
