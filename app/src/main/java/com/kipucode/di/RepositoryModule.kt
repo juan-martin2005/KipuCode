@@ -57,4 +57,10 @@ abstract class RepositoryModule {
     internal abstract fun bindExerciseRepository(
         exerciseRepositoryImpl: ExerciseRepositoryImpl
     ): ExerciseRepository
+
+    @Binds
+    @Singleton
+    internal abstract fun bindLearningProgressRepository(
+        learningProgressRepositoryImpl: com.kipucode.data.repository.LearningProgressRepositoryImpl
+    ): com.kipucode.domain.repository.LearningProgressRepository
 }

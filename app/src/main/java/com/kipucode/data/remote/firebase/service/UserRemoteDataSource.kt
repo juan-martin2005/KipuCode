@@ -3,6 +3,7 @@ package com.kipucode.data.remote.firebase.service
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.toObject
+import com.kipucode.data.remote.firebase.dto.LearningProgressDto
 import com.kipucode.data.remote.firebase.dto.UserDto
 import com.kipucode.data.remote.firebase.dto.UserProgressDto
 import com.kipucode.domain.model.UserDomain
@@ -10,7 +11,7 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 // ============================================================================================
-//  ORIGEN DE DATOS (USER & USER_PROGRESS) - FIRESTORE
+//  ORIGEN DE DATOS (USER, USER_PROGRESS & LEARNING_PROGRESS) - FIRESTORE
 // ============================================================================================
 class UserRemoteDataSource @Inject constructor(
     // ========================================================================================
@@ -27,6 +28,8 @@ class UserRemoteDataSource @Inject constructor(
     companion object {
         const val USERS_COLLECTION = "users"
         const val USER_PROGRESS_COLLECTION = "user_progress"
+        const val LEARNING_PROGRESS_COLLECTION = "learning_progress"
+        const val EXERCISES_SUBCOLLECTION = "exercises"
     }
 
 
@@ -92,5 +95,33 @@ class UserRemoteDataSource @Inject constructor(
             .get()                          // Descargamos el progreso del usuario
             .await()                        // Espera a que termine la operación para continuar
             .toObject<UserProgressDto>()    // Convierte el resultado JSON a UserProgressDto
+    }
+
+    // ========================================================================================
+    //  Guardar Repaso FSRS en (LEARNING_PROGRESS_COLLECTION -> {userId} -> exercises -> {exerciseId})
+    // ========================================================================================
+    suspend fun saveLearningProgress(learningProgressDto: LearningProgressDto) {
+        val id = currentUserId ?: return
+
+        firestore.collection(LEARNING_PROGRESS_COLLECTION)
+            .document(id)
+            .collection(EXERCISES_SUBCOLLECTION)
+            .document(learningProgressDto.exerciseId)
+            .set(learningProgressDto)
+            .await()
+    }
+
+    // ========================================================================================
+    //  Obtener Todos los Repasos FSRS del Usuario (Subcolección exercises)
+    // ========================================================================================
+    suspend fun getAllLearningProgress(): List<LearningProgressDto> {
+        val id = currentUserId ?: return emptyList()
+
+        return firestore.collection(LEARNING_PROGRESS_COLLECTION)
+            .document(id)
+            .collection(EXERCISES_SUBCOLLECTION)
+            .get()
+            .await()
+            .toObjects(LearningProgressDto::class.java)
     }
 }
