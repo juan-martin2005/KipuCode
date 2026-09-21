@@ -7,6 +7,7 @@ import com.kipucode.domain.model.ExerciseDomain
 import com.kipucode.domain.model.Response
 import com.kipucode.domain.usecase.CompleteLessonUseCase
 import com.kipucode.domain.usecase.GetExercisesByLessonUseCase
+import com.kipucode.domain.usecase.RecordExerciseAttemptUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,6 +18,7 @@ import javax.inject.Inject
 class ExerciseViewModel @Inject constructor(
     private val getExercisesUseCase: GetExercisesByLessonUseCase,
     private val completeLessonUseCase: CompleteLessonUseCase,
+    private val recordExerciseAttemptUseCase: RecordExerciseAttemptUseCase
 ) : ViewModel() {
     companion object {
         private const val EXERCISES_PER_SESSION = 10
@@ -66,9 +68,18 @@ class ExerciseViewModel @Inject constructor(
         _selectedOptionId.value = option.id
         _answerFeedback.value = AnswerFeedback(isCorrect = option.isCorrect)
 
+        val currentExercise = _exercisesState.value.getOrNull(_currentExerciseIndex.value)
         if (option.isCorrect) {
-            val currentExercise = _exercisesState.value.getOrNull(_currentExerciseIndex.value)
             currentExercise?.let { correctExerciseIds.add(it.id) }
+        }
+
+        currentExercise?.let { exercise ->
+            viewModelScope.launch {
+                recordExerciseAttemptUseCase(
+                    exerciseId = exercise.id,
+                    isCorrect = option.isCorrect
+                )
+            }
         }
     }
 
@@ -94,11 +105,11 @@ class ExerciseViewModel @Inject constructor(
     }
 
     // Regresa al ejercicio anterior
-    fun previousExercise() {
-        if (_currentExerciseIndex.value > 0) {
-            _currentExerciseIndex.value -= 1
-        }
-    }
+//    fun previousExercise() {
+//        if (_currentExerciseIndex.value > 0) {
+//            _currentExerciseIndex.value -= 1
+//        }
+//    }
 
     // Reinicia el flujo al terminar los ejercicios
     fun resetExerciseProgress() {

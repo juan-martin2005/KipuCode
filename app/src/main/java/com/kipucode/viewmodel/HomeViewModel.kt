@@ -4,13 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kipucode.domain.usecase.GetCourseWithLessonsUseCase
 import com.kipucode.domain.usecase.RefreshCoursesUseCase
+import com.kipucode.domain.usecase.RefreshLearningProgressUseCase
 import com.kipucode.domain.usecase.user.GetUserProfileUseCase
 import com.kipucode.domain.usecase.user.GetUserProgressUseCase
 import com.kipucode.domain.usecase.user.RefreshUserProfileUseCase
 import com.kipucode.domain.usecase.user.RefreshUserProgressUseCase
 import com.kipucode.ui.screens.home.HomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -25,12 +25,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val getUserProfileUseCase: GetUserProfileUseCase,
-    private val getUserProgressUseCase: GetUserProgressUseCase,
-    private val getCourseWithLessonsUseCase: GetCourseWithLessonsUseCase,
+    getUserProfileUseCase: GetUserProfileUseCase,
+    getUserProgressUseCase: GetUserProgressUseCase,
+    getCourseWithLessonsUseCase: GetCourseWithLessonsUseCase,
     private val refreshUserProfileUseCase: RefreshUserProfileUseCase,
     private val refreshUserProgressUseCase: RefreshUserProgressUseCase,
-    private val refreshCoursesUseCase: RefreshCoursesUseCase
+    private val refreshCoursesUseCase: RefreshCoursesUseCase,
+    private val refreshLearningProgressUseCase: RefreshLearningProgressUseCase
 ) : ViewModel() {
 
     // Controla la animación de deslizar para refrescar (Pull-to-refresh)
@@ -114,6 +115,7 @@ class HomeViewModel @Inject constructor(
             refreshCoursesUseCase()
             refreshUserProfileUseCase()
             refreshUserProgressUseCase()
+            refreshLearningProgressUseCase()
         }
     }
 
@@ -125,6 +127,7 @@ class HomeViewModel @Inject constructor(
                 refreshCoursesUseCase()
                 refreshUserProfileUseCase()
                 refreshUserProgressUseCase()
+                refreshLearningProgressUseCase()
             } finally {
                 _isRefreshing.value = false
             }
