@@ -1,6 +1,8 @@
 package com.kipucode.ui.components.card
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -9,8 +11,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -24,7 +29,9 @@ import com.kipucode.ui.theme.White
 fun UserProfileCard(
     name: String,
     email: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    avatarId : Int,
+    onClick: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -43,17 +50,24 @@ fun UserProfileCard(
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
+                    .background(color = Color.Transparent)
                     .size(72.dp)
-                    .background(
-                        White.copy(alpha = 0.2f),
-                        shape = CircleShape
-                    )
+                    .clickable(onClick = onClick )
             ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_user),
+                Image(
+                    painter = painterResource(id = avatarId),
                     contentDescription = "Avatar de Usuario",
-                    tint = White.copy(alpha = 0.85f),
-                    modifier = Modifier.size(50.dp)
+                    modifier = Modifier.size(90.dp)
+                )
+                Icon(
+                    imageVector = ImageVector.vectorResource(R.drawable.ic_edit),
+                    contentDescription = "Editar",
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .align(Alignment.TopEnd)
+                        .background(color = Color.Transparent)
+                        .size(19.dp),
+                    tint = Color.DarkGray
                 )
             }
 
@@ -94,7 +108,9 @@ fun ProfileHeaderCardPreview() {
     ) {
         UserProfileCard(
             name = "User Test Alpha",
-            email = "n00123456@upn.pe"
+            email = "n00123456@upn.pe",
+            avatarId = R.drawable.avatar_002,
+            onClick = {}
         )
     }
 }

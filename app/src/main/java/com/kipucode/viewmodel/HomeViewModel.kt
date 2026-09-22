@@ -89,6 +89,7 @@ class HomeViewModel @Inject constructor(
             isRefreshing = isRefreshing,
 
             userName = userProfile?.name ?: "Usuario",
+            avatarId = userProfile?.avatarId ?: "avatar_000",
             totalXp = userProgress?.totalXp ?: 0,
             streakDay = streak,
 

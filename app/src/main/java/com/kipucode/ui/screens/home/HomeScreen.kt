@@ -31,6 +31,7 @@ import com.kipucode.R
 import com.kipucode.domain.model.LessonDomain
 import com.kipucode.ui.components.KipuBottomBar
 import com.kipucode.ui.components.KipuTopBar
+import com.kipucode.ui.components.avatar.AvatarProvider
 import com.kipucode.ui.components.card.HeadlineHome
 import com.kipucode.ui.components.card.HomeCard
 import com.kipucode.ui.components.card.LessonCard
@@ -75,6 +76,7 @@ fun HomeScreen(
                     HomeContent(
                         userName = uiState.userName,
                         totalXp = uiState.totalXp,
+                        userAvatarId = AvatarProvider.getDrawableById(uiState.avatarId),
                         streakDay = uiState.streakDay,
                         sectionTitle = stringResource(id = R.string.learning_journey),
                         courseTitle = uiState.courseTitle,
@@ -97,6 +99,7 @@ fun HomeScreen(
 @Composable
 fun HomeContent(
     userName: String? = null,
+    userAvatarId : Int? = null,
     totalXp: Int? = null,
     streakDay: Int? = null,
 
@@ -123,6 +126,7 @@ fun HomeContent(
             if (userName != null && totalXp != null && streakDay != null) {
                 HeadlineHome(
                     userName = userName,
+                    userAvatarId = userAvatarId,
                     userXp = totalXp,
                     userStreak = streakDay,
                     modifier = Modifier.padding(vertical = 16.dp)
@@ -230,6 +234,7 @@ fun HomePreview() {
 
         HomeContent(
             userName = "Test_User_Full_Name",
+            userAvatarId = R.drawable.avatar_000,
             totalXp = 999,
             streakDay = 999,
             courseTitle = "Introduction to Python Programing",

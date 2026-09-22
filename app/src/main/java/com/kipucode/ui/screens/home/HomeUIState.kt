@@ -8,6 +8,7 @@ data class HomeUiState(
 
     // Datos del Estudiante
     val userName: String = "Usuario",
+    val avatarId : String = "avatar_000",
     val totalXp: Int = 0,
     val streakDay: Int = 0,
 

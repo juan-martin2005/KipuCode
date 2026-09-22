@@ -1,16 +1,22 @@
 package com.kipucode.ui.screens.profile
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.DefaultShadowColor
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -19,7 +25,10 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.kipucode.R
+import com.kipucode.domain.model.Response
 import com.kipucode.ui.components.KipuBottomBar
+import com.kipucode.ui.components.avatar.AvatarProvider
+import com.kipucode.ui.components.avatar.AvatarSelectionDialog
 import com.kipucode.ui.components.card.KipuDialog
 import com.kipucode.ui.components.card.MultipleChoicesCard
 import com.kipucode.ui.components.card.UserProfileCard
@@ -33,10 +42,27 @@ import com.kipucode.viewmodel.UserViewModel
 fun ProfileScreen(
     userViewModel: UserViewModel,
     navController: NavController,
-    onLogoutClick: () -> Unit
+    onLogoutClick: () -> Unit,
 ) {
     var showLogoutDialog by remember { mutableStateOf(false) }
+    var showAvatarList by remember { mutableStateOf(false) }
     val userProfile by userViewModel.userProfileState.collectAsStateWithLifecycle()
+    val updateAvatar by userViewModel.updateUserAvatarState.collectAsState()
+
+    LaunchedEffect(updateAvatar) {
+        when(updateAvatar) {
+            is Response.Success -> {
+                showAvatarList = false
+                userViewModel.resetUpdateAvatarState()
+            }
+            is Response.Error -> {
+                // Mostrar algun error con Toast o Snackbar (Opcional)
+                userViewModel.resetUpdateAvatarState()
+            }
+            else -> Unit
+        }
+    }
+
 
     Scaffold(
         bottomBar = { KipuBottomBar(navController = navController) },
@@ -51,8 +77,12 @@ fun ProfileScreen(
             ProfileContent(
                 name = userProfile?.name ?: "",
                 email = userProfile?.email ?: "",
+                avatarId = AvatarProvider.getDrawableById(userProfile?.avatarId),
                 onLogoutClick = {
                     showLogoutDialog = true
+                },
+                onEditAvatar = {
+                    showAvatarList = true
                 }
             )
         }
@@ -78,13 +108,30 @@ fun ProfileScreen(
             iconTint = KipuTeal
         )
     }
+
+    if (showAvatarList) {
+        AvatarSelectionDialog(
+            currentAvatarId = userProfile?.avatarId ?: AvatarProvider.defaultAvatar.id,
+            onDismiss = {
+                if (updateAvatar !is Response.Loading) {
+                    showAvatarList = false
+                }
+            },
+            isLoading = updateAvatar is Response.Loading,
+            onSave = { selectedAvatarId ->
+                userViewModel.starUpdateUserAvatar(selectedAvatarId)
+            }
+        )
+    }
 }
 
 @Composable
 fun ProfileContent(
     name: String,
     email: String,
-    onLogoutClick: () -> Unit
+    avatarId : Int,
+    onLogoutClick: () -> Unit,
+    onEditAvatar : () -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier
@@ -110,6 +157,8 @@ fun ProfileContent(
             UserProfileCard(
                 name = name,
                 email = email,
+                avatarId = avatarId,
+                onClick = onEditAvatar
             )
 
             Spacer(modifier = Modifier.height(32.dp))
@@ -133,6 +182,8 @@ fun ProfileScreenPreview() {
     ProfileContent(
         name = "Pepeito Gonzles",
         email = "pedro@upn.pe",
-        onLogoutClick = {}
+        avatarId =  R.drawable.avatar_000,
+        onLogoutClick = {},
+        onEditAvatar = {}
     )
 }

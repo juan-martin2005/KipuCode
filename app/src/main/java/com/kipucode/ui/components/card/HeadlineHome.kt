@@ -6,16 +6,19 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.draw.clip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,6 +50,7 @@ import kotlin.time.Duration.Companion.milliseconds
 @Composable
 fun HeadlineHome(
     userName: String,
+    userAvatarId: Int ? = null,
     userXp: Int,
     userStreak: Int,
     modifier: Modifier = Modifier
@@ -81,17 +85,17 @@ fun HeadlineHome(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .size(44.dp)
-                    .background(
-                        KipuTeal,
-                        shape = CircleShape
-                    )
+                    .clip(CircleShape)
             ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_user),
-                    contentDescription = "Avatar de Usuario",
-                    tint = White.copy(alpha = 0.85f),
-                    modifier = Modifier.size(28.dp)
-                )
+                userAvatarId?.let {
+                    Image(
+                        painter = painterResource(id = it),
+                        contentDescription = "Avatar de Usuario",
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(CircleShape)
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.width(8.dp))
@@ -182,6 +186,7 @@ fun HeadlineHomePreview() {
         HeadlineHome(
             userName = "Juan Martin Gonzales Sinarahua",
             userXp = 1250,
+            userAvatarId = R.drawable.avatar_000,
             userStreak = 365
         )
     }

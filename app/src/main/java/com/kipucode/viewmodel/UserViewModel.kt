@@ -10,6 +10,7 @@ import com.kipucode.domain.usecase.user.GetUserProfileUseCase
 import com.kipucode.domain.usecase.user.GetUserProgressUseCase
 import com.kipucode.domain.usecase.user.RefreshUserProfileUseCase
 import com.kipucode.domain.usecase.user.RefreshUserProgressUseCase
+import com.kipucode.domain.usecase.user.UpdateUserAvatarUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,6 +23,7 @@ import javax.inject.Inject
 class UserViewModel @Inject constructor(
     private val getUserProfileUseCase: GetUserProfileUseCase,
     private val getUserProgressUseCase : GetUserProgressUseCase,
+    private val updateUserAvatarUseCase: UpdateUserAvatarUseCase,
     private val refreshUserProfileUseCase : RefreshUserProfileUseCase,
     private val refreshUserProgressUseCase: RefreshUserProgressUseCase
 ) : ViewModel() {
@@ -43,13 +45,17 @@ class UserViewModel @Inject constructor(
     private val _userProfileState = MutableStateFlow<UserDomain?>(null)
     private val _userProgressState = MutableStateFlow<UserProgressDomain?>(null)
     private val _refreshState = MutableStateFlow<Response<Unit>?>(null)
+    private val _updateUserAvatarState = MutableStateFlow<Response<Unit>?>(null)
 
     // ============================================================================================
     //  Estados Públicos Inmutables -> Solo Lectura por la UI (Compose)
     // ============================================================================================
     val userProfileState: StateFlow<UserDomain?> = _userProfileState
     val userProgressState: StateFlow<UserProgressDomain?> = _userProgressState
+
     val refreshState: StateFlow<Response<Unit>?> = _refreshState
+
+    val updateUserAvatarState : StateFlow<Response<Unit>?> = _updateUserAvatarState
 
     // ============================================================================================
     //  Init -> Automatiza los datos en pantalla ni bien se crea el componente
@@ -82,6 +88,14 @@ class UserViewModel @Inject constructor(
         }
     }
 
+    fun starUpdateUserAvatar(avatarId : String){
+        viewModelScope.launch {
+            _updateUserAvatarState.value = Response.Loading
+            val response = updateUserAvatarUseCase.invoke(avatarId)
+            _updateUserAvatarState.value = response
+        }
+    }
+
     // ============================================================================================
     //  Lógica de Sincronización Remota -> Descarga el Perfil y Progreso desde Firestore
     // ============================================================================================
@@ -104,5 +118,9 @@ class UserViewModel @Inject constructor(
     // ============================================================================================
     fun resetRefreshState() {
         _refreshState.value = null
+    }
+
+    fun resetUpdateAvatarState() {
+        _updateUserAvatarState.value = null
     }
 }
