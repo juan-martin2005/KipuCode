@@ -37,3 +37,11 @@ class RefreshUserProfileUseCase @Inject constructor (
         return userRepository.refreshUserProfile()
     }
 }
+
+class UpdateUserAvatarUseCase @Inject constructor(
+    private val userRepository: UserRepository
+){
+    suspend operator fun invoke(avatarId : String) : Response<Unit>{
+        return userRepository.updateUserAvatar(avatarId)
+    }
+}

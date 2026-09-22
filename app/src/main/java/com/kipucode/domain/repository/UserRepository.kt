@@ -20,6 +20,7 @@ interface UserRepository {
     //  Perfil Usuario -> Obtención inmediata de los datos del usuario en la DB local
     // ========================================================================================
     fun getUserProfile() : Flow<UserDomain?>
+    suspend fun updateUserAvatar(avatarId: String) :Response<Unit>
 
     // ========================================================================================
     //  Sincronización Remota -> Descarga datos desde la red y actualiza la DB local

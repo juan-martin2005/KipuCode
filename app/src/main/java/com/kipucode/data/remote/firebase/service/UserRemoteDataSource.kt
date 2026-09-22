@@ -67,6 +67,19 @@ class UserRemoteDataSource @Inject constructor(
             .toObject<UserDto>()          // Convierte el resultado JSON a UserDto
     }
 
+    // ========================================================================================
+    //  Actualizar el avatar del usuario (USERS_COLLECTION -> users)
+    // ========================================================================================
+    suspend fun updateUserAvatar(avatarId : String): Void? {
+        val id = currentUserId ?: return null
+
+        return firestore.collection(USERS_COLLECTION)
+            .document(id)
+            .update("avatarId", avatarId)
+            .await()
+    }
+
+
 
     // ========================================================================================
     //  Crear el Progreso del Usuario en (USER_PROGRESS_COLLECTION -> user_progress)

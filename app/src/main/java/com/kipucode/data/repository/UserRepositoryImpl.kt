@@ -45,6 +45,19 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun updateUserAvatar(avatarId: String): Response<Unit> {
+        val currentId = userRemoteDataSource.currentUserId
+
+        return if (currentId != null){
+            userDao.updateAvatar(avatarId, currentId)
+            userRemoteDataSource.updateUserAvatar(avatarId)
+            Response.Success(Unit)
+        }
+        else{
+            Response.Error("User avatar not change", ServerErrorType.FIRESTORE_ERROR)
+        }
+    }
+
     // ===========================================================================================
     //  Sincronización Remota -> Descarga y actualiza el perfil del usuario desde Firestore a Room
     // ===========================================================================================

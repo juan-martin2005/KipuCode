@@ -23,7 +23,7 @@ import com.kipucode.data.local.model.*
         BlockOptionEntity::class,
         LearningProgressEntity::class
     ],
-    version = 4,
+    version = 5,
     exportSchema = false
 )
 

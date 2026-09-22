@@ -12,6 +12,7 @@ fun UserDomain.toDto(): UserDto =
         id = this.id,
         name = this.name,
         email = this.email,
+        avatarId = this.avatarId
         )
 
 // ===================================
@@ -22,6 +23,7 @@ fun UserDomain.toEntity(): UserEntity =
         id = this.id,
         name = this.name,
         email = this.email,
+        avatarId = this.avatarId
     )
 
 // ===================================
@@ -32,6 +34,7 @@ fun UserDto.toDomain(): UserDomain =
         id = this.id,
         name = this.name,
         email = this.email,
+        avatarId = this.avatarId
     )
 
 // ===================================
@@ -42,6 +45,7 @@ fun UserDto.toEntity(): UserEntity =
         id = this.id,
         name = this.name,
         email = this.email,
+        avatarId = this.avatarId
     )
 
 // ===================================
@@ -52,4 +56,5 @@ fun UserEntity.toDomain() : UserDomain =
         id = this.id,
         name = this.name,
         email = this.email,
+        avatarId = this.avatarId
     )
