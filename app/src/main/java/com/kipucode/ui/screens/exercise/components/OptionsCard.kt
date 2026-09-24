@@ -1,4 +1,4 @@
-package com.kipucode.ui.screens.lesson.components
+package com.kipucode.ui.screens.exercise.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
