@@ -16,11 +16,12 @@ import com.kipucode.ui.screens.auth.RegisterScreen
 import com.kipucode.ui.screens.code.CodeScreen
 import com.kipucode.ui.screens.explore.ExploreScreen
 import com.kipucode.ui.screens.home.HomeScreen
-import com.kipucode.ui.screens.lesson.ExerciseScreen
+import com.kipucode.ui.screens.exercise.ExerciseScreen
 import com.kipucode.ui.screens.lesson.LessonScreen
 import com.kipucode.ui.screens.onboarding.OnboardingScreen
 import com.kipucode.ui.screens.profile.ProfileScreen
 import com.kipucode.ui.screens.splash.SplashScreen
+import com.kipucode.ui.screens.summary.SummaryScreen
 import com.kipucode.viewmodel.AuthViewModel
 import com.kipucode.viewmodel.UserViewModel
 
@@ -187,7 +188,29 @@ fun AppNavigation(){
                         navController.popBackStack()
                     }
                 },
-                onFinished = {
+                onFinished = { session ->
+                    if (backStackEntry.lifecycle.currentState == Lifecycle.State.RESUMED) {
+                        navController.navigate(
+                            "summary?xp=${session.xpEarned}&correct=${session.correctCount}&total=${session.totalCount}&timeSeconds=${session.timeSeconds}"
+                        ) {
+                            popUpTo("exercise?lessonId={lessonId}") { inclusive = true }
+                        }
+                    }
+                }
+            )
+        }
+
+        composable(
+            route = "summary?xp={xp}&correct={correct}&total={total}&timeSeconds={timeSeconds}",
+            arguments = listOf(
+                navArgument("xp") { type = NavType.IntType; defaultValue = 0 },
+                navArgument("correct") { type = NavType.IntType; defaultValue = 0 },
+                navArgument("total") { type = NavType.IntType; defaultValue = 0 },
+                navArgument("timeSeconds") { type = NavType.LongType; defaultValue = 0L }
+            )
+        ) { backStackEntry ->
+            SummaryScreen(
+                onContinue = {
                     if (backStackEntry.lifecycle.currentState == Lifecycle.State.RESUMED) {
                         navController.navigate("home") {
                             popUpTo("home") { inclusive = false }
