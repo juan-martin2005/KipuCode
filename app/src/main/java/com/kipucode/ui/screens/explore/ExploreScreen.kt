@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.kipucode.ui.navigation.ExerciseRoute
 import com.kipucode.R
 import com.kipucode.domain.model.CourseDomain
 import com.kipucode.domain.model.CourseWithLessonsDomain
@@ -101,7 +102,7 @@ fun ExploreScreen(
                     courseViewModel = courseViewModel,
                     onBackClick = { selectedCourseWithLessons = null },
                     onExerciseTypeClick = { lessonId, type ->
-                        navController.navigate("exercise?lessonId=$lessonId&type=$type")
+                        navController.navigate(ExerciseRoute(lessonId = lessonId, type = type))
                     }
                 )
             } else {

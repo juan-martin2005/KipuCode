@@ -3,7 +3,6 @@ package com.kipucode.ui.components.button
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -83,32 +82,35 @@ fun OutlineButton(
     enabled: Boolean = true,
     isLoading: Boolean = false,
     fontSize: TextUnit = 18.sp,
-    color: Color = KipuTeal
+    containerColor: Color = KipuTeal
 ) {
+    val isInteractive = enabled && !isLoading
+    val activeColor = if (isInteractive) containerColor else containerColor.copy(alpha = 0.5f)
+
     OutlinedButton(
         onClick = {
-            if (!isLoading && enabled) {
+            if (isInteractive) {
                 onClickFilledButton()
             }
         },
         modifier = modifier
             .fillMaxWidth()
             .height(50.dp),
-        enabled = enabled && !isLoading,
+        enabled = isInteractive,
         shape = RoundedCornerShape(14.dp),
         border = BorderStroke(
             width = 2.dp,
-            color = if (enabled && !isLoading) color else color.copy(alpha = 0.5f)
+            color = activeColor
         ),
         colors = ButtonDefaults.outlinedButtonColors(
-            contentColor = color,
-            disabledContentColor = color.copy(alpha = 0.5f)
+            contentColor = containerColor,
+            disabledContentColor = containerColor.copy(alpha = 0.5f)
         )
     ) {
         if (isLoading) {
             CircularProgressIndicator(
                 modifier = Modifier.size(24.dp),
-                color = color,
+                color = activeColor,
                 strokeWidth = 2.5.dp
             )
         } else {
@@ -119,7 +121,7 @@ fun OutlineButton(
                 fontFamily = Nunito,
                 fontWeight = FontWeight.Bold,
                 fontSize = fontSize,
-                color = if (enabled) color else color.copy(alpha = 0.5f)
+                color = activeColor
             )
         }
     }

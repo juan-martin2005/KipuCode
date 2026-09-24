@@ -20,6 +20,7 @@ hiltNavigationCompose = "1.2.0"
 
 multiplatformMarkdown = "0.41.0"
 fsrs = "1.0.0"
+kotlinxSerialization = "1.7.3"
 
 
 [libraries]
@@ -54,8 +55,10 @@ androidx-compose-material3 = { group = "androidx.compose.material3", name = "mat
 
 multiplatform-markdown = { module = "com.mikepenz:multiplatform-markdown-renderer-m3", version.ref = "multiplatformMarkdown" }
 multiplatform-markdown-code = { module = "com.mikepenz:multiplatform-markdown-renderer-code", version.ref = "multiplatformMarkdown" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 

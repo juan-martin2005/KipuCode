@@ -31,20 +31,21 @@ import com.kipucode.domain.model.ExerciseDomain
 import com.kipucode.domain.model.Response
 import com.kipucode.ui.components.KipuTopBar
 import com.kipucode.ui.components.card.KipuDialog
-import com.kipucode.ui.screens.exercise.components.FeedbackDialog
+import com.kipucode.ui.screens.exercise.components.ExplanationDialog
 import com.kipucode.ui.screens.exercise.components.Flashcard
 import com.kipucode.ui.screens.exercise.components.UniqueChoice
 import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.KipuTeal
+import com.kipucode.viewmodel.ExerciseSessionData
 import com.kipucode.viewmodel.ExerciseViewModel
 
 // --- SCREEN ---
 @Composable
 fun ExerciseScreen(
     lessonId: String,
-    onBack: () -> Unit,
-    onFinished: () -> Unit,
     type: String? = null,
+    onBack: () -> Unit,
+    onFinished: (ExerciseSessionData) -> Unit,
     exerciseViewModel: ExerciseViewModel = hiltViewModel()
 ) {
     var showBackDialog by remember { mutableStateOf(false) }
@@ -58,27 +59,30 @@ fun ExerciseScreen(
     }
 
     if (completeState is Response.Success) {
+        val sessionData = exerciseViewModel.getSessionSummary()
         exerciseViewModel.resetCompleteState()
-        onFinished()
+        onFinished(sessionData)
     }
 
     val exercises by exerciseViewModel.exercisesState.collectAsStateWithLifecycle()
     val currentIndex by exerciseViewModel.currentExerciseIndex.collectAsStateWithLifecycle()
     val selectedOptionId by exerciseViewModel.selectedOptionId.collectAsStateWithLifecycle()
-    val feedback by exerciseViewModel.answerFeedback.collectAsStateWithLifecycle()
+    val explanation by exerciseViewModel.answerExplanation.collectAsStateWithLifecycle()
+    val lessonName by exerciseViewModel.lessonName.collectAsStateWithLifecycle()
 
     val currentExercise = exercises.getOrNull(currentIndex)
+    val isFlashCard = currentExercise?.type == "FLASHCARD"
 
     Scaffold(
         containerColor = BackgroundGray,
         bottomBar = {
             AnimatedVisibility(
-                visible = feedback != null,
+                visible = explanation != null && !isFlashCard,
                 enter = slideInVertically(initialOffsetY = { it }),
                 exit = slideOutVertically(targetOffsetY = { it })
             ) {
-                feedback?.let {
-                    FeedbackDialog(
+                explanation?.let {
+                    ExplanationDialog(
                         isCorrect = it.isCorrect,
                         isLoading = isLoading,
                         onContinue = {
@@ -87,7 +91,10 @@ fun ExerciseScreen(
                             } else {
                                 exerciseViewModel.finishLessonExercises(lessonId)
                             }
-                        }
+                        },
+                        experience = it.experience,
+                        explanation = it.explanation,
+                        message = it.message
                     )
                 }
             }
@@ -97,6 +104,7 @@ fun ExerciseScreen(
             modifier = Modifier.padding(paddingValues),
             currentExercise = currentExercise,
             currentExerciseId = currentExercise?.id,
+            lessonName = lessonName,
             instruction = currentExercise?.instruction,
             options = currentExercise?.options,
             currentIndex = currentIndex,
@@ -136,6 +144,7 @@ fun ExerciseScreenContent(
     modifier: Modifier = Modifier,
     currentExercise: ExerciseDomain?,
     currentExerciseId: String?,
+    lessonName: String,
     instruction: String?,
     options: List<BlockOptionDomain>?,
     currentIndex: Int,
@@ -162,47 +171,42 @@ fun ExerciseScreenContent(
     ) {
         item {
             KipuTopBar(
-                title = "",
+                title = lessonName,
                 onBackClick = onBackClick,
-                modifier = Modifier.padding(vertical = 16.dp)
+                modifier = Modifier.padding(vertical = 20.dp)
             )
         }
 
         item {
-
-            when(currentExercise?.type) {
-                "UNIQUE_CHOICE" -> {
-                    UniqueChoice(
-                        currentEx = currentIndex + 1,
-                        totalEx = totalExercises,
-                        instruction = instruction,
-                        options = options,
-                        selectedOptionId = selectedOptionId,
-                        onOptionSelected = onOptionSelected,
-                        modifier = Modifier.padding(horizontal = 24.dp)
-                    )
-                }
+            when (currentExercise?.type) {
                 "FLASHCARD" -> {
                     Flashcard(
                         currentFc = currentIndex + 1,
                         totalFc = totalExercises,
                         instruction = instruction,
-                        answer = currentExercise.answer,
-                        module = "Módulo actual",
+                        answer = if (currentExercise.answer.isNotBlank()) currentExercise.answer else options.firstOrNull()?.content.orEmpty(),
+                        module = lessonName.ifBlank { "Módulo actual" },
                         onRatingSelect = onRatingSelected,
-                        modifier = Modifier.padding(horizontal = 23.dp)
+                        modifier = Modifier.padding(horizontal = 20.dp)
+                    )
+                }
+                else -> {
+                    UniqueChoice(
+                        current = currentIndex + 1,
+                        total = totalExercises,
+                        instruction = instruction,
+                        options = options,
+                        selectedOptionId = selectedOptionId,
+                        onOptionSelected = onOptionSelected,
+                        modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp)
                     )
                 }
             }
-
-
-
         }
 
         item {
             Spacer(modifier = Modifier.height(24.dp))
         }
-
     }
 }
 
@@ -210,19 +214,25 @@ fun ExerciseScreenContent(
 @Preview(showBackground = true, name = "Exercise Screen Content")
 @Composable
 fun ExerciseScreenContentPreview() {
-    val exercise = ExerciseDomain(id = "ex_01", type = "FLASHCARD", lessonId = "", instruction = "WASAAAA", orderIndex = 1, answer = "Significa que el código debe ser claro, dire" )
+    val exercise = ExerciseDomain(
+        id = "ex_01",
+        type = "FLASHCARD",
+        lessonId = "",
+        instruction = "Pregunta de prueba",
+        orderIndex = 1,
+        answer = "Respuesta de prueba"
+    )
     ExerciseScreenContent(
         currentExercise = exercise,
         currentExerciseId = "ex_01",
+        lessonName = "Historia de Java",
         instruction = "#### ¿En qué año nació Java?",
         options = listOf(
-            BlockOptionDomain(id = "1", exerciseId = "ex_01", content = "console.log()", isCorrect = false),
-            BlockOptionDomain(id = "2", exerciseId = "ex_01", content = "print()", isCorrect = true),
-            BlockOptionDomain(id = "3", exerciseId = "ex_01", content = "echo", isCorrect = false),
-            BlockOptionDomain(id = "4", exerciseId = "ex_01", content = "System.out.println()", isCorrect = false)
+            BlockOptionDomain(id = "1", exerciseId = "ex_01", content = "##### 1995", isCorrect = true),
+            BlockOptionDomain(id = "2", exerciseId = "ex_01", content = "##### 2000", isCorrect = false)
         ),
-        currentIndex = 2,
-        totalExercises = 10,
+        currentIndex = 0,
+        totalExercises = 1,
         selectedOptionId = null,
         onBackClick = {},
         onOptionSelected = {},

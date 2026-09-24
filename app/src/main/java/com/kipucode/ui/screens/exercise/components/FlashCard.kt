@@ -22,7 +22,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -38,7 +37,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kipucode.R
-import com.kipucode.ui.components.KipuTopBar
 import com.kipucode.ui.components.button.FilledButton
 import com.kipucode.ui.screens.lesson.components.ContentMarkdown
 import com.kipucode.ui.theme.KipuDarkBlue
@@ -54,12 +52,11 @@ fun Flashcard(
     totalFc: Int,
     instruction: String,
     answer: String,
-    module : String,
+    module: String,
     modifier: Modifier = Modifier,
-    onRatingSelect : (rating : Int) -> Unit
+    onRatingSelect: (rating: Int) -> Unit
 ) {
     var isFlipped by remember { mutableStateOf(false) }
-
 
     val rotation by animateFloatAsState(
         targetValue = if (isFlipped) 180f else 0f,
@@ -69,7 +66,7 @@ fun Flashcard(
         ),
         label = "flipAnimation"
     )
-    val horizontalProgressFactor = currentFc.toFloat() / totalFc.toFloat()
+    val horizontalProgressFactor = if (totalFc > 0) currentFc.toFloat() / totalFc.toFloat() else 0f
     val progressPorcentaje = horizontalProgressFactor * 100
 
     Column(
@@ -79,17 +76,15 @@ fun Flashcard(
         Spacer(modifier = Modifier.height(8.dp))
 
         Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(5.dp)
-
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(5.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 imageVector = ImageVector.vectorResource(R.drawable.ic_terminal_rounded),
                 contentDescription = "Terminal icon",
                 modifier = Modifier.size(18.dp),
                 tint = KipuTealDark
-
             )
 
             Text(
@@ -97,7 +92,6 @@ fun Flashcard(
                 fontSize = 13.sp,
                 fontFamily = Nunito,
                 modifier = Modifier.weight(1f)
-
             )
         }
         Spacer(modifier = Modifier.height(12.dp))
@@ -109,68 +103,74 @@ fun Flashcard(
                     MoonFrost.copy(alpha = 0.5f),
                     shape = RoundedCornerShape(16.dp)
                 )
-            ,
-            contentAlignment = Alignment.Center
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 5.dp)
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
+                modifier = Modifier.fillMaxSize()
             ) {
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         text = currentFc.toString(),
                         color = KipuTealDark,
                         fontWeight = FontWeight.ExtraBold,
-                        fontSize = 15.sp,
+                        fontSize = 18.sp,
                         fontFamily = Nunito
                     )
                     Text(
-                        text = " / $totalFc \t\tTarjetas",
+                        text = " / $totalFc",
                         color = KipuDarkBlue.copy(alpha = 0.9f),
-                        fontSize = 13.sp,
-                        fontFamily = Nunito
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        fontFamily = Nunito,
+                        modifier = Modifier.padding(end = 25.dp)
+                    )
+
+                    Text(
+                        text = "Tarjetas",
+                        fontFamily = Nunito,
+                        fontSize = 14.sp
                     )
 
                     Spacer(modifier = Modifier.weight(1f))
 
                     Text(
-                        text = " ${progressPorcentaje.roundToInt()}% COMPLETADO",
+                        text = "${progressPorcentaje.roundToInt()}% COMPLETADO",
+                        fontFamily = Nunito,
                         color = KipuTealDark,
-                        fontSize = 12.sp,
-                        fontFamily = Nunito
+                        fontSize = 13.sp
                     )
                 }
+                Spacer(modifier = Modifier.weight(1f))
 
                 Box(
                     modifier = Modifier
-                        .height(8.dp)
                         .fillMaxWidth()
+                        .height(6.dp)
                         .background(
-                            color = MoonFrost,
+                            MoonFrost.copy(alpha = 0.5f),
                             shape = RoundedCornerShape(4.dp)
                         )
-
-                ){
+                ) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth(horizontalProgressFactor)
-                            .height(8.dp)
+                            .height(6.dp)
                             .background(
                                 KipuTeal,
                                 shape = RoundedCornerShape(4.dp)
                             )
-
                     )
                 }
             }
         }
+
         Spacer(modifier = Modifier.height(20.dp))
 
-        // --- TARJETA (FLASHCARD) ---
+        // --- TARJETA CON EFECTO 3D ---
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -179,20 +179,25 @@ fun Flashcard(
                     rotationY = rotation
                     cameraDistance = 12f * density
                 }
-                .clickable { isFlipped = !isFlipped },
+                .clickable {
+                    isFlipped = !isFlipped
+                },
             shape = RoundedCornerShape(24.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-            colors = CardDefaults.cardColors(containerColor = MoonFrost.copy(alpha = 0.4f))
+            colors = CardDefaults.cardColors(
+                containerColor = MoonFrost.copy(alpha = 0.3f)
+            )
         ) {
             Column(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(24.dp),
+                verticalArrangement = Arrangement.SpaceBetween,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Contenido central (Pregunta o Respuesta)
                 Box(
                     modifier = Modifier
-                        .weight(1f)
                         .fillMaxWidth()
-                        .padding(24.dp),
+                        .weight(1f),
                     contentAlignment = Alignment.Center
                 ) {
                     if (rotation <= 90f) {
@@ -204,15 +209,14 @@ fun Flashcard(
                             modifier = Modifier.graphicsLayer { rotationY = 180f },
                             content = answer
                         )
-                        //
                     }
                 }
 
                 Icon(
                     imageVector = ImageVector.vectorResource(
-                        if(rotation <= 90f) R.drawable.ic_bent_arrow_right else R.drawable.ic_bent_arrow_left
+                        if (rotation <= 90f) R.drawable.ic_bent_arrow_right else R.drawable.ic_bent_arrow_left
                     ),
-                    contentDescription = "",
+                    contentDescription = "Girar tarjeta",
                     modifier = Modifier
                         .size(40.dp)
                         .align(Alignment.End)
@@ -227,16 +231,13 @@ fun Flashcard(
             text = stringResource(R.string.rating_question),
             fontSize = 16.sp,
             fontFamily = Nunito
-
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
-
-        // --- SECCIÓN DE BOTONES ---
+        // --- SECCIÓN DE BOTONES DE EVALUACIÓN FSRS ---
         Row(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             FilledButton(
@@ -280,10 +281,10 @@ fun Flashcard(
                 },
                 modifier = Modifier.weight(1f),
                 fontSize = 15.sp,
-                containerColor = Color(0xFF9DB98E)
+                containerColor = Color(0xFF9DB98E),
+                contentColor = Color(0xFF1B5E20)
             )
         }
-
 
         Spacer(modifier = Modifier.height(24.dp))
     }

@@ -28,6 +28,7 @@ fun BlockOptionDto.toEntity(exerciseId: String): BlockOptionEntity {
         id = "${exerciseId}_${this.id}",
         exerciseId = exerciseId,
         content = this.content,
+        explanation = this.explanation,
         isCorrect = this.correct,
         orderIndex = this.orderIndex
     )
@@ -54,6 +55,7 @@ fun BlockOptionEntity.toDomain(): BlockOptionDomain {
         id = this.id,
         exerciseId = this.exerciseId,
         content = this.content,
+        explanation = this.explanation,
         isCorrect = this.isCorrect,
         orderIndex = this.orderIndex
     )
