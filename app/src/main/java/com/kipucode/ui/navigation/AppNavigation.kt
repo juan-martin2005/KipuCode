@@ -16,7 +16,7 @@ import com.kipucode.ui.screens.auth.RegisterScreen
 import com.kipucode.ui.screens.code.CodeScreen
 import com.kipucode.ui.screens.explore.ExploreScreen
 import com.kipucode.ui.screens.home.HomeScreen
-import com.kipucode.ui.screens.lesson.ExerciseScreen
+import com.kipucode.ui.screens.exercise.ExerciseScreen
 import com.kipucode.ui.screens.lesson.LessonScreen
 import com.kipucode.ui.screens.onboarding.OnboardingScreen
 import com.kipucode.ui.screens.profile.ProfileScreen
@@ -174,14 +174,21 @@ fun AppNavigation(){
         }
 
         composable(
-            route = "exercise?lessonId={lessonId}",
+            route = "exercise?lessonId={lessonId}&type={type}",
             arguments = listOf(
-                navArgument("lessonId") { type = NavType.StringType }
+                navArgument("lessonId") { type = NavType.StringType },
+                navArgument("type") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                }
             )
         ) { backStackEntry ->
             val lessonIdArg = backStackEntry.arguments?.getString("lessonId") ?: ""
+            val typeArg = backStackEntry.arguments?.getString("type")
             ExerciseScreen(
                 lessonId = lessonIdArg,
+                type = typeArg,
                 onBack = {
                     if (backStackEntry.lifecycle.currentState == Lifecycle.State.RESUMED) {
                         navController.popBackStack()

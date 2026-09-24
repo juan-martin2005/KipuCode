@@ -3,10 +3,13 @@ package com.kipucode.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kipucode.domain.model.CourseWithLessonsDomain
+import com.kipucode.domain.model.ExerciseDomain
 import com.kipucode.domain.model.Response
 import com.kipucode.domain.usecase.GetCourseWithLessonsUseCase
+import com.kipucode.domain.usecase.GetExercisesByLessonUseCase
 import com.kipucode.domain.usecase.RefreshCoursesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -15,7 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class CoursesViewModel @Inject constructor(
     private val getCourseWithLessonsUseCase: GetCourseWithLessonsUseCase,
-    private val refreshCoursesUseCase: RefreshCoursesUseCase
+    private val refreshCoursesUseCase: RefreshCoursesUseCase,
+    private val getExercisesByLessonUseCase: GetExercisesByLessonUseCase
 ) : ViewModel() {
     private val _coursesWithLessonsState = MutableStateFlow<List<CourseWithLessonsDomain>>(emptyList())
     val coursesWithLessonsState: StateFlow<List<CourseWithLessonsDomain>> = _coursesWithLessonsState
@@ -53,5 +57,9 @@ class CoursesViewModel @Inject constructor(
 
     fun resetRefreshState() {
         _refreshState.value = null
+    }
+
+    fun getExercisesForLesson(lessonId: String): Flow<List<ExerciseDomain>> {
+        return getExercisesByLessonUseCase(lessonId)
     }
 }
