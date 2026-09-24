@@ -8,6 +8,7 @@ import com.kipucode.domain.model.Response
 import com.kipucode.domain.usecase.CompleteLessonUseCase
 import com.kipucode.domain.usecase.GetExercisesByLessonUseCase
 import com.kipucode.domain.usecase.RecordExerciseAttemptUseCase
+import com.kipucode.domain.usecase.RecordRatingAttemptUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,7 +19,8 @@ import javax.inject.Inject
 class ExerciseViewModel @Inject constructor(
     private val getExercisesUseCase: GetExercisesByLessonUseCase,
     private val completeLessonUseCase: CompleteLessonUseCase,
-    private val recordExerciseAttemptUseCase: RecordExerciseAttemptUseCase
+    private val recordExerciseAttemptUseCase: RecordExerciseAttemptUseCase,
+    private val recordRatingAttemptUseCase: RecordRatingAttemptUseCase
 ) : ViewModel() {
     companion object {
         private const val EXERCISES_PER_SESSION = 10
@@ -110,6 +112,35 @@ class ExerciseViewModel @Inject constructor(
 //            _currentExerciseIndex.value -= 1
 //        }
 //    }
+
+    // Flash Card Exercise
+
+    fun rateFlashCard(ratingValue: Int, lessonId: String) {
+        val currentExercise = _exercisesState.value.getOrNull(_currentExerciseIndex.value)
+
+        currentExercise?.let { exercise ->
+            // Si la respuesta fue aceptable (3: Good, 4: Easy), sumamos XP
+            if (ratingValue >= 3) {
+                correctExerciseIds.add(exercise.id)
+            }
+
+            viewModelScope.launch {
+                // Guardar en FSRS (1: Again, 2: Hard, 3: Good, 4: Easy)
+                recordRatingAttemptUseCase.invoke(
+                    exerciseId = exercise.id,
+                    ratingValue = ratingValue
+                )
+            }
+        }
+
+        // Avanzar a la siguiente tarjeta o completar la lección si es la última
+        if (_currentExerciseIndex.value < _exercisesState.value.size - 1) {
+            nextExercise()
+        } else {
+            finishLessonExercises(lessonId)
+        }
+    }
+
 
     // Reinicia el flujo al terminar los ejercicios
     fun resetExerciseProgress() {
