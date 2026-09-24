@@ -1,6 +1,7 @@
 package com.kipucode.ui.components
 
 import androidx.annotation.StringRes
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -95,48 +97,40 @@ fun KipuTopBar(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(
+    Box(
         modifier = modifier
             .fillMaxWidth()
+            .padding(horizontal = 8.dp),
+        contentAlignment = Alignment.Center
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+        // Botón
+        IconButton(
+            onClick = onBackClick,
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .size(40.dp)
         ) {
-            // --- Botón de Volver ---
-            IconButton(
-                onClick = onBackClick,
-                modifier = Modifier
-                    .size(44.dp)
-                    .padding(start = 8.dp)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_arrow_left),
-                    contentDescription = "Volver",
-                    tint = KipuDarkBlue,
-                    modifier = Modifier.size(28.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            // --- Textos e Información ---
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 16.dp)
-            ) {
-                Text(
-                    text = title,
-                    fontSize = 20.sp,
-                    fontFamily = Nunito,
-                    fontWeight = FontWeight.ExtraBold,
-                    color = KipuDarkBlue,
-                    lineHeight = 24.sp,
-                    maxLines = 2
-                )
-            }
+            Icon(
+                painter = painterResource(id = R.drawable.ic_arrow_left),
+                contentDescription = "Volver",
+                tint = KipuDarkBlue,
+                modifier = Modifier.size(30.dp)
+            )
         }
+
+        // Título
+        Text(
+            text = title,
+            fontSize = 18.sp,
+            fontFamily = Nunito,
+            fontWeight = FontWeight.ExtraBold,
+            color = KipuDarkBlue,
+            lineHeight = 19.sp,
+            maxLines = 2,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .padding(horizontal = 48.dp)
+        )
     }
 }
 

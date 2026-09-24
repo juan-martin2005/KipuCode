@@ -1,4 +1,4 @@
-package com.kipucode.ui.screens.lesson.components
+package com.kipucode.ui.screens.exercise.components
 
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState

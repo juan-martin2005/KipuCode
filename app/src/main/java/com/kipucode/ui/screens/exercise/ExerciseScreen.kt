@@ -1,4 +1,4 @@
-package com.kipucode.ui.screens.lesson
+package com.kipucode.ui.screens.exercise
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
@@ -30,10 +30,11 @@ import com.kipucode.domain.model.BlockOptionDomain
 import com.kipucode.domain.model.Response
 import com.kipucode.ui.components.KipuTopBar
 import com.kipucode.ui.components.card.KipuDialog
-import com.kipucode.ui.screens.lesson.components.FeedbackDialog
-import com.kipucode.ui.screens.lesson.components.UniqueChoice
+import com.kipucode.ui.screens.exercise.components.ExplanationDialog
+import com.kipucode.ui.screens.exercise.components.UniqueChoice
 import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.KipuTeal
+import com.kipucode.viewmodel.ExerciseSessionData
 import com.kipucode.viewmodel.ExerciseViewModel
 
 // --- SCREEN ---
@@ -41,7 +42,7 @@ import com.kipucode.viewmodel.ExerciseViewModel
 fun ExerciseScreen(
     lessonId: String,
     onBack: () -> Unit,
-    onFinished: () -> Unit,
+    onFinished: (ExerciseSessionData) -> Unit,
     exerciseViewModel: ExerciseViewModel = hiltViewModel()
 ) {
     var showBackDialog by remember { mutableStateOf(false) }
@@ -55,14 +56,16 @@ fun ExerciseScreen(
     }
 
     if (completeState is Response.Success) {
+        val sessionData = exerciseViewModel.getSessionSummary()
         exerciseViewModel.resetCompleteState()
-        onFinished()
+        onFinished(sessionData)
     }
 
     val exercises by exerciseViewModel.exercisesState.collectAsStateWithLifecycle()
     val currentIndex by exerciseViewModel.currentExerciseIndex.collectAsStateWithLifecycle()
     val selectedOptionId by exerciseViewModel.selectedOptionId.collectAsStateWithLifecycle()
-    val feedback by exerciseViewModel.answerFeedback.collectAsStateWithLifecycle()
+    val explanation by exerciseViewModel.answerExplanation.collectAsStateWithLifecycle()
+    val lessonName by exerciseViewModel.lessonName.collectAsStateWithLifecycle()
 
     val currentExercise = exercises.getOrNull(currentIndex)
 
@@ -70,12 +73,12 @@ fun ExerciseScreen(
         containerColor = BackgroundGray,
         bottomBar = {
             AnimatedVisibility(
-                visible = feedback != null,
+                visible = explanation != null,
                 enter = slideInVertically(initialOffsetY = { it }),
                 exit = slideOutVertically(targetOffsetY = { it })
             ) {
-                feedback?.let {
-                    FeedbackDialog(
+                explanation?.let {
+                    ExplanationDialog(
                         isCorrect = it.isCorrect,
                         isLoading = isLoading,
                         onContinue = {
@@ -84,7 +87,10 @@ fun ExerciseScreen(
                             } else {
                                 exerciseViewModel.finishLessonExercises(lessonId)
                             }
-                        }
+                        },
+                        experience = it.experience,
+                        explanation = it.explanation,
+                        message = it.message
                     )
                 }
             }
@@ -93,6 +99,7 @@ fun ExerciseScreen(
         ExerciseScreenContent(
             modifier = Modifier.padding(paddingValues),
             currentExerciseId = currentExercise?.id,
+            lessonName = lessonName,
             instruction = currentExercise?.instruction,
             options = currentExercise?.options,
             currentIndex = currentIndex,
@@ -130,6 +137,7 @@ fun ExerciseScreen(
 fun ExerciseScreenContent(
     modifier: Modifier = Modifier,
     currentExerciseId: String?,
+    lessonName: String,
     instruction: String?,
     options: List<BlockOptionDomain>?,
     currentIndex: Int,
@@ -155,21 +163,21 @@ fun ExerciseScreenContent(
     ) {
         item {
             KipuTopBar(
-                title = "",
+                title = lessonName,
                 onBackClick = onBackClick,
-                modifier = Modifier.padding(vertical = 16.dp)
+                modifier = Modifier.padding(vertical = 20.dp)
             )
         }
 
         item {
             UniqueChoice(
-                currentEx = currentIndex + 1,
-                totalEx = totalExercises,
+                current = currentIndex + 1,
+                total = totalExercises,
                 instruction = instruction,
                 options = options,
                 selectedOptionId = selectedOptionId,
                 onOptionSelected = onOptionSelected,
-                modifier = Modifier.padding(horizontal = 24.dp)
+                modifier = Modifier.padding(vertical = 8.dp ,horizontal = 20.dp)
             )
         }
 
@@ -186,12 +194,13 @@ fun ExerciseScreenContent(
 fun ExerciseScreenContentPreview() {
     ExerciseScreenContent(
         currentExerciseId = "ex_01",
+        lessonName = "Historia de C#",
         instruction = "#### ¿En qué año nació Java?",
         options = listOf(
-            BlockOptionDomain(id = "1", exerciseId = "ex_01", content = "console.log()", isCorrect = false),
-            BlockOptionDomain(id = "2", exerciseId = "ex_01", content = "print()", isCorrect = true),
-            BlockOptionDomain(id = "3", exerciseId = "ex_01", content = "echo", isCorrect = false),
-            BlockOptionDomain(id = "4", exerciseId = "ex_01", content = "System.out.println()", isCorrect = false)
+            BlockOptionDomain(id = "1", exerciseId = "ex_01", content = "##### console.log()", isCorrect = false),
+            BlockOptionDomain(id = "2", exerciseId = "ex_01", content = "##### print()", isCorrect = true),
+            BlockOptionDomain(id = "3", exerciseId = "ex_01", content = "##### echo", isCorrect = false),
+            BlockOptionDomain(id = "4", exerciseId = "ex_01", content = "##### System.out.println()", isCorrect = false)
         ),
         currentIndex = 2,
         totalExercises = 10,

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,6 +19,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -27,33 +30,75 @@ import com.kipucode.ui.components.KipuTopBar
 import com.kipucode.ui.screens.lesson.components.ContentMarkdown
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuTeal
-import com.kipucode.ui.theme.KipuTealDark
-import com.kipucode.ui.theme.MoonFrost
+import com.kipucode.ui.theme.Nunito
 
 @Composable
 fun UniqueChoice(
-    currentEx: Int,
-    totalEx: Int,
+    current: Int,
+    total: Int,
     instruction: String,
     options: List<BlockOptionDomain>,
     selectedOptionId: String?,
     onOptionSelected: (BlockOptionDomain) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val horizontalProgressFactor = currentEx.toFloat() / totalEx.toFloat()
+    val horizontalProgressFactor = current.toFloat() / total.toFloat()
     val hasAnswered = selectedOptionId != null
 
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        // --- CONTADOR ---
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp)
+        ) {
+            Text(
+                modifier = Modifier.alignByBaseline(),
+                text = current.toString(),
+                color = lerp(KipuTeal, Color.Black, 0.1f),
+                fontFamily = Nunito,
+                fontWeight = FontWeight.ExtraBold,
+                fontSize = 24.sp
+            )
+            Text(
+                modifier = Modifier.alignByBaseline().padding(horizontal = 2.dp),
+                text = "/",
+                color = KipuDarkBlue.copy(alpha = 0.5f),
+                fontFamily = Nunito,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp
+            )
+            Text(
+                modifier = Modifier.alignByBaseline(),
+                text = "$total",
+                color = KipuDarkBlue.copy(alpha = 0.5f),
+                fontFamily = Nunito,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Text(
+                modifier = Modifier.alignByBaseline(),
+                text = "25% COMPLETADO",
+                color = lerp(KipuTeal, Color.Black, 0.1f),
+                fontFamily = Nunito,
+                fontWeight = FontWeight.Bold,
+                fontSize = 12.sp
+            )
+        }
+
         // --- BARRA DE PROGRESO ---
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(10.dp)
                 .background(
-                    MoonFrost.copy(alpha = 0.5f),
+                    KipuDarkBlue.copy(alpha = 0.1f),
                     shape = RoundedCornerShape(4.dp)
                 )
         ) {
@@ -66,32 +111,6 @@ fun UniqueChoice(
                         shape = RoundedCornerShape(4.dp)
                     )
             )
-        }
-
-
-        // --- CONTADOR ---
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 4.dp, vertical = 12.dp),
-            contentAlignment = Alignment.CenterStart
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = currentEx.toString(),
-                    color = KipuTealDark,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontSize = 20.sp
-                )
-                Text(
-                    text = " / $totalEx",
-                    color = KipuDarkBlue.copy(alpha = 0.9f),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
-                )
-            }
         }
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -140,21 +159,21 @@ fun MultipleChoiceExercisePreview() {
             contentAlignment = Alignment.Center
         ) {
             UniqueChoice(
-                currentEx = 3,
-                totalEx = 10,
+                current = 3,
+                total = 10,
                 instruction = """
                     #### ¿En qué año nació Java?
                     ```
         """.trimIndent(),
                 options = listOf(
-                    BlockOptionDomain(id = "1", exerciseId = "ex1", content = "console.log()", isCorrect = false),
-                    BlockOptionDomain(id = "2", exerciseId = "ex1", content = "print()", isCorrect = true),
-                    BlockOptionDomain(id = "3", exerciseId = "ex1", content = "echo", isCorrect = false),
-                    BlockOptionDomain(id = "4", exerciseId = "ex1", content = "System.out.println()", isCorrect = false)
+                    BlockOptionDomain(id = "1", exerciseId = "ex1", content = "##### console.log()", isCorrect = false),
+                    BlockOptionDomain(id = "2", exerciseId = "ex1", content = "##### print()", isCorrect = true),
+                    BlockOptionDomain(id = "3", exerciseId = "ex1", content = "##### echo", isCorrect = false),
+                    BlockOptionDomain(id = "4", exerciseId = "ex1", content = "##### System.out.println()", isCorrect = false)
                 ),
                 selectedOptionId = selectedId,
                 onOptionSelected = { option -> selectedId = option.id },
-                modifier = Modifier.padding(horizontal = 24.dp)
+                modifier = Modifier.padding(horizontal = 16.dp)
             )
         }
     }
