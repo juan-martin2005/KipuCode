@@ -214,7 +214,7 @@ fun Flashcard(
 
                 Icon(
                     imageVector = ImageVector.vectorResource(
-                        if (rotation <= 90f) R.drawable.ic_bent_arrow_right else R.drawable.ic_bent_arrow_left
+                        R.drawable.ic_bent_arrow_right
                     ),
                     contentDescription = "Girar tarjeta",
                     modifier = Modifier
