@@ -2,6 +2,7 @@ package com.kipucode.ui.components.card
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -21,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kipucode.R
+import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuTealDark
 import com.kipucode.ui.theme.Nunito
 import com.kipucode.ui.theme.White
@@ -53,6 +55,7 @@ fun UserProfileCard(
                     .background(color = Color.Transparent)
                     .size(72.dp)
                     .clickable(onClick = onClick )
+                    .border(shape = CircleShape, color = KipuDarkBlue, width = 2.dp)
             ) {
                 Image(
                     painter = painterResource(id = avatarId),
