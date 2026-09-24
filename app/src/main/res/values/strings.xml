@@ -140,4 +140,13 @@
     <string name="enter_exercise_confirm">Comenzar</string>
     <string name="enter_exercise_cancel">Volver</string>
 
+
+    <!--FLash Cards -->
+    <string name="rating_question">¿Cómo sentiste la respuesta?</string>
+    <string name="rating_good">Bien</string>
+    <string name="rating_easy">Fácil</string>
+    <string name="rating_hard">Difícil</string>
+    <string name="rating_again">Mal</string>
+
+
 </resources>

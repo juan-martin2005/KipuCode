@@ -3,6 +3,7 @@ package com.kipucode.ui.components.button
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -17,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -31,7 +33,9 @@ fun FilledButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     isLoading: Boolean = false,
-    fontSize: TextUnit = 18.sp
+    fontSize: TextUnit = 18.sp,
+    containerColor: Color = KipuTeal,
+    contentColor: Color = Color.White
 ) {
     Button(
         onClick = {
@@ -45,25 +49,27 @@ fun FilledButton(
         enabled = enabled && !isLoading,
         shape = RoundedCornerShape(14.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = KipuTeal,
-            contentColor = Color.White,
-            disabledContainerColor = KipuTeal.copy(alpha = 0.5f),
-            disabledContentColor = Color.White.copy(alpha = 0.6f)
+            containerColor = containerColor,
+            contentColor = contentColor,
+            disabledContainerColor = containerColor.copy(alpha = 0.5f),
+            disabledContentColor = contentColor.copy(alpha = 0.6f)
         )
     ) {
         if (isLoading) {
             CircularProgressIndicator(
                 modifier = Modifier.size(24.dp),
-                color = Color.White,
+                color = contentColor,
                 strokeWidth = 2.5.dp
             )
         } else {
             Text(
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
                 text = textButton,
                 fontFamily = Nunito,
                 fontWeight = FontWeight.Bold,
                 fontSize = fontSize,
-                color = Color.White
+                color = contentColor
             )
         }
     }
@@ -76,7 +82,8 @@ fun OutlineButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     isLoading: Boolean = false,
-    fontSize: TextUnit = 18.sp
+    fontSize: TextUnit = 18.sp,
+    color: Color = KipuTeal
 ) {
     OutlinedButton(
         onClick = {
@@ -91,26 +98,28 @@ fun OutlineButton(
         shape = RoundedCornerShape(14.dp),
         border = BorderStroke(
             width = 2.dp,
-            color = if (enabled && !isLoading) KipuTeal else KipuTeal.copy(alpha = 0.5f)
+            color = if (enabled && !isLoading) color else color.copy(alpha = 0.5f)
         ),
         colors = ButtonDefaults.outlinedButtonColors(
-            contentColor = KipuTeal,
-            disabledContentColor = KipuTeal.copy(alpha = 0.5f)
+            contentColor = color,
+            disabledContentColor = color.copy(alpha = 0.5f)
         )
     ) {
         if (isLoading) {
             CircularProgressIndicator(
                 modifier = Modifier.size(24.dp),
-                color = KipuTeal,
+                color = color,
                 strokeWidth = 2.5.dp
             )
         } else {
             Text(
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
                 text = textButton,
                 fontFamily = Nunito,
                 fontWeight = FontWeight.Bold,
                 fontSize = fontSize,
-                color = if (enabled) KipuTeal else KipuTeal.copy(alpha = 0.5f)
+                color = if (enabled) color else color.copy(alpha = 0.5f)
             )
         }
     }
