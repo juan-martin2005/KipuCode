@@ -3,20 +3,19 @@ package com.kipucode.ui.navigation
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.navigation.NavType
-import androidx.navigation.navArgument
+import androidx.navigation.toRoute
 import com.kipucode.ui.screens.auth.ForgotPasswordScreen
 import com.kipucode.ui.screens.auth.LoginScreen
 import com.kipucode.ui.screens.auth.RegisterScreen
 import com.kipucode.ui.screens.code.CodeScreen
 import com.kipucode.ui.screens.explore.ExploreScreen
-import com.kipucode.ui.screens.home.HomeScreen
 import com.kipucode.ui.screens.exercise.ExerciseScreen
+import com.kipucode.ui.screens.home.HomeScreen
 import com.kipucode.ui.screens.lesson.LessonScreen
 import com.kipucode.ui.screens.onboarding.OnboardingScreen
 import com.kipucode.ui.screens.profile.ProfileScreen
@@ -26,16 +25,16 @@ import com.kipucode.viewmodel.AuthViewModel
 import com.kipucode.viewmodel.UserViewModel
 
 @Composable
-fun AppNavigation(){
+fun AppNavigation() {
     val navController = rememberNavController()
     val userViewModel: UserViewModel = hiltViewModel()
 
     NavHost(
         navController = navController,
-        startDestination = "splash",
+        startDestination = SplashRoute,
         modifier = Modifier.fillMaxSize()
     ) {
-        composable("splash") {
+        composable<SplashRoute> {
             val authViewModel: AuthViewModel = hiltViewModel()
             SplashScreen(
                 authViewModel = authViewModel,
@@ -44,36 +43,36 @@ fun AppNavigation(){
                         userViewModel.startObservingUser()
                         userViewModel.startObservingUserProgress()
 
-                        navController.navigate("home") {
-                            popUpTo("splash") { inclusive = true }
+                        navController.navigate(HomeRoute) {
+                            popUpTo<SplashRoute> { inclusive = true }
                         }
                     } else {
-                        navController.navigate("onboarding") {
-                            popUpTo("splash") { inclusive = true }
+                        navController.navigate(OnboardingRoute) {
+                            popUpTo<SplashRoute> { inclusive = true }
                         }
                     }
                 }
             )
         }
 
-        composable("onboarding") {
+        composable<OnboardingRoute> {
             OnboardingScreen(
-                onNavigateToLogin = { navController.navigate("login") },
-                onNavigateToRegister = { navController.navigate("register") }
+                onNavigateToLogin = { navController.navigate(LoginRoute) },
+                onNavigateToRegister = { navController.navigate(RegisterRoute) }
             )
         }
 
-        composable("register"){
+        composable<RegisterRoute> {
             val authViewModel: AuthViewModel = hiltViewModel()
             RegisterScreen(
                 onRegisterSuccess = {
-                    navController.navigate("login") {
-                        popUpTo("register") { inclusive = true }
+                    navController.navigate(LoginRoute) {
+                        popUpTo<RegisterRoute> { inclusive = true }
                     }
                 },
                 onNavigateToLogin = {
-                    navController.navigate("login") {
-                        popUpTo("register") { inclusive = true }
+                    navController.navigate(LoginRoute) {
+                        popUpTo<RegisterRoute> { inclusive = true }
                     }
                 },
                 onBack = { navController.popBackStack() },
@@ -81,86 +80,77 @@ fun AppNavigation(){
             )
         }
 
-        composable("login") {
+        composable<LoginRoute> {
             val authViewModel: AuthViewModel = hiltViewModel()
             LoginScreen(
                 onLoginSuccess = {
                     userViewModel.startObservingUser()
                     userViewModel.startObservingUserProgress()
 
-                    navController.navigate("home") { popUpTo(0) }
+                    navController.navigate(HomeRoute) { popUpTo(0) }
                 },
                 onNavigateToRegister = {
-                    navController.navigate("register") {
-                        popUpTo("login") { inclusive = true }
+                    navController.navigate(RegisterRoute) {
+                        popUpTo<LoginRoute> { inclusive = true }
                     }
                 },
                 onNavigateToForgotPassword = {
-                    navController.navigate("forgot_password")
+                    navController.navigate(ForgotPasswordRoute)
                 },
                 onBack = { navController.popBackStack() },
                 authViewModel = authViewModel
             )
         }
 
-        composable("forgot_password") {
+        composable<ForgotPasswordRoute> {
             ForgotPasswordScreen(
                 onBack = { navController.popBackStack() }
             )
         }
 
-
-        composable("home"){
+        composable<HomeRoute> {
             HomeScreen(
                 navController = navController,
                 onNavigateToCode = { lessonId ->
-                    navController.navigate("lesson?lessonId=${lessonId}")
+                    navController.navigate(LessonRoute(lessonId = lessonId))
                 }
             )
         }
 
-        composable("explore"){
+        composable<ExploreRoute> {
             ExploreScreen(
                 userViewModel = userViewModel,
                 navController = navController,
                 onNavigateToCode = { lessonId ->
-                    navController.navigate("lesson?lessonId=${lessonId}")
+                    navController.navigate(LessonRoute(lessonId = lessonId))
                 }
             )
         }
 
-        composable("code"){
+        composable<CodeRoute> {
             CodeScreen(
                 navController = navController
             )
         }
 
-        composable("profile"){
+        composable<ProfileRoute> {
             val authViewModel: AuthViewModel = hiltViewModel()
             ProfileScreen(
                 userViewModel = userViewModel,
                 navController = navController,
                 onLogoutClick = {
                     authViewModel.logout()
-                    navController.navigate("onboarding") {
+                    navController.navigate(OnboardingRoute) {
                         popUpTo(0) { inclusive = true }
                     }
                 }
             )
         }
 
-
-        composable(
-            route = "lesson?lessonId={lessonId}",
-            arguments = listOf(navArgument("lessonId") {
-                type = NavType.StringType
-                nullable = true
-                defaultValue = null
-            })
-        ) { backStackEntry ->
-            val lessonIdArg = backStackEntry.arguments?.getString("lessonId")
+        composable<LessonRoute> { backStackEntry ->
+            val route = backStackEntry.toRoute<LessonRoute>()
             LessonScreen(
-                lessonId = lessonIdArg,
+                lessonId = route.lessonId,
                 onBack = {
                     if (backStackEntry.lifecycle.currentState == Lifecycle.State.RESUMED) {
                         navController.popBackStack()
@@ -168,21 +158,16 @@ fun AppNavigation(){
                 },
                 onNavigateToExercises = { id ->
                     if (backStackEntry.lifecycle.currentState == Lifecycle.State.RESUMED) {
-                        navController.navigate("exercise?lessonId=${id}")
+                        navController.navigate(ExerciseRoute(lessonId = id))
                     }
                 }
             )
         }
 
-        composable(
-            route = "exercise?lessonId={lessonId}",
-            arguments = listOf(
-                navArgument("lessonId") { type = NavType.StringType }
-            )
-        ) { backStackEntry ->
-            val lessonIdArg = backStackEntry.arguments?.getString("lessonId") ?: ""
+        composable<ExerciseRoute> { backStackEntry ->
+            val route = backStackEntry.toRoute<ExerciseRoute>()
             ExerciseScreen(
-                lessonId = lessonIdArg,
+                lessonId = route.lessonId,
                 onBack = {
                     if (backStackEntry.lifecycle.currentState == Lifecycle.State.RESUMED) {
                         navController.popBackStack()
@@ -191,29 +176,26 @@ fun AppNavigation(){
                 onFinished = { session ->
                     if (backStackEntry.lifecycle.currentState == Lifecycle.State.RESUMED) {
                         navController.navigate(
-                            "summary?xp=${session.xpEarned}&correct=${session.correctCount}&total=${session.totalCount}&timeSeconds=${session.timeSeconds}"
+                            SummaryRoute(
+                                xp = session.xpEarned,
+                                correct = session.correctCount,
+                                total = session.totalCount,
+                                timeSeconds = session.timeSeconds
+                            )
                         ) {
-                            popUpTo("exercise?lessonId={lessonId}") { inclusive = true }
+                            popUpTo<ExerciseRoute> { inclusive = true }
                         }
                     }
                 }
             )
         }
 
-        composable(
-            route = "summary?xp={xp}&correct={correct}&total={total}&timeSeconds={timeSeconds}",
-            arguments = listOf(
-                navArgument("xp") { type = NavType.IntType; defaultValue = 0 },
-                navArgument("correct") { type = NavType.IntType; defaultValue = 0 },
-                navArgument("total") { type = NavType.IntType; defaultValue = 0 },
-                navArgument("timeSeconds") { type = NavType.LongType; defaultValue = 0L }
-            )
-        ) { backStackEntry ->
+        composable<SummaryRoute> { backStackEntry ->
             SummaryScreen(
                 onContinue = {
                     if (backStackEntry.lifecycle.currentState == Lifecycle.State.RESUMED) {
-                        navController.navigate("home") {
-                            popUpTo("home") { inclusive = false }
+                        navController.navigate(HomeRoute) {
+                            popUpTo<HomeRoute> { inclusive = false }
                         }
                     }
                 }

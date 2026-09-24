@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kipucode.domain.usecase.user.GetUserProgressUseCase
 import com.kipucode.ui.screens.summary.components.DayStatus
+import androidx.navigation.toRoute
+import com.kipucode.ui.navigation.SummaryRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -43,11 +45,12 @@ class SummaryViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(SummaryUiState(isLoading = true))
     val uiState: StateFlow<SummaryUiState> = _uiState.asStateFlow()
     init {
-        // Extraer argumentos enviados desde la sesión de ejercicios
-        val xpEarned = savedStateHandle.get<Int>("xp") ?: 0
-        val correctCount = savedStateHandle.get<Int>("correct") ?: 0
-        val totalCount = savedStateHandle.get<Int>("total") ?: maxOf(1, correctCount)
-        val timeSeconds = savedStateHandle.get<Long>("timeSeconds") ?: 0L
+        // Extraer argumentos fuertemente tipados desde la sesión
+        val route = savedStateHandle.toRoute<SummaryRoute>()
+        val xpEarned = route.xp
+        val correctCount = route.correct
+        val totalCount = if (route.total > 0) route.total else maxOf(1, correctCount)
+        val timeSeconds = route.timeSeconds
 
         // Cálculos de la sesión
         val accuracy = if (totalCount > 0) correctCount.toFloat() / totalCount.toFloat() else 0f
