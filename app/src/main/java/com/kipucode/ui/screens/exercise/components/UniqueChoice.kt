@@ -1,4 +1,4 @@
-package com.kipucode.ui.screens.lesson.components
+package com.kipucode.ui.screens.exercise.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kipucode.domain.model.BlockOptionDomain
 import com.kipucode.ui.components.KipuTopBar
+import com.kipucode.ui.screens.lesson.components.ContentMarkdown
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.KipuTealDark

@@ -42,21 +42,21 @@
       "id": "exercise_java_03",
       "lessonId": "java_lesson_01",
       "type": "FLASHCARD",
-      "instruction": "### ¿Qué es el Bytecode en Java?",
+      "instruction": "#### ¿Qué es el Bytecode en Java?",
       "answer": "Es el código intermedio independiente de la plataforma generado por el compilador (`javac`). Tiene extensión `.class` y es ejecutado directamente por la Máquina Virtual de Java (JVM).",
       "orderIndex": 3,
       "xp": 20
     }
   ],
   "blocksOptions": [
-    { "id": "exercise_java_01_opt_1", "exerciseId": "exercise_java_01", "content": "1991", "isCorrect": true, "orderIndex": 1 },
-    { "id": "exercise_java_01_opt_2", "exerciseId": "exercise_java_01", "content": "1995", "isCorrect": false, "orderIndex": 2 },
-    { "id": "exercise_java_01_opt_3", "exerciseId": "exercise_java_01", "content": "1989", "isCorrect": false, "orderIndex": 3 },
-    { "id": "exercise_java_01_opt_4", "exerciseId": "exercise_java_01", "content": "2000", "isCorrect": false, "orderIndex": 4 },
+    { "id": "exercise_java_01_opt_1", "exerciseId": "exercise_java_01", "content": "##### 1991", "explanation": "Porque si", "isCorrect": true, "orderIndex": 1 },
+    { "id": "exercise_java_01_opt_2", "exerciseId": "exercise_java_01", "content": "##### 1995", "explanation": "Porque no", "isCorrect": false, "orderIndex": 2 },
+    { "id": "exercise_java_01_opt_3", "exerciseId": "exercise_java_01", "content": "##### 1989", "explanation": "Porque no", "isCorrect": false, "orderIndex": 3 },
+    { "id": "exercise_java_01_opt_4", "exerciseId": "exercise_java_01", "content": "##### 2000", "explanation": "Porque no", "isCorrect": false, "orderIndex": 4 },
 
-    { "id": "exercise_java_02_opt_1", "exerciseId": "exercise_java_02", "content": "Write Once, Run Anywhere", "isCorrect": true, "orderIndex": 1 },
-    { "id": "exercise_java_02_opt_2", "exerciseId": "exercise_java_02", "content": "Write Only, Read Always", "isCorrect": false, "orderIndex": 2 },
-    { "id": "exercise_java_02_opt_3", "exerciseId": "exercise_java_02", "content": "Work Often, Relax Always", "isCorrect": false, "orderIndex": 3 },
-    { "id": "exercise_java_02_opt_4", "exerciseId": "exercise_java_02", "content": "Windows Only Runtime Architecture", "isCorrect": false, "orderIndex": 4 }
+    { "id": "exercise_java_02_opt_1", "exerciseId": "exercise_java_02", "content": "##### Write Once, Run Anywhere", "explanation": "Principio WORA: El código se compila a Bytecode y corre en cualquier JVM.", "isCorrect": true, "orderIndex": 1 },
+    { "id": "exercise_java_02_opt_2", "exerciseId": "exercise_java_02", "content": "##### Write Only, Read Always", "explanation": "Incorrecto: WORA significa 'Write Once, Run Anywhere'.", "isCorrect": false, "orderIndex": 2 },
+    { "id": "exercise_java_02_opt_3", "exerciseId": "exercise_java_02", "content": "##### Work Often, Relax Always", "explanation": "Incorrecto: WORA significa 'Write Once, Run Anywhere'.", "isCorrect": false, "orderIndex": 3 },
+    { "id": "exercise_java_02_opt_4", "exerciseId": "exercise_java_02", "content": "##### Windows Only Runtime Architecture", "explanation": "Incorrecto: Java es multiplataforma, no solo para Windows.", "isCorrect": false, "orderIndex": 4 }
   ]
 }
