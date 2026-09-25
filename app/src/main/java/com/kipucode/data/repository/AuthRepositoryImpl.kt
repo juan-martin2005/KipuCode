@@ -158,6 +158,38 @@ internal class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun reAutenticateUser(currentPassword: String): Response<Unit> {
+       return try {
+           authRemoteDataSource.reAutenticateUser(currentPassword)
+           Response.Success(Unit)
+       }
+       catch (ex: FirebaseAuthInvalidCredentialsException) {
+           Log.d("FIREBASE_REAUTENTICATE", ex.toString())
+
+           Response.Error(
+               "Error with your autenticate", ServerErrorType.FIRESTORE_ERROR )
+       }
+       catch (ex: Exception) {
+           Log.d("FIREBASE_REAUTENTICATE", ex.toString())
+
+           Response.Error(
+               "An error occurred", ServerErrorType.FIRESTORE_ERROR )
+       }
+    }
+
+    override suspend fun changePassword(newPassword: String): Response<Unit> {
+
+        return try {
+            authRemoteDataSource.changePassword(newPassword)
+            Response.Success(Unit)
+        } catch (ex: Exception) {
+            Log.d("FIREBASE_RESET_PASSWORD_ERROR", ex.toString())
+
+            Response.Error(
+                "An error occurred", ServerErrorType.FIRESTORE_ERROR )
+        }
+    }
+
     // ============================================================================================
     //  Estado de la Sesión -> Verificar si hay un usuario logueado
     // ============================================================================================

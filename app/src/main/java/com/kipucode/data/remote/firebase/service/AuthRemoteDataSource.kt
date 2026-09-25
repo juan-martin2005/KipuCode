@@ -1,6 +1,7 @@
 package com.kipucode.data.remote.firebase.service
 
 import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -41,6 +42,29 @@ class AuthRemoteDataSource @Inject constructor(
     // ======================================================================================
     suspend fun sendPasswordReset(email: String) {
         firebaseAuth.sendPasswordResetEmail(email).await()
+    }
+
+
+    // ======================================================================================
+    //  Autenticar user ->
+    // ======================================================================================
+    suspend fun reAutenticateUser(currentPassword: String) {
+        val user = firebaseAuth.currentUser ?: return
+        val email = user.email ?: return
+
+        val credential = EmailAuthProvider.getCredential(email, currentPassword)
+        user.reauthenticate(credential).await()
+
+    }
+
+
+    // ======================================================================================
+    //  Cambiar contraseña -> FirebaseAuth incluye una función updatePassword
+    // ======================================================================================
+    suspend fun changePassword(newPassword: String) {
+        val  user = firebaseAuth.currentUser ?: return
+
+        user.updatePassword(newPassword).await()
     }
 
     // ======================================================================================

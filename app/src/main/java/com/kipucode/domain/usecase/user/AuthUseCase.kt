@@ -37,6 +37,23 @@ class ResetPasswordUseCase @Inject constructor(
     }
 }
 
+
+class ReauthenticateUseCase @Inject constructor(
+    private val authRepository: AuthRepository
+){
+    suspend operator fun invoke(password: String): Response<Unit> =
+        authRepository.reAutenticateUser(password)
+
+}
+
+class UpdatePasswordUseCase @Inject constructor(
+    private val authRepository: AuthRepository
+){
+    suspend operator fun invoke(newPassword: String): Response<Unit> =
+        authRepository.changePassword(newPassword)
+
+}
+
 class LogoutUseCase @Inject constructor(
     private val authRepository: AuthRepository
 ) {
