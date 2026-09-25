@@ -93,6 +93,7 @@
     <!-- ForgotPassword-Screen -->
     <string name="reset_password">Restablecer Contraseña</string>
     <string name="subheadline_forgot_password">Te enviaremos un enlace seguro para restablecer tu contraseña</string>
+    <string name="subheadline_change_password">Ingresa tu nueva contraseña para realizar el cambio</string>
     <string name="send_email">Enviar Correo</string>
     <string name="text_forgot_password">¿Olvidaste tu contraseña?</string>
 
@@ -107,10 +108,23 @@
     <!-- Profile-Screen -->
     <string name="my_profile">Mi Perfil</string>
     <string name="feedback">Feedback</string>
+    <string name="change_password">Cambiar contraseña</string>
     <string name="logout_title">Cerrar Sesión</string>
     <string name="logout_desc">¿Estás seguro de que quieres cerrar sesión en tu cuenta?</string>
     <string name="cancel">Cancelar</string>
     <string name="confirm">Confirmar</string>
+
+    <!-- Change Password Flow -->
+    <string name="verify_identity_title">Verifica tu identidad</string>
+    <string name="verify_identity_desc">Ingresa tu contraseña actual para autorizar el cambio de clave</string>
+    <string name="current_password">Contraseña actual</string>
+    <string name="new_password">Nueva contraseña</string>
+    <string name="new_password_title">Crea una nueva contraseña</string>
+    <string name="continue_text">Continuar</string>
+    <string name="save_password">Guardar contraseña</string>
+    <string name="password_updated_title">¡Contraseña actualizada!</string>
+    <string name="password_updated_desc">Tu contraseña ha sido cambiada exitosamente.</string>
+    <string name="error_current_password_invalid">La contraseña actual es incorrecta</string>
 
     <!-- Lesson Status -->
     <string name="status_completed">Completado</string>

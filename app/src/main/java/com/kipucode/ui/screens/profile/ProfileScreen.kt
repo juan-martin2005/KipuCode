@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.kipucode.ui.navigation.ChangePasswordRoute
 import com.kipucode.R
 import com.kipucode.domain.model.Response
 import com.kipucode.ui.components.KipuBottomBar
@@ -83,6 +84,9 @@ fun ProfileScreen(
                 },
                 onEditAvatar = {
                     showAvatarList = true
+                },
+                onChangePassword = {
+                    navController.navigate(ChangePasswordRoute)
                 }
             )
         }
@@ -132,6 +136,7 @@ fun ProfileContent(
     avatarId : Int,
     onLogoutClick: () -> Unit,
     onEditAvatar : () -> Unit,
+    onChangePassword : () -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -166,11 +171,21 @@ fun ProfileContent(
 
         item {
             MultipleChoicesCard(
+                text = stringResource(id = R.string.change_password),
+                iconRes = R.drawable.ic_lock,
+                isFirst = true,
+                onClick = onChangePassword,
+            )
+        }
+
+        item {
+            MultipleChoicesCard(
                 text = stringResource(id = R.string.logout_title),
                 iconRes = R.drawable.ic_exit,
                 disableArrow = true,
                 isRed = true,
-                onClick = onLogoutClick
+                isEnd = true,
+                onClick = onLogoutClick,
             )
         }
     }
@@ -184,6 +199,7 @@ fun ProfileScreenPreview() {
         email = "pedro@upn.pe",
         avatarId =  R.drawable.avatar_000,
         onLogoutClick = {},
-        onEditAvatar = {}
+        onEditAvatar = {},
+        onChangePassword = {}
     )
 }

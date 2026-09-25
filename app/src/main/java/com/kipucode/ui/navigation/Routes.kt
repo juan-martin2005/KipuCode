@@ -34,6 +34,9 @@ object CodeRoute
 @Serializable
 object ProfileRoute
 
+@Serializable
+object ChangePasswordRoute
+
 // --- Rutas con argumentos ---
 @Serializable
 data class LessonRoute(
