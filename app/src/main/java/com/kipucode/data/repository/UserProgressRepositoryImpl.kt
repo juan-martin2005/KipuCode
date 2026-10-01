@@ -129,7 +129,8 @@ internal class UserProgressRepositoryImpl @Inject constructor(
                 currentProgress = currentProgress,
                 coursesWithLessons = coursesWithLessons,
                 updatedLessons = updatedLessons,
-                updatedXp = updatedXp
+                updatedXp = updatedXp,
+                justCompletedLessonId = completedLessonId
             )
 
             // Calcular Racha
@@ -163,45 +164,33 @@ internal class UserProgressRepositoryImpl @Inject constructor(
         currentProgress: UserProgressDomain,
         coursesWithLessons: List<CourseWithLessonsDomain>,
         updatedLessons: List<String>,
-        updatedXp: Int
+        updatedXp: Int,
+        justCompletedLessonId: String
     ): Pair<String, String> {
-        val frontierLessonId = currentProgress.currentLessonId
+        val targetLessonId = if (justCompletedLessonId.isNotEmpty()) justCompletedLessonId else currentProgress.currentLessonId.orEmpty()
 
-        if (currentProgress.status == "COMPLETED") {
-            return frontierLessonId to currentProgress.status
-        }
+        val activeCourse = coursesWithLessons.find { c -> c.lessons.any { it.id == targetLessonId } }
+            ?: return targetLessonId to currentProgress.status.ifEmpty { "IN_PROGRESS" }
 
-        // Si la frontera todavía no está completada, no hay nada que avanzar
-        if (!updatedLessons.contains(frontierLessonId)) {
-            return frontierLessonId to currentProgress.status
-        }
-
-        val frontierCourse = coursesWithLessons.find { c -> c.lessons.any { it.id == frontierLessonId } }
-            ?: return frontierLessonId to currentProgress.status
-
-        val lessonIdx = frontierCourse.lessons.indexOfFirst { it.id == frontierLessonId }
+        val lessonIdx = activeCourse.lessons.indexOfFirst { it.id == targetLessonId }
 
         // Hay una siguiente lección en el mismo curso
-        if (lessonIdx != -1 && lessonIdx < frontierCourse.lessons.size - 1) {
-            return frontierCourse.lessons[lessonIdx + 1].id to currentProgress.status
+        if (lessonIdx != -1 && lessonIdx < activeCourse.lessons.size - 1) {
+            return activeCourse.lessons[lessonIdx + 1].id to "IN_PROGRESS"
         }
 
         // Última lección del curso -> revisar el siguiente curso del mismo track
-        val activeTrack = frontierCourse.course.track
+        val activeTrack = activeCourse.course.track
         val trackCourses = coursesWithLessons.filter { it.course.track == activeTrack }.sortedBy { it.course.orderIndex }
-        val courseIdx = trackCourses.indexOfFirst { it.course.id == frontierCourse.course.id }
+        val courseIdx = trackCourses.indexOfFirst { it.course.id == activeCourse.course.id }
 
         if (courseIdx != -1 && courseIdx < trackCourses.size - 1) {
             val nextCourse = trackCourses[courseIdx + 1]
-            return if (updatedXp >= nextCourse.course.xp) {
-                val nextLessonId = nextCourse.lessons.firstOrNull()?.id ?: frontierLessonId
-                nextLessonId to currentProgress.status
-            } else {
-                frontierLessonId to currentProgress.status
-            }
+            val nextLessonId = nextCourse.lessons.firstOrNull()?.id ?: targetLessonId
+            return nextLessonId to "IN_PROGRESS"
         }
 
-        return frontierLessonId to "COMPLETED"
+        return targetLessonId to "COMPLETED"
     }
 
     private suspend fun persistProgress(updatedProgress: UserProgressDomain) {
