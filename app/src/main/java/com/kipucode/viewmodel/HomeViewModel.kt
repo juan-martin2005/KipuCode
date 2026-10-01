@@ -2,9 +2,11 @@ package com.kipucode.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kipucode.domain.usecase.GetCognitiveMasteryOverviewUseCase
 import com.kipucode.domain.usecase.GetCourseWithLessonsUseCase
 import com.kipucode.domain.usecase.RefreshCoursesUseCase
 import com.kipucode.domain.usecase.RefreshLearningProgressUseCase
+import com.kipucode.domain.usecase.UpdateLastViewedLessonUseCase
 import com.kipucode.domain.usecase.user.GetUserProfileUseCase
 import com.kipucode.domain.usecase.user.GetUserProgressUseCase
 import com.kipucode.domain.usecase.user.RefreshUserProfileUseCase
@@ -28,6 +30,8 @@ class HomeViewModel @Inject constructor(
     getUserProfileUseCase: GetUserProfileUseCase,
     getUserProgressUseCase: GetUserProgressUseCase,
     getCourseWithLessonsUseCase: GetCourseWithLessonsUseCase,
+    getCognitiveMasteryOverviewUseCase: GetCognitiveMasteryOverviewUseCase,
+    private val updateLastViewedLessonUseCase: UpdateLastViewedLessonUseCase,
     private val refreshUserProfileUseCase: RefreshUserProfileUseCase,
     private val refreshUserProgressUseCase: RefreshUserProgressUseCase,
     private val refreshCoursesUseCase: RefreshCoursesUseCase,
@@ -42,14 +46,15 @@ class HomeViewModel @Inject constructor(
     }
 
     // ============================================================================================
-    //  COMBINE: 4 flujos se convierten en un solo HomeUiState inmutable
+    //  COMBINE: 5 flujos se convierten en un solo HomeUiState inmutable con Dominio FSRS-6
     // ============================================================================================
     val uiState: StateFlow<HomeUiState> = combine(
         getUserProfileUseCase(),
         getUserProgressUseCase(),
         getCourseWithLessonsUseCase(),
+        getCognitiveMasteryOverviewUseCase(),
         _isRefreshing
-    ) { userProfile, userProgress, coursesWithLessons, isRefreshing ->
+    ) { userProfile, userProgress, coursesWithLessons, masteryOverview, isRefreshing ->
 
         // Si aún no tenemos cursos cargados, indicamos Loading
         if (coursesWithLessons.isEmpty()) {
@@ -69,13 +74,17 @@ class HomeViewModel @Inject constructor(
             it.id == userProgress?.currentLessonId
         }?.orderIndex ?: 0
 
-        // 3. Progreso de lecciones
+        // 3. Progreso de lecciones y dominio cognitivo FSRS
         val isCompletedCourse = userProgress?.completedCourses?.contains(courseData?.id) ?: false
         val currentLessonProgress = if (isCompletedCourse) {
             lessonsData.size
         } else {
             (currentLessonOrderIndex - 1).coerceAtLeast(0)
         }
+
+        val activeCourseId = courseData?.id.orEmpty()
+        val courseMastery = masteryOverview.courseMastery[activeCourseId]
+            ?: com.kipucode.domain.model.CognitiveMasteryDomain()
 
         // 4. Calcular la racha activa
         val streak = calculateActiveStreak(
@@ -93,20 +102,30 @@ class HomeViewModel @Inject constructor(
             totalXp = userProgress?.totalXp ?: 0,
             streakDay = streak,
 
+            activeCourseId = activeCourseId,
             courseTitle = courseData?.title ?: "Curso",
             courseNumber = courseData?.orderIndex ?: 1,
             currentLessonsProgress = currentLessonProgress,
             totalLessons = lessonsData.size,
+            courseMastery = courseMastery,
 
             lessons = lessonsData,
+            lessonMasteryMap = masteryOverview.lessonMastery,
             completedLessonIds = userProgress?.completedLessons ?: emptyList(),
-            currentLessonOrderIndex = currentLessonOrderIndex
+            currentLessonOrderIndex = currentLessonOrderIndex,
+            currentLessonId = userProgress?.currentLessonId
         )
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = HomeUiState(isLoading = true)
     )
+
+    fun onSelectLesson(lessonId: String) {
+        viewModelScope.launch {
+            updateLastViewedLessonUseCase(lessonId)
+        }
+    }
 
     // ============================================================================================
     //  SINCRONIZACIÓN Y REFRESH
