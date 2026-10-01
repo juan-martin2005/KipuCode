@@ -26,6 +26,12 @@ internal class ExerciseRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun getAllExercises(): Flow<List<ExerciseDomain>> {
+        return exerciseDao.getAllExercises().map { relationsList ->
+            relationsList.map { it.toDomain() }
+        }
+    }
+
     // Descarga desde Firestore y guarda en local (Room)
     override suspend fun refreshExercises(lessonId: String): Response<Unit> {
         return try {

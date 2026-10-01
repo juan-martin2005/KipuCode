@@ -43,6 +43,34 @@ internal class LearningProgressRepositoryImpl @Inject constructor(
             .map { it?.toDomain() }
     }
 
+    override fun getProgressForLesson(lessonId: String): Flow<List<LearningProgressDomain>> {
+        val currentUid = userRemoteDataSource.currentUserId ?: return flowOf(emptyList())
+        return learningProgressDao.getProgressForLesson(currentUid, lessonId)
+            .map { list -> list.map { it.toDomain() } }
+    }
+
+    override fun getProgressForCourse(courseId: String): Flow<List<LearningProgressDomain>> {
+        val currentUid = userRemoteDataSource.currentUserId ?: return flowOf(emptyList())
+        return learningProgressDao.getProgressForCourse(currentUid, courseId)
+            .map { list -> list.map { it.toDomain() } }
+    }
+
+    override fun getAllProgressForCurrentUser(): Flow<List<LearningProgressDomain>> {
+        val currentUid = userRemoteDataSource.currentUserId ?: return flowOf(emptyList())
+        return learningProgressDao.getAllProgressForUser(currentUid)
+            .map { list -> list.map { it.toDomain() } }
+    }
+
+    override fun calculateCardRetrievability(progress: LearningProgressDomain): Double {
+        if (progress.stability <= 0.001) return 0.0
+        val card = progress.toEntity().toFsrsCard()
+        return try {
+            scheduler.getCardRetrievability(card).coerceIn(0.0, 1.0)
+        } catch (e: Exception) {
+            0.0
+        }
+    }
+
     override suspend fun recordChoiceAttempt(exerciseId: String, isCorrect: Boolean): Response<Unit> {
         val rating = if (isCorrect) Rating.GOOD else Rating.AGAIN
         return processReview(exerciseId, rating)
