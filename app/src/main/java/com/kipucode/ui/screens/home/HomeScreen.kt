@@ -83,12 +83,18 @@ fun HomeScreen(
                         courseNumber = uiState.courseNumber,
                         currentLessonsProgress = uiState.currentLessonsProgress,
                         totalLessons = uiState.totalLessons,
+                        masteryPercentage = uiState.courseMastery.percentage,
+                        statusTag = uiState.courseMastery.statusTag,
                         lessons = uiState.lessons,
+                        lessonMasteryMap = uiState.lessonMasteryMap,
 
                         isLessonCompleted = { lesson -> lesson.id in uiState.completedLessonIds },
-                        isLessonLocked = { lesson -> lesson.orderIndex > uiState.currentLessonOrderIndex },
+                        isLessonLocked = { false },
 
-                        onLessonClick = onNavigateToCode
+                        onLessonClick = { lessonId ->
+                            homeViewModel.onSelectLesson(lessonId)
+                            onNavigateToCode(lessonId)
+                        }
                     )
                 }
             }
@@ -110,7 +116,10 @@ fun HomeContent(
     courseNumber: Int = 0,
     currentLessonsProgress: Int,
     totalLessons: Int,
+    masteryPercentage: Int? = null,
+    statusTag: String? = null,
     lessons: List<LessonDomain>,
+    lessonMasteryMap: Map<String, com.kipucode.domain.model.CognitiveMasteryDomain> = emptyMap(),
 
     isLessonCompleted: (LessonDomain) -> Boolean,
     isLessonLocked: (LessonDomain) -> Boolean,
@@ -140,13 +149,15 @@ fun HomeContent(
             }
         }
 
-        // --- SECCIÓN 2: TARJETA DE PROGRESO ---
+        // --- SECCIÓN 2: TARJETA DE PROGRESO FSRS-6 ---
         item {
             HomeCard(
                 courseName = courseTitle,
                 currentLessons = currentLessonsProgress,
                 totalLessons = totalLessons,
                 courseNumber = courseNumber,
+                masteryPercentage = masteryPercentage,
+                statusTag = statusTag,
                 modifier = Modifier.padding(bottom = 24.dp)
             )
         }
@@ -168,12 +179,14 @@ fun HomeContent(
 
             val isCompleted = isLessonCompleted(lesson)
             val isLocked = isLessonLocked(lesson)
+            val lessonMastery = lessonMasteryMap[lesson.id]?.percentage
 
             LessonCard(
                 lessonId = lesson.id,
                 title = lesson.title,
                 isCompleted = isCompleted,
                 isLocked = isLocked,
+                masteryPercentage = lessonMastery,
                 onLessonClick = onLessonClick
             )
 

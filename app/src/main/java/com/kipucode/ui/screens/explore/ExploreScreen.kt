@@ -47,6 +47,7 @@ fun ExploreScreen(
 ) {
     val userProgress by userViewModel.userProgressState.collectAsStateWithLifecycle()
     val coursesWithLessons by courseViewModel.coursesWithLessonsState.collectAsStateWithLifecycle()
+    val masteryOverview by courseViewModel.masteryOverviewState.collectAsStateWithLifecycle()
 
     val progressData = userProgress
 
@@ -99,9 +100,11 @@ fun ExploreScreen(
                     courseTitle = course.title,
                     courseNumber = course.orderIndex,
                     lessons = lessons,
+                    masteryOverview = masteryOverview,
                     courseViewModel = courseViewModel,
                     onBackClick = { selectedCourseWithLessons = null },
                     onExerciseTypeClick = { lessonId, type ->
+                        courseViewModel.onSelectLesson(lessonId)
                         navController.navigate(ExerciseRoute(lessonId = lessonId, type = type))
                     }
                 )
@@ -111,6 +114,7 @@ fun ExploreScreen(
                     activeCourseId = activeCourseId,
                     completedCourses = completedCourses,
                     activeCourseCurrentLessons = currentLessonOrderIndex,
+                    masteryOverview = masteryOverview,
                     onCourseClick = { selectedCourseWithLessons = it }
                 )
             }
@@ -126,6 +130,7 @@ fun ModuleExercisesContent(
     courseTitle: String,
     courseNumber: Int,
     lessons: List<LessonDomain>,
+    masteryOverview: com.kipucode.domain.usecase.CognitiveMasteryOverview,
     courseViewModel: CoursesViewModel,
     onBackClick: () -> Unit,
     onExerciseTypeClick: (lessonId: String, type: String) -> Unit
@@ -172,6 +177,7 @@ fun ModuleExercisesContent(
         items(lessons, key = { it.id }) { lesson ->
             LessonExerciseSection(
                 lesson = lesson,
+                masteryOverview = masteryOverview,
                 courseViewModel = courseViewModel,
                 onExerciseTypeClick = onExerciseTypeClick
             )
@@ -186,6 +192,7 @@ fun ModuleExercisesContent(
 @Composable
 fun LessonExerciseSection(
     lesson: LessonDomain,
+    masteryOverview: com.kipucode.domain.usecase.CognitiveMasteryOverview,
     courseViewModel: CoursesViewModel,
     onExerciseTypeClick: (lessonId: String, type: String) -> Unit
 ) {
@@ -194,6 +201,7 @@ fun LessonExerciseSection(
 
     val flashcardsCount = remember(exercises) { exercises.count { it.type == "FLASHCARD" } }
     val uniqueChoiceCount = remember(exercises) { exercises.count { it.type == "UNIQUE_CHOICE" } }
+    val lessonMastery = masteryOverview.lessonMastery[lesson.id]?.percentage ?: 0
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -234,6 +242,33 @@ fun LessonExerciseSection(
                     color = KipuDarkBlue,
                     modifier = Modifier.weight(1f)
                 )
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Box(
+                    modifier = Modifier
+                        .background(
+                            color = when {
+                                lessonMastery >= 80 -> Color(0xFFE8F5E9)
+                                lessonMastery >= 40 -> Color(0xFFFFF3E0)
+                                else -> Color(0xFFF0F4F8)
+                            },
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                ) {
+                    Text(
+                        text = "Dominio $lessonMastery%",
+                        fontSize = 11.sp,
+                        fontFamily = Nunito,
+                        fontWeight = FontWeight.Bold,
+                        color = when {
+                            lessonMastery >= 80 -> Color(0xFF2E7D32)
+                            lessonMastery >= 40 -> Color(0xFFE65100)
+                            else -> Color.Gray
+                        }
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -353,6 +388,7 @@ fun ExploreContent(
     activeCourseId: String?,
     completedCourses: List<String>,
     activeCourseCurrentLessons: Int,
+    masteryOverview: com.kipucode.domain.usecase.CognitiveMasteryOverview = com.kipucode.domain.usecase.CognitiveMasteryOverview(),
     onCourseClick: (CourseWithLessonsDomain) -> Unit
 ) {
     Column(
@@ -392,21 +428,14 @@ fun ExploreContent(
                 items(coursesWithLessons) { item ->
                     val course = item.course
                     val totalLessons = item.lessons.size
-
-                    val isActiveCourse = course.id == activeCourseId
-                    val isCompletedCourse = completedCourses.contains(course.id)
-
-                    val current = when {
-                        isCompletedCourse -> totalLessons
-                        isActiveCourse -> (activeCourseCurrentLessons - 1).coerceAtLeast(0)
-                        else -> 0
-                    }
+                    val courseMastery = masteryOverview.courseMastery[course.id]
 
                     HomeCard(
                         courseName = course.title,
-                        currentLessons = current,
                         totalLessons = totalLessons,
                         courseNumber = course.orderIndex,
+                        masteryPercentage = courseMastery?.percentage,
+                        statusTag = courseMastery?.statusTag,
                         modifier = Modifier.clickable { onCourseClick(item) }
                     )
 

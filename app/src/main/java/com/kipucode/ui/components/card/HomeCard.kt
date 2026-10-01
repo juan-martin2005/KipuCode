@@ -27,14 +27,17 @@ fun HomeCard(
     modifier: Modifier = Modifier,
 
     courseName: String,
-    currentLessons: Int,
-    totalLessons: Int,
+    currentLessons: Int = 0,
+    totalLessons: Int = 0,
     courseNumber: Int? = 0,
 
     iconResId: Int? = null,
+    masteryPercentage: Int? = null,
+    statusTag: String? = null,
 ) {
-    val horizontalProgressFactor = currentLessons.toFloat() / totalLessons.toFloat()
-    val progressPercentage = (horizontalProgressFactor * 100).toInt()
+    val progressPercentage = masteryPercentage?.coerceIn(0, 100)
+        ?: if (totalLessons > 0) ((currentLessons.toFloat() / totalLessons.toFloat()) * 100).toInt() else 0
+    val horizontalProgressFactor = (progressPercentage / 100f).coerceIn(0f, 1f)
 
     Column(
         modifier = modifier
@@ -92,7 +95,7 @@ fun HomeCard(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // --- SECCIÓN 2: PROGRESO ---
+        // --- SECCIÓN 2: PROGRESO FSRS-6 ---
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
@@ -101,16 +104,45 @@ fun HomeCard(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.Center
             ) {
-                Text(
-                    text = stringResource(R.string.home_bar_lessons,
-                        currentLessons,
-                        totalLessons
-                    ),
-                    color = Color.White,
-                    fontSize = 15.sp,
-                    fontFamily = Nunito,
-                    fontWeight = FontWeight.SemiBold
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = if (masteryPercentage != null) "Dominio Cognitivo" else stringResource(
+                            R.string.home_bar_lessons,
+                            currentLessons,
+                            totalLessons
+                        ),
+                        color = Color.White,
+                        fontSize = 15.sp,
+                        fontFamily = Nunito,
+                        fontWeight = FontWeight.SemiBold
+                    )
+
+                    if (statusTag != null) {
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Box(
+                            modifier = Modifier
+                                .background(
+                                    color = when {
+                                        progressPercentage >= 80 -> Color(0xFF2E7D32).copy(alpha = 0.85f)
+                                        progressPercentage >= 40 -> Color(0xFFE65100).copy(alpha = 0.85f)
+                                        else -> White.copy(alpha = 0.25f)
+                                    },
+                                    shape = RoundedCornerShape(8.dp)
+                                )
+                                .padding(horizontal = 8.dp, vertical = 2.dp)
+                        ) {
+                            Text(
+                                text = statusTag,
+                                color = White,
+                                fontSize = 11.sp,
+                                fontFamily = Nunito,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                }
 
                 Spacer(modifier = Modifier.height(10.dp))
 
@@ -137,7 +169,7 @@ fun HomeCard(
                 Spacer(modifier = Modifier.height(6.dp))
 
                 Text(
-                    text = stringResource(R.string.home_underline_text_bar),
+                    text = if (masteryPercentage != null) "Curva de retención adaptativa (FSRS-6)" else stringResource(R.string.home_underline_text_bar),
                     color = White.copy(alpha = 0.8f),
                     fontSize = 13.sp,
                     fontFamily = Nunito,
