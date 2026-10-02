@@ -14,9 +14,11 @@ import com.kipucode.domain.repository.LearningProgressRepository
 import io.github.openspacedrepetition.Card
 import io.github.openspacedrepetition.Rating
 import io.github.openspacedrepetition.Scheduler
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
@@ -121,10 +123,10 @@ internal class LearningProgressRepositoryImpl @Inject constructor(
         }
     }
 
-    private suspend fun processReview(exerciseId: String, rating: Rating): Response<Unit> {
-        return try {
+    private suspend fun processReview(exerciseId: String, rating: Rating): Response<Unit> = withContext(NonCancellable) {
+        try {
             val currentUid = userRemoteDataSource.currentUserId
-                ?: return Response.Error("Usuario no autenticado", ServerErrorType.CREDENTIAL_INVALID)
+                ?: return@withContext Response.Error("Usuario no autenticado", ServerErrorType.CREDENTIAL_INVALID)
 
             val existingEntity = learningProgressDao.getProgressForExerciseDirect(currentUid, exerciseId)
             val currentCard = existingEntity?.toFsrsCard() ?: Card.builder().build()
@@ -155,6 +157,7 @@ internal class LearningProgressRepositoryImpl @Inject constructor(
 
             Response.Success(Unit)
         } catch (e: Exception) {
+            Log.e("LearningProgressRepo", "Error al procesar repaso FSRS: ${e.message}", e)
             Response.Error(e.message ?: "Error al procesar repaso FSRS", ServerErrorType.FIRESTORE_ERROR)
         }
     }

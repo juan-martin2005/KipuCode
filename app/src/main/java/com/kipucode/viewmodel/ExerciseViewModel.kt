@@ -176,38 +176,38 @@ class ExerciseViewModel @Inject constructor(
     // Flash Card Exercise
 
     fun rateFlashCard(ratingValue: Int, lessonId: String) {
-        val currentExercise = _exercisesState.value.getOrNull(_currentExerciseIndex.value)
+        val currentExercise = _exercisesState.value.getOrNull(_currentExerciseIndex.value) ?: return
 
-        currentExercise?.let { exercise ->
-            val baseExerciseXp = exercise.xp
-            val earnedXp = when (ratingValue) {
-                4 -> baseExerciseXp
-                3 -> baseExerciseXp
-                2 -> (baseExerciseXp * 0.75).toInt()
-                else -> baseExerciseXp / 2
-            }
-            earnedXpByExercise[exercise.id] = earnedXp
+        val baseExerciseXp = currentExercise.xp
+        val earnedXp = when (ratingValue) {
+            4 -> baseExerciseXp
+            3 -> baseExerciseXp
+            2 -> (baseExerciseXp * 0.75).toInt()
+            else -> baseExerciseXp / 2
+        }
+        earnedXpByExercise[currentExercise.id] = earnedXp
 
-            if (ratingValue >= 3) {
-                correctExerciseIds.add(exercise.id)
-            } else {
-                incorrectExerciseIds.add(exercise.id)
-            }
-
-            viewModelScope.launch {
-                // Guardar en FSRS (1: Again, 2: Hard, 3: Good, 4: Easy)
-                recordRatingAttemptUseCase(
-                    exerciseId = exercise.id,
-                    ratingValue = ratingValue
-                )
-            }
+        if (ratingValue >= 3) {
+            correctExerciseIds.add(currentExercise.id)
+        } else {
+            incorrectExerciseIds.add(currentExercise.id)
         }
 
-        // Avanzar a la siguiente tarjeta o completar la lección si es la última
-        if (_currentExerciseIndex.value < _exercisesState.value.size - 1) {
-            nextExercise()
-        } else {
-            finishLessonExercises(lessonId)
+        val isLast = _currentExerciseIndex.value >= _exercisesState.value.size - 1
+
+        viewModelScope.launch {
+            // Guardar en FSRS (1: Again, 2: Hard, 3: Good, 4: Easy)
+            recordRatingAttemptUseCase(
+                exerciseId = currentExercise.id,
+                ratingValue = ratingValue
+            )
+
+            // Avanzar a la siguiente tarjeta o completar la lección
+            if (isLast) {
+                finishLessonExercises(lessonId)
+            } else {
+                nextExercise()
+            }
         }
     }
 
