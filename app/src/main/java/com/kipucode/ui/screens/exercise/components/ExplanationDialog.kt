@@ -27,8 +27,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kipucode.R
 import com.kipucode.ui.components.button.FilledButton
-import com.kipucode.ui.screens.lesson.components.ContentMarkdown
+import com.kipucode.ui.components.text.FormattedText
 import com.kipucode.ui.theme.Green
+import com.kipucode.ui.theme.KipuParagraph
 import com.kipucode.ui.theme.Nunito
 import com.kipucode.ui.theme.Red
 import com.kipucode.ui.theme.White
@@ -149,8 +150,10 @@ fun ExplanationDialog(
                     )
                 }
 
-                ContentMarkdown(
-                    content = explanation,
+                FormattedText(
+                    modifier = Modifier.padding(vertical = 8.dp),
+                    text = explanation,
+                    style = KipuParagraph
                 )
             }
         }
@@ -178,7 +181,7 @@ fun ExplanationDialogCombinedPreview() {
             experience = "50",
             explanation = """
             Comprender el origen de `Python`, asimilar la filosofía de su diseño y dimensionar su rol y capacidades en la industria de la ingeniería de software moderna.
-        """,
+        """.trimIndent(),
             message = "¡Excelente! Concepto dominado"
         )
 
@@ -190,8 +193,7 @@ fun ExplanationDialogCombinedPreview() {
             isLoading = false,
             onContinue = {},
             experience = "25",
-            explanation = """
-            Comprender el origen de Python, asimilar la filosofía de su diseño y dimensionar su rol y capacidades en la industria de la ingeniería de software moderna.
+            explanation = """Comprender el origen de Python, asimilar la filosofía de su diseño y dimensionar su rol y capacidades en la industria de la ingeniería de software moderna.
         """,
             message = "¡Cerca! Equivocarse es parte de aprender"
         )

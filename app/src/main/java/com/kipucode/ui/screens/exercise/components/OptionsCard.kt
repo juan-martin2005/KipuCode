@@ -25,10 +25,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kipucode.R
-import com.kipucode.ui.screens.lesson.components.ContentMarkdown
+import com.kipucode.ui.components.text.FormattedText
 import com.kipucode.ui.theme.Gray
 import com.kipucode.ui.theme.Green
 import com.kipucode.ui.theme.KipuDarkBlue
+import com.kipucode.ui.theme.KipuH5
 import com.kipucode.ui.theme.LightGreen
 import com.kipucode.ui.theme.Red
 import com.kipucode.ui.theme.White
@@ -80,9 +81,10 @@ fun OptionCard(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            ContentMarkdown(
+            FormattedText(
                 modifier = Modifier.weight(1f),
-                content = text,
+                text = text,
+                style = KipuH5,
                 color = contentColor
             )
 
@@ -111,7 +113,7 @@ fun OptionCard(
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFF3F4F6)
+@Preview(showBackground = true, name = "Option Card States Preview", backgroundColor = 0xFFF3F4F6)
 @Composable
 fun OptionCardPreview() {
     Column(
@@ -119,7 +121,7 @@ fun OptionCardPreview() {
     ) {
 
         OptionCard(
-            text = "##### Opción seleccionada (Correcta)",
+            text = "Opción seleccionada (Correcta)",
             isSelected = true,
             isCorrect = true,
             showResult = true,
@@ -129,7 +131,7 @@ fun OptionCardPreview() {
         Spacer(modifier = Modifier.height(8.dp))
 
         OptionCard(
-            text = "##### Opción seleccionada (Incorrecta)",
+            text = "Opción seleccionada (Incorrecta)",
             isSelected = true,
             isCorrect = false,
             showResult = true,
@@ -139,7 +141,7 @@ fun OptionCardPreview() {
         Spacer(modifier = Modifier.height(8.dp))
 
         OptionCard(
-            text = "##### Esta era la respuesta correcta",
+            text = "Esta era la respuesta correcta",
             isSelected = false,
             isCorrect = true,
             showResult = true,
@@ -149,7 +151,7 @@ fun OptionCardPreview() {
         Spacer(modifier = Modifier.height(8.dp))
 
         OptionCard(
-            text = "##### Opción no seleccionada",
+            text = "Opción no seleccionada",
             isSelected = false,
             isCorrect = false,
             showResult = true,

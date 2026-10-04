@@ -38,8 +38,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kipucode.R
 import com.kipucode.ui.components.button.FilledButton
-import com.kipucode.ui.screens.lesson.components.ContentMarkdown
+import com.kipucode.ui.components.text.FormattedText
 import com.kipucode.ui.theme.KipuDarkBlue
+import com.kipucode.ui.theme.KipuH4
+import com.kipucode.ui.theme.KipuParagraph
 import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.KipuTealDark
 import com.kipucode.ui.theme.MoonFrost
@@ -202,12 +204,21 @@ fun Flashcard(
                 ) {
                     if (rotation <= 90f) {
                         // --- CARA FRONTAL (Pregunta) ---
-                        ContentMarkdown(modifier = Modifier, content = instruction)
+                        FormattedText(
+                            text = instruction,
+                            style = KipuH4.copy(fontSize = 18.sp),
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        )
                     } else {
                         // --- CARA TRASERA (Respuesta) ---
-                        ContentMarkdown(
-                            modifier = Modifier.graphicsLayer { rotationY = 180f },
-                            content = answer
+                        FormattedText(
+                            text = answer,
+                            style = KipuParagraph,
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .graphicsLayer { rotationY = 180f }
                         )
                     }
                 }
@@ -290,7 +301,7 @@ fun Flashcard(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, name = "Flashcard Preview")
 @Composable
 fun FlashcardPreview() {
     Flashcard(
