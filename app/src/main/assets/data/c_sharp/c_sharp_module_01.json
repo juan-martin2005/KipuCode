@@ -1,9 +1,9 @@
 {
-  "version": 1,
+  "version": 2,
   "course": {
     "id": "csharp_module_01",
-    "title": "Introducción al Ecosistema .NET y C#",
-    "description": "Conocer la historia de C#, el funcionamiento del Common Language Runtime (CLR), el compilador Roslyn y la ejecución de código en la plataforma .NET moderna.",
+    "title": "Fundamentos de .NET, Lógica y Diagramación",
+    "description": "Introducción a la plataforma .NET, el entorno de trabajo, el ciclo de compilación y las técnicas de análisis lógico mediante pseudocódigo y diagramación para resolver problemas antes de escribir código formal.",
     "track": "c_sharp",
     "orderIndex": 1,
     "xp": 0
@@ -11,44 +11,313 @@
   "lessons": [
     {
       "id": "csharp_lesson_01",
-      "title": "Historia y Filosofía de C#",
+      "title": "Introducción a la Plataforma .NET y Entornos de Desarrollo",
       "orderIndex": 1,
-      "xp": 200,
-      "content": "# 01 - Historia y Filosofía de C#\n\n> **Objetivo de Aprendizaje:**\n> Comprender los orígenes de C#, su evolución dentro de la plataforma .NET y cómo el **CIL (Common Intermediate Language)** y el **CLR** permiten un entorno seguro y de alto rendimiento.\n\n---\n\n## El origen de C#\n\nC# fue desarrollado por Microsoft a finales de los años 90 y presentado oficialmente en el año 2000, bajo el liderazgo de Anders Hejlsberg.\n\nNació como un lenguaje moderno, seguro y completamente orientado a objetos, diseñado específicamente para aprovechar la plataforma .NET.\n\n### Filosofía: .NET y el CLR\n\nEl código fuente en C# se compila primero a un lenguaje intermedio llamado **CIL (Common Intermediate Language)**. Posteriormente, el **CLR (Common Language Runtime)** se encarga de compilar ese código en tiempo de ejecución (JIT) a código máquina nativo, administrando automáticamente la memoria mediante el Garbage Collector.",
-      "exercises": [
+      "xp": 700,
+      "content": "### 01 - Introducción a la Plataforma .NET y Entornos de Desarrollo\n\nLa plataforma .NET se compone de tres pilares esenciales: el `CLR` (_Common Language Runtime_ / Entorno de Ejecución de Lenguaje Común) que administra la ejecución y la memoria; la `BCL` (_Base Class Library_ / Biblioteca Base de Clases) con colecciones y utilidades del sistema; y el `SDK` (_Software Development Kit_ / Kit de Desarrollo de Software) que contiene el compilador Roslyn y la `CLI` (_Command-Line Interface_ / Interfaz de Línea de Comandos) bajo el comando `dotnet`. El `.NET Runtime` combina únicamente el `CLR` y la `BCL` para correr programas, mientras que el `SDK` suma las herramientas de compilación.\n\nC# genera código administrado que no interactúa directo con la `CPU` (_Central Processing Unit_ / Unidad Central de Procesamiento). El compilador emite un ensamblado `.dll` con metadatos y código en `CIL` (_Common Intermediate Language_ / Lenguaje Intermedio Común) o `IL`. Durante la ejecución, el motor `CLR` traduce este binario a lenguaje máquina mediante el compilador `JIT` (_Just-In-Time_ / Justo a Tiempo) y libera la memoria dinámica (_Heap_) con el `GC` (_Garbage Collector_ / Recolector de Basura), el cual no libera archivos ni sockets.\n\nLos proyectos se estructuran en archivos `.csproj` (configuración) y se agrupan en soluciones `.sln` o `.slnx`. Todo el ciclo de vida puede gestionarse desde la terminal o mediante entornos como Visual Studio Community (Windows), Visual Studio Code con el paquete de extensiones C# Dev Kit (multiplataforma) o JetBrains Rider (`IDE`, _Integrated Development Environment_ / Entorno de Desarrollo Integrado).\n\n```text\n┌──────────────────────────────┐\n│           .NET SDK           │\n│  Roslyn + CLI (dotnet)       │\n│ ┌──────────────────────────┐ │\n│ │       .NET Runtime       │ │\n│ │ ┌──────────┬───────────┐ │ │\n│ │ │   BCL    │    CLR    │ │ │\n│ │ └──────────┴───────────┘ │ │\n│ └──────────────────────────┘ │\n└──────────────────────────────┘\n```\n\n¿Cuál es la diferencia fundamental entre el .NET SDK y el .NET Runtime?\nEl `SDK` incluye compiladores y herramientas para construir software. El `Runtime` (`CLR` + `BCL`) solo contiene lo necesario para ejecutar aplicaciones ya compiladas.\n\n```text\n# Comprobacion en terminal:\ndotnet --version\ndotnet --list-sdks\ndotnet --list-runtimes\n```\n\n```text\nCódigo fuente (.cs)\n        │\n        ▼\n[ Compilador Roslyn ]\n        │\n        ▼\nEnsamblado (.dll + host)\n        │\n        ▼\n[ CLR: JIT + GC ]\n        │\n        ▼\nInstrucciones de CPU\n```\n\n¿Por qué se le denomina \"código administrado\" a una aplicación en C#?\nPorque corre supervisado por el `CLR`, el cual delega la traducción al compilador `JIT`, protege la memoria y delega la limpieza de objetos al `GC`.\n\n```text\n# Crear proyecto consola\ndotnet new console -n App\n\n# Crear solucion\ndotnet new sln -n Sol\n\n# Vincular proyecto\ndotnet sln add App/App.csproj\n\n# Compilar solucion\ndotnet build\n\n# Ejecutar proyecto\ndotnet run --project App\n```\n\n¿Es indispensable utilizar un entorno gráfico para construir un programa en C#?\nNo. La `CLI` `dotnet` y cualquier editor de texto plano permiten crear, compilar y desplegar aplicaciones sin herramientas visuales.\n\n¿Cuál es la diferencia principal en la forma de trabajar entre Visual Studio y Visual Studio Code?\nVisual Studio es un `IDE` orientado a soluciones gráficas centralizadas, mientras que Visual Studio Code es un editor modular enfocado en carpetas que requiere el C# Dev Kit.\n\n```text\n# Crear y entrar a carpeta\ndotnet new console -n Hola\ncd Hola\n```\n\n```csharp\n// Program.cs\nConsole.WriteLine(\"¡Hola, C#!\");\n```\n\n```text\n# Ejecutar aplicacion\ndotnet run\n\n# Salida esperada:\n¡Hola, C#!\n```\n\n¿Cómo sé si mi entorno quedó bien configurado?\nLa terminal imprime el mensaje esperado al ejecutar `dotnet run`. Si el comando no existe, el `SDK` no está en el `PATH` (_System Path_ / Ruta del Sistema).\n\n### Resumen de la Lección\n\n- .NET divide su base en `CLR` (_Common Language Runtime_), biblioteca `BCL` (_Base Class Library_) y herramientas `SDK` (_Software Development Kit_).\n- El `.NET Runtime` contiene el entorno de ejecución, mientras que el `SDK` añade compiladores y la `CLI` (_Command-Line Interface_).\n- C# compila a `CIL` (_Common Intermediate Language_) dentro de un ensamblado `.dll` y un host ejecutable.\n- El `CLR` compila a código nativo vía `JIT` (_Just-In-Time_) y gestiona la memoria _Heap_ mediante el `GC` (_Garbage Collector_).\n- Los proyectos se declaran en archivos `.csproj` y se pueden agrupar en soluciones `.sln` o `.slnx`.\n- Toda la gestión se puede realizar desde la `CLI` `dotnet` (`new`, `build`, `run`) sin depender de interfaces gráficas.\n- El código se puede editar en Visual Studio, Visual Studio Code con C# Dev Kit o JetBrains Rider.",      "exercises": [
         {
-          "id": "exercise_csharp_01",
+          "id": "exercise_lesson_01_01",
           "type": "UNIQUE_CHOICE",
-          "instruction": "#### ¿En qué año fue presentado oficialmente el lenguaje C#?",
-          "xp": 20,
+          "instruction": "#### ¿Cuáles son los tres pilares fundamentales de la plataforma .NET?",
+          "xp": 100,
           "orderIndex": 1,
           "options": [
-            { "content": "##### 2000", "explanation": "C# fue presentado por Microsoft en el año 2000 junto con la iniciativa .NET.", "isCorrect": true, "orderIndex": 1 },
-            { "content": "##### 1995", "explanation": "En 1995 fue el lanzamiento de Java, no de C#.", "isCorrect": false, "orderIndex": 2 },
-            { "content": "##### 1991", "explanation": "En 1991 inició el proyecto Green de Java.", "isCorrect": false, "orderIndex": 3 },
-            { "content": "##### 2010", "explanation": "Para 2010 ya se utilizaba C# 4.0.", "isCorrect": false, "orderIndex": 4 }
+            { "content": "##### CLR, JIT y GC", "explanation": "El JIT y el GC son tareas que realiza el CLR; no son pilares de la plataforma.", "isCorrect": false, "orderIndex": 1 },
+            { "content": "##### CLR, BCL y SDK", "explanation": "Los tres pilares son el CLR (motor de ejecución), la BCL (biblioteca de clases) y el SDK (herramientas de desarrollo).", "isCorrect": true, "orderIndex": 2 },
+            { "content": "##### BCL, Roslyn y CLI", "explanation": "Roslyn y la CLI son herramientas incluidas dentro del SDK, no pilares independientes.", "isCorrect": false, "orderIndex": 3 },
+            { "content": "##### Runtime, SDK y .csproj", "explanation": "El Runtime combina CLR y BCL, y el .csproj es un archivo de configuración de proyecto; no son los pilares de la plataforma.", "isCorrect": false, "orderIndex": 4 }
           ]
         },
         {
-          "id": "exercise_csharp_02",
+          "id": "exercise_lesson_01_02",
           "type": "UNIQUE_CHOICE",
-          "instruction": "#### ¿Quién lideró el diseño y desarrollo inicial de C# en Microsoft?",
-          "xp": 20,
+          "instruction": "#### ¿Qué componentes combina el .NET Runtime?",
+          "xp": 100,
           "orderIndex": 2,
           "options": [
-            { "content": "##### Anders Hejlsberg", "explanation": "Anders Hejlsberg, creador también de Turbo Pascal y TypeScript, lideró el diseño de C#.", "isCorrect": true, "orderIndex": 1 },
-            { "content": "##### James Gosling", "explanation": "James Gosling es el creador de Java.", "isCorrect": false, "orderIndex": 2 },
-            { "content": "##### Bjarne Stroustrup", "explanation": "Bjarne Stroustrup es el creador de C++.", "isCorrect": false, "orderIndex": 3 },
-            { "content": "##### Guido van Rossum", "explanation": "Guido van Rossum es el creador de Python.", "isCorrect": false, "orderIndex": 4 }
+            { "content": "##### CLR + SDK", "explanation": "Es al revés: el SDK incluye al Runtime, no el Runtime al SDK.", "isCorrect": false, "orderIndex": 1 },
+            { "content": "##### BCL + Roslyn", "explanation": "Roslyn es un compilador y pertenece al SDK, no al Runtime.", "isCorrect": false, "orderIndex": 2 },
+            { "content": "##### CLR + BCL", "explanation": "El .NET Runtime combina el CLR y la BCL, y es lo mínimo necesario para ejecutar una aplicación.", "isCorrect": true, "orderIndex": 3 },
+            { "content": "##### SDK + CLI", "explanation": "El SDK y la CLI son herramientas de desarrollo; el Runtime no las incluye.", "isCorrect": false, "orderIndex": 4 }
           ]
         },
         {
-          "id": "exercise_csharp_03",
-          "type": "FLASHCARD",
-          "instruction": "#### ¿Qué es el CLR (Common Language Runtime) en .NET?",
-          "answer": "Es la máquina virtual y motor de ejecución de .NET que administra memoria, manejo de excepciones, seguridad y la compilación Just-In-Time (JIT) del código intermedio (CIL) a código máquina.",
-          "xp": 20,
+          "id": "exercise_lesson_01_03",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "#### ¿Qué proporciona la Biblioteca Base de Clases (BCL)?",
+          "xp": 100,
           "orderIndex": 3,
+          "options": [
+            { "content": "##### Compiladores y plantillas de proyecto", "explanation": "Eso corresponde al SDK, que incluye a Roslyn y las plantillas de proyecto.", "isCorrect": false, "orderIndex": 1 },
+            { "content": "##### La compilación JIT del CIL", "explanation": "La compilación JIT la realiza el CLR, no la BCL.", "isCorrect": false, "orderIndex": 2 },
+            { "content": "##### La liberación automática de memoria", "explanation": "De la memoria se encarga el Recolector de Basura (GC), que forma parte del CLR.", "isCorrect": false, "orderIndex": 3 },
+            { "content": "##### Tipos base: colecciones, texto, E/S y archivos", "explanation": "La BCL ofrece los tipos fundamentales que el programador usa directamente: colecciones, procesamiento de texto, entrada/salida y manejo de archivos.", "isCorrect": true, "orderIndex": 4 }
+          ]
+        },
+        {
+          "id": "exercise_lesson_01_04",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "#### ¿Qué incluye el .NET SDK además del Runtime?",
+          "xp": 100,
+          "orderIndex": 4,
+          "options": [
+            { "content": "##### Compiladores, plantillas y la CLI `dotnet`", "explanation": "El SDK incluye el Runtime y le añade las herramientas para desarrollar: compiladores como Roslyn, plantillas de proyecto y la CLI dotnet.", "isCorrect": true, "orderIndex": 1 },
+            { "content": "##### Solo el Recolector de Basura", "explanation": "El GC forma parte del CLR, que ya está dentro del Runtime.", "isCorrect": false, "orderIndex": 2 },
+            { "content": "##### Únicamente la BCL", "explanation": "La BCL ya está dentro del Runtime; lo que añade el SDK son herramientas de desarrollo.", "isCorrect": false, "orderIndex": 3 },
+            { "content": "##### El ejecutable anfitrión del programa", "explanation": "El ejecutable anfitrión acompaña al ensamblado que emite el compilador; no es una herramienta que añada el SDK.", "isCorrect": false, "orderIndex": 4 }
+          ]
+        },
+        {
+          "id": "exercise_lesson_01_05",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "#### Un servidor solo debe ejecutar aplicaciones ya compiladas. ¿Qué es lo mínimo que necesita?",
+          "xp": 100,
+          "orderIndex": 5,
+          "options": [
+            { "content": "##### .NET SDK", "explanation": "El SDK serviría, pero incluye herramientas de desarrollo que aquí no hacen falta; lo mínimo es el Runtime.", "isCorrect": false, "orderIndex": 1 },
+            { "content": "##### .NET Runtime", "explanation": "El Runtime (CLR + BCL) es el paquete mínimo para ejecutar aplicaciones previamente compiladas.", "isCorrect": true, "orderIndex": 2 },
+            { "content": "##### Visual Studio Community", "explanation": "Es un IDE para desarrollar; no es lo mínimo para solo ejecutar aplicaciones.", "isCorrect": false, "orderIndex": 3 },
+            { "content": "##### C# Dev Kit", "explanation": "Es un paquete de extensiones de Visual Studio Code para desarrollar, no para ejecutar.", "isCorrect": false, "orderIndex": 4 }
+          ]
+        },
+        {
+          "id": "exercise_lesson_01_06",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "#### ¿Qué comando lista los entornos de ejecución instalados en el sistema?",
+          "xp": 100,
+          "orderIndex": 6,
+          "options": [
+            { "content": "##### `dotnet --list-sdks`", "explanation": "Ese comando lista los SDKs instalados, no los entornos de ejecución.", "isCorrect": false, "orderIndex": 1 },
+            { "content": "##### `dotnet --version`", "explanation": "Muestra la versión activa del SDK, no la lista de entornos de ejecución.", "isCorrect": false, "orderIndex": 2 },
+            { "content": "##### `dotnet --list-runtimes`", "explanation": "Este comando lista los entornos de ejecución (Runtimes) instalados en el sistema.", "isCorrect": true, "orderIndex": 3 },
+            { "content": "##### `dotnet build --list-runtimes`", "explanation": "No es un comando de la lección; dotnet build se usa para compilar la solución.", "isCorrect": false, "orderIndex": 4 }
+          ]
+        },
+        {
+          "id": "exercise_lesson_01_07",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "#### Al compilar código C#, ¿en qué se traduce primero?",
+          "xp": 100,
+          "orderIndex": 7,
+          "options": [
+            { "content": "##### CIL (Common Intermediate Language)", "explanation": "El código C# se traduce a una representación binaria intermedia llamada CIL (o IL), no directamente a instrucciones de la CPU.", "isCorrect": true, "orderIndex": 1 },
+            { "content": "##### Código máquina nativo del procesador", "explanation": "El código máquina lo genera después el JIT del CLR, en el momento de ejecutar cada método.", "isCorrect": false, "orderIndex": 2 },
+            { "content": "##### Metadatos", "explanation": "Los metadatos describen clases y métodos, pero no son el código ejecutable.", "isCorrect": false, "orderIndex": 3 },
+            { "content": "##### Un archivo `.csproj`", "explanation": "El .csproj es un archivo de configuración del proyecto, no el resultado de compilar el código.", "isCorrect": false, "orderIndex": 4 }
+          ]
+        },
+        {
+          "id": "exercise_lesson_01_08",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "#### ¿Qué extensión tiene el ensamblado principal que genera .NET?",
+          "xp": 100,
+          "orderIndex": 8,
+          "options": [
+            { "content": "##### `.exe`", "explanation": "El .exe es solo el ejecutable de arranque (host) que acompaña al ensamblado en Windows.", "isCorrect": false, "orderIndex": 1 },
+            { "content": "##### `.cs`", "explanation": "Es la extensión de los archivos de código fuente.", "isCorrect": false, "orderIndex": 2 },
+            { "content": "##### `.csproj`", "explanation": "Es el archivo de proyecto con la configuración de compilación, no el ensamblado.", "isCorrect": false, "orderIndex": 3 },
+            { "content": "##### `.dll`", "explanation": "En .NET el ensamblado principal siempre se genera con extensión .dll, acompañado de un ejecutable de arranque.", "isCorrect": true, "orderIndex": 4 }
+          ]
+        },
+        {
+          "id": "exercise_lesson_01_09",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "#### ¿Qué información contiene el manifiesto de un ensamblado?",
+          "xp": 100,
+          "orderIndex": 9,
+          "options": [
+            { "content": "##### Descripción de todas las clases y métodos", "explanation": "Eso son los metadatos, no el manifiesto.", "isCorrect": false, "orderIndex": 1 },
+            { "content": "##### Versión, identidad y dependencias externas", "explanation": "El manifiesto guarda la información de versión, identidad y dependencias externas necesarias.", "isCorrect": true, "orderIndex": 2 },
+            { "content": "##### El código compilado en CIL", "explanation": "El CIL es el código del ensamblado; el manifiesto es un elemento aparte.", "isCorrect": false, "orderIndex": 3 },
+            { "content": "##### Las plantillas de proyecto", "explanation": "Las plantillas de proyecto pertenecen al SDK, no al ensamblado.", "isCorrect": false, "orderIndex": 4 }
+          ]
+        },
+        {
+          "id": "exercise_lesson_01_10",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "#### ¿Cuándo traduce el JIT el código CIL a código máquina?",
+          "xp": 100,
+          "orderIndex": 10,
+          "options": [
+            { "content": "##### Al compilar con Roslyn", "explanation": "Roslyn genera el CIL; la traducción a código máquina ocurre después, en ejecución.", "isCorrect": false, "orderIndex": 1 },
+            { "content": "##### Al instalar el SDK", "explanation": "La instalación del SDK no traduce código.", "isCorrect": false, "orderIndex": 2 },
+            { "content": "##### La primera vez que se invoca cada método", "explanation": "El JIT traduce el CIL a código máquina nativo específico del procesador justo cuando se invoca cada método por primera vez.", "isCorrect": true, "orderIndex": 3 },
+            { "content": "##### Al cerrar la aplicación", "explanation": "La traducción ocurre durante la ejecución, no al cerrar el programa.", "isCorrect": false, "orderIndex": 4 }
+          ]
+        },
+        {
+          "id": "exercise_lesson_01_11",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "#### ¿Qué hace el Recolector de Basura (GC)?",
+          "xp": 100,
+          "orderIndex": 11,
+          "options": [
+            { "content": "##### Libera objetos del Heap que ya no se usan", "explanation": "El GC supervisa la memoria Heap y libera automáticamente los objetos que la aplicación ya no utiliza.", "isCorrect": true, "orderIndex": 1 },
+            { "content": "##### Traduce el CIL a código máquina", "explanation": "Esa tarea corresponde al compilador JIT del CLR.", "isCorrect": false, "orderIndex": 2 },
+            { "content": "##### Cierra archivos y conexiones abiertas", "explanation": "El GC administra únicamente la memoria; los archivos y conexiones los cierra el programador.", "isCorrect": false, "orderIndex": 3 },
+            { "content": "##### Compila los archivos `.cs`", "explanation": "Compilar el código fuente es trabajo del compilador Roslyn, que forma parte del SDK.", "isCorrect": false, "orderIndex": 4 }
+          ]
+        },
+        {
+          "id": "exercise_lesson_01_12",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "#### Tu programa abre un archivo y luego deja de usarlo. ¿Quién debe cerrarlo?",
+          "xp": 100,
+          "orderIndex": 12,
+          "options": [
+            { "content": "##### El Recolector de Basura (GC)", "explanation": "El GC administra solo la memoria; no cierra archivos ni conexiones.", "isCorrect": false, "orderIndex": 1 },
+            { "content": "##### El compilador JIT", "explanation": "El JIT solo traduce el CIL a código máquina.", "isCorrect": false, "orderIndex": 2 },
+            { "content": "##### El CLR de forma automática", "explanation": "El CLR administra la memoria, pero no cierra recursos del sistema como archivos o conexiones.", "isCorrect": false, "orderIndex": 3 },
+            { "content": "##### El programador, por ejemplo con `using`", "explanation": "Los recursos del sistema los cierra el programador; la lección lo retoma con la sentencia using en el Módulo 4.", "isCorrect": true, "orderIndex": 4 }
+          ]
+        },
+        {
+          "id": "exercise_lesson_01_13",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "#### ¿Cuál es el orden correcto del ciclo de ejecución de un programa C#?",
+          "xp": 100,
+          "orderIndex": 13,
+          "options": [
+            { "content": "##### `.cs` → CLR → Roslyn → ensamblado", "explanation": "El compilador debe actuar antes de que el CLR ejecute el programa.", "isCorrect": false, "orderIndex": 1 },
+            { "content": "##### `.cs` → Roslyn → ensamblado → CLR", "explanation": "Roslyn compila el código fuente en un ensamblado, y luego el CLR lo ejecuta con JIT y GC hasta producir instrucciones nativas.", "isCorrect": true, "orderIndex": 2 },
+            { "content": "##### Ensamblado → Roslyn → `.cs` → CLR", "explanation": "El ensamblado es el resultado de compilar, no el punto de partida.", "isCorrect": false, "orderIndex": 3 },
+            { "content": "##### `.cs` → ensamblado → JIT → Roslyn", "explanation": "Roslyn es el compilador, así que actúa antes de obtener el ensamblado.", "isCorrect": false, "orderIndex": 4 }
+          ]
+        },
+        {
+          "id": "exercise_lesson_01_14",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "#### ¿Qué configura el archivo `.csproj`?",
+          "xp": 100,
+          "orderIndex": 14,
+          "options": [
+            { "content": "##### Agrupa varios proyectos relacionados", "explanation": "Esa es la función del archivo de solución (.sln o .slnx).", "isCorrect": false, "orderIndex": 1 },
+            { "content": "##### Contiene el código CIL compilado", "explanation": "El CIL se encuentra en el ensamblado, no en el archivo de proyecto.", "isCorrect": false, "orderIndex": 2 },
+            { "content": "##### Compilación, `<TargetFramework>` y paquetes externos", "explanation": "El .csproj contiene la configuración de compilación, la versión objetivo del marco de trabajo y las librerías o paquetes externos referenciados.", "isCorrect": true, "orderIndex": 3 },
+            { "content": "##### La lista de SDKs instalados", "explanation": "Los SDKs instalados se listan con el comando dotnet --list-sdks.", "isCorrect": false, "orderIndex": 4 }
+          ]
+        },
+        {
+          "id": "exercise_lesson_01_15",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "#### ¿Qué función cumple un archivo de solución (`.sln` o `.slnx`)?",
+          "xp": 100,
+          "orderIndex": 15,
+          "options": [
+            { "content": "##### Agrupar y organizar proyectos relacionados", "explanation": "La solución es un contenedor que agrupa uno o más proyectos relacionados para compilarlos o gestionarlos conjuntamente.", "isCorrect": true, "orderIndex": 1 },
+            { "content": "##### Definir el `<TargetFramework>`", "explanation": "Eso se configura en el archivo de proyecto .csproj.", "isCorrect": false, "orderIndex": 2 },
+            { "content": "##### Guardar el código compilado en CIL", "explanation": "El código CIL se guarda en el ensamblado .dll.", "isCorrect": false, "orderIndex": 3 },
+            { "content": "##### Reemplazar al CLR", "explanation": "El CLR es el motor de ejecución; la solución es solo un contenedor de proyectos.", "isCorrect": false, "orderIndex": 4 }
+          ]
+        },
+        {
+          "id": "exercise_lesson_01_16",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "#### ¿Qué comando vincula el proyecto `App` a una solución ya creada?",
+          "xp": 100,
+          "orderIndex": 16,
+          "options": [
+            { "content": "##### `dotnet new sln -n Sol`", "explanation": "Ese comando crea la solución; no vincula proyectos a ella.", "isCorrect": false, "orderIndex": 1 },
+            { "content": "##### `dotnet build`", "explanation": "Compila la solución, pero no vincula proyectos.", "isCorrect": false, "orderIndex": 2 },
+            { "content": "##### `dotnet run --project App`", "explanation": "Ejecuta el proyecto App, no lo vincula a una solución.", "isCorrect": false, "orderIndex": 3 },
+            { "content": "##### `dotnet sln add App/App.csproj`", "explanation": "Este comando agrega el archivo de proyecto App.csproj a la solución.", "isCorrect": true, "orderIndex": 4 }
+          ]
+        },
+        {
+          "id": "exercise_lesson_01_17",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "#### ¿Qué distingue la forma de trabajo de Visual Studio frente a Visual Studio Code?",
+          "xp": 100,
+          "orderIndex": 17,
+          "options": [
+            { "content": "##### VS trabaja por directorios; VS Code por soluciones", "explanation": "Es lo contrario: Visual Studio gira en torno a soluciones y VS Code a directorios de código.", "isCorrect": false, "orderIndex": 1 },
+            { "content": "##### VS trabaja por soluciones; VS Code por directorios", "explanation": "Visual Studio es un IDE orientado a soluciones (.sln); VS Code está centrado en directorios de código y añade C# con el C# Dev Kit.", "isCorrect": true, "orderIndex": 2 },
+            { "content": "##### VS es multiplataforma; VS Code solo funciona en Windows", "explanation": "Es al revés: Visual Studio Community es para Windows y Visual Studio Code es multiplataforma.", "isCorrect": false, "orderIndex": 3 },
+            { "content": "##### VS solo se usa en terminal; VS Code, en entorno gráfico", "explanation": "Visual Studio es un IDE con entorno gráfico; la diferencia entre ambos no depende de usar o no la terminal.", "isCorrect": false, "orderIndex": 4 }
+          ]
+        },
+        {
+          "id": "exercise_lesson_01_18",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "#### ¿Qué necesita Visual Studio Code para trabajar con C# de forma profesional?",
+          "xp": 100,
+          "orderIndex": 18,
+          "options": [
+            { "content": "##### Roslyn como extensión", "explanation": "Roslyn es un compilador incluido en el SDK, no una extensión de VS Code.", "isCorrect": false, "orderIndex": 1 },
+            { "content": "##### JetBrains Rider", "explanation": "Rider es otro IDE, no un complemento de Visual Studio Code.", "isCorrect": false, "orderIndex": 2 },
+            { "content": "##### El paquete de extensiones C# Dev Kit", "explanation": "VS Code requiere el C# Dev Kit, que incluye la extensión base de C#, para navegar por soluciones, usar IntelliSense avanzado y depurar.", "isCorrect": true, "orderIndex": 3 },
+            { "content": "##### Visual Studio Community instalado", "explanation": "No es necesario: son entornos de desarrollo distintos entre los que se puede elegir.", "isCorrect": false, "orderIndex": 4 }
+          ]
+        },
+        {
+          "id": "exercise_lesson_01_19",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "#### Tras ejecutar `dotnet new console -n HolaMundo`, reemplazas el contenido de un archivo por este código. ¿De qué archivo se trata?\n\n```csharp\nConsole.WriteLine(\"¡Hola, C#!\");\n```",
+          "xp": 100,
+          "orderIndex": 19,
+          "options": [
+            { "content": "##### `Program.cs`", "explanation": "La plantilla genera Program.cs con un mensaje en inglés (Hello, World!), y su contenido se reemplaza por el nuevo código.", "isCorrect": true, "orderIndex": 1 },
+            { "content": "##### `HolaMundo.csproj`", "explanation": "El .csproj es el archivo de configuración del proyecto, no contiene el código del programa.", "isCorrect": false, "orderIndex": 2 },
+            { "content": "##### `HolaMundo.sln`", "explanation": "El .sln agrupa proyectos y no contiene código; además se crea con un comando distinto (dotnet new sln).", "isCorrect": false, "orderIndex": 3 },
+            { "content": "##### `HolaMundo.dll`", "explanation": "El .dll es el ensamblado resultante de compilar, no un archivo que se edite.", "isCorrect": false, "orderIndex": 4 }
+          ]
+        },
+        {
+          "id": "exercise_lesson_01_20",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "#### Al ejecutar `dotnet run`, el sistema indica que `dotnet` no se reconoce como comando. ¿Qué debes revisar?",
+          "xp": 100,
+          "orderIndex": 20,
+          "options": [
+            { "content": "##### Que el `.csproj` tenga `<TargetFramework>`", "explanation": "Ese error indica que el sistema no encuentra el comando dotnet, no un problema de configuración del proyecto.", "isCorrect": false, "orderIndex": 1 },
+            { "content": "##### Que el programa genere un `.dll`", "explanation": "El error ocurre antes de compilar: el sistema ni siquiera reconoce el comando dotnet.", "isCorrect": false, "orderIndex": 2 },
+            { "content": "##### Que VS Code tenga el C# Dev Kit", "explanation": "El C# Dev Kit es del editor; el error se debe a que el sistema no encuentra dotnet.", "isCorrect": false, "orderIndex": 3 },
+            { "content": "##### La instalación del SDK y su ruta en PATH", "explanation": "Si dotnet no se reconoce, hay que revisar la instalación del SDK y que su ruta esté en la variable de entorno PATH.", "isCorrect": true, "orderIndex": 4 }
+          ]
+        },
+        {
+          "id": "exercise_lesson_01_21",
+          "type": "FLASHCARD",
+          "instruction": "#### ¿Cuál es la diferencia fundamental entre el .NET SDK y el .NET Runtime?",
+          "answer": "El SDK (Software Development Kit) sirve para crear y compilar programas: incluye los compiladores como Roslyn, las plantillas de proyecto y la CLI dotnet, y además contiene internamente el Runtime. El Runtime (CLR + BCL) es el paquete mínimo que se instala en una máquina cliente o servidor únicamente para ejecutar aplicaciones ya compiladas. En terminal se pueden comprobar con dotnet --list-sdks y dotnet --list-runtimes.",
+          "xp": 100,
+          "orderIndex": 21,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_22",
+          "type": "FLASHCARD",
+          "instruction": "#### ¿Por qué se dice que una aplicación en C# es código administrado?",
+          "answer": "Porque el código fuente .cs no se traduce directamente en instrucciones para la CPU, sino en CIL (Common Intermediate Language) dentro de un ensamblado. Al ejecutarse, el CLR lo supervisa: compila el CIL a código máquina con JIT, garantiza la seguridad de tipos y libera automáticamente la memoria Heap mediante el Recolector de Basura. El programador no gestiona la memoria de forma manual, aunque sí debe cerrar archivos y conexiones, porque el GC solo administra memoria.",
+          "xp": 100,
+          "orderIndex": 22,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_23",
+          "type": "FLASHCARD",
+          "instruction": "#### Describe el recorrido de un programa C# desde el código fuente hasta que la CPU lo ejecuta.",
+          "answer": "El código fuente (.cs) lo procesa el compilador Roslyn, que emite un ensamblado (.dll) acompañado de un ejecutable anfitrión. Ese ensamblado contiene el código CIL, los metadatos (descripción de clases, métodos, propiedades y tipos) y el manifiesto (versión, identidad y dependencias externas). Al ejecutarlo, el CLR traduce con JIT cada método a código máquina nativo la primera vez que se invoca, y el GC libera la memoria Heap que ya no se usa, hasta producir las instrucciones nativas que ejecuta la CPU.",
+          "xp": 100,
+          "orderIndex": 23,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_24",
+          "type": "FLASHCARD",
+          "instruction": "#### Compara Visual Studio Community, Visual Studio Code y JetBrains Rider.",
+          "answer": "Visual Studio Community es un IDE completo para Windows, con diseñadores visuales, depuradores avanzados y gestión centralizada por soluciones (.sln). Visual Studio Code es un editor liviano y multiplataforma centrado en directorios de código; para C# necesita el paquete C# Dev Kit, que aporta navegación por soluciones, IntelliSense avanzado y depuración, y es gratuito para estudiantes, proyectos de código abierto y uso personal. JetBrains Rider es un IDE profesional multiplataforma enfocado en .NET, conocido por sus herramientas de refactorización y análisis estático de código.",
+          "xp": 100,
+          "orderIndex": 24,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_25",
+          "type": "FLASHCARD",
+          "instruction": "#### ¿Cómo creas y ejecutas un primer programa para comprobar que tu entorno está bien configurado, y qué haces si falla?",
+          "answer": "Se crea el proyecto con dotnet new console -n HolaMundo y se entra a su carpeta con cd HolaMundo. Luego se reemplaza el contenido de Program.cs por una línea con Console.WriteLine y el mensaje deseado, y se ejecuta con dotnet run. Si el mensaje aparece en la terminal, el SDK y la CLI están correctamente instalados. Si el sistema indica que dotnet no se reconoce como comando, hay que revisar la instalación del SDK y que su ruta esté en la variable de entorno PATH.",
+          "xp": 100,
+          "orderIndex": 25,
           "options": []
         }
       ]
