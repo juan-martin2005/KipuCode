@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "course": {
     "id": "java_module_01",
     "title": "Introducción al Ecosistema Java",
@@ -19,31 +19,31 @@
         {
           "id": "exercise_java_01",
           "type": "UNIQUE_CHOICE",
-          "instruction": "#### ¿En qué año comenzó el Proyecto Green, origen de Java?",
+          "instruction": "¿En qué año comenzó el Proyecto Green, origen de Java?",
           "answer": "",
           "orderIndex": 1,
           "xp": 20,
           "options": [
             {
-              "content": "##### 1991",
+              "content": "1991",
               "explanation": "El Proyecto Green inició en 1991 bajo el liderazgo de James Gosling y Patrick Naughton.",
               "isCorrect": true,
               "orderIndex": 1
             },
             {
-              "content": "##### 1995",
+              "content": "1995",
               "explanation": "1995 fue el año del lanzamiento oficial de Java, pero el proyecto inició en 1991.",
               "isCorrect": false,
               "orderIndex": 2
             },
             {
-              "content": "##### 1989",
+              "content": "1989",
               "explanation": "No corresponde al inicio del Proyecto Green.",
               "isCorrect": false,
               "orderIndex": 3
             },
             {
-              "content": "##### 2000",
+              "content": "2000",
               "explanation": "En el año 2000 fue el lanzamiento de C#, no de Java.",
               "isCorrect": false,
               "orderIndex": 4
@@ -53,31 +53,31 @@
         {
           "id": "exercise_java_02",
           "type": "UNIQUE_CHOICE",
-          "instruction": "#### ¿Qué significa el principio WORA en Java?",
+          "instruction": "¿Qué significa el principio WORA en Java?",
           "answer": "",
           "orderIndex": 2,
           "xp": 20,
           "options": [
             {
-              "content": "##### Write Once, Run Anywhere",
+              "content": "Write Once, Run Anywhere",
               "explanation": "Principio WORA: El código se compila a Bytecode y corre en cualquier JVM.",
               "isCorrect": true,
               "orderIndex": 1
             },
             {
-              "content": "##### Write Only, Read Always",
+              "content": "Write Only, Read Always",
               "explanation": "Incorrecto: WORA significa 'Write Once, Run Anywhere'.",
               "isCorrect": false,
               "orderIndex": 2
             },
             {
-              "content": "##### Work Often, Relax Always",
+              "content": "Work Often, Relax Always",
               "explanation": "Incorrecto: WORA significa 'Write Once, Run Anywhere'.",
               "isCorrect": false,
               "orderIndex": 3
             },
             {
-              "content": "##### Windows Only Runtime Architecture",
+              "content": "Windows Only Runtime Architecture",
               "explanation": "Incorrecto: Java es multiplataforma, no solo para Windows.",
               "isCorrect": false,
               "orderIndex": 4
@@ -87,7 +87,7 @@
         {
           "id": "exercise_java_03",
           "type": "FLASHCARD",
-          "instruction": "#### ¿Qué es el Bytecode en Java?",
+          "instruction": "¿Qué es el Bytecode en Java?",
           "answer": "Es el código intermedio independiente de la plataforma generado por el compilador (`javac`). Tiene extensión `.class` y es ejecutado directamente por la Máquina Virtual de Java (JVM).",
           "orderIndex": 3,
           "xp": 20,
