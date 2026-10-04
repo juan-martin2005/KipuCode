@@ -1,6 +1,7 @@
 package com.kipucode.data.repository
 
 import android.util.Log
+import com.kipucode.data.local.dao.ExerciseDao
 import com.kipucode.data.local.dao.LearningProgressDao
 import com.kipucode.data.mapper.toDomain
 import com.kipucode.data.mapper.toDto
@@ -25,6 +26,7 @@ import kotlin.time.Duration.Companion.milliseconds
 
 internal class LearningProgressRepositoryImpl @Inject constructor(
     private val learningProgressDao: LearningProgressDao,
+    private val exerciseDao: ExerciseDao,
     private val userRemoteDataSource: UserRemoteDataSource
 ) : LearningProgressRepository {
 
@@ -115,10 +117,20 @@ internal class LearningProgressRepositoryImpl @Inject constructor(
             // Descarga el historial de ejercicios del alumno desde Firestore
             val remoteList = userRemoteDataSource.getAllLearningProgress()
             if (remoteList.isNotEmpty()) {
-                learningProgressDao.insertAll(remoteList.map { it.toEntity(currentUid) })
+                val localExerciseIds = exerciseDao.getAllExerciseIds().toSet()
+                // Solo insertamos los ejercicios que existen en el catálogo local para evitar errores de Foreign Key
+                val validEntities = remoteList
+                    .filter { localExerciseIds.contains(it.exerciseId) }
+                    .map { it.toEntity(currentUid) }
+
+                if (validEntities.isNotEmpty()) {
+                    learningProgressDao.insertAll(validEntities)
+                    Log.d("LearningProgressRepo", "Sincronizados ${validEntities.size} ejercicios desde Firestore a SQLite (${remoteList.size - validEntities.size} ignorados por no pertenecer al catálogo local).")
+                }
             }
             Response.Success(Unit)
         } catch (e: Exception) {
+            Log.e("LearningProgressRepo", "Error al sincronizar ejercicios desde Firestore: ${e.message}", e)
             Response.Error(e.message ?: "Error al sincronizar ejercicios desde Firestore", ServerErrorType.FIRESTORE_ERROR)
         }
     }
@@ -148,7 +160,7 @@ internal class LearningProgressRepositoryImpl @Inject constructor(
 
             // 2. Sincronización en segundo plano hacia Firestore con timeout protegido
             try {
-                withTimeout(2000L.milliseconds) {
+                withTimeout(10000L.milliseconds) {
                     userRemoteDataSource.saveLearningProgress(updatedEntity.toDomain().toDto())
                 }
             } catch (e: Exception) {

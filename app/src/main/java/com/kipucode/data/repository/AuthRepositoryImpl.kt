@@ -4,6 +4,8 @@ import android.util.Log
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.kipucode.data.local.dao.ExerciseDao
+import com.kipucode.data.local.dao.LearningProgressDao
 import com.kipucode.data.local.dao.UserDao
 import com.kipucode.data.local.dao.UserProgressDao
 import com.kipucode.data.mapper.toDomain
@@ -24,17 +26,12 @@ import javax.inject.Inject
 //  IMPLEMENTACIÓN DEL CONTRATO AUTHREPOSITORY
 // ================================================================================================
 internal class AuthRepositoryImpl @Inject constructor(
-    // ============================================================================================
-    //  Instancia de AuthRemoteDataSource   ->  Acceso a datos de FirebaseAuth
-    //  Instancia de UserRemoteDataSource   ->  Acceso a datos de FireStore (USER & USER_PROGRESS)
-    //  Instancia de UserDao                ->  Acceso a datos de UserDao (Room)
-    //  Instancia de UserProgressDao        ->  Acceso a datos de UserProgressDao (Room)
-    //  Instancia de CourseRepository       ->  Sincronización de cursos al iniciar sesión
-    // ============================================================================================
     private val authRemoteDataSource: AuthRemoteDataSource,
     private val userRemoteDataSource: UserRemoteDataSource,
     private val userDao: UserDao,
     private val userProgressDao: UserProgressDao,
+    private val learningProgressDao: LearningProgressDao,
+    private val exerciseDao: ExerciseDao
 ): AuthRepository {     // Equivalente en java a hacer él (implements)
 
     //  ! IMPORTANTE
@@ -105,6 +102,24 @@ internal class AuthRepositoryImpl @Inject constructor(
 
             userDao.insert(userDto.toEntity())
             userProgressDao.insert(progressDto.toEntity())
+
+            // Sincronizar de inmediato el progreso de ejercicios FSRS que correspondan al catálogo local
+            try {
+                val remoteList = userRemoteDataSource.getAllLearningProgress()
+                if (remoteList.isNotEmpty()) {
+                    val localExerciseIds = exerciseDao.getAllExerciseIds().toSet()
+                    val validEntities = remoteList
+                        .filter { localExerciseIds.contains(it.exerciseId) }
+                        .map { it.toEntity(currentUser.uid) }
+
+                    if (validEntities.isNotEmpty()) {
+                        learningProgressDao.insertAll(validEntities)
+                        Log.d("AuthRepository", "Sincronizados ${validEntities.size} ejercicios desde Firestore en login.")
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("AuthRepository", "Error al precargar progreso de ejercicios en login: ${e.message}", e)
+            }
 
             Response.Success(userDto.toDomain())
         }

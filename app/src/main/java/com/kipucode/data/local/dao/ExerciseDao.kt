@@ -27,4 +27,7 @@ interface ExerciseDao {
 
     @Query("DELETE FROM exercises WHERE lesson_id = :lessonId")
     suspend fun deleteExercisesByLessonId(lessonId: String)
+
+    @Query("SELECT id FROM exercises")
+    suspend fun getAllExerciseIds(): List<String>
 }
