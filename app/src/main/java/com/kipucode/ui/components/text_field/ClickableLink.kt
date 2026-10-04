@@ -48,13 +48,3 @@ fun ClickableLink(
         modifier = modifier
     )
 }
-
-//@Preview(showBackground = true, name = "Fragmento de Texto Clickable")
-//@Composable
-//fun ClickableLinkPreview() {
-//    ClickableLink(
-//        normalText = "Test sin click, ",
-//        linkText = "Test Clickable",
-//        onLinkClick = {}
-//    )
-//}

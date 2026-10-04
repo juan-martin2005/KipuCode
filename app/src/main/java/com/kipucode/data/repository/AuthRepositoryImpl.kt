@@ -95,11 +95,6 @@ internal class AuthRepositoryImpl @Inject constructor(
                 )
             }
 
-//            val syncResult = courseRepository.refreshCoursesAndLessons()
-//            if(syncResult !is Response.Success)
-//                return@safeFirebaseCall Response
-//                    .Error("Error syncing courses during login", ErrorType.FIRESTORE_ERROR)
-
             userDao.insert(userDto.toEntity())
             userProgressDao.insert(progressDto.toEntity())
 

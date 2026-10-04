@@ -40,9 +40,7 @@ import com.kipucode.R
 import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.Gray
 import com.kipucode.ui.theme.KipuDarkBlue
-import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.Nunito
-import com.kipucode.ui.theme.White
 import kotlinx.coroutines.delay
 import java.time.LocalTime
 import kotlin.time.Duration.Companion.milliseconds

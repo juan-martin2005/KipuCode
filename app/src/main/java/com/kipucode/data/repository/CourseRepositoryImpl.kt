@@ -1,39 +1,25 @@
 package com.kipucode.data.repository
 
-import com.kipucode.data.local.dao.BlockOptionDao
+import com.kipucode.data.local.DatabaseSeedService
 import com.kipucode.data.local.dao.CourseDao
-import com.kipucode.data.local.dao.ExerciseDao
-import com.kipucode.data.local.dao.LessonDao
 import com.kipucode.data.mapper.toDomain
-import com.kipucode.data.remote.firebase.service.CourseRemoteDataSource
-import com.kipucode.data.remote.firebase.service.ExerciseRemoteDataSource
-import com.kipucode.data.remote.firebase.service.LessonRemoteDataSource
 import com.kipucode.domain.model.CourseDomain
 import com.kipucode.domain.model.CourseWithLessonsDomain
-import com.kipucode.domain.model.ServerErrorType
 import com.kipucode.domain.model.Response
+import com.kipucode.domain.model.ServerErrorType
 import com.kipucode.domain.repository.CourseRepository
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
-import kotlin.collections.map
-
-import com.kipucode.data.local.DatabaseSeedService
 import kotlinx.coroutines.flow.onStart
+import javax.inject.Inject
 
 // ===============================================================================================
 //  IMPLEMENTACIÓN DEL CONTRATO COURSE_REPOSITORY
 // ===============================================================================================
 internal class CourseRepositoryImpl @Inject constructor(
-    private val courseRemoteDataSource: CourseRemoteDataSource,
-    private val lessonRemoteDataSource: LessonRemoteDataSource,
-    private val exerciseRemoteDataSource: ExerciseRemoteDataSource,
     private val databaseSeedService: DatabaseSeedService,
-    private val courseDao: CourseDao,
-    private val lessonDao: LessonDao,
-    private val exerciseDao: ExerciseDao,
-    private val blockOptionDao: BlockOptionDao
+    private val courseDao: CourseDao
 ): CourseRepository {
 
     // ===========================================================================================
@@ -74,36 +60,4 @@ internal class CourseRepositoryImpl @Inject constructor(
             Response.Error("Error al inicializar cursos locales: ${ex.message}", ServerErrorType.FIRESTORE_ERROR)
         }
     }
-
-    // ===========================================================================================
-    //  Sincronización 'functions'
-    // ===========================================================================================
-//    private suspend fun syncLessonsAndExercisesForCourse(courseId: String) = coroutineScope {
-//        val remoteLessons = lessonRemoteDataSource.getLessonByCourseId(courseId)
-//        lessonDao.insertAll(remoteLessons.map { it.toEntity() })
-//
-//        // Ejecutar la sincronización de ejercicios de forma concurrente por cada lección
-//        remoteLessons.map { lesson ->
-//            async { syncExercisesForLesson(lesson.id) }
-//        }.awaitAll()
-//    }
-//
-//    private suspend fun syncExercisesForLesson(lessonId: String) {
-//        val remoteExercises = exerciseRemoteDataSource.getExercisesByLessonId(lessonId)
-//
-//        // Limpiar ejercicios antiguos y guardar los nuevos de la lección
-//        exerciseDao.deleteExercisesByLessonId(lessonId)
-//        exerciseDao.insertAll(remoteExercises.map { it.toEntity() })
-//
-//        // Extraer y agrupar todas las opciones (BlockOptions) en una sola lista para un insert masivo
-//        val allBlockOptions = remoteExercises.flatMap { exerciseDto ->
-//            exerciseDto.options.map { optionDto ->
-//                optionDto.toEntity(exerciseId = exerciseDto.id)
-//            }
-//        }
-//
-//        if (allBlockOptions.isNotEmpty()) {
-//            blockOptionDao.insertAll(allBlockOptions)
-//        }
-//    }
 }

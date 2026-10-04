@@ -6,7 +6,6 @@ import com.google.firebase.firestore.toObject
 import com.kipucode.data.remote.firebase.dto.LearningProgressDto
 import com.kipucode.data.remote.firebase.dto.UserDto
 import com.kipucode.data.remote.firebase.dto.UserProgressDto
-import com.kipucode.domain.model.UserDomain
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 

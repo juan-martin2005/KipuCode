@@ -166,13 +166,6 @@ class ExerciseViewModel @Inject constructor(
         }
     }
 
-    // Regresa al ejercicio anterior
-//    fun previousExercise() {
-//        if (_currentExerciseIndex.value > 0) {
-//            _currentExerciseIndex.value -= 1
-//        }
-//    }
-
     // Flash Card Exercise
 
     fun rateFlashCard(ratingValue: Int, lessonId: String) {
