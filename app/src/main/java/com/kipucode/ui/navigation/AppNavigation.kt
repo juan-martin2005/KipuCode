@@ -1,10 +1,18 @@
 package com.kipucode.ui.navigation
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
+import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -33,7 +41,11 @@ fun AppNavigation() {
     NavHost(
         navController = navController,
         startDestination = SplashRoute,
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        enterTransition = { fadeIn(animationSpec = tween(200)) },
+        exitTransition = { fadeOut(animationSpec = tween(200)) },
+        popEnterTransition = { fadeIn(animationSpec = tween(200)) },
+        popExitTransition = { fadeOut(animationSpec = tween(200)) }
     ) {
         composable<SplashRoute> {
             val authViewModel: AuthViewModel = hiltViewModel()
@@ -109,7 +121,28 @@ fun AppNavigation() {
             )
         }
 
-        composable<HomeRoute> {
+        composable<HomeRoute>(
+            exitTransition = {
+                if (targetState.destination.hasRoute(LessonRoute::class)) {
+                    slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Down,
+                        animationSpec = tween(300, easing = FastOutSlowInEasing)
+                    ) + fadeOut(animationSpec = tween(300))
+                } else {
+                    fadeOut(animationSpec = tween(200))
+                }
+            },
+            popEnterTransition = {
+                if (initialState.destination.hasRoute(LessonRoute::class)) {
+                    slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Up,
+                        animationSpec = tween(250, easing = FastOutSlowInEasing)
+                    ) + fadeIn(animationSpec = tween(250))
+                } else {
+                    fadeIn(animationSpec = tween(200))
+                }
+            }
+        ) {
             HomeScreen(
                 navController = navController,
                 onNavigateToCode = { lessonId ->
@@ -118,7 +151,28 @@ fun AppNavigation() {
             )
         }
 
-        composable<ExploreRoute> {
+        composable<ExploreRoute>(
+            exitTransition = {
+                if (targetState.destination.hasRoute(LessonRoute::class)) {
+                    slideOutOfContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Down,
+                        animationSpec = tween(300, easing = FastOutSlowInEasing)
+                    ) + fadeOut(animationSpec = tween(300))
+                } else {
+                    fadeOut(animationSpec = tween(200))
+                }
+            },
+            popEnterTransition = {
+                if (initialState.destination.hasRoute(LessonRoute::class)) {
+                    slideIntoContainer(
+                        towards = AnimatedContentTransitionScope.SlideDirection.Up,
+                        animationSpec = tween(250, easing = FastOutSlowInEasing)
+                    ) + fadeIn(animationSpec = tween(250))
+                } else {
+                    fadeIn(animationSpec = tween(200))
+                }
+            }
+        ) {
             ExploreScreen(
                 userViewModel = userViewModel,
                 navController = navController,
@@ -154,7 +208,26 @@ fun AppNavigation() {
             )
         }
 
-        composable<LessonRoute> { backStackEntry ->
+        composable<LessonRoute>(
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Down,
+                    animationSpec = tween(300, easing = FastOutSlowInEasing)
+                )
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(200))
+            },
+            popEnterTransition = {
+                fadeIn(animationSpec = tween(200))
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Up,
+                    animationSpec = tween(250, easing = FastOutLinearInEasing)
+                )
+            }
+        ) { backStackEntry ->
             val route = backStackEntry.toRoute<LessonRoute>()
             LessonScreen(
                 lessonId = route.lessonId,
@@ -171,7 +244,26 @@ fun AppNavigation() {
             )
         }
 
-        composable<ExerciseRoute> { backStackEntry ->
+        composable<ExerciseRoute>(
+            enterTransition = {
+                slideIntoContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start,
+                    animationSpec = tween(300, easing = FastOutSlowInEasing)
+                )
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(200))
+            },
+            popEnterTransition = {
+                fadeIn(animationSpec = tween(200))
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.End,
+                    animationSpec = tween(250, easing = FastOutLinearInEasing)
+                )
+            }
+        ) { backStackEntry ->
             val route = backStackEntry.toRoute<ExerciseRoute>()
             ExerciseScreen(
                 lessonId = route.lessonId,
