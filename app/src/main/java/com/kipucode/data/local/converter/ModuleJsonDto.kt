@@ -11,6 +11,7 @@ import com.kipucode.data.local.model.LessonEntity
 // ============================================================================================
 
 data class ModuleJsonDto(
+    @SerializedName("version") val version: Int = 1,
     @SerializedName("course") val course: CourseJsonDto,
     @SerializedName("lessons") val lessons: List<LessonJsonDto> = emptyList()
 )

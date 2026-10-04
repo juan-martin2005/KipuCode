@@ -28,21 +28,25 @@ class DatabaseSeedService @Inject constructor(
     companion object {
         private const val TAG = "DatabaseSeedService"
         private const val DATA_ROOT = "data"
-        private val TRACKS = listOf("c_sharp")
+        private const val PREFS_NAME = "kipu_content_version_prefs"
+        private const val KEY_VERSION_PREFIX = "installed_version_"
+        private val DEFAULT_TRACKS = listOf("c_sharp", "java")
     }
 
     suspend fun seedIfNeeded() {
         try {
             val gson = Gson()
+            val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
-            // Carga modular jerárquica por lenguajes/tracks
-            for (track in TRACKS) {
-                val coursesInTrack = courseDao.getCoursesCountByTrack(track)
-                if (coursesInTrack > 0) {
-                    Log.d(TAG, "Track '$track' ya poblado ($coursesInTrack cursos en SQLite). Omitiendo.")
-                    continue
-                }
+            // Detección dinámica de carpetas de tracks en assets/data
+            val assetTracks = try {
+                context.assets.list(DATA_ROOT)?.filter { !it.contains(".") } ?: emptyList()
+            } catch (e: Exception) {
+                emptyList()
+            }
+            val tracks = (assetTracks + DEFAULT_TRACKS).distinct()
 
+            for (track in tracks) {
                 val folderPath = "$DATA_ROOT/$track"
                 val files = try {
                     context.assets.list(folderPath) ?: emptyArray()
@@ -53,16 +57,39 @@ class DatabaseSeedService @Inject constructor(
                 val jsonFiles = files.filter { it.endsWith(".json") }.sorted()
                 if (jsonFiles.isEmpty()) continue
 
+                val coursesInTrack = courseDao.getCoursesCountByTrack(track)
+                val isTrackEmpty = coursesInTrack == 0
+
                 val coursesToInsert = mutableListOf<CourseEntity>()
                 val lessonsToInsert = mutableListOf<LessonEntity>()
                 val exercisesToInsert = mutableListOf<ExerciseEntity>()
                 val optionsToInsert = mutableListOf<BlockOptionEntity>()
+                val versionsToPersist = mutableMapOf<String, Int>()
 
                 for (fileName in jsonFiles) {
                     val filePath = "$folderPath/$fileName"
-                    Log.d(TAG, "Cargando módulo jerárquico desde: $filePath")
-                    val jsonString = context.assets.open(filePath).bufferedReader().use { it.readText() }
+                    val jsonString = try {
+                        context.assets.open(filePath).bufferedReader().use { it.readText() }
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Error al leer archivo de módulo: $filePath", e)
+                        continue
+                    }
+
                     val moduleDto = gson.fromJson(jsonString, ModuleJsonDto::class.java) ?: continue
+                    val courseId = moduleDto.course.id
+                    val fileVersion = moduleDto.version
+                    val installedVersion = prefs.getInt("$KEY_VERSION_PREFIX$courseId", 0)
+
+                    // Si el track ya tiene datos y la versión instalada es igual que la versión del archivo, omitir
+                    if (!isTrackEmpty && installedVersion == fileVersion) {
+                        Log.d(TAG, "Módulo '$courseId' al día (v$installedVersion). Omitiendo.")
+                        continue
+                    }
+
+                    Log.d(
+                        TAG,
+                        "Cargando/Actualizando módulo '$courseId' (v$installedVersion -> v$fileVersion) desde: $filePath"
+                    )
 
                     coursesToInsert.add(moduleDto.course.toEntity())
 
@@ -78,6 +105,8 @@ class DatabaseSeedService @Inject constructor(
                             }
                         }
                     }
+
+                    versionsToPersist[courseId] = fileVersion
                 }
 
                 if (coursesToInsert.isNotEmpty()) {
@@ -86,15 +115,22 @@ class DatabaseSeedService @Inject constructor(
                     exerciseDao.insertAll(exercisesToInsert)
                     blockOptionDao.insertAll(optionsToInsert)
 
-                    Log.d(TAG, "Track '$track' pre-poblado exitosamente: " +
-                            "${coursesToInsert.size} cursos, " +
-                            "${lessonsToInsert.size} lecciones, " +
-                            "${exercisesToInsert.size} ejercicios, " +
-                            "${optionsToInsert.size} opciones.")
+                    // Persistir las nuevas versiones de los módulos actualizados
+                    prefs.edit().apply {
+                        versionsToPersist.forEach { (courseId, version) ->
+                            putInt("$KEY_VERSION_PREFIX$courseId", version)
+                        }
+                    }.apply()
+
+                    Log.d(
+                        TAG,
+                        "Track '$track' sincronizado exitosamente: " +
+                                "${coursesToInsert.size} cursos actualizados/insertados."
+                    )
                 }
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Error al pre-poblar la base de datos desde assets: ${e.message}", e)
+            Log.e(TAG, "Error al pre-poblar o actualizar la base de datos desde assets: ${e.message}", e)
         }
     }
 }
