@@ -1,6 +1,5 @@
 [versions]
 agp = "9.2.1"
-composeMarkdown = "0.5.0"
 coreKtx = "1.18.0"
 gson = "2.14.0"
 hiltAndroid = "2.59.2"
@@ -18,7 +17,6 @@ roomVersion = "2.8.4"
 firebaseBom = "34.13.0"
 hiltNavigationCompose = "1.2.0"
 
-multiplatformMarkdown = "0.41.0"
 fsrs = "1.0.0"
 kotlinxSerialization = "1.7.3"
 
@@ -27,7 +25,6 @@ kotlinxSerialization = "1.7.3"
 fsrs = { module = "io.github.open-spaced-repetition:fsrs", version.ref = "fsrs" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
-compose-markdown = { module = "com.github.jeziellago:compose-markdown", version.ref = "composeMarkdown" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-auth = { module = "com.google.firebase:firebase-auth" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
@@ -53,12 +50,9 @@ androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-
 androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 
-multiplatform-markdown = { module = "com.mikepenz:multiplatform-markdown-renderer-m3", version.ref = "multiplatformMarkdown" }
-multiplatform-markdown-code = { module = "com.mikepenz:multiplatform-markdown-renderer-code", version.ref = "multiplatformMarkdown" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-

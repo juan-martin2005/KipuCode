@@ -38,11 +38,7 @@ import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.Nunito
 import com.kipucode.ui.theme.White
 import com.kipucode.viewmodel.AuthViewModel
-import dev.snipme.highlights.Highlights
-import dev.snipme.highlights.model.SyntaxThemes
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
@@ -53,11 +49,6 @@ fun SplashScreen(
     val animationState = remember { Animatable(0f) }
 
     LaunchedEffect(key1 = true) {
-        // Precarga del motor de sintaxis y Markdown en segundo plano
-        launch(Dispatchers.Default) {
-            Highlights.Builder().theme(SyntaxThemes.atom()).build()
-        }
-
         animationState.animateTo(
             targetValue = 1f,
             animationSpec = tween(durationMillis = 1000)
