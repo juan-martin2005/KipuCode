@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.kipucode.domain.model.LessonDomain
 import com.kipucode.domain.usecase.GetLessonByCourseUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -20,7 +21,7 @@ class LessonViewModel @Inject constructor (
     val lessonState: StateFlow<LessonDomain?> = _lessonState
 
     fun getLessonById(lessonId: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             getLessonUseCase.invoke(lessonId).collect { lesson ->
                 _lessonState.value = lesson
             }

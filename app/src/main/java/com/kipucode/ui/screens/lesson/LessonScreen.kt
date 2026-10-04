@@ -1,5 +1,9 @@
 package com.kipucode.ui.screens.lesson
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -32,6 +37,7 @@ import com.kipucode.ui.components.card.KipuDialog
 import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.viewmodel.LessonViewModel
+import kotlinx.coroutines.delay
 
 @Composable
 fun LessonScreen(
@@ -41,6 +47,8 @@ fun LessonScreen(
     onNavigateToExercises: (lessonId: String) -> Unit
 ) {
     var showExerciseDialog by remember { mutableStateOf(false) }
+    val isInPreview = LocalInspectionMode.current
+    var isTransitionSettled by remember { mutableStateOf(isInPreview) }
 
     val lesson by lessonViewModel.lessonState.collectAsStateWithLifecycle()
     val currentLesson = lesson
@@ -48,6 +56,15 @@ fun LessonScreen(
     LaunchedEffect(lessonId) {
         if (lessonId != null) {
             lessonViewModel.getLessonById(lessonId)
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        if (!isInPreview) {
+            // Permite que la animación de navegación (300ms) se asiente de forma fluida a 60/120 FPS
+            // antes de procesar el árbol pesado de Markdown en el hilo principal
+            delay(320)
+            isTransitionSettled = true
         }
     }
 
@@ -60,7 +77,7 @@ fun LessonScreen(
                 .background(BackgroundGray)
                 .padding(paddingValues)
         ) {
-            if (currentLesson != null) {
+            if (isTransitionSettled && currentLesson != null) {
                 LessonContent(
                     title = "Volver al Inicio",
                     content = currentLesson.content,
@@ -70,10 +87,15 @@ fun LessonScreen(
                     }
                 )
             } else {
+                KipuTopBar(
+                    title = "Volver al Inicio",
+                    onBackClick = onBack,
+                    modifier = Modifier.padding(top = 16.dp)
+                )
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(BackgroundGray),
+                        .weight(1f),
                     contentAlignment = Alignment.Center
                 ) {
                     CircularProgressIndicator(color = KipuTeal)
@@ -111,6 +133,18 @@ fun LessonContent(
     onClickBack: () -> Unit,
     onClickNext: () -> Unit
 ) {
+    val isInPreview = LocalInspectionMode.current
+    var isButtonVisible by remember { mutableStateOf(isInPreview) }
+
+    LaunchedEffect(content) {
+        if (!isInPreview) {
+            // Retardo breve (120ms) para que Markdown calcule y mida su layout en LazyColumn,
+            // previniendo que el botón "Siguiente" aparezca temporalmente pegado arriba (Layout Shift)
+            delay(120)
+            isButtonVisible = true
+        }
+    }
+
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
     ) {
@@ -130,17 +164,27 @@ fun LessonContent(
         }
 
         item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                FilledButton(
-                    textButton = "Siguiente",
-                    onClickFilledButton = onClickNext,
-                    modifier = Modifier.weight(1f).padding(bottom = 24.dp)
+            AnimatedVisibility(
+                visible = isButtonVisible,
+                enter = fadeIn(animationSpec = tween(350)) + slideInVertically(
+                    initialOffsetY = { 60 },
+                    animationSpec = tween(350)
                 )
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    FilledButton(
+                        textButton = "Siguiente",
+                        onClickFilledButton = onClickNext,
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(bottom = 24.dp)
+                    )
+                }
             }
         }
     }
