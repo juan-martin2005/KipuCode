@@ -4,6 +4,8 @@ import com.kipucode.data.local.model.LessonEntity
 import com.kipucode.data.remote.firebase.dto.LessonDto
 import com.kipucode.domain.model.LessonDomain
 
+import com.kipucode.data.local.converter.LessonBlockConverter
+
 // ===================================
 //  Room (Entity) -> Dominio
 // ===================================
@@ -13,9 +15,11 @@ fun LessonEntity.toDomain() =
         courseId = courseId,
         title = title,
         content = content,
+        blocks = LessonBlockConverter.parse(content),
         xp = xp,
         orderIndex = orderIndex
     )
+
 
 // ===================================
 //  Domain -> Room (Entity)

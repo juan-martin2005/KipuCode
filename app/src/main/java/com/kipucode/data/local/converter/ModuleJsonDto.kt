@@ -28,7 +28,7 @@ data class CourseJsonDto(
 data class LessonJsonDto(
     @SerializedName("id") val id: String = "",
     @SerializedName("title") val title: String = "",
-    @SerializedName("content") val content: String = "",
+    @SerializedName("content") val content: com.google.gson.JsonElement? = null,
     @SerializedName("orderIndex") val orderIndex: Int = 1,
     @SerializedName("xp") val xp: Int = 200,
     @SerializedName("exercises") val exercises: List<ExerciseJsonDto> = emptyList()
@@ -64,14 +64,22 @@ fun CourseJsonDto.toEntity(): CourseEntity = CourseEntity(
     xp = this.xp
 )
 
-fun LessonJsonDto.toEntity(courseId: String): LessonEntity = LessonEntity(
-    id = this.id,
-    courseId = courseId,
-    title = this.title,
-    content = this.content,
-    orderIndex = this.orderIndex,
-    xp = this.xp
-)
+fun LessonJsonDto.toEntity(courseId: String): LessonEntity {
+    val contentString = when {
+        this.content == null -> ""
+        this.content.isJsonPrimitive && this.content.asJsonPrimitive.isString -> this.content.asString
+        else -> this.content.toString()
+    }
+    return LessonEntity(
+        id = this.id,
+        courseId = courseId,
+        title = this.title,
+        content = contentString,
+        orderIndex = this.orderIndex,
+        xp = this.xp
+    )
+}
+
 
 fun ExerciseJsonDto.toEntity(lessonId: String): ExerciseEntity = ExerciseEntity(
     id = this.id,
