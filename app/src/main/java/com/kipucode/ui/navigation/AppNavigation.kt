@@ -173,11 +173,7 @@ fun AppNavigation() {
             }
         ) {
             ExploreScreen(
-                userViewModel = userViewModel,
-                navController = navController,
-                onNavigateToCode = { lessonId ->
-                    navController.navigate(LessonRoute(lessonId = lessonId))
-                }
+                navController = navController
             )
         }
 
@@ -235,9 +231,9 @@ fun AppNavigation() {
                         navController.popBackStack()
                     }
                 },
-                onNavigateToExercises = { id ->
+                onNavigateToExercises = { id, type ->
                     if (backStackEntry.lifecycle.currentState == Lifecycle.State.RESUMED) {
-                        navController.navigate(ExerciseRoute(lessonId = id))
+                        navController.navigate(ExerciseRoute(lessonId = id, type = type))
                     }
                 }
             )
@@ -267,6 +263,7 @@ fun AppNavigation() {
             ExerciseScreen(
                 lessonId = route.lessonId,
                 type = route.type,
+                onlyDue = route.onlyDue,
                 onBack = {
                     if (backStackEntry.lifecycle.currentState == Lifecycle.State.RESUMED) {
                         navController.popBackStack()

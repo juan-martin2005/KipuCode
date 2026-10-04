@@ -44,6 +44,7 @@ import com.kipucode.viewmodel.ExerciseViewModel
 fun ExerciseScreen(
     lessonId: String,
     type: String? = null,
+    onlyDue: Boolean = false,
     onBack: () -> Unit,
     onFinished: (ExerciseSessionData) -> Unit,
     exerciseViewModel: ExerciseViewModel = hiltViewModel()
@@ -53,9 +54,9 @@ fun ExerciseScreen(
     val completeState by exerciseViewModel.completeState.collectAsStateWithLifecycle()
     val isLoading = completeState is Response.Loading
 
-    LaunchedEffect(lessonId, type) {
+    LaunchedEffect(lessonId, type, onlyDue) {
         exerciseViewModel.resetExerciseProgress()
-        exerciseViewModel.loadExercises(lessonId, type = type)
+        exerciseViewModel.loadExercises(lessonId, type = type, onlyDue = onlyDue)
     }
 
     if (completeState is Response.Success) {
@@ -216,7 +217,7 @@ fun ExerciseScreenContent(
 fun ExerciseScreenContentPreview() {
     val exercise = ExerciseDomain(
         id = "ex_01",
-        type = "FLASHCARD",
+        type = "UNIQUE_CHOICE",
         lessonId = "",
         instruction = "Pregunta de prueba",
         orderIndex = 1,

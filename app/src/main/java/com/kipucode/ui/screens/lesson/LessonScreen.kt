@@ -45,7 +45,7 @@ fun LessonScreen(
     lessonId: String?,
     lessonViewModel: LessonViewModel = hiltViewModel(),
     onBack: () -> Unit,
-    onNavigateToExercises: (lessonId: String) -> Unit
+    onNavigateToExercises: (lessonId: String, type : String) -> Unit
 ) {
     var showExerciseDialog by remember { mutableStateOf(false) }
 
@@ -109,7 +109,7 @@ fun LessonScreen(
             },
             onConfirmClick = {
                 showExerciseDialog = false
-                onNavigateToExercises(currentLesson.id)
+                onNavigateToExercises(currentLesson.id, "UNIQUE_CHOICE")
             },
             iconTint = KipuTeal
         )

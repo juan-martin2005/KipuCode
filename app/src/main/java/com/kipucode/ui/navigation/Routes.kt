@@ -46,7 +46,8 @@ data class LessonRoute(
 @Serializable
 data class ExerciseRoute(
     val lessonId: String,
-    val type: String? = null
+    val type: String? = null,
+    val onlyDue: Boolean = false
 )
 
 @Serializable

@@ -6,6 +6,7 @@ import com.kipucode.domain.model.BlockOptionDomain
 import com.kipucode.domain.model.ExerciseDomain
 import com.kipucode.domain.model.Response
 import com.kipucode.domain.usecase.CompleteLessonUseCase
+import com.kipucode.domain.usecase.GetDueExercisesUseCase
 import com.kipucode.domain.usecase.GetExercisesByLessonUseCase
 import com.kipucode.domain.usecase.GetLessonByCourseUseCase
 import com.kipucode.domain.usecase.RecordExerciseAttemptUseCase
@@ -13,6 +14,7 @@ import com.kipucode.domain.usecase.RecordRatingAttemptUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -35,6 +37,7 @@ data class ExerciseSessionData(
 class ExerciseViewModel @Inject constructor(
     private val getExercisesUseCase: GetExercisesByLessonUseCase,
     private val getLessonUseCase: GetLessonByCourseUseCase,
+    private val getDueExercisesUseCase: GetDueExercisesUseCase,
     private val completeLessonUseCase: CompleteLessonUseCase,
     private val recordExerciseAttemptUseCase: RecordExerciseAttemptUseCase,
     private val recordRatingAttemptUseCase: RecordRatingAttemptUseCase
@@ -67,7 +70,7 @@ class ExerciseViewModel @Inject constructor(
     private val incorrectExerciseIds = mutableSetOf<String>()
     private var sessionStartTime: Long = 0L
 
-    fun loadExercises(lessonId: String, type: String? = null) {
+    fun loadExercises(lessonId: String, type: String? = null, onlyDue: Boolean = false) {
         sessionStartTime = System.currentTimeMillis()
         viewModelScope.launch {
             getLessonUseCase(lessonId).collect { lesson ->
@@ -76,20 +79,42 @@ class ExerciseViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            getExercisesUseCase(lessonId).collect { exercises ->
-                val filtered = if (type != null) {
-                    exercises.filter { it.type == type }
-                } else {
-                    exercises
+            if (onlyDue) {
+                combine(
+                    getExercisesUseCase(lessonId),
+                    getDueExercisesUseCase()
+                ) { exercises, dueProgressList ->
+                    val dueIds = dueProgressList.map { it.exerciseId }.toSet()
+                    exercises.filter { exercise ->
+                        val matchesType = if (type != null) exercise.type == type else true
+                        matchesType && dueIds.contains(exercise.id)
+                    }
+                }.collect { filtered ->
+                    if (_exercisesState.value.isEmpty() && filtered.isNotEmpty()) {
+                        _exercisesState.value = filtered
+                            .shuffled()
+                            .take(EXERCISES_PER_SESSION)
+                            .map { exercise ->
+                                exercise.copy(options = exercise.options.shuffled())
+                            }
+                    }
                 }
+            } else {
+                getExercisesUseCase(lessonId).collect { exercises ->
+                    val filtered = if (type != null) {
+                        exercises.filter { it.type == type }
+                    } else {
+                        exercises
+                    }
 
-                if (_exercisesState.value.isEmpty()) {
-                    _exercisesState.value = filtered
-                        .shuffled()
-                        .take(EXERCISES_PER_SESSION)
-                        .map { exercise ->
-                            exercise.copy(options = exercise.options.shuffled())
-                        }
+                    if (_exercisesState.value.isEmpty() && filtered.isNotEmpty()) {
+                        _exercisesState.value = filtered
+                            .shuffled()
+                            .take(EXERCISES_PER_SESSION)
+                            .map { exercise ->
+                                exercise.copy(options = exercise.options.shuffled())
+                            }
+                    }
                 }
             }
         }
