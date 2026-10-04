@@ -1,0 +1,56 @@
+{
+  "course": {
+    "id": "csharp_module_01",
+    "title": "Introducción al Ecosistema .NET y C#",
+    "description": "Conocer la historia de C#, el funcionamiento del Common Language Runtime (CLR), el compilador Roslyn y la ejecución de código en la plataforma .NET moderna.",
+    "track": "c_sharp",
+    "orderIndex": 1,
+    "xp": 0
+  },
+  "lessons": [
+    {
+      "id": "csharp_lesson_01",
+      "title": "Historia y Filosofía de C#",
+      "orderIndex": 1,
+      "xp": 200,
+      "content": "# 01 - Historia y Filosofía de C#\n\n> **Objetivo de Aprendizaje:**\n> Comprender los orígenes de C#, su evolución dentro de la plataforma .NET y cómo el **CIL (Common Intermediate Language)** y el **CLR** permiten un entorno seguro y de alto rendimiento.\n\n---\n\n## El origen de C#\n\nC# fue desarrollado por Microsoft a finales de los años 90 y presentado oficialmente en el año 2000, bajo el liderazgo de Anders Hejlsberg.\n\nNació como un lenguaje moderno, seguro y completamente orientado a objetos, diseñado específicamente para aprovechar la plataforma .NET.\n\n### Filosofía: .NET y el CLR\n\nEl código fuente en C# se compila primero a un lenguaje intermedio llamado **CIL (Common Intermediate Language)**. Posteriormente, el **CLR (Common Language Runtime)** se encarga de compilar ese código en tiempo de ejecución (JIT) a código máquina nativo, administrando automáticamente la memoria mediante el Garbage Collector.",
+      "exercises": [
+        {
+          "id": "exercise_csharp_01",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "#### ¿En qué año fue presentado oficialmente el lenguaje C#?",
+          "xp": 20,
+          "orderIndex": 1,
+          "options": [
+            { "content": "##### 2000", "explanation": "C# fue presentado por Microsoft en el año 2000 junto con la iniciativa .NET.", "isCorrect": true, "orderIndex": 1 },
+            { "content": "##### 1995", "explanation": "En 1995 fue el lanzamiento de Java, no de C#.", "isCorrect": false, "orderIndex": 2 },
+            { "content": "##### 1991", "explanation": "En 1991 inició el proyecto Green de Java.", "isCorrect": false, "orderIndex": 3 },
+            { "content": "##### 2010", "explanation": "Para 2010 ya se utilizaba C# 4.0.", "isCorrect": false, "orderIndex": 4 }
+          ]
+        },
+        {
+          "id": "exercise_csharp_02",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "#### ¿Quién lideró el diseño y desarrollo inicial de C# en Microsoft?",
+          "xp": 20,
+          "orderIndex": 2,
+          "options": [
+            { "content": "##### Anders Hejlsberg", "explanation": "Anders Hejlsberg, creador también de Turbo Pascal y TypeScript, lideró el diseño de C#.", "isCorrect": true, "orderIndex": 1 },
+            { "content": "##### James Gosling", "explanation": "James Gosling es el creador de Java.", "isCorrect": false, "orderIndex": 2 },
+            { "content": "##### Bjarne Stroustrup", "explanation": "Bjarne Stroustrup es el creador de C++.", "isCorrect": false, "orderIndex": 3 },
+            { "content": "##### Guido van Rossum", "explanation": "Guido van Rossum es el creador de Python.", "isCorrect": false, "orderIndex": 4 }
+          ]
+        },
+        {
+          "id": "exercise_csharp_03",
+          "type": "FLASHCARD",
+          "instruction": "#### ¿Qué es el CLR (Common Language Runtime) en .NET?",
+          "answer": "Es la máquina virtual y motor de ejecución de .NET que administra memoria, manejo de excepciones, seguridad y la compilación Just-In-Time (JIT) del código intermedio (CIL) a código máquina.",
+          "xp": 20,
+          "orderIndex": 3,
+          "options": []
+        }
+      ]
+    }
+  ]
+}

@@ -5,7 +5,6 @@ import com.kipucode.data.local.dao.CourseDao
 import com.kipucode.data.local.dao.ExerciseDao
 import com.kipucode.data.local.dao.LessonDao
 import com.kipucode.data.mapper.toDomain
-import com.kipucode.data.mapper.toEntity
 import com.kipucode.data.remote.firebase.service.CourseRemoteDataSource
 import com.kipucode.data.remote.firebase.service.ExerciseRemoteDataSource
 import com.kipucode.data.remote.firebase.service.LessonRemoteDataSource
@@ -14,15 +13,13 @@ import com.kipucode.domain.model.CourseWithLessonsDomain
 import com.kipucode.domain.model.ServerErrorType
 import com.kipucode.domain.model.Response
 import com.kipucode.domain.repository.CourseRepository
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import kotlin.collections.map
 
-import com.kipucode.data.local.seed.DatabaseSeedService
+import com.kipucode.data.local.DatabaseSeedService
 import kotlinx.coroutines.flow.onStart
 
 // ===============================================================================================
