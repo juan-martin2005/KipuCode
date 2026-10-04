@@ -95,6 +95,8 @@ class GetDueExercisesWithDetailsUseCaseTest {
         assertEquals("ex_01", item.exerciseId)
         assertEquals("lesson_01", item.lessonId)
         assertEquals("Introducción a Java", item.lessonTitle)
+        assertEquals("c_01", item.courseId)
+        assertEquals("Java Básico", item.courseTitle)
         assertEquals("FLASHCARD", item.exerciseType)
         assertEquals(85, item.retentionPercentage)
         assertEquals(3.5, item.stability, 0.001)

@@ -1,7 +1,9 @@
 package com.kipucode.domain.usecase
 
+import com.kipucode.domain.model.CourseDomain
 import com.kipucode.domain.model.DueExerciseDomain
 import com.kipucode.domain.model.LearningProgressDomain
+import com.kipucode.domain.model.LessonDomain
 import com.kipucode.domain.model.Response
 import com.kipucode.domain.repository.CourseRepository
 import com.kipucode.domain.repository.ExerciseRepository
@@ -9,6 +11,7 @@ import com.kipucode.domain.repository.LearningProgressRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 // ============================================================================================
 //  CASOS DE USO ENCAPSULADOS EN LEARNING_PROGRESS_REPOSITORY (FSRS-6)
@@ -59,7 +62,7 @@ class RefreshLearningProgressUseCase @Inject constructor(
 }
 
 // ============================================================================================
-//  CASO DE USO: OBTENER EJERCICIOS VENCIDOS CON METADATOS DE LECCIÓN Y FSRS
+//  CASO DE USO: OBTENER EJERCICIOS VENCIDOS CON METADATOS DE LECCIÓN Y FSRS MENOR A 90%
 // ============================================================================================
 class GetDueExercisesWithDetailsUseCase @Inject constructor(
     private val learningProgressRepository: LearningProgressRepository,
@@ -73,17 +76,22 @@ class GetDueExercisesWithDetailsUseCase @Inject constructor(
             courseRepository.getCourseWithLessons()
         ) { dueProgressList, allExercises, coursesWithLessons ->
             val exerciseMap = allExercises.associateBy { it.id }
-            val lessonMap = coursesWithLessons
-                .flatMap { it.lessons }
-                .associateBy { it.id }
+            val lessonToCourseMap = mutableMapOf<String, Pair<LessonDomain, CourseDomain>>()
+            coursesWithLessons.forEach { cwl ->
+                cwl.lessons.forEach { lesson ->
+                    lessonToCourseMap[lesson.id] = lesson to cwl.course
+                }
+            }
 
             dueProgressList.mapNotNull { progress ->
                 val exercise = exerciseMap[progress.exerciseId] ?: return@mapNotNull null
-                val lesson = lessonMap[exercise.lessonId]
+                val pair = lessonToCourseMap[exercise.lessonId]
+                val lesson = pair?.first
+                val course = pair?.second
 
                 val retrievability = learningProgressRepository.calculateCardRetrievability(progress)
                 val retentionPct = if (retrievability > 0.0) {
-                    Math.round(retrievability * 100).toInt().coerceIn(1, 100)
+                    (retrievability * 100).roundToInt().coerceIn(1, 100)
                 } else {
                     if (progress.reps > 0) 50 else 0
                 }
@@ -92,12 +100,18 @@ class GetDueExercisesWithDetailsUseCase @Inject constructor(
                     exerciseId = progress.exerciseId,
                     lessonId = exercise.lessonId,
                     lessonTitle = lesson?.title ?: "Lección",
+                    courseId = course?.id ?: "",
+                    courseTitle = course?.title ?: "Módulo",
+                    courseOrderIndex = course?.orderIndex ?: 0,
+                    lessonOrderIndex = lesson?.orderIndex ?: 0,
                     exerciseType = exercise.type,
                     dueDate = progress.dueDate,
                     retentionPercentage = retentionPct,
                     stability = progress.stability
                 )
             }
+            .filter { it.retentionPercentage < 90 }
+            .sortedWith(compareBy({ it.retentionPercentage }, { it.dueDate }))
         }
     }
 }
