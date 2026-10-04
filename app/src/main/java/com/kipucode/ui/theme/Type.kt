@@ -32,20 +32,67 @@ val Typography = Typography(
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
     )
-    /* Other default text styles to override
-    titleLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 22.sp,
-        lineHeight = 28.sp,
-        letterSpacing = 0.sp
-    ),
-    labelSmall = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Medium,
-        fontSize = 11.sp,
-        lineHeight = 16.sp,
-        letterSpacing = 0.5.sp
-    )
-    */
 )
+
+// ============================================================================================
+//  TIPOGRAFÍAS ESTÁNDAR KIPUCODE (CENTRALIZADAS PARA LECCIONES Y COMPONENTES)
+// ============================================================================================
+
+val KipuH1 = TextStyle(
+    fontFamily = Nunito,
+    fontWeight = FontWeight.Black,
+    fontSize = 26.sp,
+    color = KipuTeal
+)
+
+val KipuH2 = TextStyle(
+    fontFamily = Nunito,
+    fontWeight = FontWeight.ExtraBold,
+    fontSize = 20.sp,
+    color = KipuTeal
+)
+
+val KipuH3 = TextStyle(
+    fontFamily = Nunito,
+    fontWeight = FontWeight.Bold,
+    fontSize = 18.sp,
+    color = KipuDarkBlue
+)
+
+val KipuH4 = TextStyle(
+    fontFamily = Nunito,
+    fontWeight = FontWeight.ExtraBold,
+    fontSize = 18.sp,
+    color = KipuDarkBlue
+)
+
+val KipuH5 = TextStyle(
+    fontFamily = Nunito,
+    fontWeight = FontWeight.Bold,
+    fontSize = 16.sp,
+    color = KipuDarkBlue
+)
+
+val KipuParagraph = TextStyle(
+    fontFamily = Nunito,
+    fontWeight = FontWeight.Medium,
+    fontSize = 15.sp,
+    lineHeight = 23.sp,
+    color = KipuDarkBlue
+)
+
+val KipuCodeText = TextStyle(
+    fontFamily = JetBrains,
+    fontWeight = FontWeight.Normal,
+    fontSize = 13.sp,
+    color = KipuDarkBlue
+)
+
+val KipuQuoteText = TextStyle(
+    fontFamily = Nunito,
+    fontWeight = FontWeight.Normal,
+    fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
+    fontSize = 15.sp,
+    color = KipuDarkBlue.copy(alpha = 0.85f)
+)
+
