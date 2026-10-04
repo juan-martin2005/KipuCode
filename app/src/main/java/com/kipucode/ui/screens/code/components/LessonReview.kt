@@ -75,7 +75,7 @@ fun CardExerciseReview(
     }
 
     val (typeLabel, typeIcon) = when (exerciseType.uppercase()) {
-        "FLASHCARD" -> "Flashcard" to R.drawable.ic_terminal_rounded
+        "FLASHCARD" -> "Flashcard" to R.drawable.ic_flash_card
         "UNIQUE_CHOICE" -> "Opción múltiple" to R.drawable.ic_quiz
         else -> (if (exerciseType.isNotBlank()) exerciseType else "Ejercicio") to R.drawable.ic_quiz
     }
