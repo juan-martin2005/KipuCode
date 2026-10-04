@@ -1,18 +1,30 @@
 package com.kipucode.ui.screens.explore
 
-import androidx.compose.foundation.BorderStroke
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,99 +33,93 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.kipucode.ui.navigation.ExerciseRoute
+import androidx.navigation.compose.rememberNavController
 import com.kipucode.R
 import com.kipucode.domain.model.CourseDomain
 import com.kipucode.domain.model.CourseWithLessonsDomain
 import com.kipucode.domain.model.LessonDomain
+import com.kipucode.domain.usecase.CognitiveMasteryOverview
 import com.kipucode.ui.components.KipuBottomBar
 import com.kipucode.ui.components.KipuTopBar
 import com.kipucode.ui.components.card.HomeCard
+import com.kipucode.ui.components.card.LessonCard
+import com.kipucode.ui.navigation.LessonRoute
 import com.kipucode.ui.theme.BackgroundGray
+import com.kipucode.ui.theme.Gray
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuTeal
-import com.kipucode.ui.theme.KipuTealDark
-import com.kipucode.ui.theme.MoonFrost
 import com.kipucode.ui.theme.Nunito
 import com.kipucode.viewmodel.CoursesViewModel
 import com.kipucode.viewmodel.UserViewModel
 
 @Composable
 fun ExploreScreen(
-    userViewModel: UserViewModel,
-    courseViewModel: CoursesViewModel = hiltViewModel(),
     navController: NavController,
-    onNavigateToCode: (String) -> Unit
+    coursesViewModel: CoursesViewModel = hiltViewModel(),
+    userViewModel: UserViewModel = hiltViewModel(),
+    onNavigateToLesson: (String) -> Unit = { lessonId ->
+        navController.navigate(LessonRoute(lessonId = lessonId))
+    }
 ) {
+    val coursesWithLessons by coursesViewModel.coursesWithLessonsState.collectAsStateWithLifecycle()
+    val masteryOverview by coursesViewModel.masteryOverviewState.collectAsStateWithLifecycle()
     val userProgress by userViewModel.userProgressState.collectAsStateWithLifecycle()
-    val coursesWithLessons by courseViewModel.coursesWithLessonsState.collectAsStateWithLifecycle()
-    val masteryOverview by courseViewModel.masteryOverviewState.collectAsStateWithLifecycle()
 
-    val progressData = userProgress
+    var isRefreshing by remember { mutableStateOf(false) }
+    var selectedCourseWithLessons by remember { mutableStateOf<CourseWithLessonsDomain?>(null) }
 
-    // Buscar el curso que contiene la lección actual para saber cuál es el track activo
-    val activeCourseWithLessons = coursesWithLessons.find { courseItem ->
-        courseItem.lessons.any { it.id == progressData?.currentLessonId }
+    // Intercepta el botón 'Atrás' de Android para volver a la lista de módulos si hay uno abierto
+    BackHandler(enabled = selectedCourseWithLessons != null) {
+        selectedCourseWithLessons = null
     }
 
-    val activeTrack = activeCourseWithLessons?.course?.track
+    // Filtrar módulos correspondientes al track activo del usuario
+    val activeCourse = coursesWithLessons.find { courseItem ->
+        courseItem.lessons.any { it.id == userProgress?.currentLessonId }
+    }
+    val activeTrack = activeCourse?.course?.track
 
-    // Filtrar para que solo se consideren los cursos del track actual
-    val filteredCoursesWithLessons = remember(coursesWithLessons, activeTrack) {
+    val filteredCourses = remember(coursesWithLessons, activeTrack) {
         if (activeTrack != null) {
             coursesWithLessons.filter { it.course.track == activeTrack }
         } else {
             coursesWithLessons
-        }
+        }.sortedBy { it.course.orderIndex }
     }
 
-    val activeCourseId = activeCourseWithLessons?.course?.id
-
-    val currentLessonOrderIndex = activeCourseWithLessons?.lessons?.find {
-        it.id == progressData?.currentLessonId
-    }?.orderIndex ?: 0
-
-    val completedCourses = progressData?.completedCourses ?: emptyList()
-
-    var selectedCourseWithLessons by remember { mutableStateOf<CourseWithLessonsDomain?>(null) }
-
-
     Scaffold(
-        bottomBar = {
-            KipuBottomBar(navController = navController)
-            },
+        bottomBar = { KipuBottomBar(navController = navController) },
         containerColor = BackgroundGray
     ) { paddingValues ->
-        Box(
+        PullToRefreshBox(
+            isRefreshing = isRefreshing,
+            onRefresh = {
+                isRefreshing = true
+                coursesViewModel.swipeToRefresh()
+                isRefreshing = false
+            },
             modifier = Modifier
                 .fillMaxSize()
-                .background(BackgroundGray)
                 .padding(paddingValues)
         ) {
             val selectedCourse = selectedCourseWithLessons
 
             if (selectedCourse != null) {
-                val course = selectedCourse.course
-                val lessons = selectedCourse.lessons.sortedBy { it.orderIndex }
-
-                ModuleExercisesContent(
-                    courseTitle = course.title,
-                    courseNumber = course.orderIndex,
-                    lessons = lessons,
+                // VISTA 2: LISTA DE LECCIONES DEL MÓDULO SELECCIONADO
+                ModuleLessonsContent(
+                    courseWithLessons = selectedCourse,
                     masteryOverview = masteryOverview,
-                    courseViewModel = courseViewModel,
+                    completedLessons = userProgress?.completedLessons ?: emptyList(),
                     onBackClick = { selectedCourseWithLessons = null },
-                    onExerciseTypeClick = { lessonId, type ->
-                        courseViewModel.onSelectLesson(lessonId)
-                        navController.navigate(ExerciseRoute(lessonId = lessonId, type = type))
+                    onLessonClick = { lessonId ->
+                        coursesViewModel.onSelectLesson(lessonId)
+                        onNavigateToLesson(lessonId)
                     }
                 )
             } else {
-                ExploreContent(
-                    coursesWithLessons = filteredCoursesWithLessons,
-                    activeCourseId = activeCourseId,
-                    completedCourses = completedCourses,
-                    activeCourseCurrentLessons = currentLessonOrderIndex,
+                // VISTA 1: LISTA DE MÓDULOS
+                ModulesListContent(
+                    coursesWithLessons = filteredCourses,
                     masteryOverview = masteryOverview,
                     onCourseClick = { selectedCourseWithLessons = it }
                 )
@@ -122,18 +128,11 @@ fun ExploreScreen(
     }
 }
 
-// ============================================================================================
-//  NUEVO DISEÑO: LISTADO DE LECCIONES CON CARDS DE TIPOS DE EJERCICIOS
-// ============================================================================================
 @Composable
-fun ModuleExercisesContent(
-    courseTitle: String,
-    courseNumber: Int,
-    lessons: List<LessonDomain>,
-    masteryOverview: com.kipucode.domain.usecase.CognitiveMasteryOverview,
-    courseViewModel: CoursesViewModel,
-    onBackClick: () -> Unit,
-    onExerciseTypeClick: (lessonId: String, type: String) -> Unit
+fun ModulesListContent(
+    coursesWithLessons: List<CourseWithLessonsDomain>,
+    masteryOverview: CognitiveMasteryOverview,
+    onCourseClick: (CourseWithLessonsDomain) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -143,44 +142,127 @@ fun ModuleExercisesContent(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         item {
-            KipuTopBar(
-                title = stringResource(id = R.string.back_to_modules),
-                onBackClick = onBackClick,
-                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
-            )
-
+            Spacer(modifier = Modifier.height(24.dp))
             Text(
-                text = "Módulo $courseNumber".uppercase(),
-                fontSize = 13.sp,
-                fontFamily = Nunito,
-                fontWeight = FontWeight.Bold,
-                color = KipuTealDark
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = courseTitle,
-                fontSize = 24.sp,
+                text = stringResource(id = R.string.modules),
+                fontSize = 28.sp,
                 fontFamily = Nunito,
                 fontWeight = FontWeight.ExtraBold,
                 color = KipuDarkBlue
             )
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(6.dp))
             Text(
-                text = "Selecciona el tipo de práctica interactiva que deseas realizar en cada lección.",
+                text = "Explora la ruta de aprendizaje y accede a cada módulo para ver sus lecciones.",
                 fontSize = 14.sp,
                 fontFamily = Nunito,
-                color = Color.Gray
+                color = Gray,
+                lineHeight = 20.sp
             )
             Spacer(modifier = Modifier.height(8.dp))
         }
 
-        items(lessons, key = { it.id }) { lesson ->
-            LessonExerciseSection(
-                lesson = lesson,
-                masteryOverview = masteryOverview,
-                courseViewModel = courseViewModel,
-                onExerciseTypeClick = onExerciseTypeClick
+        if (coursesWithLessons.isEmpty()) {
+            item {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 48.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = KipuTeal)
+                }
+            }
+        } else {
+            items(coursesWithLessons, key = { it.course.id }) { item ->
+                val course = item.course
+                val totalLessons = item.lessons.size
+                val courseMastery = masteryOverview.courseMastery[course.id]
+
+                HomeCard(
+                    courseName = course.title,
+                    totalLessons = totalLessons,
+                    courseNumber = course.orderIndex,
+                    masteryPercentage = courseMastery?.percentage,
+                    statusTag = courseMastery?.statusTag,
+                    modifier = Modifier.clickable { onCourseClick(item) }
+                )
+            }
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(24.dp))
+        }
+    }
+}
+
+@Composable
+fun ModuleLessonsContent(
+    courseWithLessons: CourseWithLessonsDomain,
+    masteryOverview: CognitiveMasteryOverview,
+    completedLessons: List<String>,
+    onBackClick: () -> Unit,
+    onLessonClick: (String) -> Unit
+) {
+    val course = courseWithLessons.course
+    val lessons = remember(courseWithLessons) { courseWithLessons.lessons.sortedBy { it.orderIndex } }
+    val courseMastery = masteryOverview.courseMastery[course.id]
+
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(BackgroundGray)
+            .padding(horizontal = 20.dp),
+        verticalArrangement = Arrangement.spacedBy(0.dp)
+    ) {
+        item {
+            KipuTopBar(
+                title = stringResource(id = R.string.back_to_modules),
+                onBackClick = onBackClick,
+                modifier = Modifier.padding(top = 16.dp, bottom = 12.dp)
             )
+
+            HomeCard(
+                courseName = course.title,
+                totalLessons = lessons.size,
+                courseNumber = course.orderIndex,
+                masteryPercentage = courseMastery?.percentage,
+                statusTag = courseMastery?.statusTag,
+                modifier = Modifier.padding(bottom = 20.dp)
+            )
+
+            Text(
+                text = stringResource(id = R.string.learning_journey),
+                fontSize = 20.sp,
+                fontFamily = Nunito,
+                fontWeight = FontWeight.ExtraBold,
+                color = KipuDarkBlue,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+        }
+
+        itemsIndexed(lessons, key = { _, lesson -> lesson.id }) { index, lesson ->
+            val isCompleted = lesson.id in completedLessons
+            val lessonMastery = masteryOverview.lessonMastery[lesson.id]?.percentage
+
+            LessonCard(
+                lessonId = lesson.id,
+                title = lesson.title,
+                isCompleted = isCompleted,
+                isLocked = false,
+                masteryPercentage = lessonMastery,
+                onLessonClick = onLessonClick
+            )
+
+            if (index < lessons.size - 1) {
+                Box(modifier = Modifier.padding(start = 28.dp)) {
+                    Spacer(
+                        modifier = Modifier
+                            .width(2.dp)
+                            .height(16.dp)
+                            .background(KipuTeal)
+                    )
+                }
+            }
         }
 
         item {
@@ -189,314 +271,19 @@ fun ModuleExercisesContent(
     }
 }
 
+@Preview(showBackground = true)
 @Composable
-fun LessonExerciseSection(
-    lesson: LessonDomain,
-    masteryOverview: com.kipucode.domain.usecase.CognitiveMasteryOverview,
-    courseViewModel: CoursesViewModel,
-    onExerciseTypeClick: (lessonId: String, type: String) -> Unit
-) {
-    val exercises by courseViewModel.getExercisesForLesson(lesson.id)
-        .collectAsStateWithLifecycle(initialValue = emptyList())
+fun ExploreScreenModulesPreview() {
+    val mockCourse = CourseDomain(id = "c1", title = "Fundamentos de C#", orderIndex = 1)
+    val mockLessons = listOf(
+        LessonDomain(id = "l1", courseId = "c1", title = "Variables y Tipos", orderIndex = 1),
+        LessonDomain(id = "l2", courseId = "c1", title = "Condicionales", orderIndex = 2)
+    )
+    val mockList = listOf(CourseWithLessonsDomain(mockCourse, mockLessons))
 
-    val flashcardsCount = remember(exercises) { exercises.count { it.type == "FLASHCARD" } }
-    val uniqueChoiceCount = remember(exercises) { exercises.count { it.type == "UNIQUE_CHOICE" } }
-    val lessonMastery = masteryOverview.lessonMastery[lesson.id]?.percentage ?: 0
-
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(32.dp)
-                        .background(MoonFrost.copy(alpha = 0.6f), RoundedCornerShape(8.dp)),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = "${lesson.orderIndex}",
-                        fontFamily = Nunito,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = KipuTealDark,
-                        fontSize = 15.sp
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(12.dp))
-
-                Text(
-                    text = lesson.title,
-                    fontFamily = Nunito,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp,
-                    color = KipuDarkBlue,
-                    modifier = Modifier.weight(1f)
-                )
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                Box(
-                    modifier = Modifier
-                        .background(
-                            color = when {
-                                lessonMastery >= 80 -> Color(0xFFE8F5E9)
-                                lessonMastery >= 40 -> Color(0xFFFFF3E0)
-                                else -> Color(0xFFF0F4F8)
-                            },
-                            shape = RoundedCornerShape(8.dp)
-                        )
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                ) {
-                    Text(
-                        text = "Dominio $lessonMastery%",
-                        fontSize = 11.sp,
-                        fontFamily = Nunito,
-                        fontWeight = FontWeight.Bold,
-                        color = when {
-                            lessonMastery >= 80 -> Color(0xFF2E7D32)
-                            lessonMastery >= 40 -> Color(0xFFE65100)
-                            else -> Color.Gray
-                        }
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            if (exercises.isEmpty()) {
-                Text(
-                    text = "Cargando ejercicios...",
-                    fontSize = 13.sp,
-                    fontFamily = Nunito,
-                    color = Color.Gray,
-                    modifier = Modifier.padding(vertical = 8.dp)
-                )
-            } else {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    if (flashcardsCount > 0) {
-                        ExerciseTypeCard(
-                            title = "Tarjetas de Memoria",
-                            description = "$flashcardsCount tarjetas interactivas de repaso activo (FSRS)",
-                            iconRes = R.drawable.ic_terminal_rounded,
-                            containerColor = MoonFrost.copy(alpha = 0.35f),
-                            accentColor = KipuTealDark,
-                            onClick = { onExerciseTypeClick(lesson.id, "FLASHCARD") }
-                        )
-                    }
-
-                    if (uniqueChoiceCount > 0) {
-                        ExerciseTypeCard(
-                            title = "Preguntas de Opción Múltiple",
-                            description = "$uniqueChoiceCount preguntas de comprensión teórica",
-                            iconRes = R.drawable.ic_quiz,
-                            containerColor = Color(0xFFF6F8FB),
-                            accentColor = KipuTeal,
-                            onClick = { onExerciseTypeClick(lesson.id, "UNIQUE_CHOICE") }
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun ExerciseTypeCard(
-    title: String,
-    description: String,
-    iconRes: Int,
-    containerColor: Color,
-    accentColor: Color,
-    onClick: () -> Unit
-) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick),
-        shape = RoundedCornerShape(14.dp),
-        colors = CardDefaults.cardColors(containerColor = containerColor),
-        border = BorderStroke(1.dp, accentColor.copy(alpha = 0.25f))
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(14.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(44.dp)
-                    .background(Color.White, RoundedCornerShape(12.dp)),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    painter = painterResource(id = iconRes),
-                    contentDescription = null,
-                    tint = accentColor,
-                    modifier = Modifier.size(24.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.width(14.dp))
-
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
-                Text(
-                    text = title,
-                    fontFamily = Nunito,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 15.sp,
-                    color = KipuDarkBlue
-                )
-                Spacer(modifier = Modifier.height(2.dp))
-                Text(
-                    text = description,
-                    fontFamily = Nunito,
-                    fontSize = 12.sp,
-                    color = Color.DarkGray
-                )
-            }
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            Icon(
-                painter = painterResource(id = R.drawable.ic_bent_arrow_right),
-                contentDescription = null,
-                tint = accentColor,
-                modifier = Modifier.size(20.dp)
-            )
-        }
-    }
-}
-
-@Composable
-fun ExploreContent(
-    coursesWithLessons: List<CourseWithLessonsDomain>,
-    activeCourseId: String?,
-    completedCourses: List<String>,
-    activeCourseCurrentLessons: Int,
-    masteryOverview: com.kipucode.domain.usecase.CognitiveMasteryOverview = com.kipucode.domain.usecase.CognitiveMasteryOverview(),
-    onCourseClick: (CourseWithLessonsDomain) -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(BackgroundGray)
-    ) {
-        if (coursesWithLessons.isEmpty()) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(color = KipuTeal)
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 24.dp),
-            ) {
-                item {
-                    Spacer(modifier = Modifier.height(40.dp))
-
-                    // --- SECCIÓN 1: TÍTULO ---
-                    Text(
-                        text = stringResource(id = R.string.modules),
-                        fontSize = 28.sp,
-                        fontFamily = Nunito,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = KipuDarkBlue
-                    )
-
-                    Spacer(modifier = Modifier.height(24.dp))
-                }
-
-                // --- LISTA DE CURSOS ---
-                items(coursesWithLessons) { item ->
-                    val course = item.course
-                    val totalLessons = item.lessons.size
-                    val courseMastery = masteryOverview.courseMastery[course.id]
-
-                    HomeCard(
-                        courseName = course.title,
-                        totalLessons = totalLessons,
-                        courseNumber = course.orderIndex,
-                        masteryPercentage = courseMastery?.percentage,
-                        statusTag = courseMastery?.statusTag,
-                        modifier = Modifier.clickable { onCourseClick(item) }
-                    )
-
-                    Spacer(modifier = Modifier.height(12.dp))
-                }
-            }
-        }
-    }
-}
-
-@Preview(showBackground = true, name = "Explore")
-@Composable
-fun ExplorePreview() {
-    MaterialTheme {
-        val mockLessonsModule1 = listOf(
-            LessonDomain(id = "l1", title = "Lección 1", orderIndex = 1),
-            LessonDomain(id = "l2", title = "Lección 2", orderIndex = 2)
-        )
-        val mockLessonsModule2 = listOf(
-            LessonDomain(id = "l3", title = "Lección 1", orderIndex = 1),
-            LessonDomain(id = "l4", title = "Lección 2", orderIndex = 2),
-            LessonDomain(id = "l5", title = "Lección 3", orderIndex = 3),
-            LessonDomain(id = "l6", title = "Lección 4", orderIndex = 4)
-        )
-        val mockLessonsModule3 = listOf(
-            LessonDomain(id = "l7", title = "Lección 1", orderIndex = 1)
-        )
-
-        val mockCoursesWithLessons = listOf(
-            CourseWithLessonsDomain(
-                course = CourseDomain(
-                    id = "python_module_01",
-                    title = "Introducción a Python",
-                    orderIndex = 1
-                ),
-                lessons = mockLessonsModule1
-            ),
-            CourseWithLessonsDomain(
-                course = CourseDomain(
-                    id = "python_module_02",
-                    title = "Variables y Tipos de Datos",
-                    orderIndex = 2
-                ),
-                lessons = mockLessonsModule2
-            ),
-            CourseWithLessonsDomain(
-                course = CourseDomain(
-                    id = "python_module_03",
-                    title = "Estructuras de Control",
-                    orderIndex = 3
-                ),
-                lessons = mockLessonsModule3
-            )
-        )
-
-        ExploreContent(
-            coursesWithLessons = mockCoursesWithLessons,
-            activeCourseId = "python_module_03",
-            completedCourses = listOf("python_module_01", "python_module_02"),
-            activeCourseCurrentLessons = 1,
-            onCourseClick = {}
-        )
-    }
+    ModulesListContent(
+        coursesWithLessons = mockList,
+        masteryOverview = CognitiveMasteryOverview(),
+        onCourseClick = {}
+    )
 }
