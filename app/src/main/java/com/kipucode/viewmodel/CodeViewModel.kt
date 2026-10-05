@@ -138,7 +138,7 @@ class CodeViewModel @Inject constructor(
         isRefreshing: Boolean
     ): CodeUiState {
         val progress = domainData.userProgress
-        val currentLessonId = progress?.currentLessonId.orEmpty()
+        val currentLessonId = progress?.lastVisitedLessonId.orEmpty()
 
         val activeCourse = domainData.coursesWithLessons.find { courseItem ->
             courseItem.lessons.any { it.id == currentLessonId }
