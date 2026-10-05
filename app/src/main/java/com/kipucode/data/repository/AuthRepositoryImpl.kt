@@ -8,6 +8,8 @@ import com.kipucode.data.local.dao.ExerciseDao
 import com.kipucode.data.local.dao.LearningProgressDao
 import com.kipucode.data.local.dao.UserDao
 import com.kipucode.data.local.dao.UserProgressDao
+import com.kipucode.data.mapper.toCompletedCoursesEntities
+import com.kipucode.data.mapper.toCompletedLessonsEntities
 import com.kipucode.data.mapper.toDomain
 import com.kipucode.data.mapper.toDto
 import com.kipucode.data.mapper.toEntity
@@ -31,7 +33,8 @@ internal class AuthRepositoryImpl @Inject constructor(
     private val userDao: UserDao,
     private val userProgressDao: UserProgressDao,
     private val learningProgressDao: LearningProgressDao,
-    private val exerciseDao: ExerciseDao
+    private val exerciseDao: ExerciseDao,
+    private val databaseSeedService: com.kipucode.data.local.DatabaseSeedService
 ): AuthRepository {     // Equivalente en java a hacer él (implements)
 
     //  ! IMPORTANTE
@@ -95,8 +98,15 @@ internal class AuthRepositoryImpl @Inject constructor(
                 )
             }
 
+            // Aseguramos que el catálogo local de cursos y lecciones esté pre-poblado antes de vincular el progreso
+            databaseSeedService.seedIfNeeded()
+
             userDao.insert(userDto.toEntity())
-            userProgressDao.insert(progressDto.toEntity())
+            userProgressDao.insertFullProgress(
+                progressDto.toEntity(),
+                progressDto.toCompletedLessonsEntities(),
+                progressDto.toCompletedCoursesEntities()
+            )
 
             // Sincronizar de inmediato el progreso de ejercicios FSRS que correspondan al catálogo local
             try {
@@ -125,7 +135,7 @@ internal class AuthRepositoryImpl @Inject constructor(
     // ============================================================================================
     override suspend fun register(userDomain: UserDomain, password: String): Response<UserDomain> {
         return safeFirebaseCall("REGISTER_ERROR"){
-            val initialLessonId = "java_lesson_01"
+            val initialLessonId = "csharp_lesson_01"
 
             val authResult = authRemoteDataSource.registerUserWithEmail(userDomain.email, password)
             val currentUser = authResult.user
@@ -137,8 +147,8 @@ internal class AuthRepositoryImpl @Inject constructor(
             val initialProgress = UserProgressDomain(
                 id = user.id,
                 userId = user.id,
-                currentLessonId = initialLessonId,
-                status = "IN_PROGRESS",
+                activeTrack = "c_sharp",
+                lastVisitedLessonId = initialLessonId,
                 streakDay = 1
             )
 

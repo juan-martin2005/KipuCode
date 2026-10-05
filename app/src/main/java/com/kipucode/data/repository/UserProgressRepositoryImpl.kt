@@ -2,6 +2,8 @@ package com.kipucode.data.repository
 
 import android.util.Log
 import com.kipucode.data.local.dao.UserProgressDao
+import com.kipucode.data.mapper.toCompletedCoursesEntities
+import com.kipucode.data.mapper.toCompletedLessonsEntities
 import com.kipucode.data.mapper.toDomain
 import com.kipucode.data.mapper.toDto
 import com.kipucode.data.mapper.toEntity
@@ -48,7 +50,7 @@ internal class UserProgressRepositoryImpl @Inject constructor(
         val currentUid = userRemoteDataSource.currentUserId
 
         return if (currentUid != null) {
-            userProgressDao.getUserProgress(currentUid).map { it?.toDomain() }
+            userProgressDao.getUserProgressWithDetails(currentUid).map { it?.toDomain() }
         } else {
             flowOf(null)
         }
@@ -62,7 +64,11 @@ internal class UserProgressRepositoryImpl @Inject constructor(
             val userProgressDto = userRemoteDataSource.getUserProgress()
 
             if (userProgressDto != null) {
-                userProgressDao.insert(userProgressDto.toEntity())
+                userProgressDao.insertFullProgress(
+                    userProgressDto.toEntity(),
+                    userProgressDto.toCompletedLessonsEntities(),
+                    userProgressDto.toCompletedCoursesEntities()
+                )
                 Response.Success(Unit)
             }else{
                 Response.Error(message = "Progress not found", error = ServerErrorType.FIRESTORE_ERROR)
@@ -77,7 +83,11 @@ internal class UserProgressRepositoryImpl @Inject constructor(
     // ===========================================================================================
     override suspend fun saveUserProgress(userProgress: UserProgressDomain): Response<Unit> {
         return try {
-            userProgressDao.insert(userProgress.toEntity())
+            userProgressDao.insertFullProgress(
+                userProgress.toEntity(),
+                userProgress.toCompletedLessonsEntities(),
+                userProgress.toCompletedCoursesEntities()
+            )
 
             val id = userRemoteDataSource.currentUserId
             if (id != null) {
@@ -100,7 +110,7 @@ internal class UserProgressRepositoryImpl @Inject constructor(
             val currentUid = userRemoteDataSource.currentUserId
                 ?: return Response.Error("Usuario no autenticado", ServerErrorType.FIRESTORE_ERROR)
 
-            val currentProgress = userProgressDao.getUserProgress(currentUid).first()?.toDomain()
+            val currentProgress = userProgressDao.getUserProgressWithDetails(currentUid).first()?.toDomain()
                 ?: return Response.Error("No se encontró el progreso del usuario", ServerErrorType.FIRESTORE_ERROR)
 
             val currentCourseWithLessons = coursesWithLessons.find { c -> c.lessons.any { it.id == completedLessonId } }
@@ -123,18 +133,18 @@ internal class UserProgressRepositoryImpl @Inject constructor(
                 currentProgress.completedCourses + currentCourseWithLessons.course.id
             } else currentProgress.completedCourses
 
-            // Determinar siguiente lección y estado
-            val (nextLessonId, newStatus) = determineNextStep(
+            // Determinar siguiente lección
+            val nextLessonId = determineNextStep(
                 currentProgress = currentProgress,
                 coursesWithLessons = coursesWithLessons,
-                updatedLessons = updatedLessons,
-                updatedXp = updatedXp,
                 justCompletedLessonId = completedLessonId
             )
 
             // Calcular Racha
             val now = System.currentTimeMillis()
             val newStreak = calculateStreak(currentProgress.completedAt, now, currentProgress.streakDay)
+
+            val courseTrack = currentCourseWithLessons.course.track
 
             // Construir y guardar el nuevo estado
             val updatedProgress = currentProgress.copy(
@@ -143,8 +153,8 @@ internal class UserProgressRepositoryImpl @Inject constructor(
                 totalXp = updatedXp,
                 lessonsXpRecord = updatedLessonsXpRecord,
                 streakDay = newStreak,
-                currentLessonId = nextLessonId,
-                status = newStatus,
+                activeTrack = courseTrack.ifEmpty { currentProgress.activeTrack },
+                lastVisitedLessonId = nextLessonId,
                 completedAt = now
             )
 
@@ -162,38 +172,39 @@ internal class UserProgressRepositoryImpl @Inject constructor(
     private fun determineNextStep(
         currentProgress: UserProgressDomain,
         coursesWithLessons: List<CourseWithLessonsDomain>,
-        updatedLessons: List<String>,
-        updatedXp: Int,
         justCompletedLessonId: String
-    ): Pair<String, String> {
-        val targetLessonId = if (justCompletedLessonId.isNotEmpty()) justCompletedLessonId else currentProgress.currentLessonId.orEmpty()
+    ): String {
+        val targetLessonId = if (justCompletedLessonId.isNotEmpty()) justCompletedLessonId else currentProgress.lastVisitedLessonId.orEmpty()
 
         val activeCourse = coursesWithLessons.find { c -> c.lessons.any { it.id == targetLessonId } }
-            ?: return targetLessonId to currentProgress.status.ifEmpty { "IN_PROGRESS" }
+            ?: return targetLessonId
 
         val lessonIdx = activeCourse.lessons.indexOfFirst { it.id == targetLessonId }
 
         // Hay una siguiente lección en el mismo curso
         if (lessonIdx != -1 && lessonIdx < activeCourse.lessons.size - 1) {
-            return activeCourse.lessons[lessonIdx + 1].id to "IN_PROGRESS"
+            return activeCourse.lessons[lessonIdx + 1].id
         }
 
         // Última lección del curso -> revisar el siguiente curso del mismo track
-        val activeTrack = activeCourse.course.track
+        val activeTrack = activeCourse.course.track.ifEmpty { currentProgress.activeTrack }
         val trackCourses = coursesWithLessons.filter { it.course.track == activeTrack }.sortedBy { it.course.orderIndex }
         val courseIdx = trackCourses.indexOfFirst { it.course.id == activeCourse.course.id }
 
         if (courseIdx != -1 && courseIdx < trackCourses.size - 1) {
             val nextCourse = trackCourses[courseIdx + 1]
-            val nextLessonId = nextCourse.lessons.firstOrNull()?.id ?: targetLessonId
-            return nextLessonId to "IN_PROGRESS"
+            return nextCourse.lessons.firstOrNull()?.id ?: targetLessonId
         }
 
-        return targetLessonId to "COMPLETED"
+        return targetLessonId
     }
 
     private suspend fun persistProgress(updatedProgress: UserProgressDomain) {
-        userProgressDao.insert(updatedProgress.toEntity())
+        userProgressDao.insertFullProgress(
+            updatedProgress.toEntity(),
+            updatedProgress.toCompletedLessonsEntities(),
+            updatedProgress.toCompletedCoursesEntities()
+        )
         try {
             withTimeout(2000L.milliseconds) {
                 userRemoteDataSource.createUserProgress(updatedProgress.toDto())

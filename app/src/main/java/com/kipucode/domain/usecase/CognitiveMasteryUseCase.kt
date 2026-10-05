@@ -95,8 +95,12 @@ class UpdateLastViewedLessonUseCase @Inject constructor(
     suspend operator fun invoke(lessonId: String) {
         try {
             val current = userProgressRepository.getUserProgress().first() ?: return
-            if (current.currentLessonId != lessonId) {
-                userProgressRepository.saveUserProgress(current.copy(currentLessonId = lessonId))
+            if (current.lastVisitedLessonId != lessonId) {
+                userProgressRepository.saveUserProgress(
+                    current.copy(
+                        lastVisitedLessonId = lessonId
+                    )
+                )
             }
         } catch (_: Exception) {}
     }
