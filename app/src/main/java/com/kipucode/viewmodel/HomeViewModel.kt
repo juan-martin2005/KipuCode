@@ -61,17 +61,19 @@ class HomeViewModel @Inject constructor(
             return@combine HomeUiState(isLoading = true, isRefreshing = isRefreshing)
         }
 
-        // 1. Encontrar el curso activo en el que está el alumno (con fallback al primer curso disponible)
+        // 1. Encontrar el curso activo en el que está el alumno (con fallback al track activo o primer curso disponible)
+        val activeLessonId = userProgress?.lastVisitedLessonId
         val activeCourseWithLessons = coursesWithLessons.find { courseItem ->
-            courseItem.lessons.any { it.id == userProgress?.currentLessonId }
-        } ?: coursesWithLessons.firstOrNull()
+            courseItem.lessons.any { it.id == activeLessonId }
+        } ?: coursesWithLessons.find { it.course.track == userProgress?.activeTrack }
+          ?: coursesWithLessons.firstOrNull()
 
         val courseData = activeCourseWithLessons?.course
         val lessonsData = activeCourseWithLessons?.lessons?.sortedBy { it.orderIndex } ?: emptyList()
 
         // 2. Orden de la lección actual
         val currentLessonOrderIndex = lessonsData.find {
-            it.id == userProgress?.currentLessonId
+            it.id == activeLessonId
         }?.orderIndex ?: 0
 
         // 3. Progreso de lecciones y dominio cognitivo FSRS
@@ -113,7 +115,7 @@ class HomeViewModel @Inject constructor(
             lessonMasteryMap = masteryOverview.lessonMastery,
             completedLessonIds = userProgress?.completedLessons ?: emptyList(),
             currentLessonOrderIndex = currentLessonOrderIndex,
-            currentLessonId = userProgress?.currentLessonId
+            currentLessonId = activeLessonId
         )
     }.stateIn(
         scope = viewModelScope,

@@ -48,8 +48,16 @@ class AuthViewModel @Inject constructor(
     private val registerUseCase: RegisterUseCase,
     private val isUserLoggedInUseCase: IsUserLoggedInUseCase,
     private val logoutUseCase: LogoutUseCase,
-    private val resetPasswordUseCase: ResetPasswordUseCase
+    private val resetPasswordUseCase: ResetPasswordUseCase,
+    private val refreshCoursesUseCase: com.kipucode.domain.usecase.RefreshCoursesUseCase
 ) : ViewModel() {
+
+    init {
+        viewModelScope.launch {
+            refreshCoursesUseCase()
+        }
+    }
+
     // Estados privados -> El estado solo puede cambiar en la clase AuthViewModel
     private val _authState = MutableStateFlow<Response<UserDomain>?>(null)
     private val _resetPasswordState = MutableStateFlow<Response<Unit>?>(null)

@@ -73,11 +73,16 @@ fun ExploreScreen(
         selectedCourseWithLessons = null
     }
 
-    // Filtrar módulos correspondientes al track activo del usuario
-    val activeCourse = coursesWithLessons.find { courseItem ->
-        courseItem.lessons.any { it.id == userProgress?.currentLessonId }
-    }
-    val activeTrack = activeCourse?.course?.track
+    val progressData = userProgress
+    val activeLessonId = progressData?.lastVisitedLessonId
+
+    // Buscar el curso que contiene la lección actual o el track activo
+    val activeCourseWithLessons = coursesWithLessons.find { courseItem ->
+        courseItem.lessons.any { it.id == activeLessonId }
+    } ?: coursesWithLessons.find { it.course.track == progressData?.activeTrack }
+
+    val activeTrack = progressData?.activeTrack?.ifEmpty { null }
+        ?: activeCourseWithLessons?.course?.track
 
     val filteredCourses = remember(coursesWithLessons, activeTrack) {
         if (activeTrack != null) {
@@ -86,7 +91,6 @@ fun ExploreScreen(
             coursesWithLessons
         }.sortedBy { it.course.orderIndex }
     }
-
     Scaffold(
         bottomBar = { KipuBottomBar(navController = navController) },
         containerColor = BackgroundGray
