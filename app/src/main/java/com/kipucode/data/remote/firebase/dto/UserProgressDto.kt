@@ -4,8 +4,8 @@ import com.google.firebase.Timestamp
 
 data class UserProgressDto(
     val userId: String = "",
-    val currentLessonId: String = "",
-    val status: String = "",
+    val activeTrack: String? = null,
+    val lastVisitedLessonId: String? = null,
     val totalXp: Int = 0,
     val streakDay: Int = 0,
     val completedAt: Timestamp? = null,
