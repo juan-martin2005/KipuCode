@@ -41,13 +41,21 @@ data class ModuleItemUiModel(
     val masteryPercentage: Int = 0
 )
 
+enum class PracticeFilter {
+    ALL,
+    FOR_REVIEW,
+    UP_TO_DATE
+}
+
 data class CodeUiState(
     val isLoading: Boolean = true,
     val isRefreshing: Boolean = false,
     val modules: List<ModuleItemUiModel> = emptyList(),
     val currentLessonId: String = "",
     val dueExercises: List<DueExerciseDomain> = emptyList(),
-    val masteryOverview: CognitiveMasteryOverview = CognitiveMasteryOverview()
+    val masteryOverview: CognitiveMasteryOverview = CognitiveMasteryOverview(),
+    val selectedModuleId: String? = null,
+    val selectedFilter: PracticeFilter = PracticeFilter.ALL
 )
 
 private data class CodeDomainData(
@@ -71,6 +79,8 @@ class CodeViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _isRefreshing = MutableStateFlow(false)
+    private val _selectedModuleId = MutableStateFlow<String?>(null)
+    private val _selectedFilter = MutableStateFlow(PracticeFilter.ALL)
 
     private val domainDataFlow: Flow<CodeDomainData> = combine(
         getDueExercisesWithDetailsUseCase(),
@@ -88,9 +98,11 @@ class CodeViewModel @Inject constructor(
 
     val uiState: StateFlow<CodeUiState> = combine(
         domainDataFlow,
-        _isRefreshing
-    ) { domainData, isRefreshing ->
-        buildCodeUiState(domainData, isRefreshing)
+        _isRefreshing,
+        _selectedModuleId,
+        _selectedFilter
+    ) { domainData, isRefreshing, selectedModuleId, selectedFilter ->
+        buildCodeUiState(domainData, isRefreshing, selectedModuleId, selectedFilter)
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
@@ -119,6 +131,14 @@ class CodeViewModel @Inject constructor(
         }
     }
 
+    fun selectModule(moduleId: String) {
+        _selectedModuleId.value = moduleId
+    }
+
+    fun selectFilter(filter: PracticeFilter) {
+        _selectedFilter.value = filter
+    }
+
     fun swipeToRefresh() {
         viewModelScope.launch {
             _isRefreshing.value = true
@@ -134,7 +154,9 @@ class CodeViewModel @Inject constructor(
 
     private fun buildCodeUiState(
         domainData: CodeDomainData,
-        isRefreshing: Boolean
+        isRefreshing: Boolean,
+        selectedModuleId: String?,
+        selectedFilter: PracticeFilter
     ): CodeUiState {
         val progress = domainData.userProgress
         val currentLessonId = progress?.lastVisitedLessonId.orEmpty()
@@ -170,13 +192,19 @@ class CodeViewModel @Inject constructor(
             )
         }
 
+        val resolvedSelectedModuleId = selectedModuleId
+            ?: activeCourse?.course?.id
+            ?: visibleModules.firstOrNull()?.course?.id
+
         return CodeUiState(
             isLoading = false,
             isRefreshing = isRefreshing,
             modules = visibleModules,
             currentLessonId = currentLessonId,
             dueExercises = domainData.dueExercises,
-            masteryOverview = domainData.masteryOverview
+            masteryOverview = domainData.masteryOverview,
+            selectedModuleId = resolvedSelectedModuleId,
+            selectedFilter = selectedFilter
         )
     }
 }
