@@ -102,7 +102,8 @@ fun RegisterScreen(
             onRegisterClick = { name, email, password ->
                 val userDomain = UserDomain(name = name.trim(), email = email.trim().lowercase())
                 authViewModel.register(userDomain, password)
-            }
+            },
+            isLoading = registerState is Response.Loading
         )
     }
 }
@@ -124,6 +125,7 @@ fun RegisterContent(
 
     onValidate: (name: String, email: String, pass: String, confirmPass: String) -> Boolean,
     onRegisterClick: (String, String, String) -> Unit,
+    isLoading: Boolean = false,
 ) {
     // ESTADOS PARA LOS CAMPOS
     var name by remember { mutableStateOf("") }
@@ -288,7 +290,7 @@ fun RegisterContent(
                         onRegisterClick(name, email, password)
                     }
                 },
-                isLoading = false
+                isLoading = isLoading
             )
 
             ClickableLink(
