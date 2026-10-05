@@ -2,6 +2,8 @@ package com.kipucode.data.local
 
 import android.content.Context
 import android.util.Log
+import androidx.core.content.edit
+import androidx.room.withTransaction
 import com.google.gson.Gson
 import com.kipucode.data.local.converter.ModuleJsonDto
 import com.kipucode.data.local.converter.toEntity
@@ -9,17 +11,21 @@ import com.kipucode.data.local.dao.BlockOptionDao
 import com.kipucode.data.local.dao.CourseDao
 import com.kipucode.data.local.dao.ExerciseDao
 import com.kipucode.data.local.dao.LessonDao
+import com.kipucode.data.local.database.AppDatabase
 import com.kipucode.data.local.model.BlockOptionEntity
 import com.kipucode.data.local.model.CourseEntity
 import com.kipucode.data.local.model.ExerciseEntity
 import com.kipucode.data.local.model.LessonEntity
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class DatabaseSeedService @Inject constructor(
     @param:ApplicationContext private val context: Context,
+    private val appDatabase: AppDatabase,
     private val courseDao: CourseDao,
     private val lessonDao: LessonDao,
     private val exerciseDao: ExerciseDao,
@@ -33,7 +39,9 @@ class DatabaseSeedService @Inject constructor(
         private val DEFAULT_TRACKS = listOf("c_sharp", "java")
     }
 
-    suspend fun seedIfNeeded() {
+    private val seedMutex = Mutex()
+
+    suspend fun seedIfNeeded() = seedMutex.withLock {
         try {
             val gson = Gson()
             val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -110,17 +118,19 @@ class DatabaseSeedService @Inject constructor(
                 }
 
                 if (coursesToInsert.isNotEmpty()) {
-                    courseDao.insertCourses(coursesToInsert)
-                    lessonDao.insertAll(lessonsToInsert)
-                    exerciseDao.insertAll(exercisesToInsert)
-                    blockOptionDao.insertAll(optionsToInsert)
+                    appDatabase.withTransaction {
+                        courseDao.insertCourses(coursesToInsert)
+                        lessonDao.insertAll(lessonsToInsert)
+                        exerciseDao.insertAll(exercisesToInsert)
+                        blockOptionDao.insertAll(optionsToInsert)
+                    }
 
                     // Persistir las nuevas versiones de los módulos actualizados
-                    prefs.edit().apply {
+                    prefs.edit {
                         versionsToPersist.forEach { (courseId, version) ->
                             putInt("$KEY_VERSION_PREFIX$courseId", version)
                         }
-                    }.apply()
+                    }
 
                     Log.d(
                         TAG,

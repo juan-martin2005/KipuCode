@@ -20,7 +20,7 @@ data class CourseJsonDto(
     @SerializedName("id") val id: String = "",
     @SerializedName("title") val title: String = "",
     @SerializedName("description") val description: String = "",
-    @SerializedName("track") val track: String = "c_sharp",
+    @SerializedName("track") val track: String = "",
     @SerializedName("orderIndex") val orderIndex: Int = 1,
     @SerializedName("xp") val xp: Int = 0
 )
@@ -36,7 +36,7 @@ data class LessonJsonDto(
 
 data class ExerciseJsonDto(
     @SerializedName("id") val id: String = "",
-    @SerializedName("type") val type: String = "UNIQUE_CHOICE",
+    @SerializedName("type") val type: String = "",
     @SerializedName("instruction") val instruction: String = "",
     @SerializedName("answer") val answer: String = "",
     @SerializedName("orderIndex") val orderIndex: Int = 1,

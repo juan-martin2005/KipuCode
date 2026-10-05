@@ -24,7 +24,7 @@ import androidx.room.Index
     ],
     indices = [
         Index(value = ["exercise_id"]),
-        Index(value = ["user_id"])
+        Index(value = ["user_id", "due_date"])
     ]
 )
 data class LearningProgressEntity(

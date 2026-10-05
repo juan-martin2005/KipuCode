@@ -1,5 +1,5 @@
 {
-  "version": 6,
+  "version": 2,
   "course": {
     "id": "csharp_module_01",
     "title": "Fundamentos de .NET, Lógica y Diagramación",
@@ -43,7 +43,7 @@
         {
           "type": "concept",
           "title": "El ciclo de ejecución del código administrado",
-          "text": "C# genera código administrado que no interactúa directo con la **CPU** (_Central Processing Unit_ / Unidad Central de Procesamiento). El código fuente (`.cs`) se traduce a un lenguaje binario intermedio denominado **CIL** (_Common Intermediate Language_ / Lenguaje Intermedio Común) o **IL**. Este binario se almacena en un ensamblado (`.dll`) junto a sus metadatos y un host ejecutable nativo."
+          "text": "C# genera código administrado que no interactúa dire cto con la **CPU** (_Central Processing Unit_ / Unidad Central de Procesamiento). El código fuente (`.cs`) se traduce a un lenguaje binario intermedio denominado **CIL** (_Common Intermediate Language_ / Lenguaje Intermedio Común) o **IL**. Este binario se almacena en un ensamblado (`.dll`) junto a sus metadatos y un host ejecutable nativo."
         },
         {
           "type": "concept",
@@ -389,7 +389,7 @@
           "id": "exercise_lesson_01_21",
           "type": "FLASHCARD",
           "instruction": "¿Cuál es la diferencia fundamental entre el .NET SDK y el .NET Runtime?",
-          "answer": "El **SDK** (_Software Development Kit_) sirve para crear y compilar programas: incluye los compiladores como Roslyn, las plantillas de proyecto y la **CLI** _dotnet_, y además contiene internamente el **Runtime**. El **Runtime** (**CLR** + **BCL**) es el paquete mínimo que se instala en una máquina cliente o servidor únicamente para ejecutar aplicaciones ya compiladas. En terminal se pueden comprobar con _dotnet --list-sdks_ y _dotnet --list-runtimes_.",
+          "answer": "El **SDK** (_Software Development Kit_) es para crear y compilar programas (incluye compiladores, **CLI** _dotnet_ y el **Runtime**). El **Runtime** (**CLR** + **BCL**) es el paquete mínimo requerido solo para ejecutar aplicaciones ya compiladas. Verifícalos con _dotnet --list-sdks_ y _dotnet --list-runtimes_.",
           "xp": 100,
           "orderIndex": 21,
           "options": []
@@ -398,7 +398,7 @@
           "id": "exercise_lesson_01_22",
           "type": "FLASHCARD",
           "instruction": "¿Por qué se dice que una aplicación en C# es código administrado?",
-          "answer": "Porque el código fuente `.cs` no se traduce directamente en instrucciones para la CPU, sino en **CIL** (_Common Intermediate Language_) dentro de un ensamblado. Al ejecutarse, el **CLR** lo supervisa: compila el **CIL** a código máquina con **JIT**, garantiza la seguridad de tipos y libera automáticamente la memoria dinámica con el **GC** (_Garbage Collector_). El programador no gestiona la memoria de forma manual, aunque sí debe cerrar archivos y conexiones, porque el **GC** solo administra memoria.",
+          "answer": "Porque el código `.cs` se compila a **CIL** (_Common Intermediate Language_) y es supervisado por el **CLR** al ejecutarse. El **CLR** usa **JIT** para compilar a código máquina, garantiza la seguridad y usa el **GC** (_Garbage Collector_) para liberar la memoria dinámica automáticamente.",
           "xp": 100,
           "orderIndex": 22,
           "options": []
@@ -407,7 +407,7 @@
           "id": "exercise_lesson_01_23",
           "type": "FLASHCARD",
           "instruction": "Describe el recorrido de un programa C# desde el código fuente hasta que la CPU lo ejecuta.",
-          "answer": "El código fuente (`.cs`) lo procesa el compilador Roslyn, que emite un ensamblado (`.dll`) acompañado de un ejecutable anfitrión. Ese ensamblado contiene el código **CIL**, los metadatos y el manifiesto. Al ejecutarlo, el **CLR** traduce con **JIT** cada método a código máquina nativo la primera vez que se invoca, y el **GC** libera la memoria dinámica que ya no se usa, hasta producir las instrucciones nativas que ejecuta la CPU.",
+          "answer": "El código (`.cs`) es procesado por Roslyn creando un ensamblado (`.dll`) con código **CIL**. Al ejecutarlo, el **CLR** utiliza **JIT** para traducir el **CIL** a código máquina nativo bajo demanda, mientras el **GC** limpia la memoria, produciendo las instrucciones que ejecutará la CPU.",
           "xp": 100,
           "orderIndex": 23,
           "options": []
@@ -416,7 +416,7 @@
           "id": "exercise_lesson_01_24",
           "type": "FLASHCARD",
           "instruction": "Compara Visual Studio Community, Visual Studio Code y JetBrains Rider.",
-          "answer": "Visual Studio Community es un **IDE** completo para Windows, con diseñadores visuales, depuradores avanzados y gestión centralizada por soluciones (`.sln`). Visual Studio Code es un editor liviano y multiplataforma centrado en directorios de código; para C# necesita el paquete C# Dev Kit, que aporta navegación por soluciones, IntelliSense avanzado y depuración. JetBrains Rider es un **IDE** profesional multiplataforma enfocado en .NET, conocido por sus herramientas de refactorización y análisis estático de código.",
+          "answer": "Visual Studio Community es un **IDE** completo para Windows centrado en soluciones (`.sln`). Visual Studio Code es un editor liviano multiplataforma (requiere el C# Dev Kit para herramientas avanzadas). JetBrains Rider es un **IDE** profesional multiplataforma muy destacado en refactorización para .NET.",
           "xp": 100,
           "orderIndex": 24,
           "options": []
@@ -425,7 +425,7 @@
           "id": "exercise_lesson_01_25",
           "type": "FLASHCARD",
           "instruction": "¿Cómo creas y ejecutas un primer programa para comprobar que tu entorno está bien configurado, y qué haces si falla?",
-          "answer": "Se crea el proyecto con _dotnet new console -n HolaMundo_ y se entra a su carpeta con _cd HolaMundo_. Luego se reemplaza el contenido de `Program.cs` por una línea con _Console.WriteLine_ y el mensaje deseado, y se ejecuta con _dotnet run_. Si el mensaje aparece en la terminal, el **SDK** y la **CLI** están correctamente instalados. Si el sistema indica que _dotnet_ no se reconoce como comando, hay que revisar la instalación del **SDK** y que su ruta esté en la variable de entorno **PATH**.",
+          "answer": "Créalo con _dotnet new console -n HolaMundo_ y ejecútalo con _dotnet run_. Si funciona, el **SDK** y la **CLI** están correctos. Si el comando _dotnet_ no se reconoce, debes revisar la instalación del **SDK** y asegurar que su ruta esté en la variable de entorno **PATH**.",
           "xp": 100,
           "orderIndex": 25,
           "options": []
