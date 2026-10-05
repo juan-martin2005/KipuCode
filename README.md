@@ -1,506 +1,278 @@
-### Desarrollo de una aplicación móvil de aprendizaje guiado en programación para fortalecer las habilidades técnicas de los estudiantes de la Facultad de Ingeniería de la Universidad Privada del Norte, Chorrillos, 2026.
----
-# Capítulo I: Planteamiento del Problema
+# KipuCode
 
-## 1. Descripción del Problema
+<p align="center">
+  <img src="app/src/main/res/drawable/img_kipucode_logo.webp" alt="KipuCode Logo" width="160" />
+</p>
 
-Muchos estudiantes universitarios que empiezan en el mundo del desarrollo de software lo llegan a abandonar tempranamente debido a metodologías de enseñanza tradicionales que no se adaptan a su ritmo de aprendizaje. Esta falta de personalización y la ausencia de una guía práctica generan frustración y desmotivación, dificultando la adquisición de una base lógica sólida, fundamental para su desarrollo académico y profesional.
+<p align="center">
+  <strong>Decodificando el Pasado. Programando el Futuro.</strong><br>
+  <em>Aplicación móvil de aprendizaje interactivo y adaptativo para la enseñanza moderna de fundamentos de programación e ingeniería de software.</em>
+</p>
 
----
-
-## 2. Planteamiento del Problema
-
-### Pregunta Inicial
-
-¿De qué manera la implementación de una aplicación móvil de aprendizaje guiado en programación influirá en el desarrollo de habilidades técnicas en estudiantes de la Facultad de Ingeniería de la Universidad Privada del Norte, sede Chorrillos, durante el año 2026?
-
----
-
-## 3. Objetivos
-
-### 3.1 Objetivo General
-
-Implementar una aplicación móvil de aprendizaje guiado en programación orientada a la adquisición de fundamentos técnicos esenciales en estudiantes de la Facultad de Ingeniería de la Universidad Privada del Norte, sede Chorrillos, Lima, 2026.
+<p align="center">
+  <img src="https://img.shields.io/badge/Platform-Android-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Android" />
+  <img src="https://img.shields.io/badge/Kotlin-2.3.21-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white" alt="Kotlin" />
+  <img src="https://img.shields.io/badge/UI-Jetpack%20Compose-4285F4?style=for-the-badge&logo=jetpackcompose&logoColor=white" alt="Jetpack Compose" />
+  <img src="https://img.shields.io/badge/Architecture-Clean%20%2B%20MVVM-FF6F00?style=for-the-badge" alt="Architecture" />
+  <img src="https://img.shields.io/badge/Cognitive%20Engine-FSRS_6-blueviolet?style=for-the-badge" alt="FSRS" />
+  <img src="https://img.shields.io/badge/Storage-Offline_First-00599C?style=for-the-badge" alt="Storage" />
+</p>
 
 ---
 
-### 3.2 Objetivos Específicos
+## 1. Propósito Educativo y Visión del Proyecto
 
-1. Estructurar una arquitectura de software móvil basada en Clean Architecture compatible con el ecosistema moderno de Android.
-    
-2. Diseñar interfaces de usuario dinámicas y declarativas aplicando principios de diseño moderno orientados a la experiencia del usuario (UX).
-    
-3. Implementar un modelo de persistencia de datos mixto mediante una base de datos relacional local (Room/SQLite) para funcionamiento offline y una base de datos NoSQL en la nube (Firebase) para la sincronización y gestión de la progresión del usuario.
-    
-4. Integrar módulos de contenido interactivo teórico y práctico que permitan construir rutas de aprendizaje progresivas y validar el conocimiento adquirido por el estudiante.
+### ¿Qué es KipuCode?
+**KipuCode** es una plataforma educativa móvil diseñada para transformar la experiencia de aprender a programar. Inspirada en la sabiduría de los *quipus* andinos, sistemas ancestrales de registro y transmisión de información mediante nudos y patrones lógicos, la aplicación busca que los estudiantes desarrollen habilidades técnicas sólidas de programación a través de **microaprendizaje estructurado, retroalimentación inmediata y retención cognitiva a largo plazo**.
 
----
+### Público Objetivo
+* **Estudiantes universitarios de ingeniería y computación** cursando asignaturas iniciales (Fundamentos de Programación, Programación Orientada a Objetos, Algoritmos).
+* **Ingresantes a carreras tecnológicas e institutos técnicos** que requieren nivelación lógica y práctica antes de enfrentarse a entornos de desarrollo complejos.
+* **Autodidactas y entusiastas** que buscan una ruta de aprendizaje guiada, sin curvas de frustración abruptas ni metodologías pasivas.
 
-## 4. Justificación
+### Problemática que Resuelve
+La enseñanza tradicional de programación suele generar altas tasas de reprobación y deserción temprana debido a:
+1. **Brecha entre teoría y práctica:** Clases magistrales expositivas sin suficiente ejercitación interactiva inmediata.
+2. **Curva del olvido:** Los conceptos vistos en semanas iniciales (variables, condicionales, ciclos) se olvidan rápidamente al avanzar el semestre por falta de refuerzo espaciado.
+3. **Frustración y fatiga cognitiva:** Ejercicios extensos y lineales que bloquean el avance del alumno ante un solo error, sin explicaciones formativas claras.
 
-### 4.1 Justificación Técnica
-
-El desarrollo del proyecto migró desde un enfoque inicial basado en interfaces XML y lógica desarrollada en Java hacia una arquitectura moderna basada en Kotlin y Jetpack Compose.
-
-Este cambio permitirá:
-
-- Desarrollo declarativo.    
-- Reducción de código repetitivo.    
-- Mayor mantenibilidad.    
-- Mejor rendimiento y escalabilidad.
-
-#### Bases de Datos
-
-##### Persistencia Local (**SQLite** / Room)
-
-- Almacenamiento ligero.    
-- Funcionamiento sin conexión a Internet.    
-- Persistencia de información del usuario.    
-
-##### Persistencia en la Nube (**Firebase** / NoSQL)
-
-- Autenticación de usuarios.    
-- Almacenamiento remoto.    
-- Sincronización de información.    
-- Reducción de costos de infraestructura backend.    
-
-#### Entorno de Desarrollo
-
-##### **Android Studio**
-
-|Requisito|Especificación|
-|---|---|
-|Sistema Operativo|Windows 10 (64 bits)|
-|Memoria RAM|8 GB (16 GB recomendado para emulador)|
-|Procesador|Intel Core i5 8va Gen o AMD Ryzen equivalente|
-|Espacio en Disco|8 GB (16 GB recomendado con emulador)|
-|GPU|Opcional / 4 GB VRAM para emulación avanzada|
-
-##### **SQLite**
-
-|Requisito|Especificación|
-|---|---|
-|Sistema Operativo|Windows, Linux, macOS, Android, iOS|
-|RAM|Menor a 1 MB|
-|Procesador|Arquitecturas de 32 y 64 bits|
-|Espacio|Menor a 50 MB|
+KipuCode supera estas barreras proporcionando un ecosistema donde el estudiante practica en bloques breves de 1 a 3 minutos, recibe explicaciones pedagógicas al instante y refuerza sus debilidades mediante un motor inteligente de repetición espaciada.
 
 ---
 
-### 4.2 Justificación Social
+## 2. Características Principales
 
-El proyecto tiene un impacto positivo al brindar acceso a la educación tecnológica, permitiendo reducir las barreras iniciales en estudiantes de ingeniería y carreras afines mediante una herramienta accesible desde dispositivos móviles, alineándose activamente con el **Objetivo de Desarrollo Sostenible 4 (ODS 4): Educación de Calidad** de la Agenda 2030 de la ONU.
+* **Navegación Libre por Tracks (C# y Java):**
+  * Desacoplamiento lineal completo: el estudiante puede navegar y explorar libremente cualquier lección o módulo del catálogo sin bloqueos pedagógicos forzados.
+  * Marcador pasivo inteligente (*"Separador de libro"*): recuerda la última lección visitada para reanudar el estudio con un solo toque desde la pantalla principal.
 
----
+* **Dominio Cognitivo en Tiempo Real (FSRS-6):**
+  * Supera la métrica tradicional de *"X lecciones completadas"* reemplazándola por un porcentaje dinámico de **Retención y Dominio Cognitivo** impulsado por el algoritmo FSRS-6 (*Free Spaced Repetition Scheduler*).
+  * Clasificación adaptativa del progreso: *Iniciando tema* ($0\% - 39\%$), *En consolidación* ($40\% - 79\%$) y *Maestría consolidada* ($80\% - 100\%$).
 
-### 4.3 Justificación Financiera
+* **Microaprendizaje y Sesiones Ágiles:**
+  * Teoría sintetizada y concisa complementada inmediatamente por dinámicas prácticas interactivas (selección única, opciones múltiples, bloques de código estructurados y análisis de terminal).
+  * Sesiones ágiles configuradas para resolverse en cualquier momento y lugar desde el dispositivo móvil.
 
-La aplicación utiliza tecnologías gratuitas o de bajo costo durante sus primeras etapas de desarrollo.
+* **Gamificación Formativa y Escudo Anti-Farmeo:**
+  * Sistema de Experiencia (XP) blindado por **Delta de Récord Histórico**: repetir una lección previamente aprobada no infla los puntos del usuario; solo se otorga XP adicional si el alumno supera su mejor puntaje anterior.
+  * Rachas de estudio diarias (*Streak Counter*), historial semanal y avatares desbloqueables para fomentar la constancia de estudio.
 
-#### Costos Estimados
+* **Filosofía Offline-First Garantizada:**
+  * Todo el catálogo de cursos, módulos, lecciones y opciones se encuentra almacenado y optimizado localmente en **SQLite (Room Database)**.
+  * La aplicación funciona de manera fluida sin acceso a internet; los avances, XP y métricas de repetición espaciada se sincronizan automáticamente con **Cloud Firestore** cuando se restablece la conectividad.
 
-| Concepto                                      |           Costo |
-| --------------------------------------------- | --------------: |
-| Desarrollo de Software (UI/UX y Lógica)       |     S/ 6,000.00 |
-| Licencia Google Play Store (Opcional / No se desplegará en esta fase) |        S/ 90.00 |
-| Infraestructura Inicial Firebase (Spark Plan) |         S/ 0.00 |
-| **Costo Total Estimado**                      | **S/ 6,090.00** |
-
-> **Nota:** La publicación en Google Play Store no forma parte del alcance actual del proyecto. Por otro lado, el plan Spark (gratuito) de Firebase cubre holgadamente la etapa inicial de pruebas y escalado.
-
-#### Sostenibilidad
-
-La sostenibilidad financiera se plantea mediante un modelo Freemium:
-
-- Acceso gratuito al contenido principal.
-- Monetización mediante anuncios.
-- Posible incorporación de suscripciones premium al superar los 10,000 usuarios activos.
-
-Los ingresos obtenidos permitirán:
-
-- Cubrir costos de infraestructura.
-- Escalar servicios Firebase.
-- Financiar nuevas funcionalidades.
-- Garantizar el mantenimiento continuo de la aplicación.
-
----
-# Capítulo II: Marco Teórico y Metodología
-
-## 1. Marco Teórico
-
-### Mobile Learning
-
-Metodología de enseñanza y aprendizaje basada en el uso de dispositivos móviles que permite acceder al contenido educativo desde cualquier lugar y momento.
-
-### Kotlin
-
-Lenguaje de programación de tipado estático recomendado oficialmente por Google para el desarrollo Android desde 2019.
-
-Características principales:
-
-- Null Safety.
-- Kotlin Coroutines.
-- Interoperabilidad con Java.
-
-### Jetpack Compose
-
-Framework declarativo para la construcción de interfaces nativas Android mediante Kotlin.
-
-Beneficios:
-
-- Menor cantidad de código.
-- Mayor productividad.
-- Mejor mantenibilidad.
-
-### Clean Architecture y MVVM
-
-#### **Clean Architecture**
-
-Organiza el sistema en capas independientes:
-
-- Domain
-- Data
-- UI
-#### **MVVM**
-
-Permite separar:
-
-- Modelo (Model)
-- Vista (View)
-- Lógica de Presentación (ViewModel)
-
-Beneficios:
-
-- Escalabilidad.
-- Mantenibilidad.
-- Facilidad para pruebas.
-### Room Database (SQLite)
-
-Biblioteca oficial de persistencia para Android que abstrae SQLite y facilita el acceso seguro a la base de datos local.
-
-### Firebase
-
-Plataforma en la nube utilizada para:
-
-- Firebase Authentication.
-- Cloud Firestore.
-- Sincronización de datos.
+* **Retroalimentación Formativa Inmediata:**
+  * Cada opción o bloque de ejercicio incluye explicaciones didácticas contextuales (`explanation`), transformando el error en una oportunidad directa de aprendizaje conceptual.
 
 ---
 
-## 2. Antecedentes
+## 3. Enfoque Pedagógico y Sustento Teórico
 
-**PENDIENTE**
+KipuCode no es simplemente una herramienta de evaluación; es un entorno educativo fundamentado en metodologías pedagógicas respaldadas por la ciencia cognitiva y las ciencias de la computación:
 
----
+### Metodologías de Aprendizaje Aplicadas
 
-## 3. Metodología de Desarrollo
+```mermaid
+graph TD
+    A["Pedagogia KipuCode"] --> B["Microaprendizaje (Micro-learning)"]
+    A --> C["Repeticion Espaciada (FSRS-6)"]
+    A --> D["Gamificacion Formativa"]
+    A --> E["Evaluacion Formativa Inmediata"]
 
-Para el desarrollo de la aplicación se utilizará la metodología ágil Scrum adaptada a un entorno de desarrollo de **pocos colaboradores** (equipo reducido).
+    B --> B1["Sesiones de 1 a 3 min sin fatiga cognitiva"]
+    C --> C1["Modelo DSR (Dificultad, Estabilidad, Retencion)"]
+    D --> D1["XP por superacion real y rachas consecutivas"]
+    E --> E1["Feedback conceptual explicativo por alternativa"]
+```
 
-### Product Backlog
-
-Lista priorizada de funcionalidades:
-
-- Registro y Login de usuarios
-- Módulos de contenido teórico (lecciones)
-- Sistema de ejercicios interactivos
-- Base de datos local (Offline-first)
-- Sincronización con la nube (Firebase)
-
-### Sprints
-
-Ciclos iterativos de 1 a 2 semanas orientados a la entrega continua de incrementos funcionales del software.
-
-### Herramientas de Gestión
-
-- GitHub como plataforma principal para control de versiones Git y seguimiento de tareas.
-
-## 4. Cronograma de actividades.
-
-| Sprint                              | Actividades Principales                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | Duración           |           Fechas            |
-| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------ | :-------------------------: |
-| **Sprint 1: Planificación y Base**  | • Levantamiento de requerimientos.<br><br>• Diseño UI/UX (Referencias de Pinterest).<br><br>• Configuración inicial del proyecto en Android Studio.                                                                                                                                                                                                                                                                                                                                         | **Semanas 1 - 2**  | **21/04/2026 - 04/05/2026** |
-| **Sprint 2: Lógica y Persistencia** | • Diseño e implementación de la base de datos local con Room.<br><br>• Creación de entidades y modelos de datos (Usuarios, Cursos y Lecciones).<br><br>• Desarrollo de pantallas principales (Onboarding - Login - Register).<br><br>• Refactorización Java/XML -> Kotlin/Jetpack Compose.<br><br>• Desarrollo de pantallas base (Splash - Onboarding - Register - Login - ForgotPassword - Navbar - Home).<br><br>• Integración de Firebase Authentication.                              | **Semanas 3 - 5**  | **05/05/2026 - 25/05/2026** |
-| **Sprint 3: Cloud y Funcionalidad** | • Integración de Cloud Firestore.<br><br>• Configuración de base de datos local y entidades para ejercicios, opciones de bloques y repetición espaciada.<br><br>• Sincronización offline-first robusta para progreso de usuario, lecciones y ejercicios (resolviendo dependencias de borrado en cascada y evitando pérdida de datos locales).<br><br>• Implementación de flujos de ejercicios prácticos interactivos (opciones múltiples, flashcards) y visualización de contenido teórico con markdown. | **Semanas 6 - 8**  | **26/05/2026 - 15/06/2026** |
-| **Sprint 4: Pruebas y Despliegue**  | • Implementación del sistema de registro de experiencia (XP) por lección, rachas (Streak) de estudio diarias de usuario y lógica de reintentos en ejercicios.<br><br>• Optimización de la navegación general de pantallas y reorganización de componentes de la interfaz de usuario en Compose.<br><br>• Pruebas de usabilidad con usuarios beta y resolución de bugs (ej. permisos de red, consistencia de datos).<br><br>• Generación del APK final del aplicativo.                       | **Semanas 9 - 10** | **16/06/2026 - 27/06/2026** |
-
----
-# Capítulo III
-
-## 1. Requerimientos
-
-### 1.1 Requerimientos Funcionales
-
-Los requerimientos funcionales describen las funcionalidades que el sistema debe proporcionar para satisfacer las necesidades de los usuarios.
-
-| Código   | Requerimiento                                                                                                                                                        |
-| -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **RF01** | El sistema debe permitir el registro e inicio de sesión de los estudiantes mediante Firebase Authentication, sincronizando la información básica del usuario.        |
-| **RF02** | El sistema debe mostrar la lista de cursos disponibles, incluyendo título, descripción y estado de avance.                                                           |
-| **RF03** | El sistema debe permitir la navegación entre cursos y lecciones, mostrando contenido teórico y ejercicios prácticos organizados secuencialmente.                     |
-| **RF04** | El sistema debe registrar el progreso del estudiante, actualizando estados de completado, experiencia acumulada (XP) y rachas de estudio (Streak).                   |
-| **RF05** | El sistema debe funcionar bajo un enfoque Offline First, almacenando cambios localmente y sincronizándolos con Firebase Firestore cuando exista conexión a Internet. |
+1. **Microaprendizaje (*Micro-learning*):** Reducción de la sobrecarga de la memoria de trabajo mediante la fragmentación del conocimiento en lecciones nucleares y prácticas focalizadas.
+2. **Repetición Espaciada Adaptativa (*Spaced Repetition* - FSRS-6):** Basado en el modelo matemático de tres componentes de la memoria (Dificultad, Estabilidad y Retención). El sistema programa repasos predictivos justo en el momento óptimo antes de que el concepto sea olvidado.
+3. **Gamificación Formativa:** Incentivos intrínsecos y extrínsecos (puntos XP de calidad, niveles y rachas) alineados estrictamente con el dominio cognitivo, eliminando el farmeo artificial.
+4. **Evaluación Formativa:** Respuestas acompañadas de justificaciones técnicas que guían al estudiante en la comprensión de *por qué* una alternativa es correcta o incorrecta.
 
 ---
 
-### 1.2 Requerimientos No Funcionales
+### Fuentes Bibliográficas y Currículo de Referencia (Track C#)
 
-Los requerimientos no funcionales definen las características de calidad, rendimiento y restricciones técnicas del sistema.
+El diseño curricular, la progresión pedagógica y el rigor técnico del track de C# en KipuCode se sustentan en las siguientes obras canónicas de la literatura especializada:
 
-| Código    | Requerimiento                                                                                                                                            |
-| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **RNF01** | La interfaz de usuario debe estar desarrollada con Jetpack Compose, garantizando una experiencia moderna, accesible y responsiva.                        |
-| **RNF02** | La aplicación implementará los principios de Clean Architecture para asegurar mantenibilidad, escalabilidad y separación de responsabilidades.           |
-| **RNF03** | Las operaciones de base de datos y red deben ejecutarse de manera asíncrona utilizando Kotlin Coroutines y Flow, evitando bloqueos en el hilo principal. |
-| **RNF04** | La persistencia local debe optimizar el almacenamiento mediante SQLite y Room, minimizando el consumo de recursos del dispositivo.                       |
-
----
-
-## 2. Metodología de Desarrollo
-
-Para el desarrollo de KipuCode se adoptó una metodología ágil inspirada en Scrum, adaptada a un entorno de desarrollo de **pocos colaboradores**. 
-El proceso se dividió en las siguientes fases:
-### 2.1 Diseño de Interfaces
-- Elaboración de prototipos y referencias visuales.
-- Definición de componentes reutilizables.
-- Creación del sistema de diseño utilizando:
-    - Colores
-    - Tipografías
-    - Espaciados
-    - Componentes Compose
-### 2.2 Modelado del Dominio
-Definición de entidades independientes:
-- `UserDomain`
-- `CourseDomain` (y `CourseWithLessonsDomain`)
-- `LessonDomain`
-- `ExerciseDomain` (y `BlockOptionDomain`)
-- `UserProgressDomain`
-- `SyncQueue`
-
-Estas entidades representan las reglas de negocio fundamentales de la aplicación.
-
-### 2.3 Persistencia de Datos
-Implementación de la capa de datos mediante:
-- Room Database
-- DAO (Data Access Objects)
-- Mappers entre entidades locales y modelos de dominio
-- Repositorios para abstraer el origen de los datos
-
-### 2.4 Gestión de Estado
-Implementación del patrón MVVM mediante:
-- ViewModels
-- StateFlow
-
-Los ViewModels gestionan la lógica de presentación y exponen estados reactivos consumidos por la interfaz de usuario.
-
----
-## 3. Diagrama de Clases (Arquitectura de Software)
-
-La aplicación sigue una arquitectura multicapa basada en Clean Architecture e Inyección de Dependencias.
-
-### Capa de Dominio (Domain Layer)
-
-#### Modelos
-- `UserDomain`
-- `CourseDomain`
-- `CourseWithLessonsDomain`
-- `LessonDomain`
-- `ExerciseDomain`
-- `BlockOptionDomain`
-- `UserProgressDomain`
-- `SyncQueue`
-- `Response` (Utilidad para estados de carga/éxito/error)
-
-#### Casos de Uso
-Cada clase de caso de uso encapsula responsabilidades específicas del negocio:
-- `CourseUseCase` (Carga y listado de cursos)
-- `LessonUseCase` (Gestión de lecciones y contenido markdown)
-- `ExerciseUseCase` (Obtención de ejercicios y procesamiento de respuestas)
-- `AuthUseCases` (Flujos de autenticación e inicio de sesión)
-- `UserUseCase` (Estadísticas del usuario: XP, rachas, nivel)
-
-#### Contratos de Repositorio
-Definen las operaciones disponibles sin conocer su implementación física:
-- `AuthRepository`
-- `UserRepository`
-- `CourseRepository`
-- `LessonRepository`
-- `ExerciseRepository`
-- `BlockOptionRepository`
-- `UserProgressRepository`
-- `SyncQueueRepository`
+| Obra y Edición | Autor(es) | Contribución Pedagógica y Técnica en KipuCode |
+| :--- | :--- | :--- |
+| **The C# Player's Guide** | **RB Whitaker** | **Curva Didáctica y Gamificación:** Aporta la metáfora de progresión por niveles, misiones y desafíos prácticos. Inspira la transición amigable desde programas sencillos hasta lógica orientada a objetos sin abrumar con tecnicismos prematuros. |
+| **C# Data Structures and Algorithms** | **Marcin Jamro, PhD** | **Rigor Algorítmico y Lógica Fundamental:** Base para la enseñanza de estructuras de datos lineales y no lineales, análisis de complejidad computacional (*Big-O*) y descomposición de problemas mediante pseudocódigo y diagramas de flujo. |
+| **Programming C# 12 / 10** | **Ian Griffiths** | **Sintaxis Idiomática Moderna:** Fundamento para el aprendizaje de las características contemporáneas del lenguaje (instrucciones de nivel superior, constructores primarios, expresiones de colección, registros e inmutabilidad). |
+| **C# 12 in a Nutshell** | **Joseph Albahari** | **Mapa Conceptual y Motor .NET:** Referencia para la comprensión profunda del Common Language Runtime (CLR), la BCL, gestión de memoria (Stack vs. Heap), recolección de basura (*GC*) y evaluación avanzada de tipos. |
+| **Clean Code & The Clean Coder** | **Robert C. Martin ("Uncle Bob")** | **Disciplina Profesional y Calidad de Software:** Transmisión de principios SOLID, nombres expresivos, funciones pequeñas y mentalidad requerida para transformar código aficionado en software mantenible y profesional. |
+| **C# Concurrency** | **Nir Dobovizki** | **Modelo Asíncrono:** Base pedagógica para introducir de forma clara y sin trampas el paradigma multihilo, `async/await`, el objeto `Task` y flujos asíncronos en .NET. |
+| **Pro C# 10 with .NET 6** | **Andrew Troelsen & Phil Japikse** | **Desarrollo Aplicado y Ecosistema:** Conexión entre la teoría del lenguaje y la arquitectura de software real (APIs RESTful, persistencia con ORM y pruebas automatizadas). |
 
 ---
 
-### Capa de Datos (Data Layer)
+## 4. Stack Tecnológico
 
-#### Base de Datos Local
-- `AppDatabase`
-- `UserEntity`
-- `CourseEntity`
-- `LessonEntity`
-- `ExerciseEntity`
-- `BlockOptionEntity`
-- `UserProgressEntity`
-- `FlashcardProgressEntity`
-- `SyncQueueEntity`
+La aplicación está construida siguiendo los estándares recomendados por Google y la comunidad moderna de desarrollo en Android:
 
-#### DAOs (Data Access Objects)
-- `UserDao`
-- `CourseDao`
-- `LessonDao`
-- `ExerciseDao`
-- `BlockOptionDao`
-- `UserProgressDao`
-- `SyncQueueDao`
-
-#### Fuentes de Datos Remotas
-- `AuthRemoteDataSource` (Firebase Authentication)
-- `UserRemoteDataSource` (Cloud Firestore)
-- `CourseRemoteDataSource` (Cloud Firestore)
-- `LessonRemoteDataSource` (Cloud Firestore)
-- `ExerciseRemoteDataSource` (Cloud Firestore)
-
-#### Repositorios
-- `AuthRepositoryImpl`
-- `UserRepositoryImpl`
-- `CourseRepositoryImpl`
-- `LessonRepositoryImpl`
-- `ExerciseRepositoryImpl`
-- `UserProgressRepositoryImpl`
-
-#### Mappers
-Responsables de transformar:
-- `UserMapper` (UserEntity / UserDto ↔ UserDomain)
-- `CourseMapper` (CourseEntity / CourseDto ↔ CourseDomain)
-- `LessonMapper` (LessonEntity / LessonDto ↔ LessonDomain)
-- `ExerciseMapper` (ExerciseEntity / ExerciseDto / BlockOptionEntity ↔ ExerciseDomain / BlockOptionDomain)
-- `UserProgressMapper` (UserProgressEntity / UserProgressDto ↔ UserProgressDomain)
+| Componente | Tecnología / Librería | Versión | Propósito |
+| :--- | :--- | :--- | :--- |
+| **Lenguaje Core** | Kotlin | `2.3.21` | Lenguaje oficial de desarrollo Android con null-safety estricto y corrutinas. |
+| **Framework de UI** | Jetpack Compose (BOM) | `2026.05.00` | Construcción de interfaces declarativas, dinámicas y reactivas con Material Design 3. |
+| **Navegación** | Navigation Compose | `2.9.8` | Navegación declarativa y type-safe con `@Serializable` (`kotlinx.serialization`). |
+| **Inyección de Dependencias**| Dagger Hilt | `2.59.2` | Inyección de dependencias modular y desacoplada en ViewModels y Casos de Uso. |
+| **Persistencia Local** | Room Database (SQLite) | `2.8.4` | Almacenamiento relacional local, transacciones atómicas y soporte offline-first. |
+| **Persistencia Remota** | Cloud Firestore | BOM `34.13.0` | Base de datos NoSQL en la nube para sincronización del progreso de los usuarios. |
+| **Autenticación** | Firebase Auth | BOM `34.13.0` | Gestión segura de credenciales, registro, inicio de sesión y recuperación de cuentas. |
+| **Motor Cognitivo** | FSRS Core | `1.0.0` | Implementación nativa del algoritmo de repetición espaciada FSRS-6. |
+| **Renderizado Markdown** | Multiplatform Markdown Renderer | N/A | Formateo enriquecido y resaltado de código en lecciones teóricas. |
 
 ---
 
-### Capa de Presentación (UI Layer)
+## 5. Arquitectura de Software
 
-#### ViewModels
-- `AuthViewModel` (Flujos de acceso y recuperación)
-- `UserViewModel` (Estado del perfil del usuario, rachas y XP)
-- `CoursesViewModel` (Estado y listado de cursos disponibles)
-- `LessonViewModel` (Estado de la lección seleccionada)
-- `ExerciseViewModel` (Manejo del flujo de ejercicios interactivos y reintentos)
-
-#### Pantallas
-- `SplashScreen` (Carga inicial)
-- `OnboardingScreen` (Guía de introducción)
-- `LoginScreen` (Inicio de sesión)
-- `RegisterScreen` (Registro de cuenta)
-- `ForgotPassword` (Recuperación de credenciales)
-- `HomeScreen` (Progreso del estudiante)
-- `ExploreScreen` (Exploración de temarios)
-- `ProfileScreen` (Visualización de XP, nivel y rachas)
-- `FeedbackScreen` (Envío de comentarios)
-- `LessonScreen` (Contenido teórico formateado con markdown)
-- `CodeScreen` (Visualización interactiva de lecciones de programación)
-- `ExerciseScreen` (Resolución de dinámicas prácticas)
-
-#### Componentes Reutilizables
-- `Navbar` (Navegación inferior del sistema)
-- `Buttons` (Botón principal interactivo de la app)
-- `KipuForm` y `KipucodeText` (Campos de entrada dinámicos)
-- `UserProfileCard` (Resumen del perfil de usuario)
-- `HomeCard`, `LessonsCard`, `HeadlineHome` (Estructuras de las lecciones y cursos en la pantalla principal)
-- `MultipleChoicesCard`, `CustomeDialog` (Componentes interactivos de selección y diálogos)
-- `Choices`, `FlashCard`, `OptionsCard`, `ContentMarkdown` (Componentes especializados en los ejercicios y renderizado de lecciones)
-
----
-
-## 4. Diseño de la Base de Datos
-
-La persistencia local se implementó mediante Room Database, utilizando SQLite.
-
-### Entidades Principales
-
-|Tabla|Descripción|
-|---|---|
-|`users`|Información general del estudiante (incluye XP y rachas).|
-|`courses`|Cursos disponibles dentro de la plataforma.|
-|`lessons`|Lecciones pertenecientes a cada curso.|
-|`exercises`|Ejercicios teóricos/prácticos de cada lección.|
-|`block_options`|Opciones de bloques de código y respuestas para ejercicios.|
-|`user_progress`|Registro de avance del usuario en cada lección y ejercicio.|
-|`flashcard_progress`|Seguimiento del progreso de repetición espaciada en flashcards.|
-|`sync_queue`|Cola de sincronización para operaciones offline-first pendientes.|
-
-### Relaciones
+KipuCode implementa **Clean Architecture** combinada con el patrón **Model-View-ViewModel (MVVM)** y **Flujo Unidireccional de Datos (UDF)**:
 
 ```text
-User (1) ──────── (N) UserProgress
-
-Course (1) ────── (N) Lesson
-
-Lesson (1) ────── (N) Exercise
-
-Exercise (1) ──── (N) BlockOption
+┌─────────────────────────────────────────────────────────────┐
+│                       UI / PRESENTATION                     │
+│    Jetpack Compose Screens  ───►  StateFlow / ViewModels    │
+└──────────────────────────────┬──────────────────────────────┘
+                               │ Observa estados reactivos
+┌──────────────────────────────▼──────────────────────────────┐
+│                         DOMAIN LAYER                        │
+│    UseCases (CognitiveMastery, Lesson, UserProgress, Auth)   │
+│    Domain Models (UserDomain, CourseDomain, LessonDomain)   │
+│    Repository Interfaces (Contracts)                        │
+└──────────────────────────────▲──────────────────────────────┘
+                               │ Implementa contratos
+┌──────────────────────────────┴──────────────────────────────┐
+│                          DATA LAYER                         │
+│  Mappers (DTO ◄► Entity ◄► Domain)                          │
+│  Repositories (Offline-First Sync Coordinators)              │
+│  Local: Room DB (Entities & DAOs)                           │
+│  Remote: Firebase Auth & Cloud Firestore                    │
+└─────────────────────────────────────────────────────────────┘
 ```
 
-El diseño permite mantener la información disponible localmente y sincronizarla posteriormente con Firebase.
+### Modelo de Datos Normalizado (SQLite / Room)
+
+El modelo relacional local de KipuCode garantiza una separación estricta en **Tercera Forma Normal (3FN)** con tablas intermedias $M:N$ para registrar lecciones, cursos y ejercicios evaluados:
+
+```mermaid
+erDiagram
+    COURSES ||--o{ LESSONS : "1:N"
+    LESSONS ||--o{ EXERCISES : "1:N"
+    EXERCISES ||--o{ BLOCKS_OPTIONS : "1:N"
+
+    USERS ||--|| USER_PROGRESS : "1:1"
+
+    USERS ||--o{ USER_COMPLETED_COURSES : "1:N"
+    COURSES ||--o{ USER_COMPLETED_COURSES : "1:N"
+
+    USERS ||--o{ USER_COMPLETED_LESSONS : "1:N"
+    LESSONS ||--o{ USER_COMPLETED_LESSONS : "1:N"
+
+    USERS ||--o{ LEARNING_PROGRESS : "1:N"
+    EXERCISES ||--o{ LEARNING_PROGRESS : "1:N"
+
+    USERS {
+        string id PK
+        string name
+        string email
+        string avatar_id
+    }
+
+    USER_PROGRESS {
+        string user_id PK, FK
+        string active_track
+        string last_visited_lesson_id
+        int total_xp
+        int streak_day
+        long completed_at
+    }
+
+    USER_COMPLETED_COURSES {
+        string user_id PK, FK
+        string course_id PK, FK
+        long completed_at
+    }
+
+    USER_COMPLETED_LESSONS {
+        string user_id PK, FK
+        string lesson_id PK, FK
+        int xp_earned
+        long completed_at
+    }
+
+    LEARNING_PROGRESS {
+        string exercise_id PK, FK
+        string user_id PK, FK
+        double difficulty
+        double stability
+        int reps
+        int lapses
+        int state
+        long due_date
+        long last_reviewed
+    }
+```
 
 ---
 
-## 5. Entorno
-
-| Tecnología                | Descripción              |
-| ------------------------- | ------------------------ |
-| Lenguaje                  | Kotlin                   |
-| IDE                       | Android Studio           |
-| Framework UI              | Jetpack Compose          |
-| Renderizado de Markdown   | `multiplatform-markdown-renderer` (con coloreado de sintaxis para lecciones) |
-| Base de Datos Local       | Room Database (SQLite)   |
-| Base de Datos Remota      | Cloud Firestore (NoSQL)  |
-| Autenticación             | Firebase Authentication  |
-| Arquitectura Asíncrona    | Kotlin Coroutines y Flow |
-| Inyección de Dependencias | Hilt                     |
-| Control de Versiones      | Git y GitHub             |
-
----
-
-## 6. Codificación
-
-Durante el desarrollo se siguieron las recomendaciones oficiales de Google para Android.
-
-### Inmutabilidad
-
-Se prioriza el uso de:
-
-```kotlin
-val
-data class
-```
-
-con el fin de reducir efectos secundarios y mejorar la previsibilidad del código.
-
-### Single Source of Truth (SSOT)
-
-Room actúa como fuente principal de datos, mientras que la interfaz observa los cambios mediante Flow y StateFlow.
-
-### Separación de Responsabilidades
-
-Los componentes de interfaz son principalmente Stateless y reciben:
-
-- Datos
-- Eventos
-- Callbacks
-
-desde sus respectivos ViewModels.
-
-### Manejo de Errores
-
-La aplicación utiliza clases de respuesta controladas para representar los distintos estados del sistema:
+## 6. Estructura del Proyecto
 
 ```text
-Loading
-Success
-Error
+app/src/main/java/com/kipucode/
+├── data/
+│   ├── local/               # Room Database, Entidades, DAOs y DatabaseSeedService
+│   │   ├── dao/             # Acceso reactivo a SQLite (UserDao, CourseDao, ExerciseDao...)
+│   │   ├── database/        # AppDatabase con Room migrations y TypeConverters
+│   │   └── model/           # Entidades SQLite normalizadas (Users, Courses, Progress...)
+│   ├── mapper/              # Transformaciones puras (Entity <-> DTO <-> Domain)
+│   ├── remote/firebase/     # Data sources y DTOs para Cloud Firestore y Firebase Auth
+│   └── repository/          # Implementaciones concretas de repositorios (Offline-First)
+├── di/                      # Módulos de inyección de dependencias con Dagger Hilt
+├── domain/
+│   ├── model/               # Modelos de negocio inmutables libres de dependencias de Android
+│   ├── repository/          # Interfaces y contratos abstractos de acceso a datos
+│   └── usecase/             # Lógica de aplicación pura (FSRS Cognitive Mastery, Auth...)
+├── ui/
+│   ├── components/          # Componentes reutilizables (Botones, Cards, Dialogs, TopBar)
+│   ├── navigation/          # AppNavigation con rutas Type-Safe de Navigation Compose
+│   ├── screens/             # Vistas de la aplicación (Home, Explore, Lesson, Exercise, Profile)
+│   └── theme/               # Paleta de colores, tipografías Nunito y temas Material 3
+└── viewmodel/               # ViewModels reactivos con StateFlow y manejo de ciclo de vida
 ```
 
-Esto permite mostrar mensajes adecuados al usuario sin comprometer la estabilidad de la aplicación.
+---
+
+## 7. Instalación y Ejecución
+
+### Requisitos Previos
+* **Android Studio:** Ladybug (2024.2.1) o superior.
+* **JDK:** Java Development Kit 17 o superior.
+* **SDK Android:**
+  * `compileSdk`: 35
+  * `minSdk`: 26 (Android 8.0 Oreo o superior)
+  * `targetSdk`: 35
+
+### Pasos para Ejecutar
+1. **Clonar el repositorio:**
+   ```bash
+   git clone https://github.com/juan-martin2005/KipuCode.git
+   cd KipuCode
+   ```
+
+2. **Configuración de Firebase:**
+   * Descargar el archivo `google-services.json` desde la consola de Firebase del proyecto.
+   * Colocarlo en la ruta: `app/google-services.json`.
+
+3. **Sincronizar y Compilar:**
+   * Abrir el proyecto en Android Studio.
+   * Ejecutar la sincronización de Gradle (*Sync Project with Gradle Files*).
+   * Seleccionar un emulador o dispositivo físico con Android 8.0+ y presionar **Run (`Shift + F10`)**.
+
+---
+
+<p align="center">
+  Diseñado y desarrollado con dedicación para el aprendizaje accesible y significativo del desarrollo de software.
+</p>
