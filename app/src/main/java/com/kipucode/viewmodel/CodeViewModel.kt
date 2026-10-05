@@ -31,15 +31,14 @@ import javax.inject.Inject
 enum class ModuleItemStatus {
     COMPLETED,
     CURRENT,
-    NEXT_LOCKED
+    AVAILABLE
 }
 
 data class ModuleItemUiModel(
     val course: CourseDomain,
     val lessons: List<LessonDomain>,
     val status: ModuleItemStatus,
-    val masteryPercentage: Int = 0,
-    val lockMessage: String? = null
+    val masteryPercentage: Int = 0
 )
 
 data class CodeUiState(
@@ -153,29 +152,23 @@ class CodeViewModel @Inject constructor(
 
         val currentCourseOrder = activeCourse?.course?.orderIndex ?: 1
 
-        val visibleModules = trackCourses
-            .filter { it.course.orderIndex <= currentCourseOrder + 1 }
-            .map { item ->
-                val courseOrder = item.course.orderIndex
-                val status = when {
-                    courseOrder < currentCourseOrder -> ModuleItemStatus.COMPLETED
-                    courseOrder == currentCourseOrder -> ModuleItemStatus.CURRENT
-                    else -> ModuleItemStatus.NEXT_LOCKED
-                }
-                val lockMsg = if (status == ModuleItemStatus.NEXT_LOCKED) {
-                    "Módulo bloqueado · Completa el Módulo $currentCourseOrder para desbloquear el acceso a este contenido."
-                } else null
-
-                val masteryPct = domainData.masteryOverview.courseMastery[item.course.id]?.percentage ?: 0
-
-                ModuleItemUiModel(
-                    course = item.course,
-                    lessons = item.lessons.sortedBy { it.orderIndex },
-                    status = status,
-                    masteryPercentage = masteryPct,
-                    lockMessage = lockMsg
-                )
+        val visibleModules = trackCourses.map { item ->
+            val courseOrder = item.course.orderIndex
+            val status = when {
+                courseOrder < currentCourseOrder -> ModuleItemStatus.COMPLETED
+                courseOrder == currentCourseOrder -> ModuleItemStatus.CURRENT
+                else -> ModuleItemStatus.AVAILABLE
             }
+
+            val masteryPct = domainData.masteryOverview.courseMastery[item.course.id]?.percentage ?: 0
+
+            ModuleItemUiModel(
+                course = item.course,
+                lessons = item.lessons.sortedBy { it.orderIndex },
+                status = status,
+                masteryPercentage = masteryPct
+            )
+        }
 
         return CodeUiState(
             isLoading = false,

@@ -260,8 +260,8 @@ fun CodeScreenWithDataPreview() {
         ModuleItemUiModel(
             course = mockCourse3,
             lessons = emptyList(),
-            status = ModuleItemStatus.NEXT_LOCKED,
-            lockMessage = "Módulo bloqueado · Completa el Módulo 2 para desbloquear el acceso a este contenido."
+            status = ModuleItemStatus.AVAILABLE,
+            masteryPercentage = 0
         )
     )
 

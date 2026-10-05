@@ -70,26 +70,19 @@ fun ModulePracticeCard(
         label = "arrowRotation"
     )
 
-    val isLocked = moduleItem.status == ModuleItemStatus.NEXT_LOCKED
-
     val cardBorder = when (moduleItem.status) {
         ModuleItemStatus.CURRENT -> BorderStroke(2.dp, KipuTeal)
         ModuleItemStatus.COMPLETED -> BorderStroke(1.dp, Color(0xFFE0E0E0))
-        ModuleItemStatus.NEXT_LOCKED -> BorderStroke(1.dp, Color(0xFFDDE2E7))
-    }
-
-    val cardBgColor = when (moduleItem.status) {
-        ModuleItemStatus.NEXT_LOCKED -> Color(0xFFF8F9FA)
-        else -> Color.White
+        ModuleItemStatus.AVAILABLE -> BorderStroke(1.dp, Color(0xFFE0E0E0))
     }
 
     Column(modifier = Modifier.fillMaxWidth()) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable(enabled = !isLocked, onClick = onToggleExpand),
+                .clickable(onClick = onToggleExpand),
             shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(containerColor = cardBgColor),
+            colors = CardDefaults.cardColors(containerColor = Color.White),
             border = cardBorder,
             elevation = CardDefaults.cardElevation(
                 defaultElevation = if (moduleItem.status == ModuleItemStatus.CURRENT) 3.dp else 1.dp
@@ -108,7 +101,7 @@ fun ModulePracticeCard(
                             when (moduleItem.status) {
                                 ModuleItemStatus.CURRENT -> KipuTeal.copy(alpha = 0.15f)
                                 ModuleItemStatus.COMPLETED -> Color(0xFFE8F5E9)
-                                ModuleItemStatus.NEXT_LOCKED -> Color(0xFFECEFF1)
+                                ModuleItemStatus.AVAILABLE -> Color(0xFFF0F4F8)
                             },
                             RoundedCornerShape(12.dp)
                         ),
@@ -132,12 +125,13 @@ fun ModulePracticeCard(
                                 modifier = Modifier.size(20.dp)
                             )
                         }
-                        ModuleItemStatus.NEXT_LOCKED -> {
-                            Icon(
-                                painter = painterResource(id = R.drawable.ic_lock),
-                                contentDescription = null,
-                                tint = Gray,
-                                modifier = Modifier.size(20.dp)
+                        ModuleItemStatus.AVAILABLE -> {
+                            Text(
+                                text = "${moduleItem.course.orderIndex}",
+                                fontFamily = Nunito,
+                                fontWeight = FontWeight.ExtraBold,
+                                color = KipuDarkBlue,
+                                fontSize = 16.sp
                             )
                         }
                     }
@@ -158,7 +152,7 @@ fun ModulePracticeCard(
                             color = when (moduleItem.status) {
                                 ModuleItemStatus.CURRENT -> KipuTeal
                                 ModuleItemStatus.COMPLETED -> Color(0xFF2E7D32)
-                                ModuleItemStatus.NEXT_LOCKED -> Gray
+                                ModuleItemStatus.AVAILABLE -> Gray
                             }
                         )
 
@@ -167,14 +161,14 @@ fun ModulePracticeCard(
                             color = when (moduleItem.status) {
                                 ModuleItemStatus.CURRENT -> KipuTeal
                                 ModuleItemStatus.COMPLETED -> Color(0xFFE8F5E9)
-                                ModuleItemStatus.NEXT_LOCKED -> Color(0xFFECEFF1)
+                                ModuleItemStatus.AVAILABLE -> Color(0xFFF0F4F8)
                             }
                         ) {
                             Text(
                                 text = when (moduleItem.status) {
                                     ModuleItemStatus.CURRENT -> "En curso"
                                     ModuleItemStatus.COMPLETED -> "Completado"
-                                    ModuleItemStatus.NEXT_LOCKED -> "Bloqueado"
+                                    ModuleItemStatus.AVAILABLE -> "Disponible"
                                 },
                                 fontSize = 10.sp,
                                 fontFamily = Nunito,
@@ -182,7 +176,7 @@ fun ModulePracticeCard(
                                 color = when (moduleItem.status) {
                                     ModuleItemStatus.CURRENT -> Color.White
                                     ModuleItemStatus.COMPLETED -> Color(0xFF2E7D32)
-                                    ModuleItemStatus.NEXT_LOCKED -> Gray
+                                    ModuleItemStatus.AVAILABLE -> Gray
                                 },
                                 modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
                             )
@@ -196,86 +190,52 @@ fun ModulePracticeCard(
                         fontFamily = Nunito,
                         fontWeight = FontWeight.ExtraBold,
                         fontSize = 16.sp,
-                        color = if (isLocked) Gray else KipuDarkBlue
+                        color = KipuDarkBlue
                     )
                 }
 
                 Spacer(modifier = Modifier.width(8.dp))
 
-                if (moduleItem.status != ModuleItemStatus.NEXT_LOCKED) {
-                    Column(horizontalAlignment = Alignment.End) {
-                        Surface(
-                            shape = RoundedCornerShape(8.dp),
-                            color = when {
-                                moduleItem.masteryPercentage >= 80 -> Color(0xFFE8F5E9)
-                                moduleItem.masteryPercentage >= 40 -> Color(0xFFFFF3E0)
-                                else -> Color(0xFFF0F4F8)
-                            }
-                        ) {
-                            Text(
-                                text = "Dominio ${moduleItem.masteryPercentage}%",
-                                fontSize = 11.sp,
-                                fontFamily = Nunito,
-                                fontWeight = FontWeight.Bold,
-                                color = when {
-                                    moduleItem.masteryPercentage >= 80 -> Color(0xFF2E7D32)
-                                    moduleItem.masteryPercentage >= 40 -> Color(0xFFE65100)
-                                    else -> Gray
-                                },
-                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp)
-                            )
+                Column(horizontalAlignment = Alignment.End) {
+                    Surface(
+                        shape = RoundedCornerShape(8.dp),
+                        color = when {
+                            moduleItem.masteryPercentage >= 80 -> Color(0xFFE8F5E9)
+                            moduleItem.masteryPercentage >= 40 -> Color(0xFFFFF3E0)
+                            else -> Color(0xFFF0F4F8)
                         }
-
-                        Spacer(modifier = Modifier.height(4.dp))
-
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_arrow_filled),
-                            contentDescription = null,
-                            tint = Gray,
-                            modifier = Modifier
-                                .size(16.dp)
-                                .rotate(arrowRotation)
-                        )
-                    }
-                }
-            }
-
-            if (isLocked && moduleItem.lockMessage != null) {
-                Spacer(modifier = Modifier.height(12.dp))
-                Surface(
-                    shape = RoundedCornerShape(10.dp),
-                    color = Color(0xFFECEFF1).copy(alpha = 0.6f),
-                    border = BorderStroke(1.dp, Color(0xFFCFD8DC))
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(10.dp),
-                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_lock),
-                            contentDescription = null,
-                            tint = Gray,
-                            modifier = Modifier.size(16.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = moduleItem.lockMessage,
+                            text = "Dominio ${moduleItem.masteryPercentage}%",
+                            fontSize = 11.sp,
                             fontFamily = Nunito,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = Gray,
-                            lineHeight = 16.sp
+                            fontWeight = FontWeight.Bold,
+                            color = when {
+                                moduleItem.masteryPercentage >= 80 -> Color(0xFF2E7D32)
+                                moduleItem.masteryPercentage >= 40 -> Color(0xFFE65100)
+                                else -> Gray
+                            },
+                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp)
                         )
                     }
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_arrow_filled),
+                        contentDescription = null,
+                        tint = Gray,
+                        modifier = Modifier
+                            .size(16.dp)
+                            .rotate(arrowRotation)
+                    )
                 }
             }
         }
     }
 
     AnimatedVisibility(
-        visible = isExpanded && !isLocked,
+        visible = isExpanded,
         enter = slideInVertically(
             initialOffsetY = { -it / 2 }
         ) + expandVertically() + fadeIn(),
@@ -365,15 +325,15 @@ fun ModulePracticeCardCompletedPreview() {
     }
 }
 
-@Preview(showBackground = true, name = "Módulo Bloqueado")
+@Preview(showBackground = true, name = "Módulo Disponible")
 @Composable
-fun ModulePracticeCardLockedPreview() {
+fun ModulePracticeCardAvailablePreview() {
     val mockCourse = CourseDomain(id = "c3", title = "Estructuras de Control", orderIndex = 3)
     val moduleItem = ModuleItemUiModel(
         course = mockCourse,
         lessons = emptyList(),
-        status = ModuleItemStatus.NEXT_LOCKED,
-        lockMessage = "Módulo bloqueado · Completa el Módulo 2 para desbloquear el acceso a este contenido."
+        status = ModuleItemStatus.AVAILABLE,
+        masteryPercentage = 0
     )
 
     Box(modifier = Modifier.padding(16.dp)) {
