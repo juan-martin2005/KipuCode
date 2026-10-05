@@ -37,6 +37,9 @@ interface LearningProgressDao {
     @Query("SELECT * FROM learning_progress WHERE user_id = :userId")
     fun getAllProgressForUser(userId: String): Flow<List<LearningProgressEntity>>
 
+    @Query("SELECT * FROM learning_progress WHERE user_id = :userId")
+    suspend fun getAllProgressForUserDirect(userId: String): List<LearningProgressEntity>
+
     @Upsert
     suspend fun insertOrUpdate(progress: LearningProgressEntity)
 

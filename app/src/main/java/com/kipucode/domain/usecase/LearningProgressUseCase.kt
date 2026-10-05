@@ -62,6 +62,17 @@ class RefreshLearningProgressUseCase @Inject constructor(
 }
 
 // ============================================================================================
+//  CASO DE USO: SINCRONIZAR HISTORIAL CONSOLIDADO DE EJERCICIOS A FIRESTORE (LOTE EN DOCUMENTO)
+// ============================================================================================
+class SyncLearningProgressUseCase @Inject constructor(
+    private val learningProgressRepository: LearningProgressRepository
+) {
+    suspend operator fun invoke(): Response<Unit> {
+        return learningProgressRepository.syncLearningProgressToRemote()
+    }
+}
+
+// ============================================================================================
 //  CASO DE USO: OBTENER EJERCICIOS VENCIDOS CON METADATOS DE LECCIÓN Y FSRS MENOR A 90%
 // ============================================================================================
 class GetDueExercisesWithDetailsUseCase @Inject constructor(

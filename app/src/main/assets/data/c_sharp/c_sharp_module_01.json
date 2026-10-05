@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 9,
   "course": {
     "id": "csharp_module_01",
     "title": "Fundamentos de .NET, Lógica y Diagramación",
@@ -43,7 +43,7 @@
         {
           "type": "concept",
           "title": "El ciclo de ejecución del código administrado",
-          "text": "C# genera código administrado que no interactúa dire cto con la **CPU** (_Central Processing Unit_ / Unidad Central de Procesamiento). El código fuente (`.cs`) se traduce a un lenguaje binario intermedio denominado **CIL** (_Common Intermediate Language_ / Lenguaje Intermedio Común) o **IL**. Este binario se almacena en un ensamblado (`.dll`) junto a sus metadatos y un host ejecutable nativo."
+          "text": "C# genera código administrado que no interactúa directo con la **CPU** (_Central Processing Unit_ / Unidad Central de Procesamiento). El código fuente (`.cs`) se traduce a un lenguaje binario intermedio denominado **CIL** (_Common Intermediate Language_ / Lenguaje Intermedio Común) o **IL**. Este binario se almacena en un ensamblado (`.dll`) junto a sus metadatos y un host ejecutable nativo."
         },
         {
           "type": "concept",
@@ -124,7 +124,6 @@
         }
       ],
       "exercises": [
-
         {
           "id": "exercise_lesson_01_01",
           "type": "UNIQUE_CHOICE",
@@ -132,36 +131,36 @@
           "xp": 100,
           "orderIndex": 1,
           "options": [
-            { "content": "CLR, JIT y GC", "explanation": "El JIT y el GC son tareas que realiza el CLR; no son pilares de la plataforma.", "isCorrect": false, "orderIndex": 1 },
-            { "content": "CLR, BCL y SDK", "explanation": "Los tres pilares son el CLR (motor de ejecución), la BCL (biblioteca de clases) y el SDK (herramientas de desarrollo).", "isCorrect": true, "orderIndex": 2 },
-            { "content": "BCL, Roslyn y CLI", "explanation": "Roslyn y la CLI son herramientas incluidas dentro del SDK, no pilares independientes.", "isCorrect": false, "orderIndex": 3 },
-            { "content": "Runtime, SDK y .csproj", "explanation": "El Runtime combina CLR y BCL, y el .csproj es un archivo de configuración de proyecto; no son los pilares de la plataforma.", "isCorrect": false, "orderIndex": 4 }
+            { "content": "CLR, JIT y GC", "explanation": "JIT y GC son funciones internas del CLR, no los pilares principales.", "isCorrect": false, "orderIndex": 1 },
+            { "content": "CLR, BCL y SDK", "explanation": "Correcto. El CLR (ejecución), BCL (clases) y SDK (herramientas) forman la base de .NET.", "isCorrect": true, "orderIndex": 2 },
+            { "content": "BCL, Roslyn y CLI", "explanation": "Roslyn y la CLI son partes incluidas dentro del SDK.", "isCorrect": false, "orderIndex": 3 },
+            { "content": "Runtime, SDK y .csproj", "explanation": "El archivo .csproj configura proyectos, no es un pilar de la plataforma.", "isCorrect": false, "orderIndex": 4 }
           ]
         },
         {
           "id": "exercise_lesson_01_02",
           "type": "UNIQUE_CHOICE",
-          "instruction": "¿Qué componentes combina el .NET Runtime?",
+          "instruction": "¿Qué componentes forman el .NET Runtime?",
           "xp": 100,
           "orderIndex": 2,
           "options": [
-            { "content": "CLR + SDK", "explanation": "Es al revés: el SDK incluye al Runtime, no el Runtime al SDK.", "isCorrect": false, "orderIndex": 1 },
-            { "content": "BCL + Roslyn", "explanation": "Roslyn es un compilador y pertenece al SDK, no al Runtime.", "isCorrect": false, "orderIndex": 2 },
-            { "content": "CLR + BCL", "explanation": "El .NET Runtime combina el CLR y la BCL, y es lo mínimo necesario para ejecutar una aplicación.", "isCorrect": true, "orderIndex": 3 },
-            { "content": "SDK + CLI", "explanation": "El SDK y la CLI son herramientas de desarrollo; el Runtime no las incluye.", "isCorrect": false, "orderIndex": 4 }
+            { "content": "CLR + SDK", "explanation": "El SDK incluye al Runtime, no al revés.", "isCorrect": false, "orderIndex": 1 },
+            { "content": "BCL + Roslyn", "explanation": "Roslyn pertenece al SDK.", "isCorrect": false, "orderIndex": 2 },
+            { "content": "CLR + BCL", "explanation": "Correcto. Son el motor y las clases necesarias para ejecutar una aplicación.", "isCorrect": true, "orderIndex": 3 },
+            { "content": "SDK + CLI", "explanation": "Ambos son herramientas de desarrollo, no el entorno de ejecución.", "isCorrect": false, "orderIndex": 4 }
           ]
         },
         {
           "id": "exercise_lesson_01_03",
           "type": "UNIQUE_CHOICE",
-          "instruction": "¿Qué proporciona la Biblioteca Base de Clases (BCL)?",
+          "instruction": "¿Qué proporciona la BCL (Base Class Library)?",
           "xp": 100,
           "orderIndex": 3,
           "options": [
-            { "content": "Compiladores y plantillas de proyecto", "explanation": "Eso corresponde al SDK, que incluye a Roslyn y las plantillas de proyecto.", "isCorrect": false, "orderIndex": 1 },
-            { "content": "La compilación JIT del CIL", "explanation": "La compilación JIT la realiza el CLR, no la BCL.", "isCorrect": false, "orderIndex": 2 },
-            { "content": "La liberación automática de memoria", "explanation": "De la memoria se encarga el Recolector de Basura (GC), que forma parte del CLR.", "isCorrect": false, "orderIndex": 3 },
-            { "content": "Tipos base: colecciones, texto, E/S y archivos", "explanation": "La BCL ofrece los tipos fundamentales que el programador usa directamente: colecciones, procesamiento de texto, entrada/salida y manejo de archivos.", "isCorrect": true, "orderIndex": 4 }
+            { "content": "Compiladores y plantillas", "explanation": "Eso lo provee el SDK.", "isCorrect": false, "orderIndex": 1 },
+            { "content": "La compilación JIT", "explanation": "La realiza el CLR.", "isCorrect": false, "orderIndex": 2 },
+            { "content": "Liberación automática de memoria", "explanation": "Es responsabilidad del GC dentro del CLR.", "isCorrect": false, "orderIndex": 3 },
+            { "content": "Tipos base estándar y utilidades", "explanation": "Correcto. Provee utilidades para trabajar y tipos de datos base.", "isCorrect": true, "orderIndex": 4 }
           ]
         },
         {
@@ -171,225 +170,225 @@
           "xp": 100,
           "orderIndex": 4,
           "options": [
-            { "content": "Compiladores, plantillas y la CLI _dotnet_", "explanation": "El SDK incluye el Runtime y le añade las herramientas para desarrollar: compiladores como Roslyn, plantillas de proyecto y la CLI dotnet.", "isCorrect": true, "orderIndex": 1 },
-            { "content": "Solo el Recolector de Basura", "explanation": "El GC forma parte del CLR, que ya está dentro del Runtime.", "isCorrect": false, "orderIndex": 2 },
-            { "content": "Únicamente la BCL", "explanation": "La BCL ya está dentro del Runtime; lo que añade el SDK son herramientas de desarrollo.", "isCorrect": false, "orderIndex": 3 },
-            { "content": "El ejecutable anfitrión del programa", "explanation": "El ejecutable anfitrión acompaña al ensamblado que emite el compilador; no es una herramienta que añada el SDK.", "isCorrect": false, "orderIndex": 4 }
+            { "content": "Compiladores, plantillas y la CLI", "explanation": "Correcto. Añade las herramientas necesarias para desarrollar código.", "isCorrect": true, "orderIndex": 1 },
+            { "content": "El Recolector de Basura (GC)", "explanation": "El GC ya viene incluido en el Runtime (dentro del CLR).", "isCorrect": false, "orderIndex": 2 },
+            { "content": "Únicamente la BCL", "explanation": "La BCL es parte del Runtime, el SDK añade más cosas.", "isCorrect": false, "orderIndex": 3 },
+            { "content": "El ejecutable host", "explanation": "El host se genera al compilar, no es una herramienta del SDK.", "isCorrect": false, "orderIndex": 4 }
           ]
         },
         {
           "id": "exercise_lesson_01_05",
           "type": "UNIQUE_CHOICE",
-          "instruction": "Un servidor solo debe ejecutar aplicaciones ya compiladas. ¿Qué es lo mínimo que necesita?",
+          "instruction": "Para un servidor que solo necesita ejecutar aplicaciones ya compiladas, ¿qué es lo mínimo requerido?",
           "xp": 100,
           "orderIndex": 5,
           "options": [
-            { "content": ".NET SDK", "explanation": "El SDK serviría, pero incluye herramientas de desarrollo que aquí no hacen falta; lo mínimo es el Runtime.", "isCorrect": false, "orderIndex": 1 },
-            { "content": ".NET Runtime", "explanation": "El Runtime (CLR + BCL) es el paquete mínimo para ejecutar aplicaciones previamente compiladas.", "isCorrect": true, "orderIndex": 2 },
-            { "content": "Visual Studio Community", "explanation": "Es un IDE para desarrollar; no es lo mínimo para solo ejecutar aplicaciones.", "isCorrect": false, "orderIndex": 3 },
-            { "content": "C# Dev Kit", "explanation": "Es un paquete de extensiones de Visual Studio Code para desarrollar, no para ejecutar.", "isCorrect": false, "orderIndex": 4 }
+            { "content": ".NET SDK", "explanation": "Incluye herramientas extra que un servidor de ejecución no necesita.", "isCorrect": false, "orderIndex": 1 },
+            { "content": ".NET Runtime", "explanation": "Correcto. Es el paquete mínimo necesario para ejecutar aplicaciones.", "isCorrect": true, "orderIndex": 2 },
+            { "content": "Visual Studio Community", "explanation": "Es un entorno de desarrollo (IDE).", "isCorrect": false, "orderIndex": 3 },
+            { "content": "C# Dev Kit", "explanation": "Es una extensión de VS Code para desarrollo.", "isCorrect": false, "orderIndex": 4 }
           ]
         },
         {
           "id": "exercise_lesson_01_06",
           "type": "UNIQUE_CHOICE",
-          "instruction": "¿Qué comando lista los entornos de ejecución instalados en el sistema?",
+          "instruction": "¿Qué comando lista los entornos de ejecución instalados en tu sistema?",
           "xp": 100,
           "orderIndex": 6,
           "options": [
-            { "content": "_dotnet --list-sdks_", "explanation": "Ese comando lista los SDKs instalados, no los entornos de ejecución.", "isCorrect": false, "orderIndex": 1 },
-            { "content": "_dotnet --version_", "explanation": "Muestra la versión activa del SDK, no la lista de entornos de ejecución.", "isCorrect": false, "orderIndex": 2 },
-            { "content": "_dotnet --list-runtimes_", "explanation": "Este comando lista los entornos de ejecución (Runtimes) instalados en el sistema.", "isCorrect": true, "orderIndex": 3 },
-            { "content": "_dotnet build --list-runtimes_", "explanation": "No es un comando de la lección; dotnet build se usa para compilar la solución.", "isCorrect": false, "orderIndex": 4 }
+            { "content": "dotnet --list-sdks", "explanation": "Lista los SDKs, no los entornos de ejecución.", "isCorrect": false, "orderIndex": 1 },
+            { "content": "dotnet --version", "explanation": "Muestra la versión actual del SDK.", "isCorrect": false, "orderIndex": 2 },
+            { "content": "dotnet --list-runtimes", "explanation": "Correcto. Lista todos los Runtimes instalados.", "isCorrect": true, "orderIndex": 3 },
+            { "content": "dotnet build", "explanation": "Compila el código, no lista instalaciones.", "isCorrect": false, "orderIndex": 4 }
           ]
         },
         {
           "id": "exercise_lesson_01_07",
           "type": "UNIQUE_CHOICE",
-          "instruction": "Al compilar código C#, ¿en qué se traduce primero?",
+          "instruction": "Al compilar código fuente en C#, ¿a qué formato se traduce primero?",
           "xp": 100,
           "orderIndex": 7,
           "options": [
-            { "content": "CIL (Common Intermediate Language)", "explanation": "El código C# se traduce a una representación binaria intermedia llamada CIL (o IL), no directamente a instrucciones de la CPU.", "isCorrect": true, "orderIndex": 1 },
-            { "content": "Código máquina nativo del procesador", "explanation": "El código máquina lo genera después el JIT del CLR, en el momento de ejecutar cada método.", "isCorrect": false, "orderIndex": 2 },
-            { "content": "Metadatos", "explanation": "Los metadatos describen clases y métodos, pero no son el código ejecutable.", "isCorrect": false, "orderIndex": 3 },
-            { "content": "Un archivo `.csproj`", "explanation": "El .csproj es un archivo de configuración del proyecto, no el resultado de compilar el código.", "isCorrect": false, "orderIndex": 4 }
+            { "content": "CIL (Common Intermediate Language)", "explanation": "Correcto. El código se traduce a este binario intermedio.", "isCorrect": true, "orderIndex": 1 },
+            { "content": "Código máquina nativo", "explanation": "Esto lo hace el JIT más adelante, en tiempo de ejecución.", "isCorrect": false, "orderIndex": 2 },
+            { "content": "Metadatos", "explanation": "Los metadatos acompañan al código, pero no son las instrucciones compiladas.", "isCorrect": false, "orderIndex": 3 },
+            { "content": "Archivos .csproj", "explanation": "Es el archivo de configuración del proyecto.", "isCorrect": false, "orderIndex": 4 }
           ]
         },
         {
           "id": "exercise_lesson_01_08",
           "type": "UNIQUE_CHOICE",
-          "instruction": "¿Qué extensión tiene el ensamblado principal que genera .NET?",
+          "instruction": "¿Qué extensión principal tiene el ensamblado generado tras compilar en .NET?",
           "xp": 100,
           "orderIndex": 8,
           "options": [
-            { "content": "`.exe`", "explanation": "El .exe es solo el ejecutable de arranque (host) que acompaña al ensamblado en Windows.", "isCorrect": false, "orderIndex": 1 },
-            { "content": "`.cs`", "explanation": "Es la extensión de los archivos de código fuente.", "isCorrect": false, "orderIndex": 2 },
-            { "content": "`.csproj`", "explanation": "Es el archivo de proyecto con la configuración de compilación, no el ensamblado.", "isCorrect": false, "orderIndex": 3 },
-            { "content": "`.dll`", "explanation": "En .NET el ensamblado principal siempre se genera con extensión .dll, acompañado de un ejecutable de arranque.", "isCorrect": true, "orderIndex": 4 }
+            { "content": ".exe", "explanation": "El .exe es solo el ejecutable de arranque en Windows, no el ensamblado en sí.", "isCorrect": false, "orderIndex": 1 },
+            { "content": ".cs", "explanation": "Es la extensión del código fuente sin compilar.", "isCorrect": false, "orderIndex": 2 },
+            { "content": ".csproj", "explanation": "Es la configuración del proyecto.", "isCorrect": false, "orderIndex": 3 },
+            { "content": ".dll", "explanation": "Correcto. .NET empaqueta el código CIL en archivos .dll.", "isCorrect": true, "orderIndex": 4 }
           ]
         },
         {
           "id": "exercise_lesson_01_09",
           "type": "UNIQUE_CHOICE",
-          "instruction": "¿Qué información contiene el manifiesto de un ensamblado?",
+          "instruction": "¿Qué acompaña al código binario intermedio (CIL) dentro de un ensamblado `.dll`?",
           "xp": 100,
           "orderIndex": 9,
           "options": [
-            { "content": "Descripción de todas las clases y métodos", "explanation": "Eso son los metadatos, no el manifiesto.", "isCorrect": false, "orderIndex": 1 },
-            { "content": "Versión, identidad y dependencias externas", "explanation": "El manifiesto guarda la información de versión, identidad y dependencias externas necesarias.", "isCorrect": true, "orderIndex": 2 },
-            { "content": "El código compilado en CIL", "explanation": "El CIL es el código del ensamblado; el manifiesto es un elemento aparte.", "isCorrect": false, "orderIndex": 3 },
-            { "content": "Las plantillas de proyecto", "explanation": "Las plantillas de proyecto pertenecen al SDK, no al ensamblado.", "isCorrect": false, "orderIndex": 4 }
+            { "content": "El código fuente original en C#", "explanation": "El código fuente no se incluye en el ensamblado final por defecto.", "isCorrect": false, "orderIndex": 1 },
+            { "content": "Metadatos y un host ejecutable nativo", "explanation": "Correcto. El binario se almacena junto a sus metadatos y un host ejecutable.", "isCorrect": true, "orderIndex": 2 },
+            { "content": "El compilador Roslyn", "explanation": "Roslyn hace la compilación, pero no viaja dentro del `.dll`.", "isCorrect": false, "orderIndex": 3 },
+            { "content": "El entorno CLR completo", "explanation": "El CLR está instalado en la máquina objetivo, no dentro del ensamblado.", "isCorrect": false, "orderIndex": 4 }
           ]
         },
         {
           "id": "exercise_lesson_01_10",
           "type": "UNIQUE_CHOICE",
-          "instruction": "¿Cuándo traduce el JIT el código CIL a código máquina?",
+          "instruction": "¿En qué momento traduce el JIT el código CIL a código de máquina?",
           "xp": 100,
           "orderIndex": 10,
           "options": [
-            { "content": "Al compilar con Roslyn", "explanation": "Roslyn genera el CIL; la traducción a código máquina ocurre después, en ejecución.", "isCorrect": false, "orderIndex": 1 },
-            { "content": "Al instalar el SDK", "explanation": "La instalación del SDK no traduce código.", "isCorrect": false, "orderIndex": 2 },
-            { "content": "La primera vez que se invoca cada método", "explanation": "El JIT traduce el CIL a código máquina nativo específico del procesador justo cuando se invoca cada método por primera vez.", "isCorrect": true, "orderIndex": 3 },
-            { "content": "Al cerrar la aplicación", "explanation": "La traducción ocurre durante la ejecución, no al cerrar el programa.", "isCorrect": false, "orderIndex": 4 }
+            { "content": "Al usar el comando dotnet build", "explanation": "Ese comando usa Roslyn para generar CIL, no código máquina.", "isCorrect": false, "orderIndex": 1 },
+            { "content": "Al instalar el SDK", "explanation": "La instalación no ejecuta ni compila código de usuario.", "isCorrect": false, "orderIndex": 2 },
+            { "content": "Al invocar cada método por primera vez", "explanation": "Correcto. El compilador Just-In-Time traduce bajo demanda.", "isCorrect": true, "orderIndex": 3 },
+            { "content": "Al finalizar el programa", "explanation": "El código máquina se requiere para poder ejecutar el programa.", "isCorrect": false, "orderIndex": 4 }
           ]
         },
         {
           "id": "exercise_lesson_01_11",
           "type": "UNIQUE_CHOICE",
-          "instruction": "¿Qué hace el Recolector de Basura (GC)?",
+          "instruction": "¿Cuál es la función principal del Recolector de Basura (GC)?",
           "xp": 100,
           "orderIndex": 11,
           "options": [
-            { "content": "Libera objetos del Heap que ya no se usan", "explanation": "El GC supervisa la memoria Heap y libera automáticamente los objetos que la aplicación ya no utiliza.", "isCorrect": true, "orderIndex": 1 },
-            { "content": "Traduce el CIL a código máquina", "explanation": "Esa tarea corresponde al compilador JIT del CLR.", "isCorrect": false, "orderIndex": 2 },
-            { "content": "Cierra archivos y conexiones abiertas", "explanation": "El GC administra únicamente la memoria; los archivos y conexiones los cierra el programador.", "isCorrect": false, "orderIndex": 3 },
-            { "content": "Compila los archivos `.cs`", "explanation": "Compilar el código fuente es trabajo del compilador Roslyn, que forma parte del SDK.", "isCorrect": false, "orderIndex": 4 }
+            { "content": "Liberar de la memoria los objetos huérfanos", "explanation": "Correcto. Administra la memoria dinámica y elimina lo que ya no se usa.", "isCorrect": true, "orderIndex": 1 },
+            { "content": "Traducir CIL a código máquina", "explanation": "Esa es la función del JIT.", "isCorrect": false, "orderIndex": 2 },
+            { "content": "Cerrar archivos abiertos", "explanation": "El GC no administra recursos del sistema operativo como archivos.", "isCorrect": false, "orderIndex": 3 },
+            { "content": "Compilar el código fuente", "explanation": "Esto lo hace el compilador Roslyn.", "isCorrect": false, "orderIndex": 4 }
           ]
         },
         {
           "id": "exercise_lesson_01_12",
           "type": "UNIQUE_CHOICE",
-          "instruction": "Tu programa abre un archivo y luego deja de usarlo. ¿Quién debe cerrarlo?",
+          "instruction": "Si tu programa abre un archivo en el sistema operativo, ¿quién es el responsable de cerrarlo?",
           "xp": 100,
           "orderIndex": 12,
           "options": [
-            { "content": "El Recolector de Basura (GC)", "explanation": "El GC administra solo la memoria; no cierra archivos ni conexiones.", "isCorrect": false, "orderIndex": 1 },
-            { "content": "El compilador JIT", "explanation": "El JIT solo traduce el CIL a código máquina.", "isCorrect": false, "orderIndex": 2 },
-            { "content": "El CLR de forma automática", "explanation": "El CLR administra la memoria, pero no cierra recursos del sistema como archivos o conexiones.", "isCorrect": false, "orderIndex": 3 },
-            { "content": "El programador, por ejemplo con `using`", "explanation": "Los recursos del sistema los cierra el programador; la lección lo retoma con la sentencia using en el Módulo 4.", "isCorrect": true, "orderIndex": 4 }
+            { "content": "El Recolector de Basura (GC)", "explanation": "El GC administra memoria, no recursos de red o archivos.", "isCorrect": false, "orderIndex": 1 },
+            { "content": "El compilador JIT", "explanation": "Solo traduce código a lenguaje máquina.", "isCorrect": false, "orderIndex": 2 },
+            { "content": "El CLR automáticamente", "explanation": "El motor de ejecución no cierra conexiones externas.", "isCorrect": false, "orderIndex": 3 },
+            { "content": "El programador de forma manual", "explanation": "Correcto. El programador debe liberar explícitamente los recursos del sistema.", "isCorrect": true, "orderIndex": 4 }
           ]
         },
         {
           "id": "exercise_lesson_01_13",
           "type": "UNIQUE_CHOICE",
-          "instruction": "¿Cuál es el orden correcto del ciclo de ejecución de un programa C#?",
+          "instruction": "¿Cuál es la ruta correcta de compilación y ejecución de un programa en C#?",
           "xp": 100,
           "orderIndex": 13,
           "options": [
-            { "content": "`.cs` → CLR → Roslyn → ensamblado", "explanation": "El compilador debe actuar antes de que el CLR ejecute el programa.", "isCorrect": false, "orderIndex": 1 },
-            { "content": "`.cs` → Roslyn → ensamblado → CLR", "explanation": "Roslyn compila el código fuente en un ensamblado, y luego el CLR lo ejecuta con JIT y GC hasta producir instrucciones nativas.", "isCorrect": true, "orderIndex": 2 },
-            { "content": "Ensamblado → Roslyn → `.cs` → CLR", "explanation": "El ensamblado es el resultado de compilar, no el punto de partida.", "isCorrect": false, "orderIndex": 3 },
-            { "content": "`.cs` → ensamblado → JIT → Roslyn", "explanation": "Roslyn es el compilador, así que actúa antes de obtener el ensamblado.", "isCorrect": false, "orderIndex": 4 }
+            { "content": ".cs → CLR → Roslyn → Ensamblado", "explanation": "Roslyn debe compilar antes de que el CLR actúe.", "isCorrect": false, "orderIndex": 1 },
+            { "content": ".cs → Roslyn → Ensamblado → CLR (JIT/GC)", "explanation": "Correcto. Primero se compila, luego se empaqueta, y finalmente el CLR lo ejecuta.", "isCorrect": true, "orderIndex": 2 },
+            { "content": "Ensamblado → Roslyn → .cs → CLR", "explanation": "El ensamblado es el resultado, no el origen.", "isCorrect": false, "orderIndex": 3 },
+            { "content": ".cs → Ensamblado → JIT → Roslyn", "explanation": "Roslyn (el compilador) va al principio del proceso.", "isCorrect": false, "orderIndex": 4 }
           ]
         },
         {
           "id": "exercise_lesson_01_14",
           "type": "UNIQUE_CHOICE",
-          "instruction": "¿Qué configura el archivo `.csproj`?",
+          "instruction": "¿Para qué sirve el archivo `.csproj`?",
           "xp": 100,
           "orderIndex": 14,
           "options": [
-            { "content": "Agrupa varios proyectos relacionados", "explanation": "Esa es la función del archivo de solución (.sln o .slnx).", "isCorrect": false, "orderIndex": 1 },
-            { "content": "Contiene el código CIL compilado", "explanation": "El CIL se encuentra en el ensamblado, no en el archivo de proyecto.", "isCorrect": false, "orderIndex": 2 },
-            { "content": "Compilación, `<TargetFramework>` y paquetes externos", "explanation": "El .csproj contiene la configuración de compilación, la versión objetivo del marco de trabajo y las librerías o paquetes externos referenciados.", "isCorrect": true, "orderIndex": 3 },
-            { "content": "La lista de SDKs instalados", "explanation": "Los SDKs instalados se listan con el comando dotnet --list-sdks.", "isCorrect": false, "orderIndex": 4 }
+            { "content": "Agrupa varios proyectos", "explanation": "Eso lo hace el archivo `.sln`.", "isCorrect": false, "orderIndex": 1 },
+            { "content": "Contiene el código binario", "explanation": "El código compilado se guarda en el ensamblado.", "isCorrect": false, "orderIndex": 2 },
+            { "content": "Configura el framework y las librerías", "explanation": "Correcto. Define las características y dependencias del proyecto.", "isCorrect": true, "orderIndex": 3 },
+            { "content": "Almacena logs del compilador", "explanation": "No se usa para guardar logs.", "isCorrect": false, "orderIndex": 4 }
           ]
         },
         {
           "id": "exercise_lesson_01_15",
           "type": "UNIQUE_CHOICE",
-          "instruction": "¿Qué función cumple un archivo de solución (`.sln` o `.slnx`)?",
+          "instruction": "¿Cuál es la función de un archivo de solución (`.sln`)?",
           "xp": 100,
           "orderIndex": 15,
           "options": [
-            { "content": "Agrupar y organizar proyectos relacionados", "explanation": "La solución es un contenedor que agrupa uno o más proyectos relacionados para compilarlos o gestionarlos conjuntamente.", "isCorrect": true, "orderIndex": 1 },
-            { "content": "Definir el `<TargetFramework>`", "explanation": "Eso se configura en el archivo de proyecto .csproj.", "isCorrect": false, "orderIndex": 2 },
-            { "content": "Guardar el código compilado en CIL", "explanation": "El código CIL se guarda en el ensamblado .dll.", "isCorrect": false, "orderIndex": 3 },
-            { "content": "Reemplazar al CLR", "explanation": "El CLR es el motor de ejecución; la solución es solo un contenedor de proyectos.", "isCorrect": false, "orderIndex": 4 }
+            { "content": "Agrupar y organizar proyectos", "explanation": "Correcto. Sirve para manejar varios proyectos como una sola unidad.", "isCorrect": true, "orderIndex": 1 },
+            { "content": "Definir dependencias individuales", "explanation": "Eso se hace en el archivo de proyecto `.csproj`.", "isCorrect": false, "orderIndex": 2 },
+            { "content": "Guardar código fuente", "explanation": "El código fuente se guarda en archivos `.cs`.", "isCorrect": false, "orderIndex": 3 },
+            { "content": "Reemplazar al compilador", "explanation": "No realiza tareas de compilación, es solo configuración.", "isCorrect": false, "orderIndex": 4 }
           ]
         },
         {
           "id": "exercise_lesson_01_16",
           "type": "UNIQUE_CHOICE",
-          "instruction": "¿Qué comando vincula el proyecto `App` a una solución ya creada?",
+          "instruction": "¿Qué comando añade el proyecto 'App' a una solución existente?",
           "xp": 100,
           "orderIndex": 16,
           "options": [
-            { "content": "_dotnet new sln -n Sol_", "explanation": "Ese comando crea la solución; no vincula proyectos a ella.", "isCorrect": false, "orderIndex": 1 },
-            { "content": "_dotnet build_", "explanation": "Compila la solución, pero no vincula proyectos.", "isCorrect": false, "orderIndex": 2 },
-            { "content": "_dotnet run --project App_", "explanation": "Ejecuta el proyecto App, no lo vincula a una solución.", "isCorrect": false, "orderIndex": 3 },
-            { "content": "_dotnet sln add App/App.csproj_", "explanation": "Este comando agrega el archivo de proyecto App.csproj a la solución.", "isCorrect": true, "orderIndex": 4 }
+            { "content": "dotnet new sln -n Sol", "explanation": "Este comando crea una nueva solución.", "isCorrect": false, "orderIndex": 1 },
+            { "content": "dotnet build", "explanation": "Sirve para compilar.", "isCorrect": false, "orderIndex": 2 },
+            { "content": "dotnet run", "explanation": "Ejecuta un proyecto.", "isCorrect": false, "orderIndex": 3 },
+            { "content": "dotnet sln add App/App.csproj", "explanation": "Correcto. Vincula el `.csproj` especificado a la solución actual.", "isCorrect": true, "orderIndex": 4 }
           ]
         },
         {
           "id": "exercise_lesson_01_17",
           "type": "UNIQUE_CHOICE",
-          "instruction": "¿Qué distingue la forma de trabajo de Visual Studio frente a Visual Studio Code?",
+          "instruction": "¿Cuál es una diferencia clave entre Visual Studio y Visual Studio Code?",
           "xp": 100,
           "orderIndex": 17,
           "options": [
-            { "content": "VS trabaja por directorios; VS Code por soluciones", "explanation": "Es lo contrario: Visual Studio gira en torno a soluciones y VS Code a directorios de código.", "isCorrect": false, "orderIndex": 1 },
-            { "content": "VS trabaja por soluciones; VS Code por directorios", "explanation": "Visual Studio es un IDE orientado a soluciones (.sln); VS Code está centrado en directorios de código y añade C# con el C# Dev Kit.", "isCorrect": true, "orderIndex": 2 },
-            { "content": "VS es multiplataforma; VS Code solo funciona en Windows", "explanation": "Es al revés: Visual Studio Community es para Windows y Visual Studio Code es multiplataforma.", "isCorrect": false, "orderIndex": 3 },
-            { "content": "VS solo se usa en terminal; VS Code, en entorno gráfico", "explanation": "Visual Studio es un IDE con entorno gráfico; la diferencia entre ambos no depende de usar o no la terminal.", "isCorrect": false, "orderIndex": 4 }
+            { "content": "VS es para carpetas, VS Code para soluciones", "explanation": "Al revés: VS se enfoca en soluciones, VS Code en directorios.", "isCorrect": false, "orderIndex": 1 },
+            { "content": "VS se enfoca en soluciones, VS Code en carpetas", "explanation": "Correcto. VS es un IDE integral por soluciones, VS Code es modular por carpetas.", "isCorrect": true, "orderIndex": 2 },
+            { "content": "Ambos son exclusivos de Windows", "explanation": "VS Code es multiplataforma, VS (Community) es principalmete para Windows.", "isCorrect": false, "orderIndex": 3 },
+            { "content": "VS Code incluye compiladores integrados", "explanation": "VS Code requiere el SDK por separado y extensiones.", "isCorrect": false, "orderIndex": 4 }
           ]
         },
         {
           "id": "exercise_lesson_01_18",
           "type": "UNIQUE_CHOICE",
-          "instruction": "¿Qué necesita Visual Studio Code para trabajar con C# de forma profesional?",
+          "instruction": "Para programar en C# usando Visual Studio Code, ¿qué extensión es fundamental instalar?",
           "xp": 100,
           "orderIndex": 18,
           "options": [
-            { "content": "Roslyn como extensión", "explanation": "Roslyn es un compilador incluido en el SDK, no una extensión de VS Code.", "isCorrect": false, "orderIndex": 1 },
-            { "content": "JetBrains Rider", "explanation": "Rider es otro IDE, no un complemento de Visual Studio Code.", "isCorrect": false, "orderIndex": 2 },
-            { "content": "El paquete de extensiones C# Dev Kit", "explanation": "VS Code requiere el C# Dev Kit, que incluye la extensión base de C#, para navegar por soluciones, usar IntelliSense avanzado y depurar.", "isCorrect": true, "orderIndex": 3 },
-            { "content": "Visual Studio Community instalado", "explanation": "No es necesario: son entornos de desarrollo distintos entre los que se puede elegir.", "isCorrect": false, "orderIndex": 4 }
+            { "content": "JetBrains Rider", "explanation": "Rider es un IDE distinto, no una extensión.", "isCorrect": false, "orderIndex": 1 },
+            { "content": "Roslyn Compiler", "explanation": "Roslyn viene incluido en el SDK de .NET.", "isCorrect": false, "orderIndex": 2 },
+            { "content": "C# Dev Kit", "explanation": "Correcto. Provee las herramientas avanzadas para trabajar con C# en VS Code.", "isCorrect": true, "orderIndex": 3 },
+            { "content": "Sol Explorer", "explanation": "El explorador de soluciones ya viene incluido en el Dev Kit.", "isCorrect": false, "orderIndex": 4 }
           ]
         },
         {
           "id": "exercise_lesson_01_19",
           "type": "UNIQUE_CHOICE",
-          "instruction": "Tras ejecutar  \n```terminal\ndotnet new console -n HolaMundo\n```\n, reemplazas el contenido de un archivo por este código. ¿De qué archivo se trata?\n\n```c#\nConsole.WriteLine(\"¡Hola, C#!\");\n```",
+          "instruction": "Al usar `dotnet new console`, se genera un archivo con el código de inicio (punto de entrada). ¿Cómo se llama?",
           "xp": 100,
           "orderIndex": 19,
           "options": [
-            { "content": "`Program.cs`", "explanation": "La plantilla genera Program.cs con un mensaje en inglés (Hello, World!), y su contenido se reemplaza por el nuevo código.", "isCorrect": true, "orderIndex": 1 },
-            { "content": "`HolaMundo.csproj`", "explanation": "El .csproj es el archivo de configuración del proyecto, no contiene el código del programa.", "isCorrect": false, "orderIndex": 2 },
-            { "content": "`HolaMundo.sln`", "explanation": "El .sln agrupa proyectos y no contiene código; además se crea con un comando distinto (dotnet new sln).", "isCorrect": false, "orderIndex": 3 },
-            { "content": "`HolaMundo.dll`", "explanation": "El .dll es el ensamblado resultante de compilar, no un archivo que se edite.", "isCorrect": false, "orderIndex": 4 }
+            { "content": "Program.cs", "explanation": "Correcto. Es el archivo que contiene la ejecución inicial del programa.", "isCorrect": true, "orderIndex": 1 },
+            { "content": "App.csproj", "explanation": "Es el archivo de configuración.", "isCorrect": false, "orderIndex": 2 },
+            { "content": "Main.cs", "explanation": "Por convención en .NET, la plantilla usa Program.cs.", "isCorrect": false, "orderIndex": 3 },
+            { "content": "Index.cs", "explanation": "Nombre común en desarrollo web, no en consolas C#.", "isCorrect": false, "orderIndex": 4 }
           ]
         },
         {
           "id": "exercise_lesson_01_20",
           "type": "UNIQUE_CHOICE",
-          "instruction": "Al ejecutar _dotnet run_, el sistema indica que _dotnet_ no se reconoce como comando. ¿Qué debes revisar?",
+          "instruction": "Si al ejecutar `dotnet run` la terminal dice que el comando no se reconoce, ¿qué debes revisar?",
           "xp": 100,
           "orderIndex": 20,
           "options": [
-            { "content": "Que el `.csproj` tenga `<TargetFramework>`", "explanation": "Ese error indica que el sistema no encuentra el comando dotnet, no un problema de configuración del proyecto.", "isCorrect": false, "orderIndex": 1 },
-            { "content": "Que el programa genere un `.dll`", "explanation": "El error ocurre antes de compilar: el sistema ni siquiera reconoce el comando dotnet.", "isCorrect": false, "orderIndex": 2 },
-            { "content": "Que VS Code tenga el C# Dev Kit", "explanation": "El C# Dev Kit es del editor; el error se debe a que el sistema no encuentra dotnet.", "isCorrect": false, "orderIndex": 3 },
-            { "content": "La instalación del SDK y su ruta en PATH", "explanation": "Si dotnet no se reconoce, hay que revisar la instalación del SDK y que su ruta esté en la variable de entorno PATH.", "isCorrect": true, "orderIndex": 4 }
+            { "content": "Errores de sintaxis en el código", "explanation": "Si fuera error de código, dotnet sí se reconocería.", "isCorrect": false, "orderIndex": 1 },
+            { "content": "Que el C# Dev Kit esté instalado", "explanation": "Es independiente de la terminal del sistema operativo.", "isCorrect": false, "orderIndex": 2 },
+            { "content": "La instalación del SDK y su inclusión en el PATH", "explanation": "Correcto. Si el sistema no reconoce 'dotnet', falta el SDK o no está en el PATH.", "isCorrect": true, "orderIndex": 3 },
+            { "content": "El archivo .csproj de la solución", "explanation": "No afecta si el sistema operativo no detecta la herramienta principal.", "isCorrect": false, "orderIndex": 4 }
           ]
         },
         {
           "id": "exercise_lesson_01_21",
           "type": "FLASHCARD",
-          "instruction": "¿Cuál es la diferencia fundamental entre el .NET SDK y el .NET Runtime?",
-          "answer": "El **SDK** (_Software Development Kit_) es para crear y compilar programas (incluye compiladores, **CLI** _dotnet_ y el **Runtime**). El **Runtime** (**CLR** + **BCL**) es el paquete mínimo requerido solo para ejecutar aplicaciones ya compiladas. Verifícalos con _dotnet --list-sdks_ y _dotnet --list-runtimes_.",
+          "instruction": "¿Diferencia entre .NET SDK y .NET Runtime?",
+          "answer": "El **SDK** tiene herramientas para compilar (CLI, Roslyn). El **Runtime** (CLR + BCL) es lo mínimo necesario solo para ejecutar las aplicaciones ya creadas.",
           "xp": 100,
           "orderIndex": 21,
           "options": []
@@ -397,8 +396,8 @@
         {
           "id": "exercise_lesson_01_22",
           "type": "FLASHCARD",
-          "instruction": "¿Por qué se dice que una aplicación en C# es código administrado?",
-          "answer": "Porque el código `.cs` se compila a **CIL** (_Common Intermediate Language_) y es supervisado por el **CLR** al ejecutarse. El **CLR** usa **JIT** para compilar a código máquina, garantiza la seguridad y usa el **GC** (_Garbage Collector_) para liberar la memoria dinámica automáticamente.",
+          "instruction": "¿Por qué las aplicaciones en C# se llaman 'código administrado'?",
+          "answer": "Porque se ejecutan bajo la supervisión del motor **CLR**, que se encarga de traducirlo con **JIT** y manejar su memoria automáticamente con el **GC**.",
           "xp": 100,
           "orderIndex": 22,
           "options": []
@@ -406,8 +405,8 @@
         {
           "id": "exercise_lesson_01_23",
           "type": "FLASHCARD",
-          "instruction": "Describe el recorrido de un programa C# desde el código fuente hasta que la CPU lo ejecuta.",
-          "answer": "El código (`.cs`) es procesado por Roslyn creando un ensamblado (`.dll`) con código **CIL**. Al ejecutarlo, el **CLR** utiliza **JIT** para traducir el **CIL** a código máquina nativo bajo demanda, mientras el **GC** limpia la memoria, produciendo las instrucciones que ejecutará la CPU.",
+          "instruction": "Resume el flujo de ejecución: del código a la CPU.",
+          "answer": "Código (.cs) → Roslyn → Binario CIL (.dll). Al ejecutarse, el **CLR** usa el **JIT** para convertir ese CIL a instrucciones nativas para la CPU.",
           "xp": 100,
           "orderIndex": 23,
           "options": []
@@ -415,8 +414,8 @@
         {
           "id": "exercise_lesson_01_24",
           "type": "FLASHCARD",
-          "instruction": "Compara Visual Studio Community, Visual Studio Code y JetBrains Rider.",
-          "answer": "Visual Studio Community es un **IDE** completo para Windows centrado en soluciones (`.sln`). Visual Studio Code es un editor liviano multiplataforma (requiere el C# Dev Kit para herramientas avanzadas). JetBrains Rider es un **IDE** profesional multiplataforma muy destacado en refactorización para .NET.",
+          "instruction": "¿Cuál es el enfoque de cada herramienta: Visual Studio, VS Code y Rider?",
+          "answer": "Visual Studio: IDE robusto (Windows) para soluciones. VS Code: Editor ligero multiplataforma por carpetas (requiere extensión). Rider: IDE profesional avanzado.",
           "xp": 100,
           "orderIndex": 24,
           "options": []
@@ -424,11 +423,646 @@
         {
           "id": "exercise_lesson_01_25",
           "type": "FLASHCARD",
-          "instruction": "¿Cómo creas y ejecutas un primer programa para comprobar que tu entorno está bien configurado, y qué haces si falla?",
-          "answer": "Créalo con _dotnet new console -n HolaMundo_ y ejecútalo con _dotnet run_. Si funciona, el **SDK** y la **CLI** están correctos. Si el comando _dotnet_ no se reconoce, debes revisar la instalación del **SDK** y asegurar que su ruta esté en la variable de entorno **PATH**.",
+          "instruction": "¿Qué comandos crean y ejecutan un proyecto de consola?",
+          "answer": "`dotnet new console -n NombreProyecto` para crearlo, y `dotnet run` para compilar y ejecutarlo al instante.",
           "xp": 100,
           "orderIndex": 25,
           "options": []
+        }
+      ]
+    },
+    {
+      "id": "csharp_lesson_02",
+      "title": "El Ciclo de Compilación y Lectura de Errores",
+      "orderIndex": 2,
+      "xp": 400,
+      "content": [
+        {
+          "type": "header",
+          "title": "02 - El Ciclo de Compilación y Lectura de Errores",
+          "objective": "Comprender la transformación de C# a CIL y código de máquina, e interpretar errores sintácticos comunes del compilador."
+        },
+        {
+          "type": "concept",
+          "title": "Detección de Errores en Tiempo de Compilación",
+          "text": "El compilador Roslyn analiza la sintaxis antes de generar el ensamblado (.dll). Errores comunes como omitir un punto y coma (;) o cerrar llaves ({}) impiden generar el ejecutable y generan códigos de diagnóstico como CS1002."
+        },
+        {
+          "type": "code",
+          "language": "c#",
+          "code": "// Ejemplo de cálculo y asignación correcta\nint resultado = 1 + 2;\nConsole.WriteLine(resultado);"
+        }
+      ],
+      "exercises": [
+        {
+          "id": "exercise_lesson_02_01",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "¿Cuál es el resultado de la operación 1 + 2 en C#?",
+          "answer": "",
+          "xp": 100,
+          "orderIndex": 1,
+          "options": [
+            {
+              "content": "3",
+              "explanation": "Correcto. 1 + 2 es igual a 3.",
+              "isCorrect": true,
+              "orderIndex": 1
+            },
+            {
+              "content": "12",
+              "explanation": "Incorrecto. 12 sería el resultado de concatenar cadenas (\"1\" + \"2\").",
+              "isCorrect": false,
+              "orderIndex": 2
+            },
+            {
+              "content": "2",
+              "explanation": "Incorrecto.",
+              "isCorrect": false,
+              "orderIndex": 3
+            },
+            {
+              "content": "Error de compilación",
+              "explanation": "Incorrecto. La suma aritmética entre enteros es totalmente válida.",
+              "isCorrect": false,
+              "orderIndex": 4
+            }
+          ]
+        },
+        {
+          "id": "exercise_lesson_02_02",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "¿Qué símbolo de terminación es obligatorio al final de una instrucción simple en C#?",
+          "answer": "",
+          "xp": 100,
+          "orderIndex": 2,
+          "options": [
+            {
+              "content": "; (punto y coma)",
+              "explanation": "Correcto. En C# cada instrucción debe finalizar con punto y coma (;).",
+              "isCorrect": true,
+              "orderIndex": 1
+            },
+            {
+              "content": ": (dos puntos)",
+              "explanation": "Incorrecto. Los dos puntos se usan en etiquetas o herencia.",
+              "isCorrect": false,
+              "orderIndex": 2
+            },
+            {
+              "content": ". (punto)",
+              "explanation": "Incorrecto. El punto se utiliza como operador de acceso a miembros.",
+              "isCorrect": false,
+              "orderIndex": 3
+            },
+            {
+              "content": "Ninguno, basta con un salto de línea",
+              "explanation": "Incorrecto. C# no deduce automáticamente los finales de instrucción.",
+              "isCorrect": false,
+              "orderIndex": 4
+            }
+          ]
+        },
+        {
+          "id": "exercise_lesson_02_03",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "Si el compilador de C# muestra el error `CS1002: ; expected`, ¿qué significa?",
+          "answer": "",
+          "xp": 100,
+          "orderIndex": 3,
+          "options": [
+            {
+              "content": "Falta un punto y coma al final de una instrucción",
+              "explanation": "Correcto. El diagnóstico CS1002 alerta explícitamente la ausencia de ';'.",
+              "isCorrect": true,
+              "orderIndex": 1
+            },
+            {
+              "content": "Falta cerrar una llave de bloque",
+              "explanation": "Incorrecto. Ese error corresponde a CS1513.",
+              "isCorrect": false,
+              "orderIndex": 2
+            },
+            {
+              "content": "La variable no ha sido declarada",
+              "explanation": "Incorrecto. Ese caso corresponde al error CS0103.",
+              "isCorrect": false,
+              "orderIndex": 3
+            },
+            {
+              "content": "Falla de memoria en el sistema operativo",
+              "explanation": "Incorrecto. Es un error estrictamente sintáctico del compilador.",
+              "isCorrect": false,
+              "orderIndex": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "csharp_lesson_03",
+      "title": "Documentación y Comentarios Útiles en el Código",
+      "orderIndex": 3,
+      "xp": 400,
+      "content": [
+        {
+          "type": "header",
+          "title": "03 - Documentación y Comentarios Útiles en el Código",
+          "objective": "Aprender el uso de comentarios de línea, bloque y documentación XML para facilitar el mantenimiento del software."
+        },
+        {
+          "type": "concept",
+          "title": "Tipos de Comentarios en C#",
+          "text": "Los comentarios son ignorados por el compilador y sirven para explicar la intención del código. C# soporta comentarios de una línea (//), bloques multilínea (/* ... */) y documentación XML (///) que el IDE utiliza para generar ayuda contextual."
+        },
+        {
+          "type": "code",
+          "language": "c#",
+          "code": "// Comentario de una línea\n/* Comentario\n   de bloque */\n/// <summary>Calcula una suma simple</summary>\nint total = 3 + 4;"
+        }
+      ],
+      "exercises": [
+        {
+          "id": "exercise_lesson_03_01",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "¿Cuál es el resultado de la expresión aritmética 3 + 4 en C#?",
+          "answer": "",
+          "xp": 100,
+          "orderIndex": 1,
+          "options": [
+            {
+              "content": "7",
+              "explanation": "Correcto. 3 + 4 es igual a 7.",
+              "isCorrect": true,
+              "orderIndex": 1
+            },
+            {
+              "content": "34",
+              "explanation": "Incorrecto. 34 ocurriría si fueran cadenas de texto.",
+              "isCorrect": false,
+              "orderIndex": 2
+            },
+            {
+              "content": "12",
+              "explanation": "Incorrecto. 12 es el producto de 3 * 4.",
+              "isCorrect": false,
+              "orderIndex": 3
+            },
+            {
+              "content": "-1",
+              "explanation": "Incorrecto.",
+              "isCorrect": false,
+              "orderIndex": 4
+            }
+          ]
+        },
+        {
+          "id": "exercise_lesson_03_02",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "¿Cómo se inicia un comentario de una sola línea en C#?",
+          "answer": "",
+          "xp": 100,
+          "orderIndex": 2,
+          "options": [
+            {
+              "content": "//",
+              "explanation": "Correcto. Dos barras diagonales convierten el resto de la línea en comentario.",
+              "isCorrect": true,
+              "orderIndex": 1
+            },
+            {
+              "content": "/*",
+              "explanation": "Incorrecto. /* se usa para comentarios multilínea de bloque.",
+              "isCorrect": false,
+              "orderIndex": 2
+            },
+            {
+              "content": "#",
+              "explanation": "Incorrecto. El símbolo # se usa en directivas de preprocesador o en Python.",
+              "isCorrect": false,
+              "orderIndex": 3
+            },
+            {
+              "content": "<!--",
+              "explanation": "Incorrecto. Esa es la sintaxis de comentarios en XML o HTML.",
+              "isCorrect": false,
+              "orderIndex": 4
+            }
+          ]
+        },
+        {
+          "id": "exercise_lesson_03_03",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "¿Qué función cumplen los comentarios con triple barra `///` en C#?",
+          "answer": "",
+          "xp": 100,
+          "orderIndex": 3,
+          "options": [
+            {
+              "content": "Generar documentación XML estructurada visible en el autocompletado del IDE",
+              "explanation": "Correcto. Permiten documentar clases y métodos con etiquetas como <summary> y <param>.",
+              "isCorrect": true,
+              "orderIndex": 1
+            },
+            {
+              "content": "Indicarle al CLR que ejecute el código más rápido",
+              "explanation": "Incorrecto. Los comentarios son omitidos durante la compilación.",
+              "isCorrect": false,
+              "orderIndex": 2
+            },
+            {
+              "content": "Declarar variables constantes globales",
+              "explanation": "Incorrecto.",
+              "isCorrect": false,
+              "orderIndex": 3
+            },
+            {
+              "content": "Ocultar código ante los usuarios finales",
+              "explanation": "Incorrecto.",
+              "isCorrect": false,
+              "orderIndex": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "csharp_lesson_04",
+      "title": "Análisis de Problemas: Entrada, Proceso y Salida",
+      "orderIndex": 4,
+      "xp": 400,
+      "content": [
+        {
+          "type": "header",
+          "title": "04 - Análisis de Problemas: Entrada, Proceso y Salida",
+          "objective": "Desglosar problemas algorítmicos en sus tres fases fundamentales: Entrada de datos, Proceso de transformación y Salida de información."
+        },
+        {
+          "type": "concept",
+          "title": "El Paradigma Entrada - Proceso - Salida (IPO)",
+          "text": "Antes de codificar, todo problema debe descomponerse: las Entradas son los datos brutos iniciales (teclado, archivos); el Proceso realiza los cálculos y la lógica; la Salida entrega los resultados al usuario o pantalla."
+        },
+        {
+          "type": "code",
+          "language": "c#",
+          "code": "// Entrada\nint entradaA = 5;\nint entradaB = 5;\n// Proceso\nint procesoSuma = entradaA + entradaB;\n// Salida\nConsole.WriteLine(procesoSuma);"
+        }
+      ],
+      "exercises": [
+        {
+          "id": "exercise_lesson_04_01",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "Si un programa recibe como entradas los números 5 y 5, y el proceso es sumarlos, ¿cuál es la salida?",
+          "answer": "",
+          "xp": 100,
+          "orderIndex": 1,
+          "options": [
+            {
+              "content": "10",
+              "explanation": "Correcto. El proceso 5 + 5 produce la salida 10.",
+              "isCorrect": true,
+              "orderIndex": 1
+            },
+            {
+              "content": "25",
+              "explanation": "Incorrecto. 25 sería el resultado de multiplicar 5 * 5.",
+              "isCorrect": false,
+              "orderIndex": 2
+            },
+            {
+              "content": "55",
+              "explanation": "Incorrecto.",
+              "isCorrect": false,
+              "orderIndex": 3
+            },
+            {
+              "content": "0",
+              "explanation": "Incorrecto.",
+              "isCorrect": false,
+              "orderIndex": 4
+            }
+          ]
+        },
+        {
+          "id": "exercise_lesson_04_02",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "En un sistema de cálculo de promedios, ¿cuál de los siguientes elementos representa la Entrada?",
+          "answer": "",
+          "xp": 100,
+          "orderIndex": 2,
+          "options": [
+            {
+              "content": "Las notas numéricas ingresadas por el usuario",
+              "explanation": "Correcto. Son los datos de partida requeridos para procesar el cálculo.",
+              "isCorrect": true,
+              "orderIndex": 1
+            },
+            {
+              "content": "La fórmula matemática que divide la suma entre el total de cursos",
+              "explanation": "Incorrecto. La aplicación de la fórmula pertenece a la etapa de Proceso.",
+              "isCorrect": false,
+              "orderIndex": 2
+            },
+            {
+              "content": "El texto en pantalla 'Tu promedio es 17.5'",
+              "explanation": "Incorrecto. Mostrar el texto final corresponde a la etapa de Salida.",
+              "isCorrect": false,
+              "orderIndex": 3
+            },
+            {
+              "content": "El disco duro de la computadora",
+              "explanation": "Incorrecto.",
+              "isCorrect": false,
+              "orderIndex": 4
+            }
+          ]
+        },
+        {
+          "id": "exercise_lesson_04_03",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "¿A qué etapa del paradigma Entrada-Proceso-Salida corresponde `Console.WriteLine()`?",
+          "answer": "",
+          "xp": 100,
+          "orderIndex": 3,
+          "options": [
+            {
+              "content": "Salida",
+              "explanation": "Correcto. Console.WriteLine() emite datos formateados hacia la consola estándar.",
+              "isCorrect": true,
+              "orderIndex": 1
+            },
+            {
+              "content": "Entrada",
+              "explanation": "Incorrecto. La entrada en consola se captura con Console.ReadLine().",
+              "isCorrect": false,
+              "orderIndex": 2
+            },
+            {
+              "content": "Proceso",
+              "explanation": "Incorrecto.",
+              "isCorrect": false,
+              "orderIndex": 3
+            },
+            {
+              "content": "Compilación",
+              "explanation": "Incorrecto.",
+              "isCorrect": false,
+              "orderIndex": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "csharp_lesson_05",
+      "title": "Diseño de Algoritmos con Pseudocódigo Estructurado",
+      "orderIndex": 5,
+      "xp": 400,
+      "content": [
+        {
+          "type": "header",
+          "title": "05 - Diseño de Algoritmos con Pseudocódigo Estructurado",
+          "objective": "Estructurar la secuencia lógica de solución en lenguaje natural riguroso antes de trasladarla a la sintaxis formal de C#."
+        },
+        {
+          "type": "concept",
+          "title": "Ventajas del Pseudocódigo",
+          "text": "El pseudocódigo permite abstraerse de los detalles sintácticos (como tipos estrictos o llaves) y centrarse en la corrección lógica: orden de las acciones, bifurcaciones de decisión y condiciones de parada."
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "ALGORITMO CalcularDoble\n  LEER numero\n  resultado <- numero * 2\n  ESCRIBIR resultado\nFIN ALGORITMO"
+        }
+      ],
+      "exercises": [
+        {
+          "id": "exercise_lesson_05_01",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "En la evaluación algorítmica de la expresión `2 + 2 * 2`, ¿cuál es el resultado correcto por precedencia de operadores?",
+          "answer": "",
+          "xp": 100,
+          "orderIndex": 1,
+          "options": [
+            {
+              "content": "6",
+              "explanation": "Correcto. La multiplicación tiene mayor precedencia: primero 2 * 2 = 4, luego 2 + 4 = 6.",
+              "isCorrect": true,
+              "orderIndex": 1
+            },
+            {
+              "content": "8",
+              "explanation": "Incorrecto. Evaluar de izquierda a derecha (2 + 2 = 4; 4 * 2 = 8) viola la precedencia estándar.",
+              "isCorrect": false,
+              "orderIndex": 2
+            },
+            {
+              "content": "4",
+              "explanation": "Incorrecto.",
+              "isCorrect": false,
+              "orderIndex": 3
+            },
+            {
+              "content": "2",
+              "explanation": "Incorrecto.",
+              "isCorrect": false,
+              "orderIndex": 4
+            }
+          ]
+        },
+        {
+          "id": "exercise_lesson_05_02",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "¿Cuál es la principal ventaja de diseñar un algoritmo en pseudocódigo antes de escribir código C#?",
+          "answer": "",
+          "xp": 100,
+          "orderIndex": 2,
+          "options": [
+            {
+              "content": "Validar la lógica de pasos sin distraerse con la sintaxis del lenguaje",
+              "explanation": "Correcto. Permite resolver el problema a nivel conceptual antes de enfrentarse a errores de compilador.",
+              "isCorrect": true,
+              "orderIndex": 1
+            },
+            {
+              "content": "Hacer que el compilador cree el ejecutable automáticamente",
+              "explanation": "Incorrecto. El pseudocódigo no es directamente ejecutable por la máquina.",
+              "isCorrect": false,
+              "orderIndex": 2
+            },
+            {
+              "content": "Mejorar la memoria caché del procesador",
+              "explanation": "Incorrecto.",
+              "isCorrect": false,
+              "orderIndex": 3
+            },
+            {
+              "content": "Generar automáticamente interfaces gráficas",
+              "explanation": "Incorrecto.",
+              "isCorrect": false,
+              "orderIndex": 4
+            }
+          ]
+        },
+        {
+          "id": "exercise_lesson_05_03",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "¿Qué caracteriza a una estructura puramente secuencial en un algoritmo?",
+          "answer": "",
+          "xp": 100,
+          "orderIndex": 3,
+          "options": [
+            {
+              "content": "Las instrucciones se ejecutan una tras otra en el orden estricto en que fueron escritas",
+              "explanation": "Correcto. En la secuencia lineal cada paso sucede al anterior sin saltos condicionales.",
+              "isCorrect": true,
+              "orderIndex": 1
+            },
+            {
+              "content": "Las instrucciones se ejecutan de manera simultánea en hilos paralelos",
+              "explanation": "Incorrecto. Eso corresponde a concurrencia o paralelismo.",
+              "isCorrect": false,
+              "orderIndex": 2
+            },
+            {
+              "content": "El programa elige pasos al azar",
+              "explanation": "Incorrecto.",
+              "isCorrect": false,
+              "orderIndex": 3
+            },
+            {
+              "content": "El algoritmo se repite infinitamente sin terminar",
+              "explanation": "Incorrecto. Eso describe un bucle infinito.",
+              "isCorrect": false,
+              "orderIndex": 4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "csharp_lesson_06",
+      "title": "Diagramas de Flujo Textuales y Representación Lógica",
+      "orderIndex": 6,
+      "xp": 400,
+      "content": [
+        {
+          "type": "header",
+          "title": "06 - Diagramas de Flujo Textuales y Representación Lógica",
+          "objective": "Modelar el flujo de control, bifurcaciones de decisión y secuencias utilizando diagramas estructurados."
+        },
+        {
+          "type": "concept",
+          "title": "Simbología Básica de Diagramas de Flujo",
+          "text": "Los diagramas de flujo representan gráficamente la solución: Óvalo para Inicio/Fin, Paralelogramo para Entrada/Salida de datos, Rectángulo para Procesos o cálculos internos, y Rombo para Decisiones o condiciones booleanas."
+        },
+        {
+          "type": "diagram",
+          "language": "text",
+          "code": "[Inicio]\n   │\n   ▼\n[Pedir Número]\n   │\n   ▼\n{¿Número > 0?}\n  ├── Sí ──> [Imprimir \"Positivo\"]\n  └── No ──> [Imprimir \"Cero o Negativo\"]\n   │\n   ▼\n [Fin]"
+        }
+      ],
+      "exercises": [
+        {
+          "id": "exercise_lesson_06_01",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "En la simbología estándar de diagramas de flujo, ¿qué figura representa una Decisión o Bifurcación condicional?",
+          "answer": "",
+          "xp": 100,
+          "orderIndex": 1,
+          "options": [
+            {
+              "content": "Rombo",
+              "explanation": "Correcto. El rombo formula una pregunta lógica con dos o más caminos de salida (ej. Sí / No).",
+              "isCorrect": true,
+              "orderIndex": 1
+            },
+            {
+              "content": "Rectángulo",
+              "explanation": "Incorrecto. El rectángulo representa una operación o proceso de cálculo.",
+              "isCorrect": false,
+              "orderIndex": 2
+            },
+            {
+              "content": "Óvalo",
+              "explanation": "Incorrecto. El óvalo representa los puntos terminales de Inicio o Fin.",
+              "isCorrect": false,
+              "orderIndex": 3
+            },
+            {
+              "content": "Paralelogramo",
+              "explanation": "Incorrecto. El paralelogramo representa Entrada o Salida de datos.",
+              "isCorrect": false,
+              "orderIndex": 4
+            }
+          ]
+        },
+        {
+          "id": "exercise_lesson_06_02",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "¿Qué camino toma el flujo al evaluar la condición `10 > 5` en un rombo de decisión?",
+          "answer": "",
+          "xp": 100,
+          "orderIndex": 2,
+          "options": [
+            {
+              "content": "La rama de 'Sí' (Verdadero / True)",
+              "explanation": "Correcto. Dado que 10 es mayor que 5, la expresión se evalúa como verdadera.",
+              "isCorrect": true,
+              "orderIndex": 1
+            },
+            {
+              "content": "La rama de 'No' (Falso / False)",
+              "explanation": "Incorrecto. 10 sí es estrictamente mayor que 5.",
+              "isCorrect": false,
+              "orderIndex": 2
+            },
+            {
+              "content": "Se genera un bucle de bloqueo",
+              "explanation": "Incorrecto.",
+              "isCorrect": false,
+              "orderIndex": 3
+            },
+            {
+              "content": "El programa se detiene de inmediato",
+              "explanation": "Incorrecto.",
+              "isCorrect": false,
+              "orderIndex": 4
+            }
+          ]
+        },
+        {
+          "id": "exercise_lesson_06_03",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "¿Qué elemento representa el Óvalo en un diagrama de flujo?",
+          "answer": "",
+          "xp": 100,
+          "orderIndex": 3,
+          "options": [
+            {
+              "content": "Inicio o Fin del algoritmo",
+              "explanation": "Correcto. Los óvalos o elipses marcan las terminales de arranque y conclusión.",
+              "isCorrect": true,
+              "orderIndex": 1
+            },
+            {
+              "content": "Un cálculo aritmético complejo",
+              "explanation": "Incorrecto. Los cálculos se sitúan en rectángulos de proceso.",
+              "isCorrect": false,
+              "orderIndex": 2
+            },
+            {
+              "content": "La lectura de datos desde el teclado",
+              "explanation": "Incorrecto. La entrada y salida se sitúan en paralelogramos.",
+              "isCorrect": false,
+              "orderIndex": 3
+            },
+            {
+              "content": "Una conexión inalámbrica a la nube",
+              "explanation": "Incorrecto.",
+              "isCorrect": false,
+              "orderIndex": 4
+            }
+          ]
         }
       ]
     }

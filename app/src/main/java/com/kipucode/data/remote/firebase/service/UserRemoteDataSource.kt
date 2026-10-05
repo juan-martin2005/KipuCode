@@ -2,6 +2,7 @@ package com.kipucode.data.remote.firebase.service
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.toObject
 import com.kipucode.data.remote.firebase.dto.LearningProgressDto
 import com.kipucode.data.remote.firebase.dto.UserDto
@@ -28,7 +29,6 @@ class UserRemoteDataSource @Inject constructor(
         const val USERS_COLLECTION = "users"
         const val USER_PROGRESS_COLLECTION = "user_progress"
         const val LEARNING_PROGRESS_COLLECTION = "learning_progress"
-        const val EXERCISES_SUBCOLLECTION = "exercises"
     }
 
 
@@ -110,30 +110,53 @@ class UserRemoteDataSource @Inject constructor(
     }
 
     // ========================================================================================
-    //  Guardar Repaso FSRS en (LEARNING_PROGRESS_COLLECTION -> {userId} -> exercises -> {exerciseId})
+    //  Guardar Lote de Repaso FSRS en Documento Único (LEARNING_PROGRESS_COLLECTION -> {userId})
     // ========================================================================================
-    suspend fun saveLearningProgress(learningProgressDto: LearningProgressDto) {
+    suspend fun saveLearningProgressMap(exercisesMap: Map<String, LearningProgressDto>) {
         val id = currentUserId ?: return
 
         firestore.collection(LEARNING_PROGRESS_COLLECTION)
             .document(id)
-            .collection(EXERCISES_SUBCOLLECTION)
-            .document(learningProgressDto.exerciseId)
-            .set(learningProgressDto)
+            .set(
+                mapOf(
+                    "userId" to id,
+                    "updatedAt" to System.currentTimeMillis(),
+                    "exercises" to exercisesMap
+                ),
+                SetOptions.merge()
+            )
             .await()
     }
 
     // ========================================================================================
-    //  Obtener Todos los Repasos FSRS del Usuario (Subcolección exercises)
+    //  Obtener Todos los Repasos FSRS del Usuario (1 sola lectura directa del Documento)
     // ========================================================================================
     suspend fun getAllLearningProgress(): List<LearningProgressDto> {
         val id = currentUserId ?: return emptyList()
 
-        return firestore.collection(LEARNING_PROGRESS_COLLECTION)
+        val docSnapshot = firestore.collection(LEARNING_PROGRESS_COLLECTION)
             .document(id)
-            .collection(EXERCISES_SUBCOLLECTION)
             .get()
             .await()
-            .toObjects(LearningProgressDto::class.java)
+
+        val rawMap = docSnapshot.get("exercises") as? Map<String, Any?> ?: return emptyList()
+
+        return rawMap.values.mapNotNull { rawObj ->
+            try {
+                val item = rawObj as? Map<String, Any?> ?: return@mapNotNull null
+                LearningProgressDto(
+                    exerciseId = item["exerciseId"] as? String ?: "",
+                    difficulty = (item["difficulty"] as? Number)?.toDouble() ?: 0.0,
+                    stability = (item["stability"] as? Number)?.toDouble() ?: 0.0,
+                    reps = (item["reps"] as? Number)?.toInt() ?: 0,
+                    lapses = (item["lapses"] as? Number)?.toInt() ?: 0,
+                    state = (item["state"] as? Number)?.toInt() ?: 0,
+                    dueDate = (item["dueDate"] as? Number)?.toLong() ?: 0L,
+                    lastReviewed = (item["lastReviewed"] as? Number)?.toLong()
+                )
+            } catch (e: Exception) {
+                null
+            }
+        }
     }
 }

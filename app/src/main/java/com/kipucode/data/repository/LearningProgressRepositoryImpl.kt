@@ -91,21 +91,26 @@ internal class LearningProgressRepositoryImpl @Inject constructor(
         return processReview(exerciseId, rating)
     }
 
-    override suspend fun saveLearningProgress(progress: LearningProgressDomain): Response<Unit> {
+    override suspend fun syncLearningProgressToRemote(): Response<Unit> {
         return try {
-            // 1. Guardado local (Offline-First)
-            learningProgressDao.insertOrUpdate(progress.toEntity())
-
-            // 2. Respaldo en la nube (Firestore)
             val currentUid = userRemoteDataSource.currentUserId
-            if (currentUid != null) {
-                userRemoteDataSource.saveLearningProgress(progress.toDto())
-                Response.Success(Unit)
-            } else {
-                Response.Error("Usuario no autenticado", ServerErrorType.CREDENTIAL_INVALID)
+                ?: return Response.Error("Usuario no autenticado", ServerErrorType.CREDENTIAL_INVALID)
+
+            val localEntities = learningProgressDao.getAllProgressForUserDirect(currentUid)
+            if (localEntities.isNotEmpty()) {
+                val progressMap = localEntities.associate { it.exerciseId to it.toDomain().toDto() }
+                try {
+                    withTimeout(10000L.milliseconds) {
+                        userRemoteDataSource.saveLearningProgressMap(progressMap)
+                    }
+                } catch (e: Exception) {
+                    Log.e("LearningProgressRepo", "Sync remoto diferido (Offline-First activo): ${e.message}")
+                }
             }
+            Response.Success(Unit)
         } catch (e: Exception) {
-            Response.Error(e.message ?: "Error al guardar en Firestore", ServerErrorType.FIRESTORE_ERROR)
+            Log.e("LearningProgressRepo", "Error al sincronizar mapa a Firestore: ${e.message}", e)
+            Response.Error(e.message ?: "Error al sincronizar progreso", ServerErrorType.FIRESTORE_ERROR)
         }
     }
 
@@ -114,7 +119,7 @@ internal class LearningProgressRepositoryImpl @Inject constructor(
             val currentUid = userRemoteDataSource.currentUserId
                 ?: return Response.Error("Usuario no autenticado", ServerErrorType.CREDENTIAL_INVALID)
 
-            // Descarga el historial de ejercicios del alumno desde Firestore
+            // Descarga el mapa consolidado de ejercicios del alumno desde Firestore en 1 sola lectura
             val remoteList = userRemoteDataSource.getAllLearningProgress()
             if (remoteList.isNotEmpty()) {
                 val localExerciseIds = exerciseDao.getAllExerciseIds().toSet()
@@ -125,7 +130,7 @@ internal class LearningProgressRepositoryImpl @Inject constructor(
 
                 if (validEntities.isNotEmpty()) {
                     learningProgressDao.insertAll(validEntities)
-                    Log.d("LearningProgressRepo", "Sincronizados ${validEntities.size} ejercicios desde Firestore a SQLite (${remoteList.size - validEntities.size} ignorados por no pertenecer al catálogo local).")
+                    Log.d("LearningProgressRepo", "Sincronizados ${validEntities.size} ejercicios desde Firestore a SQLite.")
                 }
             }
             Response.Success(Unit)
@@ -155,17 +160,8 @@ internal class LearningProgressRepositoryImpl @Inject constructor(
                 wasLapse = wasLapse
             )
 
-            // 1. Guardado local prioritario en SQLite
+            // 1. Guardado local prioritario instantáneo en Room SQLite (0 ms de red)
             learningProgressDao.insertOrUpdate(updatedEntity)
-
-            // 2. Sincronización en segundo plano hacia Firestore con timeout protegido
-            try {
-                withTimeout(10000L.milliseconds) {
-                    userRemoteDataSource.saveLearningProgress(updatedEntity.toDomain().toDto())
-                }
-            } catch (e: Exception) {
-                Log.e("LearningProgressRepo", "Sync remoto diferido (Offline-First activo): ${e.message}")
-            }
 
             Response.Success(Unit)
         } catch (e: Exception) {

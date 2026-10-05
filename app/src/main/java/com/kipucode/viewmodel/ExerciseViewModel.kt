@@ -11,6 +11,7 @@ import com.kipucode.domain.usecase.GetExercisesByLessonUseCase
 import com.kipucode.domain.usecase.GetLessonByCourseUseCase
 import com.kipucode.domain.usecase.RecordExerciseAttemptUseCase
 import com.kipucode.domain.usecase.RecordRatingAttemptUseCase
+import com.kipucode.domain.usecase.SyncLearningProgressUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -40,7 +41,8 @@ class ExerciseViewModel @Inject constructor(
     private val getDueExercisesUseCase: GetDueExercisesUseCase,
     private val completeLessonUseCase: CompleteLessonUseCase,
     private val recordExerciseAttemptUseCase: RecordExerciseAttemptUseCase,
-    private val recordRatingAttemptUseCase: RecordRatingAttemptUseCase
+    private val recordRatingAttemptUseCase: RecordRatingAttemptUseCase,
+    private val syncLearningProgressUseCase: SyncLearningProgressUseCase
 ) : ViewModel() {
     companion object {
         private const val EXERCISES_PER_SESSION = 5
@@ -177,7 +179,15 @@ class ExerciseViewModel @Inject constructor(
             _completeState.value = Response.Loading
             val totalXpEarned = earnedXpByExercise.values.sum()
 
-            val result = completeLessonUseCase(lessonId, totalXpEarned)
+            val result = if (lessonId.isNotEmpty()) {
+                completeLessonUseCase(lessonId, totalXpEarned)
+            } else {
+                Response.Success(Unit)
+            }
+
+            // Sincronización consolidada en un solo lote a Firestore (Offline-First respaldado)
+            syncLearningProgressUseCase()
+
             _completeState.value = result
         }
     }
