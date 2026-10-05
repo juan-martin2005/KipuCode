@@ -17,13 +17,15 @@ import com.kipucode.data.local.model.*
     entities = [
         UserEntity::class,
         UserProgressEntity::class,
+        UserCompletedLessonEntity::class,
+        UserCompletedCourseEntity::class,
         CourseEntity::class,
         LessonEntity::class,
         ExerciseEntity::class,
         BlockOptionEntity::class,
         LearningProgressEntity::class
     ],
-    version = 6,
+    version = 9,
     exportSchema = false
 )
 
