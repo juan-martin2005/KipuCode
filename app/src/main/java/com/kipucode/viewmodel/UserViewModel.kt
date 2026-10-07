@@ -2,10 +2,13 @@ package com.kipucode.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kipucode.domain.model.DailyActivityDomain
 import com.kipucode.domain.model.ServerErrorType
 import com.kipucode.domain.model.Response
 import com.kipucode.domain.model.UserDomain
 import com.kipucode.domain.model.UserProgressDomain
+import com.kipucode.domain.repository.ActivityCalendarRepository
+import com.kipucode.domain.usecase.GetActivityCalendarUseCase
 import com.kipucode.domain.usecase.user.GetUserProfileUseCase
 import com.kipucode.domain.usecase.user.GetUserProgressUseCase
 import com.kipucode.domain.usecase.user.RefreshUserProfileUseCase
@@ -25,7 +28,9 @@ class UserViewModel @Inject constructor(
     private val getUserProgressUseCase : GetUserProgressUseCase,
     private val updateUserAvatarUseCase: UpdateUserAvatarUseCase,
     private val refreshUserProfileUseCase : RefreshUserProfileUseCase,
-    private val refreshUserProgressUseCase: RefreshUserProgressUseCase
+    private val refreshUserProgressUseCase: RefreshUserProgressUseCase,
+    private val getActivityCalendarUseCase: GetActivityCalendarUseCase,
+    private val activityCalendarRepository: ActivityCalendarRepository
 ) : ViewModel() {
 
     //  ! IMPORTANTE
@@ -46,6 +51,7 @@ class UserViewModel @Inject constructor(
     private val _userProgressState = MutableStateFlow<UserProgressDomain?>(null)
     private val _refreshState = MutableStateFlow<Response<Unit>?>(null)
     private val _updateUserAvatarState = MutableStateFlow<Response<Unit>?>(null)
+    private val _activityCalendarState = MutableStateFlow<List<DailyActivityDomain>>(emptyList())
 
     // ============================================================================================
     //  Estados Públicos Inmutables -> Solo Lectura por la UI (Compose)
@@ -56,6 +62,7 @@ class UserViewModel @Inject constructor(
     val refreshState: StateFlow<Response<Unit>?> = _refreshState
 
     val updateUserAvatarState : StateFlow<Response<Unit>?> = _updateUserAvatarState
+    val activityCalendarState: StateFlow<List<DailyActivityDomain>> = _activityCalendarState
 
     // ============================================================================================
     //  Init -> Automatiza los datos en pantalla ni bien se crea el componente
@@ -63,6 +70,7 @@ class UserViewModel @Inject constructor(
     init {
         startObservingUser()
         startObservingUserProgress()
+        startObservingActivityCalendar()
     }
 
     // ============================================================================================
@@ -88,6 +96,19 @@ class UserViewModel @Inject constructor(
         }
     }
 
+    fun startObservingActivityCalendar() {
+        viewModelScope.launch {
+            try {
+                activityCalendarRepository.fetchYearActivityFromRemote(java.time.LocalDate.now().year)
+            } catch (_: Exception) {}
+        }
+        viewModelScope.launch {
+            getActivityCalendarUseCase().collect { activities ->
+                _activityCalendarState.value = activities
+            }
+        }
+    }
+
     fun starUpdateUserAvatar(avatarId : String){
         viewModelScope.launch {
             _updateUserAvatarState.value = Response.Loading
@@ -104,6 +125,9 @@ class UserViewModel @Inject constructor(
             _refreshState.value = Response.Loading
             val profileResult = refreshUserProfileUseCase.invoke()
             val progressResult = refreshUserProgressUseCase.invoke()
+            try {
+                activityCalendarRepository.fetchYearActivityFromRemote(java.time.LocalDate.now().year)
+            } catch (_: Exception) {}
 
             if(profileResult is Response.Success && progressResult is Response.Success) {
                 _refreshState.value = Response.Success(Unit)
@@ -113,12 +137,6 @@ class UserViewModel @Inject constructor(
         }
     }
 
-    // ============================================================================================
-    //  Resetea el canal de refresco a nulo para evitar repeticiones de eventos
-    // ============================================================================================
-    fun resetRefreshState() {
-        _refreshState.value = null
-    }
 
     fun resetUpdateAvatarState() {
         _updateUserAvatarState.value = null

@@ -47,4 +47,7 @@ object DatabaseModule {
 
     @Provides
     fun provideLearningProgressDao(appDatabase: AppDatabase): LearningProgressDao = appDatabase.learningProgressDao()
+
+    @Provides
+    fun provideDailyActivityDao(appDatabase: AppDatabase): DailyActivityDao = appDatabase.dailyActivityDao()
 }

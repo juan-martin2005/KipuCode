@@ -2,10 +2,9 @@ package com.kipucode.data.local.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
-import com.kipucode.data.local.converter.ListConverters
 import com.kipucode.data.local.dao.BlockOptionDao
 import com.kipucode.data.local.dao.CourseDao
+import com.kipucode.data.local.dao.DailyActivityDao
 import com.kipucode.data.local.dao.ExerciseDao
 import com.kipucode.data.local.dao.LearningProgressDao
 import com.kipucode.data.local.dao.LessonDao
@@ -23,13 +22,12 @@ import com.kipucode.data.local.model.*
         LessonEntity::class,
         ExerciseEntity::class,
         BlockOptionEntity::class,
-        LearningProgressEntity::class
+        LearningProgressEntity::class,
+        DailyActivityEntity::class
     ],
-    version = 9,
+    version = 11,
     exportSchema = false
 )
-
-@TypeConverters(ListConverters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun userProgressDao(): UserProgressDao
@@ -38,4 +36,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun exerciseDao(): ExerciseDao
     abstract fun blockOptionDao(): BlockOptionDao
     abstract fun learningProgressDao(): LearningProgressDao
+    abstract fun dailyActivityDao(): DailyActivityDao
 }

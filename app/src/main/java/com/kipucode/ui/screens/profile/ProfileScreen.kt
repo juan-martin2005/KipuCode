@@ -7,7 +7,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,10 +21,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.kipucode.ui.navigation.ChangePasswordRoute
 import com.kipucode.R
+import com.kipucode.domain.model.DailyActivityDomain
 import com.kipucode.domain.model.Response
 import com.kipucode.ui.components.KipuBottomBar
 import com.kipucode.ui.components.avatar.AvatarProvider
 import com.kipucode.ui.components.avatar.AvatarSelectionDialog
+import com.kipucode.ui.screens.profile.components.ActivityHeatmapCard
 import com.kipucode.ui.components.card.KipuDialog
 import com.kipucode.ui.components.card.MultipleChoicesCard
 import com.kipucode.ui.components.card.UserProfileCard
@@ -44,7 +45,8 @@ fun ProfileScreen(
     var showLogoutDialog by remember { mutableStateOf(false) }
     var showAvatarList by remember { mutableStateOf(false) }
     val userProfile by userViewModel.userProfileState.collectAsStateWithLifecycle()
-    val updateAvatar by userViewModel.updateUserAvatarState.collectAsState()
+    val updateAvatar by userViewModel.updateUserAvatarState.collectAsStateWithLifecycle()
+    val activityCalendar by userViewModel.activityCalendarState.collectAsStateWithLifecycle()
 
     LaunchedEffect(updateAvatar) {
         when(updateAvatar) {
@@ -75,6 +77,7 @@ fun ProfileScreen(
                 name = userProfile?.name ?: "",
                 email = userProfile?.email ?: "",
                 avatarId = AvatarProvider.getDrawableById(userProfile?.avatarId),
+                activities = activityCalendar,
                 onLogoutClick = {
                     showLogoutDialog = true
                 },
@@ -130,6 +133,7 @@ fun ProfileContent(
     name: String,
     email: String,
     avatarId : Int,
+    activities: List<DailyActivityDomain>,
     onLogoutClick: () -> Unit,
     onEditAvatar : () -> Unit,
     onChangePassword : () -> Unit
@@ -162,7 +166,17 @@ fun ProfileContent(
                 onClick = onEditAvatar
             )
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp))
+        }
+
+        // --- SECCIÓN 3: MAPA DE CALOR DE ACTIVIDAD ANUAL ---
+        item {
+            ActivityHeatmapCard(
+                activities = activities,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
         }
 
         item {
@@ -194,6 +208,7 @@ fun ProfileScreenPreview() {
         name = "Pepeito Gonzles",
         email = "pedro@upn.pe",
         avatarId =  R.drawable.avatar_000,
+        activities = emptyList(),
         onLogoutClick = {},
         onEditAvatar = {},
         onChangePassword = {}

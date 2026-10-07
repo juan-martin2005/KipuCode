@@ -70,7 +70,15 @@ class AuthRemoteDataSource @Inject constructor(
     // ======================================================================================
     //  Utilidad Extra -> Verificar si hay una sesión activa en el dispositivo
     // ======================================================================================
-    fun isUserLoggedIn(): Boolean = firebaseAuth.currentUser != null
+    fun isUserLoggedIn(): Boolean {
+        val user = firebaseAuth.currentUser ?: return false
+        return if (user.isEmailVerified) {
+            true
+        } else {
+            logoutUser()
+            false
+        }
+    }
 
     // ======================================================================================
     //  Funcionalidad Extra -> Cerrar la sesión del dispositivo

@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.kipucode.data.local.dao.DailyActivityDao
 import com.kipucode.data.local.dao.ExerciseDao
 import com.kipucode.data.local.dao.LearningProgressDao
 import com.kipucode.data.local.dao.UserDao
@@ -34,7 +35,8 @@ internal class AuthRepositoryImpl @Inject constructor(
     private val userProgressDao: UserProgressDao,
     private val learningProgressDao: LearningProgressDao,
     private val exerciseDao: ExerciseDao,
-    private val databaseSeedService: com.kipucode.data.local.DatabaseSeedService
+    private val databaseSeedService: com.kipucode.data.local.DatabaseSeedService,
+    private val dailyActivityDao: DailyActivityDao
 ): AuthRepository {     // Equivalente en java a hacer él (implements)
 
     //  ! IMPORTANTE
@@ -80,9 +82,11 @@ internal class AuthRepositoryImpl @Inject constructor(
                 ?: return@safeFirebaseCall Response
                     .Error("An unexpected error occurred while signing in", ServerErrorType.FIRESTORE_ERROR)
 
-            if(!currentUser.isEmailVerified)
+            if (!currentUser.isEmailVerified) {
+                authRemoteDataSource.logoutUser()
                 return@safeFirebaseCall Response
                     .Error("Email verification required", ServerErrorType.EMAIL_NOT_VERIFIED)
+            }
 
 
             val (userDto, progressDto) = coroutineScope {
@@ -126,6 +130,21 @@ internal class AuthRepositoryImpl @Inject constructor(
                 Log.e("AuthRepository", "Error al precargar progreso de ejercicios en login: ${e.message}", e)
             }
 
+            // Sincronizar calendario de actividad anual desde Firestore
+            try {
+                val currentYear = java.time.LocalDate.now().year
+                val remoteDays = userRemoteDataSource.getYearActivity(currentYear)
+                if (remoteDays.isNotEmpty()) {
+                    val entities = remoteDays.map { (date, dto) ->
+                        dto.toEntity(userId = currentUser.uid, date = date, year = currentYear)
+                    }
+                    dailyActivityDao.insertAll(entities)
+                    Log.d("AuthRepository", "Sincronizados ${entities.size} días de actividad en login.")
+                }
+            } catch (e: Exception) {
+                Log.e("AuthRepository", "Error al precargar calendario de actividad en login: ${e.message}", e)
+            }
+
             Response.Success(userDto.toDomain())
         }
     }
@@ -155,8 +174,6 @@ internal class AuthRepositoryImpl @Inject constructor(
             userRemoteDataSource.saveUserProfile(user.toDto())
             userRemoteDataSource.createUserProgress(initialProgress.toDto())
 
-//            userDao.insert(user.toEntity())
-//            userProgressDao.insert(initialProgress.toEntity())
             logout()
 
             Response.Success(user)
@@ -219,6 +236,10 @@ internal class AuthRepositoryImpl @Inject constructor(
     //  Cerrar Sesión -> Limpiar UID en FirebaseAuth y remover de la DB Local (Room)
     // ============================================================================================
     override suspend fun logout() {
+        val currentUid = userRemoteDataSource.currentUserId
+        if (currentUid != null) {
+            dailyActivityDao.clearUserActivity(currentUid)
+        }
         authRemoteDataSource.logoutUser()
         userProgressDao.clearProgressData()
         userDao.clearUserData()

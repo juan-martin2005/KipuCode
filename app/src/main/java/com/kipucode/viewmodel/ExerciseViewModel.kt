@@ -12,6 +12,7 @@ import com.kipucode.domain.usecase.GetLessonByCourseUseCase
 import com.kipucode.domain.usecase.RecordExerciseAttemptUseCase
 import com.kipucode.domain.usecase.RecordRatingAttemptUseCase
 import com.kipucode.domain.usecase.SyncLearningProgressUseCase
+import com.kipucode.domain.usecase.RecordDailyActivityUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -42,7 +43,8 @@ class ExerciseViewModel @Inject constructor(
     private val completeLessonUseCase: CompleteLessonUseCase,
     private val recordExerciseAttemptUseCase: RecordExerciseAttemptUseCase,
     private val recordRatingAttemptUseCase: RecordRatingAttemptUseCase,
-    private val syncLearningProgressUseCase: SyncLearningProgressUseCase
+    private val syncLearningProgressUseCase: SyncLearningProgressUseCase,
+    private val recordDailyActivityUseCase: RecordDailyActivityUseCase
 ) : ViewModel() {
     companion object {
         private const val EXERCISES_PER_SESSION = 5
@@ -178,6 +180,10 @@ class ExerciseViewModel @Inject constructor(
         viewModelScope.launch {
             _completeState.value = Response.Loading
             val totalXpEarned = earnedXpByExercise.values.sum()
+            val correctCount = correctExerciseIds.size
+            val incorrectCount = incorrectExerciseIds.size
+            val exercisesCompleted = _exercisesState.value.size.coerceAtLeast(correctCount + incorrectCount)
+            val lessonsCompleted = if (lessonId.isNotEmpty()) 1 else 0
 
             val result = if (lessonId.isNotEmpty()) {
                 completeLessonUseCase(lessonId, totalXpEarned)
@@ -185,8 +191,14 @@ class ExerciseViewModel @Inject constructor(
                 Response.Success(Unit)
             }
 
-            // Sincronización consolidada en un solo lote a Firestore (Offline-First respaldado)
-            syncLearningProgressUseCase()
+            // Registro de actividad diaria y sincronización consolidada en 1 solo WriteBatch (FSRS + Calendario)
+            recordDailyActivityUseCase(
+                exercisesDelta = exercisesCompleted,
+                correctDelta = correctCount,
+                incorrectDelta = incorrectCount,
+                xpDelta = totalXpEarned,
+                lessonsDelta = lessonsCompleted
+            )
 
             _completeState.value = result
         }
