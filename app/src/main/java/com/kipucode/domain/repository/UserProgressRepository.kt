@@ -29,6 +29,8 @@ interface UserProgressRepository {
 
     suspend fun saveUserProgress(userProgress: UserProgressDomain): Response<Unit>
 
+    suspend fun updateLastVisitedLessonLocal(lessonId: String): Response<Unit>
+
     suspend fun completeLesson(completedLessonId: String, xpEarned: Int,
                                coursesWithLessons: List<CourseWithLessonsDomain>): Response<Unit>
 }

@@ -2,6 +2,7 @@ package com.kipucode.data.repository
 
 import com.kipucode.data.local.dao.DailyActivityDao
 import com.kipucode.data.local.dao.LearningProgressDao
+import com.kipucode.data.local.dao.UserProgressDao
 import com.kipucode.data.local.model.DailyActivityEntity
 import com.kipucode.data.mapper.toDomain
 import com.kipucode.data.mapper.toDto
@@ -12,6 +13,7 @@ import com.kipucode.domain.model.Response
 import com.kipucode.domain.model.ServerErrorType
 import com.kipucode.domain.repository.ActivityCalendarRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import java.time.LocalDate
@@ -22,6 +24,7 @@ import javax.inject.Singleton
 internal class ActivityCalendarRepositoryImpl @Inject constructor(
     private val dailyActivityDao: DailyActivityDao,
     private val learningProgressDao: LearningProgressDao,
+    private val userProgressDao: UserProgressDao,
     private val userRemoteDataSource: UserRemoteDataSource
 ) : ActivityCalendarRepository {
 
@@ -83,19 +86,24 @@ internal class ActivityCalendarRepositoryImpl @Inject constructor(
             val currentUid = userRemoteDataSource.currentUserId
                 ?: return Response.Error("Usuario no autenticado", ServerErrorType.FIRESTORE_ERROR)
 
-            // 1. Obtener lote de ejercicios FSRS locales
+            // 1. Obtener progreso de usuario local más reciente (XP, Racha, Lecciones completadas)
+            val userProgressEntity = userProgressDao.getUserProgressWithDetails(currentUid).firstOrNull()
+            val userProgressDto = userProgressEntity?.toDomain()?.toDto()
+
+            // 2. Obtener lote de ejercicios FSRS locales
             val localExercises = learningProgressDao.getAllProgressForUserDirect(currentUid)
             val exercisesMap = localExercises.associate { entity ->
                 entity.exerciseId to entity.toDomain().toDto()
             }
 
-            // 2. Extraer actividad de hoy si aplica
+            // 3. Extraer actividad de hoy si aplica
             val todayYear = todayActivity?.year
             val todayDate = todayActivity?.date
             val todayDto = todayActivity?.toDto()
 
-            // 3. Enviar todo en 1 solo WriteBatch atómico a Firestore
+            // 4. Enviar TODO en 1 solo WriteBatch atómico a Firestore
             userRemoteDataSource.syncSessionBatch(
+                userProgressDto = userProgressDto,
                 exercisesMap = exercisesMap,
                 todayYear = todayYear,
                 todayDate = todayDate,

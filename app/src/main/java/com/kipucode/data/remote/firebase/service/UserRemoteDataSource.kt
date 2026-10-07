@@ -209,9 +209,10 @@ class UserRemoteDataSource @Inject constructor(
     }
 
     // ========================================================================================
-    //  Sincronización Consolidada Batch (FSRS + Calendario Diario en 1 solo viaje de red)
+    //  Sincronización Consolidada Batch (User Progress + FSRS + Calendario Diario en 1 solo viaje de red)
     // ========================================================================================
     suspend fun syncSessionBatch(
+        userProgressDto: UserProgressDto? = null,
         exercisesMap: Map<String, LearningProgressDto>?,
         todayYear: Int?,
         todayDate: String?,
@@ -220,7 +221,13 @@ class UserRemoteDataSource @Inject constructor(
         val id = currentUserId ?: return
         val batch = firestore.batch()
 
-        // 1. Guardar mapa de ejercicios FSRS si aplica
+        // 1. Guardar progreso general del usuario (XP, Racha, Lecciones completadas, etc.) si aplica
+        if (userProgressDto != null) {
+            val userProgressDoc = firestore.collection(USER_PROGRESS_COLLECTION).document(id)
+            batch.set(userProgressDoc, userProgressDto)
+        }
+
+        // 2. Guardar mapa de ejercicios FSRS si aplica
         if (!exercisesMap.isNullOrEmpty()) {
             val progressDoc = firestore.collection(LEARNING_PROGRESS_COLLECTION).document(id)
             batch.set(
@@ -234,7 +241,7 @@ class UserRemoteDataSource @Inject constructor(
             )
         }
 
-        // 2. Incrementar actividad del día en el calendario anual si aplica
+        // 3. Incrementar actividad del día en el calendario anual si aplica
         if (todayYear != null && todayDate != null && todayActivity != null) {
             val calendarDoc = firestore.collection(ACTIVITY_CALENDAR_COLLECTION)
                 .document(id)

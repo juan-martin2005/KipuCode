@@ -101,6 +101,17 @@ internal class UserProgressRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun updateLastVisitedLessonLocal(lessonId: String): Response<Unit> {
+        return try {
+            val currentUid = userRemoteDataSource.currentUserId
+                ?: return Response.Error("Usuario no autenticado", ServerErrorType.FIRESTORE_ERROR)
+            userProgressDao.updateLastVisitedLesson(currentUid, lessonId)
+            Response.Success(Unit)
+        } catch (ex: Exception) {
+            Response.Error(ex.message, ServerErrorType.FIRESTORE_ERROR)
+        }
+    }
+
     override suspend fun completeLesson(
         completedLessonId: String,
         xpEarned: Int,
@@ -146,7 +157,7 @@ internal class UserProgressRepositoryImpl @Inject constructor(
 
             val courseTrack = currentCourseWithLessons.course.track
 
-            // Construir y guardar el nuevo estado
+            // Construir y guardar el nuevo estado en Room (la sincronización remota se realiza en el batch consolidado)
             val updatedProgress = currentProgress.copy(
                 completedLessons = updatedLessons,
                 completedCourses = updatedCourses,
@@ -158,7 +169,11 @@ internal class UserProgressRepositoryImpl @Inject constructor(
                 completedAt = now
             )
 
-            persistProgress(updatedProgress)
+            userProgressDao.insertFullProgress(
+                updatedProgress.toEntity(),
+                updatedProgress.toCompletedLessonsEntities(),
+                updatedProgress.toCompletedCoursesEntities()
+            )
             Response.Success(Unit)
 
         } catch (e: Exception) {
@@ -197,21 +212,6 @@ internal class UserProgressRepositoryImpl @Inject constructor(
         }
 
         return targetLessonId
-    }
-
-    private suspend fun persistProgress(updatedProgress: UserProgressDomain) {
-        userProgressDao.insertFullProgress(
-            updatedProgress.toEntity(),
-            updatedProgress.toCompletedLessonsEntities(),
-            updatedProgress.toCompletedCoursesEntities()
-        )
-        try {
-            withTimeout(2000L.milliseconds) {
-                userRemoteDataSource.createUserProgress(updatedProgress.toDto())
-            }
-        } catch (e: Exception) {
-            Log.e("UserProgressRepository", "Error en sync remoto (Offline-first activo): ${e.message}")
-        }
     }
 
     private fun calculateStreak(lastCompletedMillis: Long?, currentMillis: Long, currentStreak: Int): Int {

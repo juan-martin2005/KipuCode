@@ -20,6 +20,9 @@ interface UserProgressDao {
     @Query("SELECT * FROM user_progress WHERE user_id = :userId")
     fun getUserProgressWithDetails(userId: String): Flow<UserProgressWithDetails?>
 
+    @Query("UPDATE user_progress SET last_visited_lesson_id = :lessonId WHERE user_id = :userId")
+    suspend fun updateLastVisitedLesson(userId: String, lessonId: String)
+
     @Upsert
     suspend fun insert(userProgress: UserProgressEntity)
 
