@@ -1,5 +1,9 @@
 package com.kipucode.ui.screens.profile
 
+import android.Manifest
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,6 +16,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -20,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.kipucode.ui.navigation.ChangePasswordRoute
+import com.kipucode.util.notification.ReminderNotificationHelper
 import com.kipucode.R
 import com.kipucode.domain.model.DailyActivityDomain
 import com.kipucode.domain.model.Response
@@ -47,6 +53,28 @@ fun ProfileScreen(
     val userProfile by userViewModel.userProfileState.collectAsStateWithLifecycle()
     val updateAvatar by userViewModel.updateUserAvatarState.collectAsStateWithLifecycle()
     val activityCalendar by userViewModel.activityCalendarState.collectAsStateWithLifecycle()
+
+    val context = LocalContext.current
+    val notificationHelper = remember { ReminderNotificationHelper(context) }
+    var pendingNotificationAction by remember { mutableStateOf<(() -> Unit)?>(null) }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            pendingNotificationAction?.invoke()
+        }
+        pendingNotificationAction = null
+    }
+
+    val triggerNotification: (() -> Unit) -> Unit = { action ->
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !notificationHelper.hasNotificationPermission()) {
+            pendingNotificationAction = action
+            permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        } else {
+            action()
+        }
+    }
 
     LaunchedEffect(updateAvatar) {
         when(updateAvatar) {
@@ -86,6 +114,16 @@ fun ProfileScreen(
                 },
                 onChangePassword = {
                     navController.navigate(ChangePasswordRoute)
+                },
+                onTestHighNotification = {
+                    triggerNotification {
+                        notificationHelper.sendHighPriorityNotification()
+                    }
+                },
+                onTestDefaultNotification = {
+                    triggerNotification {
+                        notificationHelper.sendDefaultNotification()
+                    }
                 }
             )
         }
@@ -136,7 +174,9 @@ fun ProfileContent(
     activities: List<DailyActivityDomain>,
     onLogoutClick: () -> Unit,
     onEditAvatar : () -> Unit,
-    onChangePassword : () -> Unit
+    onChangePassword : () -> Unit,
+    onTestHighNotification : () -> Unit,
+    onTestDefaultNotification : () -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -190,6 +230,24 @@ fun ProfileContent(
 
         item {
             MultipleChoicesCard(
+                text = "Probar recordatorio de estudio",
+                iconRes = R.drawable.ic_star,
+                isMiddle = true,
+                onClick = onTestHighNotification,
+            )
+        }
+
+        item {
+            MultipleChoicesCard(
+                text = "Probar recordatorio de avisos",
+                iconRes = R.drawable.ic_note,
+                isMiddle = true,
+                onClick = onTestDefaultNotification,
+            )
+        }
+
+        item {
+            MultipleChoicesCard(
                 text = stringResource(id = R.string.logout_title),
                 iconRes = R.drawable.ic_exit,
                 disableArrow = true,
@@ -211,6 +269,8 @@ fun ProfileScreenPreview() {
         activities = emptyList(),
         onLogoutClick = {},
         onEditAvatar = {},
-        onChangePassword = {}
+        onChangePassword = {},
+        onTestHighNotification = {},
+        onTestDefaultNotification = {}
     )
 }
