@@ -8,34 +8,34 @@ import kotlinx.serialization.Serializable
 
 // --- Rutas sin argumentos ---
 @Serializable
-object SplashRoute
+data object SplashRoute
 
 @Serializable
-object OnboardingRoute
+data object OnboardingRoute
 
 @Serializable
-object RegisterRoute
+data object RegisterRoute
 
 @Serializable
-object LoginRoute
+data object LoginRoute
 
 @Serializable
-object ForgotPasswordRoute
+data object ForgotPasswordRoute
 
 @Serializable
-object HomeRoute
+data object HomeRoute
 
 @Serializable
-object ExploreRoute
+data object ExploreRoute
 
 @Serializable
-object CodeRoute
+data object CodeRoute
 
 @Serializable
-object ProfileRoute
+data object ProfileRoute
 
 @Serializable
-object ChangePasswordRoute
+data object ChangePasswordRoute
 
 // --- Rutas con argumentos ---
 @Serializable

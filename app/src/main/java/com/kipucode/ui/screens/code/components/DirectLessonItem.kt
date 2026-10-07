@@ -34,8 +34,6 @@ import com.kipucode.ui.theme.Nunito
 import com.kipucode.viewmodel.PracticeFilter
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
-import java.util.Locale
-import androidx.compose.ui.platform.LocalLocale
 
 @Composable
 fun DirectLessonItem(
@@ -81,7 +79,7 @@ fun DirectLessonItem(
         return
     }
 
-    val formattedIndex = String.format(LocalLocale.current.platformLocale, "%02d", lesson.orderIndex)
+    val formattedIndex = lesson.orderIndex.toString().padStart(2, '0')
 
     Column(
         modifier = modifier.fillMaxWidth(),

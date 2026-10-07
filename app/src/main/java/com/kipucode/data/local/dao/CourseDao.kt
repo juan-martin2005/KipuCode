@@ -1,10 +1,9 @@
 package com.kipucode.data.local.dao
 
 import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Upsert
 import com.kipucode.data.local.dao.relation.CourseWithLessons
 import com.kipucode.data.local.model.CourseEntity
 import kotlinx.coroutines.flow.Flow
@@ -27,20 +26,9 @@ interface CourseDao {
     // ========================================================================================
     //  Guardar Cursos -> Inserción de la lista de cursos
     // ========================================================================================
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertCourses(courses: List<CourseEntity>)
 
-    // ========================================================================================
-    //  Obtener todos los cursos disponibles de la bd local (Flow)
-    // ========================================================================================
-    @Query("SELECT * FROM courses ORDER BY order_index ASC")
-    fun getAllCourses(): Flow<List<CourseEntity>>
-
-    // ========================================================================================
-    //  Contador de cursos locales para verificar pre-poblado
-    // ========================================================================================
-    @Query("SELECT COUNT(*) FROM courses")
-    suspend fun getCoursesCount(): Int
 
     @Query("SELECT COUNT(*) FROM courses WHERE track = :track")
     suspend fun getCoursesCountByTrack(track: String): Int
@@ -52,9 +40,5 @@ interface CourseDao {
     @Query("SELECT * FROM courses ORDER BY order_index ASC")
     fun getCourseWithLessons(): Flow<List<CourseWithLessons>>
 
-    // ========================================================================================
-    //  Obtener la información de un solo curso mediante su ID
-    // ========================================================================================
-    @Query("SELECT * FROM courses WHERE id = :courseId")
-    fun getCourseByIdFlow(courseId: String): Flow<CourseEntity?>
+
 }

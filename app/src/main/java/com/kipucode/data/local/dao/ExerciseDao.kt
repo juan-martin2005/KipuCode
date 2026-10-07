@@ -1,21 +1,17 @@
 package com.kipucode.data.local.dao
 
 import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Upsert
 import com.kipucode.data.local.dao.relation.ExerciseWithOptions
 import com.kipucode.data.local.model.ExerciseEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ExerciseDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun insertAll(exercises: List<ExerciseEntity>)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(exercise: ExerciseEntity)
 
     @Transaction
     @Query("SELECT * FROM exercises WHERE lesson_id = :lessonId ORDER BY order_index ASC")
@@ -24,9 +20,6 @@ interface ExerciseDao {
     @Transaction
     @Query("SELECT * FROM exercises ORDER BY order_index ASC")
     fun getAllExercises(): Flow<List<ExerciseWithOptions>>
-
-    @Query("DELETE FROM exercises WHERE lesson_id = :lessonId")
-    suspend fun deleteExercisesByLessonId(lessonId: String)
 
     @Query("SELECT id FROM exercises")
     suspend fun getAllExerciseIds(): List<String>
