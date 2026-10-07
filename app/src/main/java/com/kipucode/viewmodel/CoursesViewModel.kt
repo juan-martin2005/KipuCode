@@ -3,16 +3,13 @@ package com.kipucode.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kipucode.domain.model.CourseWithLessonsDomain
-import com.kipucode.domain.model.ExerciseDomain
 import com.kipucode.domain.model.Response
 import com.kipucode.domain.usecase.CognitiveMasteryOverview
 import com.kipucode.domain.usecase.GetCognitiveMasteryOverviewUseCase
 import com.kipucode.domain.usecase.GetCourseWithLessonsUseCase
-import com.kipucode.domain.usecase.GetExercisesByLessonUseCase
 import com.kipucode.domain.usecase.RefreshCoursesUseCase
 import com.kipucode.domain.usecase.UpdateLastViewedLessonUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -24,7 +21,6 @@ import javax.inject.Inject
 class CoursesViewModel @Inject constructor(
     private val getCourseWithLessonsUseCase: GetCourseWithLessonsUseCase,
     private val refreshCoursesUseCase: RefreshCoursesUseCase,
-    private val getExercisesByLessonUseCase: GetExercisesByLessonUseCase,
     getCognitiveMasteryOverviewUseCase: GetCognitiveMasteryOverviewUseCase,
     private val updateLastViewedLessonUseCase: UpdateLastViewedLessonUseCase
 ) : ViewModel() {
@@ -67,14 +63,6 @@ class CoursesViewModel @Inject constructor(
 
             _refreshState.value = result
         }
-    }
-
-    fun resetRefreshState() {
-        _refreshState.value = null
-    }
-
-    fun getExercisesForLesson(lessonId: String): Flow<List<ExerciseDomain>> {
-        return getExercisesByLessonUseCase(lessonId)
     }
 
     fun onSelectLesson(lessonId: String) {

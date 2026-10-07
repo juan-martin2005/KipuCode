@@ -41,23 +41,7 @@ internal class LearningProgressRepositoryImpl @Inject constructor(
             .map { list -> list.map { it.toDomain() } }
     }
 
-    override fun getProgressForExercise(exerciseId: String): Flow<LearningProgressDomain?> {
-        val currentUid = userRemoteDataSource.currentUserId ?: return flowOf(null)
-        return learningProgressDao.getProgressForExercise(currentUid, exerciseId)
-            .map { it?.toDomain() }
-    }
 
-    override fun getProgressForLesson(lessonId: String): Flow<List<LearningProgressDomain>> {
-        val currentUid = userRemoteDataSource.currentUserId ?: return flowOf(emptyList())
-        return learningProgressDao.getProgressForLesson(currentUid, lessonId)
-            .map { list -> list.map { it.toDomain() } }
-    }
-
-    override fun getProgressForCourse(courseId: String): Flow<List<LearningProgressDomain>> {
-        val currentUid = userRemoteDataSource.currentUserId ?: return flowOf(emptyList())
-        return learningProgressDao.getProgressForCourse(currentUid, courseId)
-            .map { list -> list.map { it.toDomain() } }
-    }
 
     override fun getAllProgressForCurrentUser(): Flow<List<LearningProgressDomain>> {
         val currentUid = userRemoteDataSource.currentUserId ?: return flowOf(emptyList())

@@ -22,19 +22,6 @@ internal class CourseRepositoryImpl @Inject constructor(
     private val courseDao: CourseDao
 ): CourseRepository {
 
-    // ===========================================================================================
-    //  Obtiene los cursos locales (Entity) y los transforma al modelo de Dominio (Domain)
-    // ===========================================================================================
-    override fun getCourses(): Flow<List<CourseDomain>> =
-        courseDao.getAllCourses()
-            .onStart { databaseSeedService.seedIfNeeded() }
-            .map { list -> list.map { it.toDomain() } }
-
-    // ===========================================================================================
-    //  Observa un curso local (Entity) convirtiendo el resultado a modelo de Dominio (Domain)
-    // ===========================================================================================
-    override fun getCourseById(courseId: String): Flow<CourseDomain?> =
-        courseDao.getCourseByIdFlow(courseId).map { courseEntity -> courseEntity?.toDomain() }
 
 
     override fun getCourseWithLessons(): Flow<List<CourseWithLessonsDomain>> =

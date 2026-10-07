@@ -26,8 +26,5 @@ data class HomeUiState(
     val lessonMasteryMap: Map<String, CognitiveMasteryDomain> = emptyMap(),
     val completedLessonIds: List<String> = emptyList(),
     val currentLessonOrderIndex: Int = 0,
-    val currentLessonId: String? = null,
-
-    // Mensajes o errores
-    val errorMessage: String? = null
+    val currentLessonId: String? = null
 )

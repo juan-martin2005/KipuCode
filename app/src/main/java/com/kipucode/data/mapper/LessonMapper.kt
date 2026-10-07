@@ -1,7 +1,6 @@
 package com.kipucode.data.mapper
 
 import com.kipucode.data.local.model.LessonEntity
-import com.kipucode.data.remote.firebase.dto.LessonDto
 import com.kipucode.domain.model.LessonDomain
 
 import com.kipucode.data.local.converter.LessonBlockConverter
@@ -16,20 +15,6 @@ fun LessonEntity.toDomain() =
         title = title,
         content = content,
         blocks = LessonBlockConverter.parse(content),
-        xp = xp,
-        orderIndex = orderIndex
-    )
-
-
-// ===================================
-//  Domain -> Room (Entity)
-// ===================================
-fun LessonDto.toEntity() =
-    LessonEntity(
-        id = id,
-        courseId = courseId,
-        title = title,
-        content = content,
         xp = xp,
         orderIndex = orderIndex
     )

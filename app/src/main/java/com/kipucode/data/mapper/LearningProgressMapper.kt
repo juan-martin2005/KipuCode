@@ -105,17 +105,3 @@ fun LearningProgressDto.toEntity(userId: String): LearningProgressEntity {
         lastReviewed = this.lastReviewed
     )
 }
-
-fun LearningProgressDto.toDomain(userId: String): LearningProgressDomain {
-    return LearningProgressDomain(
-        exerciseId = this.exerciseId,
-        userId = userId,
-        difficulty = this.difficulty,
-        stability = this.stability,
-        reps = this.reps,
-        lapses = this.lapses,
-        state = this.state,
-        dueDate = this.dueDate,
-        lastReviewed = this.lastReviewed
-    )
-}

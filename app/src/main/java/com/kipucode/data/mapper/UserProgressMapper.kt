@@ -12,20 +12,6 @@ import java.util.Date
 // ===================================
 //  Room (Entity / Relation) -> Dominio
 // ===================================
-fun UserProgressEntity.toDomain(): UserProgressDomain {
-    return UserProgressDomain(
-        id = this.userId,
-        userId = this.userId,
-        activeTrack = this.activeTrack,
-        lastVisitedLessonId = this.lastVisitedLessonId,
-        completedAt = this.completedAt,
-        totalXp = this.totalXp,
-        streakDay = this.streakDay,
-        completedLessons = emptyList(),
-        completedCourses = emptyList(),
-        lessonsXpRecord = emptyMap()
-    )
-}
 
 fun UserProgressWithDetails.toDomain(): UserProgressDomain {
     return UserProgressDomain(

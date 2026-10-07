@@ -17,15 +17,6 @@ interface CourseRepository {
     //      (API/Firestore) es una operación lenta que depende de la latencia de red. Remueve la
     //      ejecución del hilo principal para NO congelar la aplicación.
 
-    // ========================================================================================
-    //  Obtener la lista completa de cursos con el modelo del Dominio
-    // ========================================================================================
-    fun getCourses(): Flow<List<CourseDomain>>
-
-    // ========================================================================================
-    //  Obtener la información actualizada de un curso por `courseId`
-    // ========================================================================================
-    fun getCourseById(courseId: String): Flow<CourseDomain?>
 
 
     fun getCourseWithLessons(): Flow<List<CourseWithLessonsDomain>>

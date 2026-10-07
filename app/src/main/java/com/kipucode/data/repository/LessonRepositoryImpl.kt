@@ -13,11 +13,6 @@ import javax.inject.Singleton
 internal class LessonRepositoryImpl @Inject constructor(
     private val lessonDao: LessonDao
 ): LessonRepository {
-    // ===========================================================================================
-    //  Flujo reactivo filtrado que obtiene lecciones (Entity) mapeadas a Dominio
-    // ===========================================================================================
-    override fun getLessonsByCourseId(courseId: String): Flow<List<LessonDomain>> =
-        lessonDao.getLessonsByCourseId(courseId).map { list -> list.map { it.toDomain() } }
 
     // ===========================================================================================
     //  Observa una lección local (Entity) convirtiendo el resultado a modelo de Dominio (Domain)

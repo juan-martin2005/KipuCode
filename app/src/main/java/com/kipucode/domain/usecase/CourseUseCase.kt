@@ -1,6 +1,5 @@
 package com.kipucode.domain.usecase
 
-import com.kipucode.domain.model.CourseDomain
 import com.kipucode.domain.model.CourseWithLessonsDomain
 import com.kipucode.domain.model.Response
 import com.kipucode.domain.repository.CourseRepository
@@ -20,21 +19,5 @@ class RefreshCoursesUseCase @Inject constructor(
 ){
     suspend operator fun invoke(): Response<Unit> {
         return courseRepository.refreshCoursesAndLessons()
-    }
-}
-
-class GetAllCourseUseCase @Inject constructor(
-    private val courseRepository: CourseRepository
-) {
-    operator fun invoke(): Flow<List<CourseDomain>> {
-        return courseRepository.getCourses()
-    }
-}
-
-class GetCourseByIdUseCase @Inject constructor(
-    private val courseRepository: CourseRepository
-) {
-    operator fun invoke(courseId: String): Flow<CourseDomain?> {
-        return courseRepository.getCourseById(courseId)
     }
 }

@@ -15,16 +15,6 @@ fun UserDomain.toDto(): UserDto =
         avatarId = this.avatarId
         )
 
-// ===================================
-//  Domain -> Room (Entity)
-// ===================================
-fun UserDomain.toEntity(): UserEntity =
-    UserEntity(
-        id = this.id,
-        name = this.name,
-        email = this.email,
-        avatarId = this.avatarId
-    )
 
 // ===================================
 //  Firebase (DTO) -> Dominio
