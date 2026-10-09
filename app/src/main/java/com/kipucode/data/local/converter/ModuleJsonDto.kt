@@ -48,7 +48,7 @@ data class OptionJsonDto(
     @SerializedName("content") val content: String = "",
     @SerializedName("explanation") val explanation: String = "",
     @SerializedName("isCorrect") val isCorrect: Boolean = false,
-    @SerializedName("orderIndex") val orderIndex: Int = 0
+    @SerializedName("orderIndex") val orderIndex: Int? = null
 )
 
 // ============================================================================================
@@ -97,5 +97,5 @@ fun OptionJsonDto.toEntity(id: String, exerciseId: String, fallbackOrderIndex: I
     content = this.content,
     explanation = this.explanation,
     isCorrect = this.isCorrect,
-    orderIndex = if (this.orderIndex > 0) this.orderIndex else fallbackOrderIndex
+    orderIndex = this.orderIndex ?: fallbackOrderIndex
 )
