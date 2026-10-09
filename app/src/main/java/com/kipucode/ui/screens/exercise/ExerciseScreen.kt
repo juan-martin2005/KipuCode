@@ -31,6 +31,7 @@ import com.kipucode.domain.model.ExerciseDomain
 import com.kipucode.domain.model.Response
 import com.kipucode.ui.components.KipuTopBar
 import com.kipucode.ui.components.card.KipuDialog
+import com.kipucode.ui.screens.exercise.components.BlockCompletion
 import com.kipucode.ui.screens.exercise.components.ExplanationDialog
 import com.kipucode.ui.screens.exercise.components.Flashcard
 import com.kipucode.ui.screens.exercise.components.UniqueChoice
@@ -70,9 +71,18 @@ fun ExerciseScreen(
     val selectedOptionId by exerciseViewModel.selectedOptionId.collectAsStateWithLifecycle()
     val explanation by exerciseViewModel.answerExplanation.collectAsStateWithLifecycle()
     val lessonName by exerciseViewModel.lessonName.collectAsStateWithLifecycle()
+    val placedBlocks by exerciseViewModel.placedBlocks.collectAsStateWithLifecycle()
+    val availableBlocks by exerciseViewModel.availableBlocks.collectAsStateWithLifecycle()
+    val isBlockEvaluated by exerciseViewModel.isBlockAnswerEvaluated.collectAsStateWithLifecycle()
 
     val currentExercise = exercises.getOrNull(currentIndex)
     val isFlashCard = currentExercise?.type == "FLASHCARD"
+
+    LaunchedEffect(currentExercise?.id) {
+        if (currentExercise?.type == "COMPLETE_CODE" && currentExercise.options.isNotEmpty()) {
+            exerciseViewModel.setupBlockExercise(currentExercise.options)
+        }
+    }
 
     Scaffold(
         containerColor = BackgroundGray,
@@ -111,9 +121,15 @@ fun ExerciseScreen(
             currentIndex = currentIndex,
             totalExercises = exercises.size,
             selectedOptionId = selectedOptionId,
+            placedBlocks = placedBlocks,
+            availableBlocks = availableBlocks,
+            isBlockEvaluated = isBlockEvaluated,
             onBackClick = { showBackDialog = true },
             onOptionSelected = { exerciseViewModel.submitAnswer(it) },
-            onRatingSelected = { rating -> exerciseViewModel.rateFlashCard(rating, lessonId) }
+            onRatingSelected = { rating -> exerciseViewModel.rateFlashCard(rating, lessonId) },
+            onSelectBlock = { block, totalSlots -> exerciseViewModel.onSelectBlockFromPool(block, totalSlots) },
+            onRemoveBlock = { slotIndex -> exerciseViewModel.onRemoveBlockFromSlot(slotIndex) },
+            onSubmitBlockAnswer = { totalSlots -> exerciseViewModel.submitBlockAnswer(totalSlots) }
         )
     }
 
@@ -151,9 +167,15 @@ fun ExerciseScreenContent(
     currentIndex: Int,
     totalExercises: Int,
     selectedOptionId: String?,
+    placedBlocks: Map<Int, BlockOptionDomain> = emptyMap(),
+    availableBlocks: List<BlockOptionDomain> = emptyList(),
+    isBlockEvaluated: Boolean = false,
     onBackClick: () -> Unit,
     onOptionSelected: (BlockOptionDomain) -> Unit,
-    onRatingSelected: (Int) -> Unit
+    onRatingSelected: (Int) -> Unit,
+    onSelectBlock: (BlockOptionDomain, Int) -> Unit = { _, _ -> },
+    onRemoveBlock: (Int) -> Unit = {},
+    onSubmitBlockAnswer: (Int) -> Unit = {}
 ) {
     if (currentExerciseId == null || instruction == null || options == null) {
         Box(
@@ -189,6 +211,21 @@ fun ExerciseScreenContent(
                         module = lessonName.ifBlank { "Módulo actual" },
                         onRatingSelect = onRatingSelected,
                         modifier = Modifier.padding(horizontal = 20.dp)
+                    )
+                }
+                "COMPLETE_CODE" -> {
+                    BlockCompletion(
+                        current = currentIndex + 1,
+                        total = totalExercises,
+                        instruction = instruction,
+                        options = options,
+                        placedBlocks = placedBlocks,
+                        availableBlocks = availableBlocks,
+                        isEvaluated = isBlockEvaluated,
+                        onSelectBlock = onSelectBlock,
+                        onRemoveBlock = onRemoveBlock,
+                        onSubmitAnswer = onSubmitBlockAnswer,
+                        modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp)
                     )
                 }
                 else -> {

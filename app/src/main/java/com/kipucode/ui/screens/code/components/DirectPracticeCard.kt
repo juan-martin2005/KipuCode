@@ -33,7 +33,8 @@ import com.kipucode.ui.theme.Nunito
 
 enum class DirectPracticeType {
     FLASHCARD,
-    UNIQUE_CHOICE
+    UNIQUE_CHOICE,
+    COMPLETE_CODE
 }
 
 @Composable
@@ -45,15 +46,32 @@ fun DirectPracticeCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val isFlashcard = type == DirectPracticeType.FLASHCARD
-
-    val iconRes = if (isFlashcard) R.drawable.ic_flashcards else R.drawable.ic_multiple_choice
-    val iconBgColor = if (isFlashcard) Color(0xFFE0F7FA) else Color(0xFFEDE7F6)
-    val iconBorderColor = if (isFlashcard) Color(0xFFB2EBF2) else Color(0xFFD1C4E9)
-    val iconTint = if (isFlashcard) KipuTeal else Color(0xFF5E35B1)
-
-    val title = if (isFlashcard) "Tarjetas de memoria" else "Opción múltiple"
-    val countLabel = if (isFlashcard) "$totalCount tarjetas" else "$totalCount preguntas"
+    val style = when (type) {
+        DirectPracticeType.FLASHCARD -> PracticeCardStyle(
+            iconRes = R.drawable.ic_flashcards,
+            iconBgColor = Color(0xFFE0F7FA),
+            iconBorderColor = Color(0xFFB2EBF2),
+            iconTint = KipuTeal,
+            title = "Tarjetas de memoria",
+            countLabel = "$totalCount tarjetas"
+        )
+        DirectPracticeType.UNIQUE_CHOICE -> PracticeCardStyle(
+            iconRes = R.drawable.ic_multiple_choice,
+            iconBgColor = Color(0xFFEDE7F6),
+            iconBorderColor = Color(0xFFD1C4E9),
+            iconTint = Color(0xFF5E35B1),
+            title = "Opción múltiple",
+            countLabel = "$totalCount preguntas"
+        )
+        DirectPracticeType.COMPLETE_CODE -> PracticeCardStyle(
+            iconRes = R.drawable.ic_code,
+            iconBgColor = Color(0xFFFFF3E0),
+            iconBorderColor = Color(0xFFFFE0B2),
+            iconTint = Color(0xFFE65100),
+            title = "Completar bloques",
+            countLabel = "$totalCount ejercicios"
+        )
+    }
 
     Row(
         modifier = modifier
@@ -66,13 +84,13 @@ fun DirectPracticeCard(
         Box(
             modifier = Modifier
                 .size(46.dp)
-                .background(iconBgColor, RoundedCornerShape(14.dp)),
+                .background(style.iconBgColor, RoundedCornerShape(14.dp)),
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                painter = painterResource(id = iconRes),
+                painter = painterResource(id = style.iconRes),
                 contentDescription = null,
-                tint = iconTint,
+                tint = style.iconTint,
                 modifier = Modifier.size(24.dp)
             )
         }
@@ -82,7 +100,7 @@ fun DirectPracticeCard(
         // Título y Conteo
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = title,
+                text = style.title,
                 fontFamily = Nunito,
                 fontWeight = FontWeight.Bold,
                 fontSize = 15.sp,
@@ -90,7 +108,7 @@ fun DirectPracticeCard(
             )
             Spacer(modifier = Modifier.height(2.dp))
             Text(
-                text = countLabel,
+                text = style.countLabel,
                 fontFamily = Nunito,
                 fontWeight = FontWeight.Medium,
                 fontSize = 12.5.sp,
@@ -165,6 +183,14 @@ private fun DirectPracticeCardDuePreview() {
             isPracticed = true,
             onClick = {}
         )
+        DirectPracticeCard(
+            type = DirectPracticeType.COMPLETE_CODE,
+            totalCount = 8,
+            dueCount = 2,
+            isPracticed = true,
+            onClick = {}
+        )
+
     }
 }
 
@@ -189,5 +215,21 @@ private fun DirectPracticeCardUpToDatePreview() {
             isPracticed = false,
             onClick = {}
         )
+        DirectPracticeCard(
+            type = DirectPracticeType.COMPLETE_CODE,
+            totalCount = 6,
+            dueCount = 0,
+            isPracticed = false,
+            onClick = {}
+        )
     }
 }
+
+private data class PracticeCardStyle(
+    val iconRes: Int,
+    val iconBgColor: Color,
+    val iconBorderColor: Color,
+    val iconTint: Color,
+    val title: String,
+    val countLabel: String
+)

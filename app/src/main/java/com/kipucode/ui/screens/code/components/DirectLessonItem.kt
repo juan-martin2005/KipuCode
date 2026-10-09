@@ -50,6 +50,7 @@ fun DirectLessonItem(
 
     val flashcards = remember(exercises) { exercises.filter { it.type == "FLASHCARD" } }
     val uniqueChoices = remember(exercises) { exercises.filter { it.type == "UNIQUE_CHOICE" } }
+    val blockExercises = remember(exercises) { exercises.filter { it.type == "COMPLETE_CODE" } }
 
     val dueFlashcardsCount = remember(dueExercises, lesson.id) {
         dueExercises.count { it.lessonId == lesson.id && it.exerciseType.equals("FLASHCARD", ignoreCase = true) }
@@ -57,9 +58,13 @@ fun DirectLessonItem(
     val dueUniqueChoicesCount = remember(dueExercises, lesson.id) {
         dueExercises.count { it.lessonId == lesson.id && it.exerciseType.equals("UNIQUE_CHOICE", ignoreCase = true) }
     }
+    val dueBlocksCount = remember(dueExercises, lesson.id) {
+        dueExercises.count { it.lessonId == lesson.id && it.exerciseType.equals("COMPLETE_CODE", ignoreCase = true) }
+    }
 
     val isFlashcardPracticed = dueFlashcardsCount > 0 || (isLessonPracticed && flashcards.isNotEmpty())
     val isUniqueChoicePracticed = dueUniqueChoicesCount > 0 || (isLessonPracticed && uniqueChoices.isNotEmpty())
+    val isBlocksPracticed = dueBlocksCount > 0 || (isLessonPracticed && blockExercises.isNotEmpty())
 
     // Determinamos si se debe mostrar cada tarjeta según el filtro seleccionado
     val showFlashcard = when (selectedFilter) {
@@ -74,8 +79,14 @@ fun DirectLessonItem(
         PracticeFilter.UP_TO_DATE -> dueUniqueChoicesCount == 0 && isUniqueChoicePracticed && uniqueChoices.isNotEmpty()
     }
 
+    val showBlocks = when (selectedFilter) {
+        PracticeFilter.ALL -> blockExercises.isNotEmpty()
+        PracticeFilter.FOR_REVIEW -> dueBlocksCount > 0
+        PracticeFilter.UP_TO_DATE -> dueBlocksCount == 0 && isBlocksPracticed && blockExercises.isNotEmpty()
+    }
+
     // Si con el filtro actual la lección no tiene ejercicios para mostrar, no renderizamos
-    if (!showFlashcard && !showUniqueChoice && exercises.isNotEmpty()) {
+    if (!showFlashcard && !showUniqueChoice && !showBlocks && exercises.isNotEmpty()) {
         return
     }
 
@@ -164,7 +175,7 @@ fun DirectLessonItem(
                 )
             }
 
-            if (showFlashcard && showUniqueChoice) {
+            if (showFlashcard && (showUniqueChoice || showBlocks)) {
                 HorizontalDivider(
                     thickness = 1.dp,
                     color = Color(0xFFF0F3F6)
@@ -188,7 +199,31 @@ fun DirectLessonItem(
                 )
             }
 
-            if (showFlashcard || showUniqueChoice) {
+            if (showUniqueChoice && showBlocks) {
+                HorizontalDivider(
+                    thickness = 1.dp,
+                    color = Color(0xFFF0F3F6)
+                )
+            }
+
+            if (showBlocks) {
+                DirectPracticeCard(
+                    type = DirectPracticeType.COMPLETE_CODE,
+                    totalCount = blockExercises.size,
+                    dueCount = dueBlocksCount,
+                    isPracticed = isBlocksPracticed,
+                    onClick = {
+                        onOpenPracticeOptions(
+                            lesson,
+                            "COMPLETE_CODE",
+                            blockExercises.size,
+                            dueBlocksCount
+                        )
+                    }
+                )
+            }
+
+            if (showFlashcard || showUniqueChoice || showBlocks) {
                 HorizontalDivider(
                     thickness = 1.dp,
                     color = Color(0xFFF0F3F6),
@@ -207,7 +242,8 @@ private fun DirectLessonItemPreview() {
     val mockLesson = LessonDomain(id = "l1", title = "Tipos primitivos", orderIndex = 1)
     val mockExercises = listOf(
         ExerciseDomain(id = "e1", lessonId = "l1", type = "FLASHCARD", instruction = "", orderIndex = 1),
-        ExerciseDomain(id = "e2", lessonId = "l1", type = "UNIQUE_CHOICE", instruction = "", orderIndex = 2)
+        ExerciseDomain(id = "e2", lessonId = "l1", type = "UNIQUE_CHOICE", instruction = "", orderIndex = 2),
+        ExerciseDomain(id = "e3", lessonId = "l1", type = "COMPLETE_CODE", instruction = "", orderIndex = 3)
     )
 
     Column(modifier = Modifier.padding(16.dp)) {

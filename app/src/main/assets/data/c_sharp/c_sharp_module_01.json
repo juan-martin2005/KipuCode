@@ -1,5 +1,5 @@
 {
-  "version": 9,
+  "version": 12,
   "course": {
     "id": "csharp_module_01",
     "title": "Fundamentos de .NET, Lógica y Diagramación",
@@ -124,6 +124,20 @@
         }
       ],
       "exercises": [
+        {
+          "id": "exercise_lesson_01_block_01",
+          "type": "COMPLETE_CODE",
+          "instruction": "Completa el saludo:\n```c#\n// Saludo en C#\nstring mensaje = [[slot]];\n// Muestra el mensaje\nConsole.[[slot]](mensaje);\n```",
+          "answer": "string mensaje = \"Hola\";\nConsole.WriteLine(mensaje);",
+          "xp": 100,
+          "orderIndex": 0,
+          "options": [
+            { "content": "\"Hola\"", "explanation": "\"Hola\" es el literal de cadena asignado a la variable mensaje.", "isCorrect": true, "orderIndex": 0 },
+            { "content": "WriteLine", "explanation": "WriteLine es el método para mostrar la variable en la consola.", "isCorrect": true, "orderIndex": 1 },
+            { "content": "\"Adiós\"", "explanation": "\"Adiós\" no coincide con el saludo esperado.", "isCorrect": false, "orderIndex": 0 },
+            { "content": "ReadLine", "explanation": "ReadLine es para leer datos del teclado, no para mostrar texto.", "isCorrect": false, "orderIndex": 1 }
+          ]
+        },
         {
           "id": "exercise_lesson_01_01",
           "type": "UNIQUE_CHOICE",

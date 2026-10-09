@@ -76,8 +76,17 @@ fun PracticeOptionsContent(
     modifier: Modifier = Modifier
 ) {
     val isFlashcard = exerciseType.equals("FLASHCARD", ignoreCase = true)
-    val typeTitle = if (isFlashcard) "Tarjetas de Memoria" else "Preguntas de Opción Múltiple"
-    val typeIcon = if (isFlashcard) R.drawable.ic_flashcards else R.drawable.ic_multiple_choice
+    val isBlock = exerciseType.equals("COMPLETE_CODE", ignoreCase = true) || exerciseType.equals("BLOCK_COMPLETION", ignoreCase = true)
+    val typeTitle = when {
+        isFlashcard -> "Tarjetas de Memoria"
+        isBlock -> "Completar con Bloques"
+        else -> "Preguntas de Opción Múltiple"
+    }
+    val typeIcon = when {
+        isFlashcard -> R.drawable.ic_flashcards
+        isBlock -> R.drawable.ic_code
+        else -> R.drawable.ic_multiple_choice
+    }
 
     Column(
         modifier = modifier

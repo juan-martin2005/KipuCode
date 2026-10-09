@@ -68,6 +68,15 @@ class ExerciseViewModel @Inject constructor(
     private val _lessonName = MutableStateFlow<String>("")
     val lessonName: StateFlow<String> = _lessonName
 
+    // --- ESTADO PARA EJERCICIOS DE COMPLETAR CON BLOQUES (BLOCK_COMPLETION) ---
+    private val _placedBlocks = MutableStateFlow<Map<Int, BlockOptionDomain>>(emptyMap())
+    val placedBlocks: StateFlow<Map<Int, BlockOptionDomain>> = _placedBlocks
+
+    private val _availableBlocks = MutableStateFlow<List<BlockOptionDomain>>(emptyList())
+    val availableBlocks: StateFlow<List<BlockOptionDomain>> = _availableBlocks
+
+    private val _isBlockAnswerEvaluated = MutableStateFlow(false)
+    val isBlockAnswerEvaluated: StateFlow<Boolean> = _isBlockAnswerEvaluated
 
     private val earnedXpByExercise = mutableMapOf<String, Int>()
     private val correctExerciseIds = mutableSetOf<String>()
@@ -176,6 +185,96 @@ class ExerciseViewModel @Inject constructor(
         }
     }
 
+    // --- ACCIONES PARA EJERCICIOS DE COMPLETAR CON BLOQUES ---
+
+    fun setupBlockExercise(options: List<BlockOptionDomain>) {
+        _placedBlocks.value = emptyMap()
+        _availableBlocks.value = options.shuffled()
+        _isBlockAnswerEvaluated.value = false
+    }
+
+    fun onSelectBlockFromPool(block: BlockOptionDomain, totalSlots: Int) {
+        if (_isBlockAnswerEvaluated.value) return
+        val currentPlaced = _placedBlocks.value
+        val firstEmptySlot = (0 until totalSlots).firstOrNull { !currentPlaced.containsKey(it) } ?: return
+
+        _placedBlocks.value = currentPlaced + (firstEmptySlot to block)
+        _availableBlocks.value = _availableBlocks.value.filter { it.id != block.id }
+    }
+
+    fun onRemoveBlockFromSlot(slotIndex: Int) {
+        if (_isBlockAnswerEvaluated.value) return
+        val blockToRemove = _placedBlocks.value[slotIndex] ?: return
+
+        _placedBlocks.value = _placedBlocks.value - slotIndex
+        _availableBlocks.value = _availableBlocks.value + blockToRemove
+    }
+
+    fun submitBlockAnswer(totalSlots: Int) {
+        if (_isBlockAnswerEvaluated.value) return
+        val currentExercise = _exercisesState.value.getOrNull(_currentExerciseIndex.value) ?: return
+        val currentPlaced = _placedBlocks.value
+
+        if (currentPlaced.size < totalSlots) return
+
+        val correctOptions = currentExercise.options.filter { it.isCorrect }.sortedBy { it.orderIndex }
+
+        var allCorrect = true
+        for (i in 0 until totalSlots) {
+            val placed = currentPlaced[i]
+            val expected = correctOptions.getOrNull(i)
+            if (placed == null || expected == null || !placed.isCorrect || placed.content.trim() != expected.content.trim()) {
+                allCorrect = false
+                break
+            }
+        }
+
+        val baseExerciseXp = currentExercise.xp
+        val earnedXp = if (allCorrect) baseExerciseXp else (baseExerciseXp / 2)
+
+        earnedXpByExercise[currentExercise.id] = earnedXp
+        if (allCorrect) {
+            correctExerciseIds.add(currentExercise.id)
+        } else {
+            incorrectExerciseIds.add(currentExercise.id)
+        }
+
+        val feedbackMessage = if (allCorrect) {
+            "¡Excelente! Has completado el código a la perfección"
+        } else {
+            "¡Casi! Revisa la sintaxis de los bloques"
+        }
+
+        val explanationsList = if (allCorrect) {
+            correctOptions.map { it.explanation }.filter { it.isNotBlank() }
+        } else {
+            currentPlaced.values.filter { !it.isCorrect }.map { it.explanation }.filter { it.isNotBlank() }
+        }
+
+        val finalExplanation = if (explanationsList.isNotEmpty()) {
+            explanationsList.joinToString("\n\n")
+        } else {
+            if (allCorrect) "Has colocado todos los tokens en el orden y contexto adecuados."
+            else "Uno o más bloques no corresponden a la sintaxis correcta del lenguaje."
+        }
+
+        _isBlockAnswerEvaluated.value = true
+        _answerExplanation.value = AnswerExplanation(
+            isCorrect = allCorrect,
+            explanation = finalExplanation,
+            experience = earnedXp.toString(),
+            message = feedbackMessage
+        )
+
+        // Registro FSRS
+        viewModelScope.launch {
+            recordExerciseAttemptUseCase(
+                exerciseId = currentExercise.id,
+                isCorrect = allCorrect
+            )
+        }
+    }
+
     fun finishLessonExercises(lessonId: String) {
         viewModelScope.launch {
             _completeState.value = Response.Loading
@@ -208,6 +307,9 @@ class ExerciseViewModel @Inject constructor(
     fun nextExercise() {
         _answerExplanation.value = null
         _selectedOptionId.value = null
+        _placedBlocks.value = emptyMap()
+        _availableBlocks.value = emptyList()
+        _isBlockAnswerEvaluated.value = false
         if (_currentExerciseIndex.value < _exercisesState.value.size - 1) {
             _currentExerciseIndex.value += 1
         }
@@ -257,6 +359,9 @@ class ExerciseViewModel @Inject constructor(
         _currentExerciseIndex.value = 0
         _selectedOptionId.value = null
         _answerExplanation.value = null
+        _placedBlocks.value = emptyMap()
+        _availableBlocks.value = emptyList()
+        _isBlockAnswerEvaluated.value = false
         _exercisesState.value = emptyList()
         _lessonName.value = ""
         correctExerciseIds.clear()
