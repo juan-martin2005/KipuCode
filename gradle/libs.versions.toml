@@ -1,9 +1,6 @@
 [versions]
 agp = "9.2.1"
-converterGson = "3.0.0"
 coreKtx = "1.18.0"
-desugar_jdk_libs = "2.1.5"
-editorBom = "0.24.6"
 gson = "2.14.0"
 hiltAndroid = "2.59.2"
 hiltAndroidCompiler = "2.59.2"
@@ -16,7 +13,6 @@ kotlin = "2.3.21"
 composeBom = "2026.05.00"
 
 navigationCompose = "2.9.8"
-retrofit = "3.0.0"
 roomVersion = "2.8.4"
 firebaseBom = "34.13.0"
 hiltNavigationCompose = "1.2.0"
@@ -26,10 +22,6 @@ kotlinxSerialization = "1.7.3"
 
 
 [libraries]
-converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
-desugar_jdk_libs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar_jdk_libs" }
-editor = { module = "io.github.rosemoe:editor" }
-editor-bom = { module = "io.github.rosemoe:editor-bom", version.ref = "editorBom" }
 fsrs = { module = "io.github.open-spaced-repetition:fsrs", version.ref = "fsrs" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
@@ -40,8 +32,6 @@ firebase-firestore = { module = "com.google.firebase:firebase-firestore" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompiler" }
-language-textmate = { module = "io.github.rosemoe:language-textmate" }
-retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 room-runtime = {module = "androidx.room:room-runtime", version.ref = "roomVersion"}
 room-compiler = {module = "androidx.room:room-compiler", version.ref = "roomVersion"}
 

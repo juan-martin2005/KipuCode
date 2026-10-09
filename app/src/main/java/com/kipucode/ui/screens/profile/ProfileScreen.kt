@@ -25,7 +25,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.kipucode.ui.navigation.ChangePasswordRoute
-import com.kipucode.ui.navigation.CodeEditorRoute
 import com.kipucode.util.notification.ReminderNotificationHelper
 import com.kipucode.R
 import com.kipucode.domain.model.DailyActivityDomain
@@ -116,9 +115,6 @@ fun ProfileScreen(
                 onChangePassword = {
                     navController.navigate(ChangePasswordRoute)
                 },
-                onFreeCodingClick = {
-                    navController.navigate(CodeEditorRoute())
-                },
                 onTestHighNotification = {
                     triggerNotification {
                         notificationHelper.sendHighPriorityNotification()
@@ -179,7 +175,6 @@ fun ProfileContent(
     onLogoutClick: () -> Unit,
     onEditAvatar : () -> Unit,
     onChangePassword : () -> Unit,
-    onFreeCodingClick: () -> Unit,
     onTestHighNotification : () -> Unit,
     onTestDefaultNotification : () -> Unit
 ) {
@@ -226,18 +221,9 @@ fun ProfileContent(
 
         item {
             MultipleChoicesCard(
-                text = "Codificación libre",
-                iconRes = R.drawable.ic_code,
-                isFirst = true,
-                onClick = onFreeCodingClick,
-            )
-        }
-
-        item {
-            MultipleChoicesCard(
                 text = stringResource(id = R.string.change_password),
                 iconRes = R.drawable.ic_lock,
-                isMiddle = true,
+                isFirst = true,
                 onClick = onChangePassword,
             )
         }
@@ -284,7 +270,6 @@ fun ProfileScreenPreview() {
         onLogoutClick = {},
         onEditAvatar = {},
         onChangePassword = {},
-        onFreeCodingClick = {},
         onTestHighNotification = {},
         onTestDefaultNotification = {}
     )

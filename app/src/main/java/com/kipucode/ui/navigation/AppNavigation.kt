@@ -29,7 +29,6 @@ import com.kipucode.ui.screens.profile.ChangePasswordScreen
 import com.kipucode.ui.screens.profile.ProfileScreen
 import com.kipucode.ui.screens.splash.SplashScreen
 import com.kipucode.ui.screens.summary.SummaryScreen
-import com.kipucode.ui.screens.editor.CodeEditorScreen
 import com.kipucode.viewmodel.AuthViewModel
 import com.kipucode.viewmodel.UserViewModel
 
@@ -294,18 +293,6 @@ fun AppNavigation() {
                         navController.navigate(HomeRoute) {
                             popUpTo<HomeRoute> { inclusive = false }
                         }
-                    }
-                }
-            )
-        }
-
-        composable<CodeEditorRoute> { backStackEntry ->
-            val route = backStackEntry.toRoute<CodeEditorRoute>()
-            CodeEditorScreen(
-                languageKey = route.languageKey,
-                onBack = {
-                    if (backStackEntry.lifecycle.currentState == Lifecycle.State.RESUMED) {
-                        navController.popBackStack()
                     }
                 }
             )

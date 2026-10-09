@@ -2,7 +2,6 @@ package com.kipucode.di
 
 import com.kipucode.data.repository.ActivityCalendarRepositoryImpl
 import com.kipucode.data.repository.AuthRepositoryImpl
-import com.kipucode.data.repository.CodeExecutionRepositoryImpl
 import com.kipucode.data.repository.CourseRepositoryImpl
 import com.kipucode.data.repository.ExerciseRepositoryImpl
 import com.kipucode.data.repository.LessonRepositoryImpl
@@ -10,7 +9,6 @@ import com.kipucode.data.repository.UserProgressRepositoryImpl
 import com.kipucode.data.repository.UserRepositoryImpl
 import com.kipucode.domain.repository.ActivityCalendarRepository
 import com.kipucode.domain.repository.AuthRepository
-import com.kipucode.domain.repository.CodeExecutionRepository
 import com.kipucode.domain.repository.CourseRepository
 import com.kipucode.domain.repository.ExerciseRepository
 import com.kipucode.domain.repository.LessonRepository
@@ -73,10 +71,4 @@ abstract class RepositoryModule {
     internal abstract fun bindActivityCalendarRepository(
         activityCalendarRepositoryImpl: ActivityCalendarRepositoryImpl
     ): ActivityCalendarRepository
-
-    @Binds
-    @Singleton
-    internal abstract fun bindCodeExecutionRepository(
-        codeExecutionRepositoryImpl: CodeExecutionRepositoryImpl
-    ): CodeExecutionRepository
 }
