@@ -40,78 +40,20 @@ fun UniqueChoice(
     onOptionSelected: (BlockOptionDomain) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val horizontalProgressFactor = current.toFloat() / total.toFloat()
     val hasAnswered = selectedOptionId != null
 
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // --- CONTADOR ---
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 4.dp)
-        ) {
-            Text(
-                modifier = Modifier.alignByBaseline(),
-                text = current.toString(),
-                color = lerp(KipuTeal, Color.Black, 0.1f),
-                fontFamily = Nunito,
-                fontWeight = FontWeight.ExtraBold,
-                fontSize = 24.sp
-            )
-            Text(
-                modifier = Modifier.alignByBaseline().padding(horizontal = 2.dp),
-                text = "/",
-                color = KipuDarkBlue.copy(alpha = 0.5f),
-                fontFamily = Nunito,
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp
-            )
-            Text(
-                modifier = Modifier.alignByBaseline(),
-                text = "$total",
-                color = KipuDarkBlue.copy(alpha = 0.5f),
-                fontFamily = Nunito,
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp
-            )
+        // --- BARRA DE PROGRESO REUTILIZABLE ---
+        ExerciseProgressBar(
+            current = current,
+            total = total,
+            modifier = Modifier.fillMaxWidth()
+        )
 
-            Spacer(modifier = Modifier.weight(1f))
-
-            Text(
-                modifier = Modifier.alignByBaseline(),
-                text = "25% COMPLETADO",
-                color = lerp(KipuTeal, Color.Black, 0.1f),
-                fontFamily = Nunito,
-                fontWeight = FontWeight.Bold,
-                fontSize = 12.sp
-            )
-        }
-
-        // --- BARRA DE PROGRESO ---
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(10.dp)
-                .background(
-                    KipuDarkBlue.copy(alpha = 0.1f),
-                    shape = RoundedCornerShape(4.dp)
-                )
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(horizontalProgressFactor)
-                    .height(10.dp)
-                    .background(
-                        KipuTeal,
-                        shape = RoundedCornerShape(4.dp)
-                    )
-            )
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         // --- PREGUNTA (INSTRUCTION) ---
         ExerciseInstruction(
