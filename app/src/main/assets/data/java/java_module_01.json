@@ -86,7 +86,7 @@
         },
         {
           "id": "exercise_java_03",
-          "type": "FLASHCARD",
+          "type": "DEFAULT_FLASHCARDS",
           "instruction": "¿Qué es el Bytecode en Java?",
           "answer": "Es el código intermedio independiente de la plataforma generado por el compilador (`javac`). Tiene extensión `.class` y es ejecutado directamente por la Máquina Virtual de Java (JVM).",
           "orderIndex": 3,

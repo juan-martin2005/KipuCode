@@ -2,14 +2,15 @@ package com.kipucode.domain.model
 
 data class CognitiveMasteryDomain(
     val percentage: Int = 0,
-    val statusTag: String = TAG_INITIAL,
+    val statusTag: String = TAG_ZERO,
     val totalExercises: Int = 0,
     val practicedExercises: Int = 0
 ) {
     companion object {
+        const val TAG_ZERO = "Sin Dominio"
         const val TAG_INITIAL = "Iniciando tema"
         const val TAG_CONSOLIDATING = "En consolidación"
-        const val TAG_MASTERED = "Maestría consolidada (FSRS)"
+        const val TAG_MASTERED = "Maestría consolidada"
 
         fun fromPercentage(
             percentage: Int,
@@ -18,6 +19,7 @@ data class CognitiveMasteryDomain(
         ): CognitiveMasteryDomain {
             val clampedPct = percentage.coerceIn(0, 100)
             val tag = when {
+                clampedPct == 0 -> TAG_ZERO
                 clampedPct >= 80 -> TAG_MASTERED
                 clampedPct >= 40 -> TAG_CONSOLIDATING
                 else -> TAG_INITIAL

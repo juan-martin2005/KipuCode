@@ -8,7 +8,6 @@ interface LearningProgressRepository {
     fun getDueExercises(): Flow<List<LearningProgressDomain>>
     fun getAllProgressForCurrentUser(): Flow<List<LearningProgressDomain>>
     fun calculateCardRetrievability(progress: LearningProgressDomain): Double
-    suspend fun recordChoiceAttempt(exerciseId: String, isCorrect: Boolean): Response<Unit>
     suspend fun recordRatingAttempt(exerciseId: String, ratingValue: Int): Response<Unit>
     suspend fun refreshLearningProgress(): Response<Unit>
     suspend fun syncLearningProgressToRemote(): Response<Unit>

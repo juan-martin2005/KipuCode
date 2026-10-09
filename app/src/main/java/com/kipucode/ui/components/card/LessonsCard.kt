@@ -29,7 +29,8 @@ fun LessonCard(
     val borderColor = if (isLocked) LightGray else KipuTeal
 
     val statusText = when {
-        masteryPercentage != null -> "Dominio Cognitivo: $masteryPercentage%"
+        masteryPercentage != null && masteryPercentage > 0 -> "Dominio de lección: $masteryPercentage%"
+        masteryPercentage != null && masteryPercentage == 0 -> "Sin Dominio"
         isCompleted -> stringResource(id = R.string.status_completed)
         isLocked -> stringResource(id = R.string.status_locked)
         else -> stringResource(id = R.string.status_in_progress)
@@ -38,6 +39,7 @@ fun LessonCard(
     val statusColor = when {
         masteryPercentage != null && masteryPercentage >= 80 -> Color(0xFF2E7D32)
         masteryPercentage != null && masteryPercentage >= 40 -> Color(0xFFE65100)
+        masteryPercentage != null && masteryPercentage == 0 -> Color.Gray
         isCompleted -> KipuTeal
         else -> Color.Gray
     }

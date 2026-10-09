@@ -9,7 +9,6 @@ import com.kipucode.domain.usecase.CompleteLessonUseCase
 import com.kipucode.domain.usecase.GetDueExercisesUseCase
 import com.kipucode.domain.usecase.GetExercisesByLessonUseCase
 import com.kipucode.domain.usecase.GetLessonByCourseUseCase
-import com.kipucode.domain.usecase.RecordExerciseAttemptUseCase
 import com.kipucode.domain.usecase.RecordRatingAttemptUseCase
 import com.kipucode.domain.usecase.SyncLearningProgressUseCase
 import com.kipucode.domain.usecase.RecordDailyActivityUseCase
@@ -41,7 +40,6 @@ class ExerciseViewModel @Inject constructor(
     private val getLessonUseCase: GetLessonByCourseUseCase,
     private val getDueExercisesUseCase: GetDueExercisesUseCase,
     private val completeLessonUseCase: CompleteLessonUseCase,
-    private val recordExerciseAttemptUseCase: RecordExerciseAttemptUseCase,
     private val recordRatingAttemptUseCase: RecordRatingAttemptUseCase,
     private val syncLearningProgressUseCase: SyncLearningProgressUseCase,
     private val recordDailyActivityUseCase: RecordDailyActivityUseCase
@@ -173,16 +171,6 @@ class ExerciseViewModel @Inject constructor(
             experience = earnedXp.toString(),
             message = feedbackMessage
         )
-
-        // Registro FSRS
-        currentExercise?.let { exercise ->
-            viewModelScope.launch {
-                recordExerciseAttemptUseCase(
-                    exerciseId = exercise.id,
-                    isCorrect = option.isCorrect
-                )
-            }
-        }
     }
 
     // --- ACCIONES PARA EJERCICIOS DE COMPLETAR CON BLOQUES ---
@@ -265,14 +253,6 @@ class ExerciseViewModel @Inject constructor(
             experience = earnedXp.toString(),
             message = feedbackMessage
         )
-
-        // Registro FSRS
-        viewModelScope.launch {
-            recordExerciseAttemptUseCase(
-                exerciseId = currentExercise.id,
-                isCorrect = allCorrect
-            )
-        }
     }
 
     fun finishLessonExercises(lessonId: String) {

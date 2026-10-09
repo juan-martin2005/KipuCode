@@ -45,14 +45,17 @@ class GetCognitiveMasteryOverviewUseCase @Inject constructor(
                 var courseLessonsCount = 0
 
                 courseWithLessons.lessons.forEach { lesson ->
-                    val lessonExercises = exercisesByLesson[lesson.id] ?: emptyList()
-                    if (lessonExercises.isEmpty()) {
+                    val allLessonExercises = exercisesByLesson[lesson.id] ?: emptyList()
+                    val flashcards = allLessonExercises.filter {
+                        it.type.equals("DEFAULT_FLASHCARDS", ignoreCase = true) || it.type.equals("FLASHCARD", ignoreCase = true)
+                    }
+                    if (flashcards.isEmpty()) {
                         lessonMap[lesson.id] = CognitiveMasteryDomain.fromPercentage(0, 0, 0)
                     } else {
                         var lessonMasterySum = 0.0
                         var practicedCount = 0
 
-                        lessonExercises.forEach { ex ->
+                        flashcards.forEach { ex ->
                             val progress = progressByExercise[ex.id]
                             if (progress != null && progress.reps > 0) {
                                 practicedCount++
@@ -69,7 +72,7 @@ class GetCognitiveMasteryOverviewUseCase @Inject constructor(
                         }
                         lessonMap[lesson.id] = CognitiveMasteryDomain.fromPercentage(
                             percentage = lessonPct,
-                            totalExercises = lessonExercises.size,
+                            totalExercises = flashcards.size,
                             practicedExercises = practicedCount
                         )
                         courseMasterySum += lessonPct

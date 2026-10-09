@@ -76,7 +76,7 @@ fun ExerciseScreen(
     val isBlockEvaluated by exerciseViewModel.isBlockAnswerEvaluated.collectAsStateWithLifecycle()
 
     val currentExercise = exercises.getOrNull(currentIndex)
-    val isFlashCard = currentExercise?.type == "FLASHCARD"
+    val isFlashCard = currentExercise?.type == "DEFAULT_FLASHCARDS" || currentExercise?.type == "FLASHCARD"
 
     LaunchedEffect(currentExercise?.id) {
         if (currentExercise?.type == "COMPLETE_CODE" && currentExercise.options.isNotEmpty()) {
@@ -202,7 +202,7 @@ fun ExerciseScreenContent(
 
         item {
             when (currentExercise?.type) {
-                "FLASHCARD" -> {
+                "DEFAULT_FLASHCARDS", "FLASHCARD" -> {
                     Flashcard(
                         currentFc = currentIndex + 1,
                         totalFc = totalExercises,
@@ -228,7 +228,7 @@ fun ExerciseScreenContent(
                         modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp)
                     )
                 }
-                else -> {
+                "WHATS_OUTPUT", "UNIQUE_CHOICE", else -> {
                     UniqueChoice(
                         current = currentIndex + 1,
                         total = totalExercises,

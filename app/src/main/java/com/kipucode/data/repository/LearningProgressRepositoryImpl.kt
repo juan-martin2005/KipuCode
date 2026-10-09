@@ -59,11 +59,6 @@ internal class LearningProgressRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun recordChoiceAttempt(exerciseId: String, isCorrect: Boolean): Response<Unit> {
-        val rating = if (isCorrect) Rating.GOOD else Rating.AGAIN
-        return processReview(exerciseId, rating)
-    }
-
     override suspend fun recordRatingAttempt(exerciseId: String, ratingValue: Int): Response<Unit> {
         val rating = when (ratingValue) {
             1 -> Rating.AGAIN

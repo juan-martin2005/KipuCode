@@ -108,7 +108,7 @@ fun HomeCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = if (masteryPercentage != null) "Dominio Cognitivo" else stringResource(
+                        text = if (masteryPercentage != null) "Dominio de lección" else stringResource(
                             R.string.home_bar_lessons,
                             currentLessons,
                             totalLessons

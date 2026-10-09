@@ -400,7 +400,7 @@
         },
         {
           "id": "exercise_lesson_01_21",
-          "type": "FLASHCARD",
+          "type": "DEFAULT_FLASHCARDS",
           "instruction": "¿Diferencia entre .NET SDK y .NET Runtime?",
           "answer": "El **SDK** tiene herramientas para compilar (CLI, Roslyn). El **Runtime** (CLR + BCL) es lo mínimo necesario solo para ejecutar las aplicaciones ya creadas.",
           "xp": 100,
@@ -409,7 +409,7 @@
         },
         {
           "id": "exercise_lesson_01_22",
-          "type": "FLASHCARD",
+          "type": "DEFAULT_FLASHCARDS",
           "instruction": "¿Por qué las aplicaciones en C# se llaman 'código administrado'?",
           "answer": "Porque se ejecutan bajo la supervisión del motor **CLR**, que se encarga de traducirlo con **JIT** y manejar su memoria automáticamente con el **GC**.",
           "xp": 100,
@@ -418,7 +418,7 @@
         },
         {
           "id": "exercise_lesson_01_23",
-          "type": "FLASHCARD",
+          "type": "DEFAULT_FLASHCARDS",
           "instruction": "Resume el flujo de ejecución: del código a la CPU.",
           "answer": "Código (.cs) → Roslyn → Binario CIL (.dll). Al ejecutarse, el **CLR** usa el **JIT** para convertir ese CIL a instrucciones nativas para la CPU.",
           "xp": 100,
@@ -427,7 +427,7 @@
         },
         {
           "id": "exercise_lesson_01_24",
-          "type": "FLASHCARD",
+          "type": "DEFAULT_FLASHCARDS",
           "instruction": "¿Cuál es el enfoque de cada herramienta: Visual Studio, VS Code y Rider?",
           "answer": "Visual Studio: IDE robusto (Windows) para soluciones. VS Code: Editor ligero multiplataforma por carpetas (requiere extensión). Rider: IDE profesional avanzado.",
           "xp": 100,
@@ -436,7 +436,7 @@
         },
         {
           "id": "exercise_lesson_01_25",
-          "type": "FLASHCARD",
+          "type": "DEFAULT_FLASHCARDS",
           "instruction": "¿Qué comandos crean y ejecutan un proyecto de consola?",
           "answer": "`dotnet new console -n NombreProyecto` para crearlo, y `dotnet run` para compilar y ejecutarlo al instante.",
           "xp": 100,
