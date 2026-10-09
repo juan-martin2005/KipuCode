@@ -57,3 +57,8 @@ data class SummaryRoute(
     val total: Int,
     val timeSeconds: Long
 )
+
+@Serializable
+data class CodeEditorRoute (
+    val languageKey : String = "csharp"
+)
