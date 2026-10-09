@@ -18,12 +18,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.PlatformTextStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kipucode.R
@@ -85,13 +86,6 @@ fun ActivityHeatmapCard(
         lazyListState.scrollToItem(currentWeekIndex)
     }
 
-    // Densidad con fontScale fijo: solo se aplica a la cuadrícula (dp fijos),
-    // el resto de la tarjeta sigue respetando el tamaño de fuente del sistema.
-    val systemDensity = LocalDensity.current
-    val gridDensity = remember(systemDensity.density) {
-        Density(density = systemDensity.density, fontScale = 1f)
-    }
-
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
@@ -145,82 +139,85 @@ fun ActivityHeatmapCard(
 
             Spacer(modifier = Modifier.height(18.dp))
 
-            // --- CUADRÍCULA DE MAPA DE CALOR (fontScale bloqueado) ---
-            CompositionLocalProvider(LocalDensity provides gridDensity) {
-                Row(modifier = Modifier.fillMaxWidth()) {
-                    // Columna izquierda: Etiquetas de días (Lun, Mié, Vie)
-                    // Alineada 1:1 con las casillas de la semana
-                    Column(
-                        modifier = Modifier.padding(end = 6.dp),
-                        verticalArrangement = Arrangement.spacedBy(3.dp)
-                    ) {
-                        // Espacio equivalente a la fila de los meses de arriba
-                        Spacer(modifier = Modifier.height(16.dp))
+            // --- CUADRÍCULA DE MAPA DE CALOR ---
+            Row(modifier = Modifier.fillMaxWidth()) {
+                // Columna izquierda: Etiquetas de días (Lun, Mié, Vie)
+                // Alineada 1:1 con las casillas de la semana
+                Column(
+                    modifier = Modifier.padding(end = 6.dp),
+                    verticalArrangement = Arrangement.spacedBy(3.dp)
+                ) {
+                    // Espacio equivalente a la fila de los meses de arriba
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                        listOf("Lun", "", "Mié", "", "Vie", "", "").forEach { dayLabel ->
+                    listOf("Lun", "", "Mié", "", "Vie", "", "").forEach { dayLabel ->
+                        Box(
+                            modifier = Modifier
+                                .width(28.dp)
+                                .height(12.dp),
+                            contentAlignment = Alignment.CenterEnd
+                        ) {
+                            if (dayLabel.isNotEmpty()) {
+                                Text(
+                                    text = dayLabel,
+                                    fontFamily = Nunito,
+                                    fontSize = 8.5.sp,
+                                    style = TextStyle(
+                                        platformStyle = PlatformTextStyle(includeFontPadding = false),
+                                        lineHeightStyle = LineHeightStyle(
+                                            alignment = LineHeightStyle.Alignment.Center,
+                                            trim = LineHeightStyle.Trim.Both
+                                        )
+                                    ),
+                                    color = Gray,
+                                    fontWeight = FontWeight.SemiBold,
+                                    maxLines = 1,
+                                    softWrap = false
+                                )
+                            }
+                        }
+                    }
+                }
+
+                // Cuadrícula deslizable horizontalmente
+                LazyRow(
+                    state = lazyListState,
+                    modifier = Modifier.weight(1f),
+                    horizontalArrangement = Arrangement.spacedBy(3.dp)
+                ) {
+                    items(weeks.size) { weekIdx ->
+                        val week = weeks[weekIdx]
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(3.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            // Etiqueta del mes sobre la semana (16.dp)
                             Box(
                                 modifier = Modifier
-                                    .width(24.dp)
-                                    .height(12.dp),
-                                contentAlignment = Alignment.CenterEnd
+                                    .height(16.dp)
+                                    .width(14.dp),
+                                contentAlignment = Alignment.CenterStart
                             ) {
-                                if (dayLabel.isNotEmpty()) {
+                                if (week.monthLabel != null) {
                                     Text(
-                                        text = dayLabel,
+                                        text = week.monthLabel,
                                         fontFamily = Nunito,
-                                        fontSize = 9.sp,
-                                        lineHeight = 9.sp,
-                                        color = Gray,
-                                        fontWeight = FontWeight.SemiBold,
+                                        fontSize = 10.sp,
+                                        style = TextStyle(
+                                            platformStyle = PlatformTextStyle(includeFontPadding = false)
+                                        ),
+                                        fontWeight = FontWeight.Bold,
+                                        color = KipuTealDark,
                                         maxLines = 1,
                                         softWrap = false,
                                         overflow = TextOverflow.Visible,
-                                        modifier = Modifier.wrapContentSize(
-                                            align = Alignment.CenterEnd,
+                                        modifier = Modifier.wrapContentWidth(
+                                            align = Alignment.Start,
                                             unbounded = true
                                         )
                                     )
                                 }
                             }
-                        }
-                    }
-
-                    // Cuadrícula deslizable horizontalmente
-                    LazyRow(
-                        state = lazyListState,
-                        modifier = Modifier.weight(1f),
-                        horizontalArrangement = Arrangement.spacedBy(3.dp)
-                    ) {
-                        items(weeks.size) { weekIdx ->
-                            val week = weeks[weekIdx]
-                            Column(
-                                verticalArrangement = Arrangement.spacedBy(3.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                // Etiqueta del mes sobre la semana (16.dp)
-                                Box(
-                                    modifier = Modifier
-                                        .height(16.dp)
-                                        .width(14.dp),
-                                    contentAlignment = Alignment.CenterStart
-                                ) {
-                                    if (week.monthLabel != null) {
-                                        Text(
-                                            text = week.monthLabel,
-                                            fontFamily = Nunito,
-                                            fontSize = 10.sp,
-                                            fontWeight = FontWeight.Bold,
-                                            color = KipuTealDark,
-                                            maxLines = 1,
-                                            softWrap = false,
-                                            overflow = TextOverflow.Visible,
-                                            modifier = Modifier.wrapContentWidth(
-                                                align = Alignment.Start,
-                                                unbounded = true
-                                            )
-                                        )
-                                    }
-                                }
 
                                 // 7 celdas de la semana (Lunes a Domingo)
                                 week.days.forEach { day ->
@@ -287,9 +284,8 @@ fun ActivityHeatmapCard(
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(text = "Más", fontFamily = Nunito, fontSize = 11.sp, color = Gray)
                 }
-            }
 
-            Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
             // --- TARJETA DE DETALLE AL HACER TAP ---
             selectedDate?.let { date ->

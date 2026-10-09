@@ -28,6 +28,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kipucode.R
@@ -40,15 +41,30 @@ import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.MoonFrost
 import com.kipucode.ui.theme.Nunito
 import com.kipucode.ui.theme.White
-import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun LessonCueBlock(
     block: LessonBlock.Cue,
+    modifier: Modifier = Modifier,
+    initialExpanded: Boolean = false
+) {
+    var isAnswerVisible by remember { mutableStateOf(initialExpanded) }
+
+    LessonCueBlockContent(
+        block = block,
+        isAnswerVisible = isAnswerVisible,
+        onToggleVisibility = { isAnswerVisible = !isAnswerVisible },
+        modifier = modifier
+    )
+}
+
+@Composable
+fun LessonCueBlockContent(
+    block: LessonBlock.Cue,
+    isAnswerVisible: Boolean,
+    onToggleVisibility: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var isAnswerVisible by remember { mutableStateOf(false) }
-
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -62,7 +78,7 @@ fun LessonCueBlock(
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // --- Encabezado de la tarjeta Cue ---
+        // --- Encabezado ---
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -90,11 +106,11 @@ fun LessonCueBlock(
             color = KipuDarkBlue
         )
 
-        // --- Botón de revelado (Active Recall) ---
+        // --- Botón de revelado ---
         Row(
             modifier = Modifier
                 .clip(RoundedCornerShape(8.dp))
-                .clickable { isAnswerVisible = !isAnswerVisible }
+                .clickable(onClick = onToggleVisibility)
                 .padding(vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(6.dp)
@@ -116,7 +132,7 @@ fun LessonCueBlock(
             )
         }
 
-        // --- Respuesta revelable con animación suave ---
+        // --- Contenido animado ---
         AnimatedVisibility(
             visible = isAnswerVisible,
             enter = fadeIn() + expandVertically(),
@@ -155,14 +171,33 @@ fun LessonCueBlock(
     }
 }
 
-@Preview(showBackground = true, name = "Lesson Cue Block Preview")
+// ==========================================
+// PREVIEWS
+// ==========================================
+
+private val sampleCue = LessonBlock.Cue(
+    question = "¿Cuál es la diferencia fundamental entre el `.NET SDK` y el `.NET Runtime`?",
+    answer = "El `SDK` contiene los compiladores y herramientas para programar y compilar. El `Runtime` (`CLR` + `BCL`) es el paquete mínimo necesario únicamente para ejecutar binarios ya creados."
+)
+
+@Preview(name = "1. Colapsado (Oculto)", showBackground = true)
 @Composable
-fun LessonCueBlockPreview() {
-    LessonCueBlock(
-        block = LessonBlock.Cue(
-            question = "¿Cuál es la diferencia fundamental entre el `.NET SDK` y el `.NET Runtime`?",
-            answer = "El `SDK` contiene los compiladores y herramientas para programar y compilar. El `Runtime` (`CLR` + `BCL`) es el paquete mínimo necesario únicamente para ejecutar binarios ya creados."
-        ),
+fun LessonCueBlockCollapsedPreview() {
+    LessonCueBlockContent(
+        block = sampleCue,
+        isAnswerVisible = false,
+        onToggleVisibility = {},
+        modifier = Modifier.padding(16.dp)
+    )
+}
+
+@Preview(name = "2. Desplegado (Visible)", showBackground = true)
+@Composable
+fun LessonCueBlockExpandedPreview() {
+    LessonCueBlockContent(
+        block = sampleCue,
+        isAnswerVisible = true,
+        onToggleVisibility = {},
         modifier = Modifier.padding(16.dp)
     )
 }

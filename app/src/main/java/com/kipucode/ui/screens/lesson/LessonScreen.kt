@@ -21,21 +21,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.kipucode.R
 import com.kipucode.domain.model.LessonBlock
+import com.kipucode.domain.model.PracticeMethod
 import com.kipucode.ui.components.KipuTopBar
 import com.kipucode.ui.components.button.FilledButton
-import com.kipucode.ui.components.card.KipuDialog
 import com.kipucode.ui.screens.lesson.components.LessonCodeBlock
 import com.kipucode.ui.screens.lesson.components.LessonConceptBlock
 import com.kipucode.ui.screens.lesson.components.LessonCueBlock
 import com.kipucode.ui.screens.lesson.components.LessonHeaderBlock
 import com.kipucode.ui.screens.lesson.components.LessonSummaryBlock
+import com.kipucode.ui.screens.lesson.components.PracticeMethodSelector
 import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.viewmodel.LessonViewModel
@@ -45,11 +44,10 @@ fun LessonScreen(
     lessonId: String?,
     lessonViewModel: LessonViewModel = hiltViewModel(),
     onBack: () -> Unit,
-    onNavigateToExercises: (lessonId: String, type : String) -> Unit
+    onNavigateToExercises: (lessonId: String, type: String) -> Unit
 ) {
-    var showExerciseDialog by remember { mutableStateOf(false) }
-
     val lesson by lessonViewModel.lessonState.collectAsStateWithLifecycle()
+    val availableMethods by lessonViewModel.availableMethods.collectAsStateWithLifecycle()
     val currentLesson = lesson
 
     LaunchedEffect(lessonId) {
@@ -71,9 +69,10 @@ fun LessonScreen(
                 LessonContent(
                     title = "Volver al Inicio",
                     blocks = currentLesson.blocks,
+                    availableMethods = availableMethods,
                     onClickBack = onBack,
-                    onClickNext = {
-                        showExerciseDialog = true
+                    onStartPractice = { selectedMethod ->
+                        onNavigateToExercises(currentLesson.id, selectedMethod.name)
                     }
                 )
             } else {
@@ -93,37 +92,27 @@ fun LessonScreen(
             }
         }
     }
-
-    if (showExerciseDialog && currentLesson != null) {
-        KipuDialog(
-            title = stringResource(R.string.enter_exercise_title),
-            description = stringResource(R.string.enter_exercise_desc),
-            dismissButtonText = stringResource(R.string.enter_exercise_cancel),
-            confirmButtonText = stringResource(R.string.enter_exercise_confirm),
-            iconRes = R.drawable.ic_quiz,
-            onDismissRequest = {
-                showExerciseDialog = false
-            },
-            onDismissClick = {
-                showExerciseDialog = false
-            },
-            onConfirmClick = {
-                showExerciseDialog = false
-                onNavigateToExercises(currentLesson.id, "UNIQUE_CHOICE")
-            },
-            iconTint = KipuTeal
-        )
-    }
 }
 
 @Composable
 fun LessonContent(
     title: String,
     blocks: List<LessonBlock>,
+    availableMethods: List<PracticeMethod>,
     onClickBack: () -> Unit,
-    onClickNext: () -> Unit,
+    onStartPractice: (PracticeMethod) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var selectedMethod by remember(availableMethods) {
+        mutableStateOf(
+            if (availableMethods.contains(PracticeMethod.DEFAULT_FLASHCARDS)) {
+                PracticeMethod.DEFAULT_FLASHCARDS
+            } else {
+                availableMethods.firstOrNull() ?: PracticeMethod.UNIQUE_CHOICE
+            }
+        )
+    }
+
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(bottom = 24.dp),
@@ -149,6 +138,17 @@ fun LessonContent(
             }
         }
 
+        if (availableMethods.isNotEmpty()) {
+            item {
+                PracticeMethodSelector(
+                    availableMethods = availableMethods,
+                    selectedMethod = selectedMethod,
+                    onMethodSelected = { selectedMethod = it },
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+            }
+        }
+
         item {
             Row(
                 modifier = Modifier
@@ -157,8 +157,10 @@ fun LessonContent(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 FilledButton(
-                    textButton = "Siguiente",
-                    onClickFilledButton = onClickNext,
+                    textButton = "Comenzar práctica",
+                    onClickFilledButton = {
+                        onStartPractice(selectedMethod)
+                    },
                     modifier = Modifier
                         .weight(1f)
                         .padding(bottom = 16.dp)
@@ -172,23 +174,6 @@ fun LessonContent(
 @Composable
 fun LessonContentPreview() {
     val mockBlocks = listOf(
-        LessonBlock.Header(
-            title = "01 - Introducción a la Plataforma .NET",
-            objective = "Comprender la arquitectura de .NET, diferenciar SDK y Runtime."
-        ),
-        LessonBlock.Concept(
-            title = "Arquitectura general de la plataforma .NET",
-            text = "La plataforma .NET se compone de tres pilares esenciales: el **CLR**, la **BCL** y el **SDK**."
-        ),
-        LessonBlock.Code(
-            code = "// Program.cs\nConsole.WriteLine(\"¡Hola, C#!\");",
-            language = "csharp",
-            isDiagram = false
-        ),
-        LessonBlock.Cue(
-            question = "¿Cuál es la diferencia entre el SDK y el Runtime?",
-            answer = "El **SDK** compila y crea; el **Runtime** solo ejecuta."
-        ),
         LessonBlock.Summary(
             items = listOf(
                 ".NET divide su arquitectura en **CLR**, **BCL** y herramientas **SDK**.",
@@ -205,8 +190,13 @@ fun LessonContentPreview() {
         LessonContent(
             title = "1. Introducción a Variables",
             blocks = mockBlocks,
+            availableMethods = listOf(
+                PracticeMethod.UNIQUE_CHOICE,
+                PracticeMethod.DEFAULT_FLASHCARDS,
+                PracticeMethod.FEYNMAN_FLASHCARDS
+            ),
             onClickBack = {},
-            onClickNext = {}
+            onStartPractice = {}
         )
     }
 }

@@ -5,8 +5,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -22,7 +25,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.kipucode.domain.model.PracticeMethod
 import com.kipucode.ui.components.KipuBottomBar
+import com.kipucode.ui.components.button.FilledButton
+import com.kipucode.ui.navigation.ExerciseRoute
+import com.kipucode.ui.screens.code.components.PracticeCodeSelectorContent
 import com.kipucode.ui.theme.Gray
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.Nunito
@@ -46,17 +53,44 @@ fun CodeScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            CodeContent()
+            CodeContent(
+                selectedMethod = uiState.selectedMethod,
+                completeCodeCount = uiState.availability.completeCodeCount,
+                whatsOutputCount = uiState.availability.whatsOutputCount,
+                onMethodSelected = { codeViewModel.selectMethod(it) },
+                onStartPractice = { method ->
+                    navController.navigate(
+                        ExerciseRoute(
+                            lessonId = "csharp_lesson_01",
+                            type = method.name
+                        )
+                    )
+                }
+            )
         }
     }
 }
 
 @Composable
-fun CodeContent() {
+fun CodeContent(
+    selectedMethod: PracticeMethod,
+    completeCodeCount: Int,
+    whatsOutputCount: Int,
+    onMethodSelected: (PracticeMethod) -> Unit,
+    onStartPractice: (PracticeMethod) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val isSelectedAvailable = when (selectedMethod) {
+        PracticeMethod.COMPLETE_CODE -> completeCodeCount > 0
+        PracticeMethod.WHATS_OUTPUT -> whatsOutputCount > 0
+        else -> false
+    }
+
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(Color.White)
+            .verticalScroll(rememberScrollState())
             .padding(horizontal = 24.dp)
     ) {
         Spacer(modifier = Modifier.height(28.dp))
@@ -70,10 +104,33 @@ fun CodeContent() {
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            text = "Elige una lección y empieza.",
+            text = "Elige una modalidad y pon a prueba tu lógica.",
             fontSize = 15.sp,
             fontFamily = Nunito,
             color = Gray
+        )
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        // Selector con tarjetas interactivas y estado de bloqueo
+        PracticeCodeSelectorContent(
+            selectedMethod = selectedMethod,
+            completeCodeCount = completeCodeCount,
+            whatsOutputCount = whatsOutputCount,
+            onMethodSelected = onMethodSelected
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        FilledButton(
+            textButton = if (isSelectedAvailable) "Comenzar práctica" else "Modo bloqueado",
+            onClickFilledButton = {
+                if (isSelectedAvailable) onStartPractice(selectedMethod)
+            },
+            enabled = isSelectedAvailable,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 24.dp)
         )
     }
 }
@@ -87,7 +144,13 @@ fun CodeScreenPreview() {
         containerColor = Color.White
     ) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues)) {
-            CodeContent()
+            CodeContent(
+                selectedMethod = PracticeMethod.COMPLETE_CODE,
+                completeCodeCount = 1,
+                whatsOutputCount = 0,
+                onMethodSelected = {},
+                onStartPractice = {}
+            )
         }
     }
 }
