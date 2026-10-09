@@ -37,6 +37,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+        isCoreLibraryDesugaringEnabled = true
     }
     buildFeatures {
         compose = true
@@ -79,4 +80,15 @@ dependencies {
 
     // FSRS Spaced Repetition Engine
     implementation(libs.fsrs)
+
+    // Retrofit para consumo de API's
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+
+    // Sora-editor
+    implementation(platform(libs.editor.bom))
+    implementation(libs.editor)
+    implementation(libs.language.textmate)
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
+
 }
