@@ -32,15 +32,12 @@ class GetDueExercisesWithDetailsUseCaseTest {
                 )
             )
         )
-        override fun getProgressForExercise(exerciseId: String): Flow<LearningProgressDomain?> = flowOf(null)
-        override fun getProgressForLesson(lessonId: String): Flow<List<LearningProgressDomain>> = flowOf(emptyList())
-        override fun getProgressForCourse(courseId: String): Flow<List<LearningProgressDomain>> = flowOf(emptyList())
         override fun getAllProgressForCurrentUser(): Flow<List<LearningProgressDomain>> = flowOf(emptyList())
         override fun calculateCardRetrievability(progress: LearningProgressDomain): Double = 0.85
         override suspend fun recordChoiceAttempt(exerciseId: String, isCorrect: Boolean): Response<Unit> = Response.Success(Unit)
         override suspend fun recordRatingAttempt(exerciseId: String, ratingValue: Int): Response<Unit> = Response.Success(Unit)
-        override suspend fun saveLearningProgress(progress: LearningProgressDomain): Response<Unit> = Response.Success(Unit)
         override suspend fun refreshLearningProgress(): Response<Unit> = Response.Success(Unit)
+        override suspend fun syncLearningProgressToRemote(): Response<Unit> = Response.Success(Unit)
     }
 
     private val fakeExerciseRepository = object : ExerciseRepository {
@@ -56,12 +53,9 @@ class GetDueExercisesWithDetailsUseCaseTest {
                 )
             )
         )
-        override suspend fun refreshExercises(lessonId: String): Response<Unit> = Response.Success(Unit)
     }
 
     private val fakeCourseRepository = object : CourseRepository {
-        override fun getCourses(): Flow<List<CourseDomain>> = flowOf(emptyList())
-        override fun getCourseById(courseId: String): Flow<CourseDomain?> = flowOf(null)
         override fun getCourseWithLessons(): Flow<List<CourseWithLessonsDomain>> = flowOf(
             listOf(
                 CourseWithLessonsDomain(
