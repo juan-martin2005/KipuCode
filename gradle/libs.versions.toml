@@ -19,9 +19,11 @@ hiltNavigationCompose = "1.2.0"
 
 fsrs = "1.0.0"
 kotlinxSerialization = "1.7.3"
+workRuntimeKtx = "2.10.0"
 
 
 [libraries]
+androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 fsrs = { module = "io.github.open-spaced-repetition:fsrs", version.ref = "fsrs" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }

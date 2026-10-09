@@ -79,4 +79,7 @@ dependencies {
 
     // FSRS Spaced Repetition Engine
     implementation(libs.fsrs)
+
+    // WorkManager para tareas en segundo plano
+    implementation(libs.androidx.work.runtime.ktx)
 }

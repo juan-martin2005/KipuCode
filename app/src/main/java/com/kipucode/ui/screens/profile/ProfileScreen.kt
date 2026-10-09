@@ -26,6 +26,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.kipucode.ui.navigation.ChangePasswordRoute
 import com.kipucode.util.notification.ReminderNotificationHelper
+import com.kipucode.util.notification.StudyReminderScheduler
 import com.kipucode.R
 import com.kipucode.domain.model.DailyActivityDomain
 import com.kipucode.domain.model.Response
@@ -124,6 +125,11 @@ fun ProfileScreen(
                     triggerNotification {
                         notificationHelper.sendDefaultNotification()
                     }
+                },
+                onTestSchedulerNotification = {
+                    triggerNotification {
+                        StudyReminderScheduler.triggerImmediateTest(context)
+                    }
                 }
             )
         }
@@ -176,7 +182,8 @@ fun ProfileContent(
     onEditAvatar : () -> Unit,
     onChangePassword : () -> Unit,
     onTestHighNotification : () -> Unit,
-    onTestDefaultNotification : () -> Unit
+    onTestDefaultNotification : () -> Unit,
+    onTestSchedulerNotification : () -> Unit = {}
 ) {
     LazyColumn(
         modifier = Modifier
@@ -248,6 +255,15 @@ fun ProfileContent(
 
         item {
             MultipleChoicesCard(
+                text = "Probar Worker inteligente",
+                iconRes = R.drawable.ic_code,
+                isMiddle = true,
+                onClick = onTestSchedulerNotification,
+            )
+        }
+
+        item {
+            MultipleChoicesCard(
                 text = stringResource(id = R.string.logout_title),
                 iconRes = R.drawable.ic_exit,
                 disableArrow = true,
@@ -271,6 +287,7 @@ fun ProfileScreenPreview() {
         onEditAvatar = {},
         onChangePassword = {},
         onTestHighNotification = {},
-        onTestDefaultNotification = {}
+        onTestDefaultNotification = {},
+        onTestSchedulerNotification = {}
     )
 }
