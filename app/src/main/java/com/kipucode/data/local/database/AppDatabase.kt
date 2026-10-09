@@ -5,6 +5,7 @@ import androidx.room.RoomDatabase
 import com.kipucode.data.local.dao.BlockOptionDao
 import com.kipucode.data.local.dao.CourseDao
 import com.kipucode.data.local.dao.DailyActivityDao
+import com.kipucode.data.local.dao.ExerciseAttemptDao
 import com.kipucode.data.local.dao.ExerciseDao
 import com.kipucode.data.local.dao.LearningProgressDao
 import com.kipucode.data.local.dao.LessonDao
@@ -23,9 +24,10 @@ import com.kipucode.data.local.model.*
         ExerciseEntity::class,
         BlockOptionEntity::class,
         LearningProgressEntity::class,
-        DailyActivityEntity::class
+        DailyActivityEntity::class,
+        ExerciseAttemptEntity::class
     ],
-    version = 11,
+    version = 12,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -37,4 +39,5 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun blockOptionDao(): BlockOptionDao
     abstract fun learningProgressDao(): LearningProgressDao
     abstract fun dailyActivityDao(): DailyActivityDao
+    abstract fun exerciseAttemptDao(): ExerciseAttemptDao
 }

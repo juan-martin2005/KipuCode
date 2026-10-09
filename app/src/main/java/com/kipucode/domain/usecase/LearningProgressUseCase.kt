@@ -53,3 +53,14 @@ class SyncLearningProgressUseCase @Inject constructor(
         return learningProgressRepository.syncLearningProgressToRemote()
     }
 }
+
+// ============================================================================================
+//  CASO DE USO: OBTENER TODO EL PROGRESO FSRS DEL USUARIO (Flow continuo de aprendizaje)
+// ============================================================================================
+class GetAllLearningProgressUseCase @Inject constructor(
+    private val learningProgressRepository: LearningProgressRepository
+) {
+    operator fun invoke(): Flow<List<LearningProgressDomain>> {
+        return learningProgressRepository.getAllProgressForCurrentUser()
+    }
+}

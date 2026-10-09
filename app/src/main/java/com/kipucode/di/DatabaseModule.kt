@@ -50,4 +50,7 @@ object DatabaseModule {
 
     @Provides
     fun provideDailyActivityDao(appDatabase: AppDatabase): DailyActivityDao = appDatabase.dailyActivityDao()
+
+    @Provides
+    fun provideExerciseAttemptDao(appDatabase: AppDatabase): ExerciseAttemptDao = appDatabase.exerciseAttemptDao()
 }

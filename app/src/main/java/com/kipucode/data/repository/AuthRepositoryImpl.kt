@@ -5,6 +5,7 @@ import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.kipucode.data.local.dao.DailyActivityDao
+import com.kipucode.data.local.dao.ExerciseAttemptDao
 import com.kipucode.data.local.dao.ExerciseDao
 import com.kipucode.data.local.dao.LearningProgressDao
 import com.kipucode.data.local.dao.UserDao
@@ -36,7 +37,8 @@ internal class AuthRepositoryImpl @Inject constructor(
     private val learningProgressDao: LearningProgressDao,
     private val exerciseDao: ExerciseDao,
     private val databaseSeedService: com.kipucode.data.local.DatabaseSeedService,
-    private val dailyActivityDao: DailyActivityDao
+    private val dailyActivityDao: DailyActivityDao,
+    private val exerciseAttemptDao: ExerciseAttemptDao
 ): AuthRepository {     // Equivalente en java a hacer él (implements)
 
     //  ! IMPORTANTE
@@ -143,6 +145,18 @@ internal class AuthRepositoryImpl @Inject constructor(
                 }
             } catch (e: Exception) {
                 Log.e("AuthRepository", "Error al precargar calendario de actividad en login: ${e.message}", e)
+            }
+
+            // Sincronizar historial de intentos de ejercicios desde Firestore
+            try {
+                val remoteAttempts = userRemoteDataSource.getAllExerciseAttempts()
+                if (remoteAttempts.isNotEmpty()) {
+                    val entities = remoteAttempts.map { it.toEntity(userId = currentUser.uid) }
+                    exerciseAttemptDao.insertAll(entities)
+                    Log.d("AuthRepository", "Sincronizados ${entities.size} intentos de ejercicios en login.")
+                }
+            } catch (e: Exception) {
+                Log.e("AuthRepository", "Error al precargar intentos de ejercicios en login: ${e.message}", e)
             }
 
             Response.Success(userDto.toDomain())

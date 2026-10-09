@@ -5,6 +5,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.toObject
 import com.kipucode.data.remote.firebase.dto.DayActivityDto
+import com.kipucode.data.remote.firebase.dto.ExerciseAttemptDto
 import com.kipucode.data.remote.firebase.dto.LearningProgressDto
 import com.kipucode.data.remote.firebase.dto.UserDto
 import com.kipucode.data.remote.firebase.dto.UserProgressDto
@@ -12,7 +13,7 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 // ============================================================================================
-//  ORIGEN DE DATOS (USER, USER_PROGRESS, LEARNING_PROGRESS & ACTIVITY_CALENDAR) - FIRESTORE
+//  ORIGEN DE DATOS (USER, USER_PROGRESS, LEARNING_PROGRESS, ACTIVITY_CALENDAR & EXERCISE_ATTEMPTS) - FIRESTORE
 // ============================================================================================
 class UserRemoteDataSource @Inject constructor(
     // ========================================================================================
@@ -31,6 +32,7 @@ class UserRemoteDataSource @Inject constructor(
         const val USER_PROGRESS_COLLECTION = "user_progress"
         const val LEARNING_PROGRESS_COLLECTION = "learning_progress"
         const val ACTIVITY_CALENDAR_COLLECTION = "activity_calendar"
+        const val EXERCISE_ATTEMPTS_COLLECTION = "exercise_attempts"
     }
 
 
@@ -209,14 +211,48 @@ class UserRemoteDataSource @Inject constructor(
     }
 
     // ========================================================================================
-    //  Sincronización Consolidada Batch (User Progress + FSRS + Calendario Diario en 1 solo viaje de red)
+    //  Obtener Todos los Intentos de Ejercicios del Usuario (1 sola lectura directa del Documento)
+    // ========================================================================================
+    suspend fun getAllExerciseAttempts(): List<ExerciseAttemptDto> {
+        val id = currentUserId ?: return emptyList()
+
+        val docSnapshot = firestore.collection(EXERCISE_ATTEMPTS_COLLECTION)
+            .document(id)
+            .get()
+            .await()
+
+        val rawMap = docSnapshot.get("attempts") as? Map<String, Any?> ?: return emptyList()
+
+        return rawMap.values.mapNotNull { rawObj ->
+            try {
+                val item = rawObj as? Map<String, Any?> ?: return@mapNotNull null
+                ExerciseAttemptDto(
+                    exerciseId = item["exerciseId"] as? String ?: "",
+                    lessonId = item["lessonId"] as? String ?: "",
+                    exerciseType = item["exerciseType"] as? String ?: "",
+                    isCompleted = item["isCompleted"] as? Boolean ?: false,
+                    attemptsCount = (item["attemptsCount"] as? Number)?.toInt() ?: 0,
+                    correctCount = (item["correctCount"] as? Number)?.toInt() ?: 0,
+                    incorrectCount = (item["incorrectCount"] as? Number)?.toInt() ?: 0,
+                    lastIsCorrect = item["lastIsCorrect"] as? Boolean ?: false,
+                    lastAttemptAt = (item["lastAttemptAt"] as? Number)?.toLong() ?: 0L
+                )
+            } catch (e: Exception) {
+                null
+            }
+        }
+    }
+
+    // ========================================================================================
+    //  Sincronización Consolidada Batch (User Progress + FSRS + Calendario + Intentos en 1 solo viaje de red)
     // ========================================================================================
     suspend fun syncSessionBatch(
         userProgressDto: UserProgressDto? = null,
         exercisesMap: Map<String, LearningProgressDto>?,
         todayYear: Int?,
         todayDate: String?,
-        todayActivity: DayActivityDto?
+        todayActivity: DayActivityDto?,
+        exerciseAttemptsMap: Map<String, ExerciseAttemptDto>? = null
     ) {
         val id = currentUserId ?: return
         val batch = firestore.batch()
@@ -259,6 +295,20 @@ class UserRemoteDataSource @Inject constructor(
                         "xp" to todayActivity.xp,
                         "lessons" to todayActivity.lessons
                     )
+                ),
+                SetOptions.merge()
+            )
+        }
+
+        // 4. Guardar mapa consolidado de intentos de ejercicios si aplica
+        if (!exerciseAttemptsMap.isNullOrEmpty()) {
+            val attemptsDoc = firestore.collection(EXERCISE_ATTEMPTS_COLLECTION).document(id)
+            batch.set(
+                attemptsDoc,
+                mapOf(
+                    "userId" to id,
+                    "updatedAt" to System.currentTimeMillis(),
+                    "attempts" to exerciseAttemptsMap
                 ),
                 SetOptions.merge()
             )

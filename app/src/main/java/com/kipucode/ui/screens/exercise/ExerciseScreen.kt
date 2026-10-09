@@ -76,7 +76,7 @@ fun ExerciseScreen(
     val isBlockEvaluated by exerciseViewModel.isBlockAnswerEvaluated.collectAsStateWithLifecycle()
 
     val currentExercise = exercises.getOrNull(currentIndex)
-    val isFlashCard = currentExercise?.type == "DEFAULT_FLASHCARDS" || currentExercise?.type == "FLASHCARD"
+    val isFlashCard = currentExercise?.type?.contains("FLASHCARD", ignoreCase = true) == true
 
     LaunchedEffect(currentExercise?.id) {
         if (currentExercise?.type == "COMPLETE_CODE" && currentExercise.options.isNotEmpty()) {
@@ -155,7 +155,7 @@ fun ExerciseScreen(
     }
 }
 
-// ---  CONTENT ---
+// --- CONTENT ---
 @Composable
 fun ExerciseScreenContent(
     modifier: Modifier = Modifier,
@@ -202,15 +202,26 @@ fun ExerciseScreenContent(
 
         item {
             when (currentExercise?.type) {
-                "DEFAULT_FLASHCARDS", "FLASHCARD" -> {
+                "DEFAULT_FLASHCARDS", "FEYNMAN_FLASHCARDS", "FLASHCARD" -> {
                     Flashcard(
                         currentFc = currentIndex + 1,
                         totalFc = totalExercises,
                         instruction = instruction,
-                        answer = if (currentExercise.answer.isNotBlank()) currentExercise.answer else options.firstOrNull()?.content.orEmpty(),
+                        answer = currentExercise.answer.ifBlank { options.firstOrNull()?.content.orEmpty() },
                         module = lessonName.ifBlank { "Módulo actual" },
                         onRatingSelect = onRatingSelected,
                         modifier = Modifier.padding(horizontal = 20.dp)
+                    )
+                }
+                "UNIQUE_CHOICE" -> {
+                    UniqueChoice(
+                        current = currentIndex + 1,
+                        total = totalExercises,
+                        instruction = instruction,
+                        options = options,
+                        selectedOptionId = selectedOptionId,
+                        onOptionSelected = onOptionSelected,
+                        modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp)
                     )
                 }
                 "COMPLETE_CODE" -> {
@@ -225,17 +236,6 @@ fun ExerciseScreenContent(
                         onSelectBlock = onSelectBlock,
                         onRemoveBlock = onRemoveBlock,
                         onSubmitAnswer = onSubmitBlockAnswer,
-                        modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp)
-                    )
-                }
-                "WHATS_OUTPUT", "UNIQUE_CHOICE", else -> {
-                    UniqueChoice(
-                        current = currentIndex + 1,
-                        total = totalExercises,
-                        instruction = instruction,
-                        options = options,
-                        selectedOptionId = selectedOptionId,
-                        onOptionSelected = onOptionSelected,
                         modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp)
                     )
                 }

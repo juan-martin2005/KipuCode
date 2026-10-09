@@ -5,13 +5,15 @@ import androidx.lifecycle.viewModelScope
 import com.kipucode.domain.model.BlockOptionDomain
 import com.kipucode.domain.model.ExerciseDomain
 import com.kipucode.domain.model.Response
+import com.kipucode.domain.repository.ExerciseAttemptRepository
 import com.kipucode.domain.usecase.CompleteLessonUseCase
+import com.kipucode.domain.usecase.GetAllLearningProgressUseCase
 import com.kipucode.domain.usecase.GetDueExercisesUseCase
 import com.kipucode.domain.usecase.GetExercisesByLessonUseCase
 import com.kipucode.domain.usecase.GetLessonByCourseUseCase
+import com.kipucode.domain.usecase.RecordDailyActivityUseCase
 import com.kipucode.domain.usecase.RecordRatingAttemptUseCase
 import com.kipucode.domain.usecase.SyncLearningProgressUseCase
-import com.kipucode.domain.usecase.RecordDailyActivityUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -42,7 +44,9 @@ class ExerciseViewModel @Inject constructor(
     private val completeLessonUseCase: CompleteLessonUseCase,
     private val recordRatingAttemptUseCase: RecordRatingAttemptUseCase,
     private val syncLearningProgressUseCase: SyncLearningProgressUseCase,
-    private val recordDailyActivityUseCase: RecordDailyActivityUseCase
+    private val recordDailyActivityUseCase: RecordDailyActivityUseCase,
+    private val exerciseAttemptRepository: ExerciseAttemptRepository,
+    private val getAllLearningProgressUseCase: GetAllLearningProgressUseCase
 ) : ViewModel() {
     companion object {
         private const val EXERCISES_PER_SESSION = 5
@@ -80,8 +84,10 @@ class ExerciseViewModel @Inject constructor(
     private val correctExerciseIds = mutableSetOf<String>()
     private val incorrectExerciseIds = mutableSetOf<String>()
     private var sessionStartTime: Long = 0L
+    private var currentLessonId: String = ""
 
     fun loadExercises(lessonId: String, type: String? = null, onlyDue: Boolean = false) {
+        currentLessonId = lessonId
         sessionStartTime = System.currentTimeMillis()
         viewModelScope.launch {
             getLessonUseCase(lessonId).collect { lesson ->
@@ -90,42 +96,72 @@ class ExerciseViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            if (onlyDue) {
-                combine(
-                    getExercisesUseCase(lessonId),
-                    getDueExercisesUseCase()
-                ) { exercises, dueProgressList ->
-                    val dueIds = dueProgressList.map { it.exerciseId }.toSet()
-                    exercises.filter { exercise ->
-                        val matchesType = if (type != null) exercise.type == type else true
-                        matchesType && dueIds.contains(exercise.id)
+            combine(
+                getExercisesUseCase(lessonId),
+                getAllLearningProgressUseCase()
+            ) { exercises, allProgress ->
+                val typeFiltered = if (type != null) {
+                    when (type) {
+                        "DEFAULT_FLASHCARDS" -> exercises.filter { it.type == "DEFAULT_FLASHCARDS" || it.type == "FLASHCARD" }
+                        else -> exercises.filter { it.type == type }
                     }
-                }.collect { filtered ->
-                    if (_exercisesState.value.isEmpty() && filtered.isNotEmpty()) {
-                        _exercisesState.value = filtered
-                            .shuffled()
-                            .take(EXERCISES_PER_SESSION)
-                            .map { exercise ->
-                                exercise.copy(options = exercise.options.shuffled())
-                            }
-                    }
+                } else {
+                    exercises
                 }
-            } else {
-                getExercisesUseCase(lessonId).collect { exercises ->
-                    val filtered = if (type != null) {
-                        exercises.filter { it.type == type }
-                    } else {
-                        exercises
-                    }
 
-                    if (_exercisesState.value.isEmpty() && filtered.isNotEmpty()) {
-                        _exercisesState.value = filtered
-                            .shuffled()
-                            .take(EXERCISES_PER_SESSION)
-                            .map { exercise ->
-                                exercise.copy(options = exercise.options.shuffled())
-                            }
+                val isFlashcard = type in setOf("DEFAULT_FLASHCARDS", "FEYNMAN_FLASHCARDS", "FLASHCARD") ||
+                        (type == null && typeFiltered.isNotEmpty() && typeFiltered.all { it.type in setOf("DEFAULT_FLASHCARDS", "FEYNMAN_FLASHCARDS", "FLASHCARD") }) ||
+                        onlyDue
+
+                if (isFlashcard) {
+                    val now = System.currentTimeMillis()
+                    val progressMap = allProgress.associateBy { it.exerciseId }
+
+                    if (onlyDue) {
+                        // Modo repaso: solo vencidas (dueDate <= now y reps > 0)
+                        typeFiltered.filter { ex ->
+                            val p = progressMap[ex.id]
+                            p != null && p.reps > 0 && p.dueDate <= now
+                        }.sortedBy { progressMap[it.id]?.dueDate ?: 0L }
+                    } else {
+                        // Modo normal de flashcards con priorización FSRS-6:
+                        // 1. Vencidas (dueDate <= now y reps > 0), ordenadas de más atrasadas a más recientes
+                        val dueCards = typeFiltered.filter { ex ->
+                            val p = progressMap[ex.id]
+                            p != null && p.reps > 0 && p.dueDate <= now
+                        }.sortedBy { progressMap[it.id]?.dueDate ?: 0L }
+
+                        // 2. Nuevas (sin registrar en FSRS o reps == 0)
+                        val newCards = typeFiltered.filter { ex ->
+                            val p = progressMap[ex.id]
+                            p == null || p.reps == 0
+                        }.shuffled()
+
+                        // 3. Próximas / Al día (dueDate > now) ordenadas por la más próxima a vencer
+                        val upcomingCards = typeFiltered.filter { ex ->
+                            val p = progressMap[ex.id]
+                            p != null && p.reps > 0 && p.dueDate > now
+                        }.sortedBy { progressMap[it.id]?.dueDate ?: Long.MAX_VALUE }
+
+                        dueCards + newCards + upcomingCards
                     }
+                } else {
+                    // Modo ejercicios de código / no-flashcard (UNIQUE_CHOICE, COMPLETE_CODE, etc.)
+                    // Priorizar ejercicios no completados según exercise_attempts
+                    val completedIds = exerciseAttemptRepository.getCompletedExerciseIdsForLesson(lessonId).toSet()
+
+                    val uncompleted = typeFiltered.filter { it.id !in completedIds }.shuffled()
+                    val completed = typeFiltered.filter { it.id in completedIds }.shuffled()
+
+                    uncompleted + completed
+                }
+            }.collect { selectedList ->
+                if (_exercisesState.value.isEmpty() && selectedList.isNotEmpty()) {
+                    _exercisesState.value = selectedList
+                        .take(EXERCISES_PER_SESSION)
+                        .map { exercise ->
+                            exercise.copy(options = exercise.options.shuffled())
+                        }
                 }
             }
         }
@@ -158,6 +194,15 @@ class ExerciseViewModel @Inject constructor(
                 correctExerciseIds.add(ex.id)
             } else {
                 incorrectExerciseIds.add(ex.id)
+            }
+
+            viewModelScope.launch {
+                exerciseAttemptRepository.recordAttempt(
+                    exerciseId = ex.id,
+                    lessonId = currentLessonId,
+                    exerciseType = ex.type,
+                    isCorrect = option.isCorrect
+                )
             }
         }
         val feedbackMessage = if (option.isCorrect) {
@@ -227,6 +272,15 @@ class ExerciseViewModel @Inject constructor(
             incorrectExerciseIds.add(currentExercise.id)
         }
 
+        viewModelScope.launch {
+            exerciseAttemptRepository.recordAttempt(
+                exerciseId = currentExercise.id,
+                lessonId = currentLessonId,
+                exerciseType = currentExercise.type,
+                isCorrect = allCorrect
+            )
+        }
+
         val feedbackMessage = if (allCorrect) {
             "¡Excelente! Has completado el código a la perfección"
         } else {
@@ -270,7 +324,7 @@ class ExerciseViewModel @Inject constructor(
                 Response.Success(Unit)
             }
 
-            // Registro de actividad diaria y sincronización consolidada en 1 solo WriteBatch (FSRS + Calendario)
+            // Registro de actividad diaria y sincronización consolidada en 1 solo WriteBatch (FSRS + Calendario + Attempts)
             recordDailyActivityUseCase(
                 exercisesDelta = exercisesCompleted,
                 correctDelta = correctCount,
@@ -296,7 +350,6 @@ class ExerciseViewModel @Inject constructor(
     }
 
     // Flash Card Exercise
-
     fun rateFlashCard(ratingValue: Int, lessonId: String) {
         val currentExercise = _exercisesState.value.getOrNull(_currentExerciseIndex.value) ?: return
 
@@ -324,6 +377,14 @@ class ExerciseViewModel @Inject constructor(
                 ratingValue = ratingValue
             )
 
+            // Registrar en historial de intentos (exercise_attempts)
+            exerciseAttemptRepository.recordAttempt(
+                exerciseId = currentExercise.id,
+                lessonId = lessonId,
+                exerciseType = currentExercise.type,
+                isCorrect = ratingValue >= 3
+            )
+
             // Avanzar a la siguiente tarjeta o completar la lección
             if (isLast) {
                 finishLessonExercises(lessonId)
@@ -332,7 +393,6 @@ class ExerciseViewModel @Inject constructor(
             }
         }
     }
-
 
     // Reinicia el flujo al terminar los ejercicios
     fun resetExerciseProgress() {
@@ -344,6 +404,7 @@ class ExerciseViewModel @Inject constructor(
         _isBlockAnswerEvaluated.value = false
         _exercisesState.value = emptyList()
         _lessonName.value = ""
+        currentLessonId = ""
         correctExerciseIds.clear()
         earnedXpByExercise.clear()
         incorrectExerciseIds.clear()

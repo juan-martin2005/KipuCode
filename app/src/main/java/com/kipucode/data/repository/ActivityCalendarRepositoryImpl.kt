@@ -1,12 +1,11 @@
 package com.kipucode.data.repository
 
 import com.kipucode.data.local.dao.DailyActivityDao
+import com.kipucode.data.local.dao.ExerciseAttemptDao
 import com.kipucode.data.local.dao.LearningProgressDao
 import com.kipucode.data.local.dao.UserProgressDao
 import com.kipucode.data.local.model.DailyActivityEntity
-import com.kipucode.data.mapper.toDomain
-import com.kipucode.data.mapper.toDto
-import com.kipucode.data.mapper.toEntity
+import com.kipucode.data.mapper.*
 import com.kipucode.data.remote.firebase.service.UserRemoteDataSource
 import com.kipucode.domain.model.DailyActivityDomain
 import com.kipucode.domain.model.Response
@@ -25,6 +24,7 @@ internal class ActivityCalendarRepositoryImpl @Inject constructor(
     private val dailyActivityDao: DailyActivityDao,
     private val learningProgressDao: LearningProgressDao,
     private val userProgressDao: UserProgressDao,
+    private val exerciseAttemptDao: ExerciseAttemptDao,
     private val userRemoteDataSource: UserRemoteDataSource
 ) : ActivityCalendarRepository {
 
@@ -101,13 +101,20 @@ internal class ActivityCalendarRepositoryImpl @Inject constructor(
             val todayDate = todayActivity?.date
             val todayDto = todayActivity?.toDto()
 
-            // 4. Enviar TODO en 1 solo WriteBatch atómico a Firestore
+            // 4. Obtener intentos locales de ejercicios para el usuario
+            val localAttempts = exerciseAttemptDao.getAllAttemptsForUser(currentUid)
+            val attemptsMap = localAttempts.associate { entity ->
+                entity.exerciseId to entity.toDomain().toDto()
+            }
+
+            // 5. Enviar TODO en 1 solo WriteBatch atómico a Firestore
             userRemoteDataSource.syncSessionBatch(
                 userProgressDto = userProgressDto,
                 exercisesMap = exercisesMap,
                 todayYear = todayYear,
                 todayDate = todayDate,
-                todayActivity = todayDto
+                todayActivity = todayDto,
+                exerciseAttemptsMap = attemptsMap
             )
 
             Response.Success(Unit)
