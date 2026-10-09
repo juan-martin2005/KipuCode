@@ -262,6 +262,18 @@ class ExerciseViewModel @Inject constructor(
             }
         }
 
+        // Actualizar placedBlocks con resultado per-slot para que la UI pinte correctamente
+        val evaluatedPlaced = mutableMapOf<Int, BlockOptionDomain>()
+        for (i in 0 until totalSlots) {
+            val placed = currentPlaced[i] ?: continue
+            val expected = correctOptions.getOrNull(i)
+            val isInCorrectSlot = placed.isCorrect
+                    && expected != null
+                    && placed.content.trim() == expected.content.trim()
+            evaluatedPlaced[i] = placed.copy(isCorrect = isInCorrectSlot)
+        }
+        _placedBlocks.value = evaluatedPlaced
+
         val baseExerciseXp = currentExercise.xp
         val earnedXp = if (allCorrect) baseExerciseXp else (baseExerciseXp / 2)
 
@@ -290,7 +302,7 @@ class ExerciseViewModel @Inject constructor(
         val explanationsList = if (allCorrect) {
             correctOptions.map { it.explanation }.filter { it.isNotBlank() }
         } else {
-            currentPlaced.values.filter { !it.isCorrect }.map { it.explanation }.filter { it.isNotBlank() }
+            evaluatedPlaced.values.filter { !it.isCorrect }.map { it.explanation }.filter { it.isNotBlank() }
         }
 
         val finalExplanation = if (explanationsList.isNotEmpty()) {
