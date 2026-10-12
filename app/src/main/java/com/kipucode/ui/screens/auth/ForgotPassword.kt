@@ -19,6 +19,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kipucode.R
 import com.kipucode.domain.model.Response
+import com.kipucode.domain.model.ValidationErrorType
 import com.kipucode.ui.components.button.FilledButton
 import com.kipucode.ui.components.text_field.KipuForm
 import com.kipucode.ui.theme.BackgroundGray
@@ -58,30 +59,29 @@ fun ForgotPasswordScreen(
     Scaffold(
         containerColor = BackgroundGray,
     ) { paddingValues ->
-        ForgotPasswordScreenContent(
-            email = email,
-            emailError = emailError,
-            onEmailChange = {
-                email = it
-                emailError = null
-            },
-            onBackClick = onBack,
-            onSendClick = {
-                var hasError = false
-                val emailTrimmed = email.trim().lowercase()
+            val emailRequiredText = stringResource(R.string.error_email_required)
+            val emailInvalidDomainText = stringResource(R.string.error_email_domain)
 
-                if (emailTrimmed.isBlank()) {
-                    emailError = "El correo es obligatorio"
-                    hasError = true
-                } else if (!emailTrimmed.endsWith("@upn.pe")) {
-                    emailError = "Debe usar el correo institucional"
-                    hasError = true
-                }
-
-                if (!hasError) {
-                    authViewModel.resetPassword(emailTrimmed)
-                }
-            },
+            ForgotPasswordScreenContent(
+                email = email,
+                emailError = emailError,
+                onEmailChange = {
+                    email = it
+                    emailError = null
+                },
+                onBackClick = onBack,
+                onSendClick = {
+                    val validation = authViewModel.validateEmail(email)
+                    if (!validation.successful) {
+                        emailError = when (validation.errorType) {
+                            ValidationErrorType.EMPTY_FIELD -> emailRequiredText
+                            ValidationErrorType.INVALID_EMAIL_DOMAIN -> emailInvalidDomainText
+                            else -> "Correo inválido"
+                        }
+                    } else {
+                        authViewModel.resetPassword(email.trim().lowercase())
+                    }
+                },
             isLoading = resetState is Response.Loading,
             modifier = Modifier.padding(paddingValues)
         )

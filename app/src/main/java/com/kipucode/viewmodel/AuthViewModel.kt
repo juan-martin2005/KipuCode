@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.kipucode.domain.model.Response
 import com.kipucode.domain.model.UserDomain
 import com.kipucode.domain.model.ValidationErrorType
+import com.kipucode.domain.model.ValidationResult
 import com.kipucode.domain.usecase.user.IsUserLoggedInUseCase
 import com.kipucode.domain.usecase.user.LoginUseCases
 import com.kipucode.domain.usecase.user.LogoutUseCase
@@ -116,6 +117,10 @@ class AuthViewModel @Inject constructor(
         }
 
         return emailResult.successful && passwordResult.successful
+    }
+
+    fun validateEmail(email: String): ValidationResult {
+        return validateEmailUseCase.invoke(email)
     }
 
     fun clearNameError() {

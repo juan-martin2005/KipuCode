@@ -15,6 +15,8 @@ class ValidateFullNameUseCase @Inject constructor(){
     }
 }
 class ValidateEmailUseCase @Inject constructor(){
+    private val emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.(com|pe)$".toRegex()
+
     operator fun invoke(email: String): ValidationResult{
         val emailTrimmed = email.trim().lowercase()
 
@@ -22,7 +24,7 @@ class ValidateEmailUseCase @Inject constructor(){
             return ValidationResult(false, ValidationErrorType.EMPTY_FIELD)
         }
 
-        if (!emailTrimmed.endsWith("@upn.pe")){
+        if (!emailRegex.matches(emailTrimmed)){
             return ValidationResult(false, ValidationErrorType.INVALID_EMAIL_DOMAIN)
         }
 
