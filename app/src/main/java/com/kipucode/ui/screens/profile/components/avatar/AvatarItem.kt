@@ -1,4 +1,4 @@
-package com.kipucode.ui.components.avatar
+package com.kipucode.ui.screens.profile.components.avatar
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

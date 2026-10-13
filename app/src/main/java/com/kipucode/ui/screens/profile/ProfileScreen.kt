@@ -1,9 +1,5 @@
 package com.kipucode.ui.screens.profile
 
-import android.Manifest
-import android.os.Build
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,81 +12,45 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.kipucode.ui.navigation.ChangePasswordRoute
-import com.kipucode.util.notification.ReminderNotificationHelper
-import com.kipucode.util.notification.StudyReminderScheduler
 import com.kipucode.R
-import com.kipucode.domain.model.DailyActivityDomain
-import com.kipucode.domain.model.Response
 import com.kipucode.ui.components.KipuBottomBar
-import com.kipucode.ui.components.avatar.AvatarProvider
-import com.kipucode.ui.components.avatar.AvatarSelectionDialog
-import com.kipucode.ui.screens.profile.components.ActivityHeatmapCard
+import com.kipucode.ui.screens.profile.components.avatar.AvatarProvider
+import com.kipucode.ui.screens.profile.components.avatar.AvatarSelectionDialog
 import com.kipucode.ui.components.card.KipuDialog
 import com.kipucode.ui.components.card.MultipleChoicesCard
 import com.kipucode.ui.components.card.UserProfileCard
+import com.kipucode.ui.navigation.ChangePasswordRoute
+import com.kipucode.ui.screens.profile.components.ActivityHeatmapCard
 import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.Nunito
-import com.kipucode.viewmodel.UserViewModel
+import com.kipucode.viewmodel.ProfileViewModel
 
 @Composable
 fun ProfileScreen(
-    userViewModel: UserViewModel,
     navController: NavController,
     onLogoutClick: () -> Unit,
+    profileViewModel: ProfileViewModel = hiltViewModel()
 ) {
     var showLogoutDialog by remember { mutableStateOf(false) }
     var showAvatarList by remember { mutableStateOf(false) }
-    val userProfile by userViewModel.userProfileState.collectAsStateWithLifecycle()
-    val updateAvatar by userViewModel.updateUserAvatarState.collectAsStateWithLifecycle()
-    val activityCalendar by userViewModel.activityCalendarState.collectAsStateWithLifecycle()
+    val uiState by profileViewModel.uiState.collectAsStateWithLifecycle()
 
-    val context = LocalContext.current
-    val notificationHelper = remember { ReminderNotificationHelper(context) }
-    var pendingNotificationAction by remember { mutableStateOf<(() -> Unit)?>(null) }
-
-    val permissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-        if (isGranted) {
-            pendingNotificationAction?.invoke()
-        }
-        pendingNotificationAction = null
-    }
-
-    val triggerNotification: (() -> Unit) -> Unit = { action ->
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !notificationHelper.hasNotificationPermission()) {
-            pendingNotificationAction = action
-            permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-        } else {
-            action()
+    LaunchedEffect(uiState.updateAvatarSuccess) {
+        if (uiState.updateAvatarSuccess) {
+            showAvatarList = false
+            profileViewModel.resetAvatarSuccess()
         }
     }
-
-    LaunchedEffect(updateAvatar) {
-        when(updateAvatar) {
-            is Response.Success -> {
-                showAvatarList = false
-                userViewModel.resetUpdateAvatarState()
-            }
-            is Response.Error -> {
-                // Mostrar algun error con Toast o Snackbar (Opcional)
-                userViewModel.resetUpdateAvatarState()
-            }
-            else -> Unit
-        }
-    }
-
 
     Scaffold(
         bottomBar = { KipuBottomBar(navController = navController) },
@@ -103,34 +63,13 @@ fun ProfileScreen(
                 .padding(paddingValues)
         ) {
             ProfileContent(
-                name = userProfile?.name ?: "",
-                email = userProfile?.email ?: "",
-                avatarId = AvatarProvider.getDrawableById(userProfile?.avatarId),
-                activities = activityCalendar,
-                onLogoutClick = {
-                    showLogoutDialog = true
-                },
-                onEditAvatar = {
-                    showAvatarList = true
-                },
-                onChangePassword = {
-                    navController.navigate(ChangePasswordRoute)
-                },
-                onTestHighNotification = {
-                    triggerNotification {
-                        notificationHelper.sendHighPriorityNotification()
-                    }
-                },
-                onTestDefaultNotification = {
-                    triggerNotification {
-                        notificationHelper.sendDefaultNotification()
-                    }
-                },
-                onTestSchedulerNotification = {
-                    triggerNotification {
-                        StudyReminderScheduler.triggerImmediateTest(context)
-                    }
-                }
+                name = uiState.name,
+                email = uiState.email,
+                avatarId = AvatarProvider.getDrawableById(uiState.avatarId),
+                heatmapData = uiState.heatmapData,
+                onLogoutClick = { showLogoutDialog = true },
+                onEditAvatar = { showAvatarList = true },
+                onChangePassword = { navController.navigate(ChangePasswordRoute) }
             )
         }
     }
@@ -158,15 +97,15 @@ fun ProfileScreen(
 
     if (showAvatarList) {
         AvatarSelectionDialog(
-            currentAvatarId = userProfile?.avatarId ?: AvatarProvider.defaultAvatar.id,
+            currentAvatarId = uiState.avatarId,
             onDismiss = {
-                if (updateAvatar !is Response.Loading) {
+                if (!uiState.isUpdatingAvatar) {
                     showAvatarList = false
                 }
             },
-            isLoading = updateAvatar is Response.Loading,
+            isLoading = uiState.isUpdatingAvatar,
             onSave = { selectedAvatarId ->
-                userViewModel.starUpdateUserAvatar(selectedAvatarId)
+                profileViewModel.updateUserAvatar(selectedAvatarId)
             }
         )
     }
@@ -176,14 +115,11 @@ fun ProfileScreen(
 fun ProfileContent(
     name: String,
     email: String,
-    avatarId : Int,
-    activities: List<DailyActivityDomain>,
+    avatarId: Int?,
+    heatmapData: HeatmapUiData,
     onLogoutClick: () -> Unit,
-    onEditAvatar : () -> Unit,
-    onChangePassword : () -> Unit,
-    onTestHighNotification : () -> Unit,
-    onTestDefaultNotification : () -> Unit,
-    onTestSchedulerNotification : () -> Unit = {}
+    onEditAvatar: () -> Unit,
+    onChangePassword: () -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -216,49 +152,23 @@ fun ProfileContent(
             Spacer(modifier = Modifier.height(24.dp))
         }
 
-        // --- SECCIÓN 3: MAPA DE CALOR DE ACTIVIDAD ANUAL ---
+        // --- SECCIÓN 2: MAPA DE CALOR DE ACTIVIDAD ANUAL ---
         item {
             ActivityHeatmapCard(
-                activities = activities,
+                heatmapData = heatmapData,
                 modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(24.dp))
         }
 
+        // --- SECCIÓN 3: OPCIONES ---
         item {
             MultipleChoicesCard(
                 text = stringResource(id = R.string.change_password),
                 iconRes = R.drawable.ic_lock,
                 isFirst = true,
                 onClick = onChangePassword,
-            )
-        }
-
-        item {
-            MultipleChoicesCard(
-                text = "Probar recordatorio de estudio",
-                iconRes = R.drawable.ic_star,
-                isMiddle = true,
-                onClick = onTestHighNotification,
-            )
-        }
-
-        item {
-            MultipleChoicesCard(
-                text = "Probar recordatorio de avisos",
-                iconRes = R.drawable.ic_note,
-                isMiddle = true,
-                onClick = onTestDefaultNotification,
-            )
-        }
-
-        item {
-            MultipleChoicesCard(
-                text = "Probar Worker inteligente",
-                iconRes = R.drawable.ic_code,
-                isMiddle = true,
-                onClick = onTestSchedulerNotification,
             )
         }
 
@@ -281,13 +191,10 @@ fun ProfileScreenPreview() {
     ProfileContent(
         name = "Pepeito Gonzles",
         email = "pedro@upn.pe",
-        avatarId =  R.drawable.avatar_000,
-        activities = emptyList(),
+        avatarId = R.drawable.avatar_001,
+        heatmapData = HeatmapUiData(),
         onLogoutClick = {},
         onEditAvatar = {},
-        onChangePassword = {},
-        onTestHighNotification = {},
-        onTestDefaultNotification = {},
-        onTestSchedulerNotification = {}
+        onChangePassword = {}
     )
 }

@@ -1,12 +1,12 @@
-package com.kipucode.ui.components.avatar
+package com.kipucode.ui.screens.profile.components.avatar
 
 import com.kipucode.R
 import com.kipucode.domain.model.Avatar
+import kotlin.collections.get
 
 object AvatarProvider {
 
     val avatars: List<Avatar> = listOf(
-        Avatar("avatar_000", R.drawable.avatar_000, "Avatar 0"),
         Avatar("avatar_001", R.drawable.avatar_001, "Avatar 1"),
         Avatar("avatar_002", R.drawable.avatar_002, "Avatar 2"),
         Avatar("avatar_003", R.drawable.avatar_003, "Avatar 3"),
@@ -59,17 +59,12 @@ object AvatarProvider {
         Avatar("avatar_050", R.drawable.avatar_050, "Avatar 50")
     )
 
-    val defaultAvatar: Avatar = avatars.first()
-
     private val avatarMap: Map<String, Avatar> by lazy {
         avatars.associateBy { it.id }
     }
 
-    fun getAvatarById(id: String?): Avatar {
-        return avatarMap[id] ?: defaultAvatar
-    }
-
-    fun getDrawableById(id: String?): Int {
-        return getAvatarById(id).resId
+    fun getDrawableById(id: String?): Int? {
+        if (id.isNullOrEmpty()) return null
+        return avatarMap[id]?.resId
     }
 }

@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kipucode.R
 import com.kipucode.domain.model.DailyActivityDomain
+import com.kipucode.ui.screens.profile.HeatmapUiData
 import com.kipucode.ui.theme.*
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -47,24 +48,14 @@ private data class HeatmapWeek(
 
 @Composable
 fun ActivityHeatmapCard(
-    activities: List<DailyActivityDomain>,
-    modifier: Modifier = Modifier,
-    year: Int = LocalDate.now().year
+    heatmapData: HeatmapUiData,
+    modifier: Modifier = Modifier
 ) {
-    // Mapa rápido por fecha "YYYY-MM-DD" -> O(1) acceso
-    val activityMap = remember(activities) {
-        activities.associateBy { it.date }
-    }
-
-    val totalActiveDays = remember(activities) {
-        activities.count { it.exercisesCount > 0 }
-    }
-    val totalExercisesYear = remember(activities) {
-        activities.sumOf { it.exercisesCount }
-    }
-    val totalXpYear = remember(activities) {
-        activities.sumOf { it.xpEarned }
-    }
+    val year = heatmapData.year
+    val activityMap = heatmapData.activityMap
+    val totalActiveDays = heatmapData.totalActiveDays
+    val totalExercisesYear = heatmapData.totalExercises
+    val totalXpYear = heatmapData.totalXp
 
     val today = remember { LocalDate.now() }
     var selectedDate by remember { mutableStateOf<LocalDate?>(today) }
@@ -476,8 +467,7 @@ private fun generateWeeksForYear(year: Int): List<HeatmapWeek> {
 private fun ActivityHeatmapCardEmptyPreview() {
     Box(modifier = Modifier.padding(16.dp)) {
         ActivityHeatmapCard(
-            activities = emptyList(),
-            year = LocalDate.now().year
+            heatmapData = HeatmapUiData()
         )
     }
 }

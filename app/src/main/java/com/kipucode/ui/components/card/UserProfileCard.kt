@@ -32,7 +32,7 @@ fun UserProfileCard(
     name: String,
     email: String,
     modifier: Modifier = Modifier,
-    avatarId : Int,
+    avatarId: Int? = null,
     onClick: () -> Unit
 ) {
     Column(
@@ -57,11 +57,13 @@ fun UserProfileCard(
                     .clickable(onClick = onClick )
                     .border(shape = CircleShape, color = KipuDarkBlue, width = 2.dp)
             ) {
-                Image(
-                    painter = painterResource(id = avatarId),
-                    contentDescription = "Avatar de Usuario",
-                    modifier = Modifier.size(90.dp)
-                )
+                avatarId?.let { resId ->
+                    Image(
+                        painter = painterResource(id = resId),
+                        contentDescription = "Avatar de Usuario",
+                        modifier = Modifier.size(90.dp)
+                    )
+                }
                 Icon(
                     imageVector = ImageVector.vectorResource(R.drawable.ic_edit),
                     contentDescription = "Editar",
