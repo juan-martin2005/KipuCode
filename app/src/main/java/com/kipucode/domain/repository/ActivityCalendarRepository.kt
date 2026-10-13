@@ -14,5 +14,5 @@ interface ActivityCalendarRepository {
         lessonsDelta: Int
     ): Response<DailyActivityDomain>
     suspend fun syncSessionBatchToRemote(todayActivity: DailyActivityDomain?): Response<Unit>
-    suspend fun fetchYearActivityFromRemote(year: Int): Response<Unit>
+    suspend fun refreshActivityCalendar(): Response<Unit>
 }

@@ -4,6 +4,8 @@ import com.kipucode.data.local.model.DailyActivityEntity
 import com.kipucode.data.remote.firebase.dto.DayActivityDto
 import com.kipucode.domain.model.DailyActivityDomain
 
+import java.time.LocalDate
+
 fun DailyActivityEntity.toDomain(): DailyActivityDomain =
     DailyActivityDomain(
         date = date,
@@ -30,18 +32,20 @@ fun DailyActivityDomain.toEntity(userId: String): DailyActivityEntity =
         lessonsCount = lessonsCount
     )
 
-fun DayActivityDto.toEntity(userId: String, date: String, year: Int): DailyActivityEntity =
-    DailyActivityEntity(
+fun DayActivityDto.toEntity(userId: String, date: String): DailyActivityEntity {
+    val extractedYear = date.substringBefore("-").toIntOrNull() ?: LocalDate.now().year
+    return DailyActivityEntity(
         id = "${userId}_$date",
         userId = userId,
         date = date,
-        year = year,
+        year = extractedYear,
         exercisesCount = exercises,
         correctCount = correct,
         incorrectCount = incorrect,
         xpEarned = xp,
         lessonsCount = lessons
     )
+}
 
 fun DailyActivityDomain.toDto(): DayActivityDto =
     DayActivityDto(

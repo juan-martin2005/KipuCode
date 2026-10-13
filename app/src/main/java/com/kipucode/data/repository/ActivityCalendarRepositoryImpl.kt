@@ -97,7 +97,6 @@ internal class ActivityCalendarRepositoryImpl @Inject constructor(
             }
 
             // 3. Extraer actividad de hoy si aplica
-            val todayYear = todayActivity?.year
             val todayDate = todayActivity?.date
             val todayDto = todayActivity?.toDto()
 
@@ -111,7 +110,6 @@ internal class ActivityCalendarRepositoryImpl @Inject constructor(
             userRemoteDataSource.syncSessionBatch(
                 userProgressDto = userProgressDto,
                 exercisesMap = exercisesMap,
-                todayYear = todayYear,
                 todayDate = todayDate,
                 todayActivity = todayDto,
                 exerciseAttemptsMap = attemptsMap
@@ -123,15 +121,15 @@ internal class ActivityCalendarRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun fetchYearActivityFromRemote(year: Int): Response<Unit> {
+    override suspend fun refreshActivityCalendar(): Response<Unit> {
         return try {
             val currentUid = userRemoteDataSource.currentUserId
                 ?: return Response.Error("Usuario no autenticado", ServerErrorType.FIRESTORE_ERROR)
 
-            val remoteDays = userRemoteDataSource.getYearActivity(year)
+            val remoteDays = userRemoteDataSource.getAllActivityCalendar()
             if (remoteDays.isNotEmpty()) {
                 val entities = remoteDays.map { (date, dto) ->
-                    dto.toEntity(userId = currentUid, date = date, year = year)
+                    dto.toEntity(userId = currentUid, date = date)
                 }
                 dailyActivityDao.insertAll(entities)
             }

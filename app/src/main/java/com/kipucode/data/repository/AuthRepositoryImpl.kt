@@ -134,11 +134,10 @@ internal class AuthRepositoryImpl @Inject constructor(
 
             // Sincronizar calendario de actividad anual desde Firestore
             try {
-                val currentYear = java.time.LocalDate.now().year
-                val remoteDays = userRemoteDataSource.getYearActivity(currentYear)
+                val remoteDays = userRemoteDataSource.getAllActivityCalendar()
                 if (remoteDays.isNotEmpty()) {
                     val entities = remoteDays.map { (date, dto) ->
-                        dto.toEntity(userId = currentUser.uid, date = date, year = currentYear)
+                        dto.toEntity(userId = currentUser.uid, date = date)
                     }
                     dailyActivityDao.insertAll(entities)
                     Log.d("AuthRepository", "Sincronizados ${entities.size} días de actividad en login.")
@@ -193,10 +192,8 @@ internal class AuthRepositoryImpl @Inject constructor(
             Response.Success(user)
         }
     }
-
     // ============================================================================================
     //  Recuperar Contraseña -> Solicitar envío de correo para restablecer la contraseña
-    // ============================================================================================
     override suspend fun resetPassword(email: String): Response<Unit> {
         return try {
             authRemoteDataSource.sendPasswordReset(email)

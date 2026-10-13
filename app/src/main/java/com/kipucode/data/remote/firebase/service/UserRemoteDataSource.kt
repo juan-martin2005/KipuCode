@@ -13,20 +13,17 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 // ============================================================================================
-//  ORIGEN DE DATOS (USER, USER_PROGRESS, LEARNING_PROGRESS, ACTIVITY_CALENDAR & EXERCISE_ATTEMPTS) - FIRESTORE
-// ============================================================================================
+//  ORIGEN DE DATOS REMOTO - FIRESTORE
 class UserRemoteDataSource @Inject constructor(
     // ========================================================================================
     //  Instancia de FirebaseAuth   ->  Gestionar sesión.
-    //  Instancia de Firestore      ->  Interactuar con la BD NOSQL
-    // ========================================================================================
+    //  Instancia de Firestore      ->  Interactuar con la BD NoSQL
     private val auth: FirebaseAuth,
     private val firestore: FirebaseFirestore
 ) {
 
     // ========================================================================================
-    //  Valores constantes de los nombres de los JSONs de Firestore
-    // ========================================================================================
+    //  Nombres de Colecciones en Firestore
     companion object {
         const val USERS_COLLECTION = "users"
         const val USER_PROGRESS_COLLECTION = "user_progress"
@@ -35,106 +32,34 @@ class UserRemoteDataSource @Inject constructor(
         const val EXERCISE_ATTEMPTS_COLLECTION = "exercise_attempts"
     }
 
-
     // ========================================================================================
-    //  Obtener el UID del usuario actual. Puede ser Nullo (?.)
-    // ========================================================================================
+    //  UID del usuario actual en sesión (null si no ha iniciado sesión)
     val currentUserId: String? get() = auth.currentUser?.uid
 
     // ========================================================================================
-    //  Guardar el Perfil del Usuario en (USERS_COLLECTION -> users)
-    // ========================================================================================
-    suspend fun saveUserProfile(userDto: UserDto) {
-        // Como el currentUserId puede ser NULL, de ser ese el caso se cancela la operación
-        val id = currentUserId ?: return
-
-        // Guardar en la colección (USERS_COLLECTION -> users)
-        firestore.collection(USERS_COLLECTION)
-            .document(id)   // Nombre del documento será el UID del usuario
-            .set(userDto)                 // Guardamos los datos del usuario
-            .await()                      // Espera a que termine la operación para continuar
-    }
-
+    //  BLOQUE 1: LECTURAS (GET) -> PROXIMAMENTE (FETCH) `BUSCAR / CARGAR`
     // ========================================================================================
     //  Obtener el Perfil del Usuario en (USERS_COLLECTION -> users)
-    // ========================================================================================
     suspend fun getUserProfile(): UserDto? {
-        // Como el currentUserId puede ser NULL, de ser ese el caso se cancela la operación
         val id = currentUserId ?: return null
-
-        // Buscamos y retornamos la colección (USERS_COLLECTION -> users)
-        return firestore.collection(USERS_COLLECTION)
-            .document(id)   // Lo buscamos por el UID del usuario
-            .get()                        // Descargamos los datos del usuario
-            .await()                      // Espera a que termine la operación para continuar
-            .toObject<UserDto>()          // Convierte el resultado JSON a UserDto
-    }
-
-    // ========================================================================================
-    //  Actualizar el avatar del usuario (USERS_COLLECTION -> users)
-    // ========================================================================================
-    suspend fun updateUserAvatar(avatarId : String): Void? {
-        val id = currentUserId ?: return null
-
         return firestore.collection(USERS_COLLECTION)
             .document(id)
-            .update("avatarId", avatarId)
+            .get()
             .await()
+            .toObject<UserDto>()
     }
-
-
-
-    // ========================================================================================
-    //  Crear el Progreso del Usuario en (USER_PROGRESS_COLLECTION -> user_progress)
-    // ========================================================================================
-    suspend fun createUserProgress(userProgressDto: UserProgressDto) {
-        // Como el currentUserId puede ser NULL, de ser ese el caso se cancela la operación
-        val id = currentUserId ?: return
-
-        // Creamos la colección (USER_PROGRESS_COLLECTION -> user_progress)
-        firestore.collection(USER_PROGRESS_COLLECTION)
-            .document(id)       // Lo creamos con el UID del usuario
-            .set(userProgressDto)             // Guardamos el progreso del usuario
-            .await()                          // Espera a que termine la operación para continuar
-    }
-
     // ========================================================================================
     //  Obtener el Progreso del Usuario en (USER_PROGRESS_COLLECTION -> user_progress)
-    // ========================================================================================
     suspend fun getUserProgress(): UserProgressDto? {
-        // Como el currentUserId puede ser NULL, de ser ese el caso se cancela la operación
         val id = currentUserId ?: return null
-
-        // Buscamos y retornamos de la colección (USER_PROGRESS_COLLECTION -> user_progress)
         return firestore.collection(USER_PROGRESS_COLLECTION)
-            .document(id)     // Lo buscamos por el UID del usuario
-            .get()                          // Descargamos el progreso del usuario
-            .await()                        // Espera a que termine la operación para continuar
-            .toObject<UserProgressDto>()    // Convierte el resultado JSON a UserProgressDto
-    }
-
-    // ========================================================================================
-    //  Guardar Lote de Repaso FSRS en Documento Único (LEARNING_PROGRESS_COLLECTION -> {userId})
-    // ========================================================================================
-    suspend fun saveLearningProgressMap(exercisesMap: Map<String, LearningProgressDto>) {
-        val id = currentUserId ?: return
-
-        firestore.collection(LEARNING_PROGRESS_COLLECTION)
             .document(id)
-            .set(
-                mapOf(
-                    "userId" to id,
-                    "updatedAt" to System.currentTimeMillis(),
-                    "exercises" to exercisesMap
-                ),
-                SetOptions.merge()
-            )
+            .get()
             .await()
+            .toObject<UserProgressDto>()
     }
-
     // ========================================================================================
-    //  Obtener Todos los Repasos FSRS del Usuario (1 sola lectura directa del Documento)
-    // ========================================================================================
+    //  Obtener Todos los Repasos FSRS del Usuario en (LEARNING_PROGRESS_COLLECTION)
     suspend fun getAllLearningProgress(): List<LearningProgressDto> {
         val id = currentUserId ?: return emptyList()
 
@@ -143,11 +68,11 @@ class UserRemoteDataSource @Inject constructor(
             .get()
             .await()
 
-        val rawMap = docSnapshot.get("exercises") as? Map<String, Any?> ?: return emptyList()
+        val rawMap = docSnapshot.get("exercises") as? Map<*, *> ?: return emptyList()
 
         return rawMap.values.mapNotNull { rawObj ->
             try {
-                val item = rawObj as? Map<String, Any?> ?: return@mapNotNull null
+                val item = rawObj as? Map<*, *> ?: return@mapNotNull null
                 LearningProgressDto(
                     exerciseId = item["exerciseId"] as? String ?: "",
                     difficulty = (item["difficulty"] as? Number)?.toDouble() ?: 0.0,
@@ -158,16 +83,14 @@ class UserRemoteDataSource @Inject constructor(
                     dueDate = (item["dueDate"] as? Number)?.toLong() ?: 0L,
                     lastReviewed = (item["lastReviewed"] as? Number)?.toLong()
                 )
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 null
             }
         }
     }
-
     // ========================================================================================
-    //  Obtener Actividad del Año (1 sola lectura de Firestore para los 365 días)
-    // ========================================================================================
-    suspend fun getYearActivity(year: Int): Map<String, DayActivityDto> {
+    //  Obtener Todos los Días del Calendario Anual en (ACTIVITY_CALENDAR_COLLECTION)
+    suspend fun getAllActivityCalendar(): Map<String, DayActivityDto> {
         val id = currentUserId ?: return emptyMap()
 
         val snapshot = firestore.collection(ACTIVITY_CALENDAR_COLLECTION)
@@ -176,10 +99,11 @@ class UserRemoteDataSource @Inject constructor(
             .await()
 
         val data = snapshot.data ?: return emptyMap()
+        val daysMap = data["days"] as? Map<*, *> ?: return emptyMap()
         val result = mutableMapOf<String, DayActivityDto>()
 
         fun parseDayDto(rawObj: Any?): DayActivityDto? {
-            val map = rawObj as? Map<String, Any?> ?: return null
+            val map = rawObj as? Map<*, *> ?: return null
             val exercises = (map["exercises"] as? Number)?.toInt() ?: 0
             val correct = (map["correct"] as? Number)?.toInt() ?: 0
             val incorrect = (map["incorrect"] as? Number)?.toInt() ?: 0
@@ -194,25 +118,15 @@ class UserRemoteDataSource @Inject constructor(
             )
         }
 
-        // 1. Formato mapa anidado ("days": { "YYYY-MM-DD": { ... } })
-        (data["days"] as? Map<String, Any?>)?.forEach { (date, rawObj) ->
+        daysMap.forEach { (rawDate, rawObj) ->
+            val date = rawDate as? String ?: return@forEach
             parseDayDto(rawObj)?.let { result[date] = it }
-        }
-
-        // 2. Formato aplanado ("days.YYYY-MM-DD": { ... })
-        data.forEach { (key, rawObj) ->
-            if (key.startsWith("days.")) {
-                val date = key.removePrefix("days.")
-                parseDayDto(rawObj)?.let { result[date] = it }
-            }
         }
 
         return result
     }
-
     // ========================================================================================
-    //  Obtener Todos los Intentos de Ejercicios del Usuario (1 sola lectura directa del Documento)
-    // ========================================================================================
+    //  Obtener Todos los Intentos de Ejercicios en (EXERCISE_ATTEMPTS_COLLECTION)
     suspend fun getAllExerciseAttempts(): List<ExerciseAttemptDto> {
         val id = currentUserId ?: return emptyList()
 
@@ -221,11 +135,11 @@ class UserRemoteDataSource @Inject constructor(
             .get()
             .await()
 
-        val rawMap = docSnapshot.get("attempts") as? Map<String, Any?> ?: return emptyList()
+        val rawMap = docSnapshot.get("attempts") as? Map<*, *> ?: return emptyList()
 
         return rawMap.values.mapNotNull { rawObj ->
             try {
-                val item = rawObj as? Map<String, Any?> ?: return@mapNotNull null
+                val item = rawObj as? Map<*, *> ?: return@mapNotNull null
                 ExerciseAttemptDto(
                     exerciseId = item["exerciseId"] as? String ?: "",
                     lessonId = item["lessonId"] as? String ?: "",
@@ -237,33 +151,84 @@ class UserRemoteDataSource @Inject constructor(
                     lastIsCorrect = item["lastIsCorrect"] as? Boolean ?: false,
                     lastAttemptAt = (item["lastAttemptAt"] as? Number)?.toLong() ?: 0L
                 )
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 null
             }
         }
     }
 
+
     // ========================================================================================
-    //  Sincronización Consolidada Batch (User Progress + FSRS + Calendario + Intentos en 1 solo viaje de red)
+    //  BLOQUE 2: ESCRITURAS PUNTUALES (SAVE / UPDATE)
+    // ========================================================================================
+    //  Guardar el Perfil del Usuario en (USERS_COLLECTION -> users)
+    suspend fun saveUserProfile(userDto: UserDto) {
+        val id = currentUserId ?: return
+        firestore.collection(USERS_COLLECTION)
+            .document(id)
+            .set(userDto)
+            .await()
+    }
+    // ========================================================================================
+    //  Actualizar el avatar del usuario en (USERS_COLLECTION -> users)
+    suspend fun updateUserAvatar(avatarId: String): Void? {
+        val id = currentUserId ?: return null
+        return firestore.collection(USERS_COLLECTION)
+            .document(id)
+            .update("avatarId", avatarId)
+            .await()
+    }
+    // ========================================================================================
+    //  Crear el Progreso del Usuario en (USER_PROGRESS_COLLECTION -> user_progress)
+    suspend fun createUserProgress(userProgressDto: UserProgressDto) {
+        val id = currentUserId ?: return
+        firestore.collection(USER_PROGRESS_COLLECTION)
+            .document(id)
+            .set(userProgressDto)
+            .await()
+    }
+    // ========================================================================================
+    //  Guardar Lote de Repaso FSRS en Documento Único (LEARNING_PROGRESS_COLLECTION)
+    suspend fun saveLearningProgressMap(exercisesMap: Map<String, LearningProgressDto>) {
+        val id = currentUserId ?: return
+        firestore.collection(LEARNING_PROGRESS_COLLECTION)
+            .document(id)
+            .set(
+                mapOf(
+                    "userId" to id,
+                    "updatedAt" to System.currentTimeMillis(),
+                    "exercises" to exercisesMap
+                ),
+                SetOptions.merge()
+            )
+            .await()
+    }
+
+
+    // ========================================================================================
+    //  BLOQUE 3: BATCH ATÓMICO (Sincronización Consolidada en 1 solo viaje de red)
+    // ========================================================================================
+
+    // ========================================================================================
+    //  Sincronización Consolidada Batch (User Progress + FSRS + Calendario + Intentos)
     // ========================================================================================
     suspend fun syncSessionBatch(
         userProgressDto: UserProgressDto? = null,
-        exercisesMap: Map<String, LearningProgressDto>?,
-        todayYear: Int?,
-        todayDate: String?,
-        todayActivity: DayActivityDto?,
+        exercisesMap: Map<String, LearningProgressDto>? = null,
+        todayDate: String? = null,
+        todayActivity: DayActivityDto? = null,
         exerciseAttemptsMap: Map<String, ExerciseAttemptDto>? = null
     ) {
         val id = currentUserId ?: return
         val batch = firestore.batch()
 
-        // 1. Guardar progreso general del usuario (XP, Racha, Lecciones completadas, etc.) si aplica
+        // 1. Guardar progreso general del usuario si aplica
         if (userProgressDto != null) {
             val userProgressDoc = firestore.collection(USER_PROGRESS_COLLECTION).document(id)
             batch.set(userProgressDoc, userProgressDto)
         }
 
-        // 2. Guardar mapa de ejercicios FSRS si aplica
+        // 2. Guardar o fusionar mapa de ejercicios FSRS si aplica
         if (!exercisesMap.isNullOrEmpty()) {
             val progressDoc = firestore.collection(LEARNING_PROGRESS_COLLECTION).document(id)
             batch.set(
@@ -277,23 +242,22 @@ class UserRemoteDataSource @Inject constructor(
             )
         }
 
-        // 3. Incrementar actividad del día en el calendario anual si aplica
-        if (todayYear != null && todayDate != null && todayActivity != null) {
-            val calendarDoc = firestore.collection(ACTIVITY_CALENDAR_COLLECTION)
-                .document(id)
-
+        // 3. Registrar actividad diaria del calendario si aplica
+        if (todayDate != null && todayActivity != null) {
+            val calendarDoc = firestore.collection(ACTIVITY_CALENDAR_COLLECTION).document(id)
             batch.set(
                 calendarDoc,
                 mapOf(
                     "userId" to id,
-                    "year" to todayYear,
                     "updatedAt" to System.currentTimeMillis(),
-                    "days.$todayDate" to mapOf(
-                        "exercises" to todayActivity.exercises,
-                        "correct" to todayActivity.correct,
-                        "incorrect" to todayActivity.incorrect,
-                        "xp" to todayActivity.xp,
-                        "lessons" to todayActivity.lessons
+                    "days" to mapOf(
+                        todayDate to mapOf(
+                            "exercises" to todayActivity.exercises,
+                            "correct" to todayActivity.correct,
+                            "incorrect" to todayActivity.incorrect,
+                            "xp" to todayActivity.xp,
+                            "lessons" to todayActivity.lessons
+                        )
                     )
                 ),
                 SetOptions.merge()
@@ -314,6 +278,7 @@ class UserRemoteDataSource @Inject constructor(
             )
         }
 
+        // Ejecutar todas las operaciones juntas en Firestore
         batch.commit().await()
     }
 }
