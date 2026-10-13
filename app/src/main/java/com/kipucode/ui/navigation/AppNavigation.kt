@@ -30,12 +30,10 @@ import com.kipucode.ui.screens.profile.ProfileScreen
 import com.kipucode.ui.screens.splash.SplashScreen
 import com.kipucode.ui.screens.summary.SummaryScreen
 import com.kipucode.viewmodel.AuthViewModel
-import com.kipucode.viewmodel.UserViewModel
 
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
-    val userViewModel: UserViewModel = hiltViewModel()
 
     NavHost(
         navController = navController,
@@ -52,9 +50,6 @@ fun AppNavigation() {
                 authViewModel = authViewModel,
                 onSplashFinished = { isUserLogged ->
                     if (isUserLogged) {
-                        userViewModel.startObservingUser()
-                        userViewModel.startObservingUserProgress()
-
                         navController.navigate(HomeRoute) {
                             popUpTo<SplashRoute> { inclusive = true }
                         }
@@ -96,9 +91,6 @@ fun AppNavigation() {
             val authViewModel: AuthViewModel = hiltViewModel()
             LoginScreen(
                 onLoginSuccess = {
-                    userViewModel.startObservingUser()
-                    userViewModel.startObservingUserProgress()
-
                     navController.navigate(HomeRoute) { popUpTo(0) }
                 },
                 onNavigateToRegister = {
@@ -186,7 +178,6 @@ fun AppNavigation() {
         composable<ProfileRoute> {
             val authViewModel: AuthViewModel = hiltViewModel()
             ProfileScreen(
-                userViewModel = userViewModel,
                 navController = navController,
                 onLogoutClick = {
                     authViewModel.logout()

@@ -49,23 +49,17 @@ import com.kipucode.ui.theme.Gray
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.Nunito
-import com.kipucode.viewmodel.CoursesViewModel
-import com.kipucode.viewmodel.UserViewModel
+import com.kipucode.viewmodel.ExploreViewModel
 
 @Composable
 fun ExploreScreen(
     navController: NavController,
-    coursesViewModel: CoursesViewModel = hiltViewModel(),
-    userViewModel: UserViewModel = hiltViewModel(),
+    exploreViewModel: ExploreViewModel = hiltViewModel(),
     onNavigateToLesson: (String) -> Unit = { lessonId ->
         navController.navigate(LessonRoute(lessonId = lessonId))
     }
 ) {
-    val coursesWithLessons by coursesViewModel.coursesWithLessonsState.collectAsStateWithLifecycle()
-    val masteryOverview by coursesViewModel.masteryOverviewState.collectAsStateWithLifecycle()
-    val userProgress by userViewModel.userProgressState.collectAsStateWithLifecycle()
-
-    var isRefreshing by remember { mutableStateOf(false) }
+    val uiState by exploreViewModel.uiState.collectAsStateWithLifecycle()
     var selectedCourseWithLessons by remember { mutableStateOf<CourseWithLessonsDomain?>(null) }
 
     // Intercepta el botón 'Atrás' de Android para volver a la lista de módulos si hay uno abierto
@@ -73,35 +67,13 @@ fun ExploreScreen(
         selectedCourseWithLessons = null
     }
 
-    val progressData = userProgress
-    val activeLessonId = progressData?.lastVisitedLessonId
-
-    // Buscar el curso que contiene la lección actual o el track activo
-    val activeCourseWithLessons = coursesWithLessons.find { courseItem ->
-        courseItem.lessons.any { it.id == activeLessonId }
-    } ?: coursesWithLessons.find { it.course.track == progressData?.activeTrack }
-
-    val activeTrack = progressData?.activeTrack?.ifEmpty { null }
-        ?: activeCourseWithLessons?.course?.track
-
-    val filteredCourses = remember(coursesWithLessons, activeTrack) {
-        if (activeTrack != null) {
-            coursesWithLessons.filter { it.course.track == activeTrack }
-        } else {
-            coursesWithLessons
-        }.sortedBy { it.course.orderIndex }
-    }
     Scaffold(
         bottomBar = { KipuBottomBar(navController = navController) },
         containerColor = BackgroundGray
     ) { paddingValues ->
         PullToRefreshBox(
-            isRefreshing = isRefreshing,
-            onRefresh = {
-                isRefreshing = true
-                coursesViewModel.swipeToRefresh()
-                isRefreshing = false
-            },
+            isRefreshing = uiState.isRefreshing,
+            onRefresh = { exploreViewModel.swipeToRefresh() },
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
@@ -112,19 +84,19 @@ fun ExploreScreen(
                 // VISTA 2: LISTA DE LECCIONES DEL MÓDULO SELECCIONADO
                 ModuleLessonsContent(
                     courseWithLessons = selectedCourse,
-                    masteryOverview = masteryOverview,
-                    completedLessons = userProgress?.completedLessons ?: emptyList(),
+                    masteryOverview = uiState.masteryOverview,
+                    completedLessons = uiState.completedLessons,
                     onBackClick = { selectedCourseWithLessons = null },
                     onLessonClick = { lessonId ->
-                        coursesViewModel.onSelectLesson(lessonId)
+                        exploreViewModel.onSelectLesson(lessonId)
                         onNavigateToLesson(lessonId)
                     }
                 )
             } else {
                 // VISTA 1: LISTA DE MÓDULOS
                 ModulesListContent(
-                    coursesWithLessons = filteredCourses,
-                    masteryOverview = masteryOverview,
+                    coursesWithLessons = uiState.coursesWithLessons,
+                    masteryOverview = uiState.masteryOverview,
                     onCourseClick = { selectedCourseWithLessons = it }
                 )
             }
