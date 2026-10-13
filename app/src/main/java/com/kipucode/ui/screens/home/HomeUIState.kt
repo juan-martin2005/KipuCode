@@ -8,14 +8,14 @@ data class HomeUiState(
     val isRefreshing: Boolean = false,
 
     // Datos del Estudiante
-    val userName: String = "Usuario",
-    val avatarId : String = "avatar_000",
+    val userName: String = "",
+    val avatarId : String = "",
     val totalXp: Int = 0,
     val streakDay: Int = 0,
 
     // Datos del Curso Activo
     val activeCourseId: String = "",
-    val courseTitle: String = "Curso",
+    val courseTitle: String = "",
     val courseNumber: Int = 1,
     val currentLessonsProgress: Int = 0,
     val totalLessons: Int = 0,

@@ -31,7 +31,7 @@ import com.kipucode.R
 import com.kipucode.domain.model.LessonDomain
 import com.kipucode.ui.components.KipuBottomBar
 import com.kipucode.ui.components.KipuTopBar
-import com.kipucode.ui.components.avatar.AvatarProvider
+import com.kipucode.ui.screens.profile.components.avatar.AvatarProvider
 import com.kipucode.ui.components.card.HeadlineHome
 import com.kipucode.ui.components.card.HomeCard
 import com.kipucode.ui.components.card.LessonCard

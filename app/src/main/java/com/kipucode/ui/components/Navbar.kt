@@ -76,8 +76,11 @@ fun KipuBottomBar(navController: NavController) {
                 onClick = {
                     if (!isSelected) {
                         navController.navigate(item.route) {
-                            popUpTo<HomeRoute>()
+                            popUpTo<HomeRoute> {
+                                saveState = true
+                            }
                             launchSingleTop = true
+                            restoreState = true
                         }
                     }
                 },
