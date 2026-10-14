@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -28,6 +29,7 @@ import com.kipucode.ui.theme.BackgroundGray
 // --- SCREEN (Stateful / Hilt) ---
 @Composable
 fun SummaryScreen(
+    onReset: () -> Unit,
     onContinue: () -> Unit,
     viewModel: SummaryViewModel = hiltViewModel()
 ) {
@@ -39,6 +41,7 @@ fun SummaryScreen(
         SummaryScreenContent(
             uiState = uiState,
             onClickFilledButton = onContinue,
+            onClickResetFilledButton = onReset,
             modifier = Modifier.padding(paddingValues)
         )
     }
@@ -49,6 +52,7 @@ fun SummaryScreen(
 fun SummaryScreenContent(
     uiState: SummaryUiState?,
     onClickFilledButton: () -> Unit,
+    onClickResetFilledButton: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     if (uiState == null) {
@@ -95,12 +99,23 @@ fun SummaryScreenContent(
             )
         }
 
-        // Botón continuar al final del flujo
-        item(key = "button") {
+        // Botón reiniciar los ejercicios
+        item(key = "button_reset") {
             FilledButton(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 12.dp),
+                textButton = "Reiniciar ejercicio",
+                onClickFilledButton = onClickResetFilledButton,
+                containerColor = Color(0xFF607D8B)
+            )
+        }
+
+        // Botón continuar al final del flujo
+        item(key = "button") {
+            FilledButton(
+                modifier = Modifier
+                    .fillMaxWidth(),
                 textButton = "Volver al inicio",
                 onClickFilledButton = onClickFilledButton
             )
@@ -109,7 +124,7 @@ fun SummaryScreenContent(
 }
 
 // --- PREVIEW ---
-@Preview(showBackground = true, name = "Summary Screen Preview")
+@Preview(showBackground = true, name = "Summary Screen Preview", heightDp = 1000)
 @Composable
 fun SummaryScreenContentPreview() {
     SummaryScreenContent(
@@ -134,6 +149,7 @@ fun SummaryScreenContentPreview() {
             ),
             nextStreakText = "¡A solo 1 día de alcanzar tu objetivo semanal!"
         ),
+        onClickResetFilledButton = {},
         onClickFilledButton = {}
     )
 }

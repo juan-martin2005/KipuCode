@@ -267,7 +267,10 @@ fun AppNavigation() {
                                 xp = session.xpEarned,
                                 correct = session.correctCount,
                                 total = session.totalCount,
-                                timeSeconds = session.timeSeconds
+                                timeSeconds = session.timeSeconds,
+                                lessonId = route.lessonId,
+                                type = route.type,
+                                onlyDue = route.onlyDue
                             )
                         ) {
                             popUpTo<ExerciseRoute> { inclusive = true }
@@ -278,11 +281,25 @@ fun AppNavigation() {
         }
 
         composable<SummaryRoute> { backStackEntry ->
+            val summaryRoute = backStackEntry.toRoute<SummaryRoute>()
             SummaryScreen(
                 onContinue = {
                     if (backStackEntry.lifecycle.currentState == Lifecycle.State.RESUMED) {
                         navController.navigate(HomeRoute) {
                             popUpTo<HomeRoute> { inclusive = false }
+                        }
+                    }
+                },
+                onReset = {
+                    if (backStackEntry.lifecycle.currentState == Lifecycle.State.RESUMED) {
+                        navController.navigate(
+                            ExerciseRoute(
+                                lessonId = summaryRoute.lessonId,
+                                type = summaryRoute.type,
+                                onlyDue = summaryRoute.onlyDue
+                            )
+                        ) {
+                            popUpTo<SummaryRoute> { inclusive = true }
                         }
                     }
                 }

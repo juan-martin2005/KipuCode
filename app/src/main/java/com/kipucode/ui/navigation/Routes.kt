@@ -55,5 +55,8 @@ data class SummaryRoute(
     val xp: Int,
     val correct: Int,
     val total: Int,
-    val timeSeconds: Long
+    val timeSeconds: Long,
+    val lessonId: String = "",
+    val type: String? = null,
+    val onlyDue: Boolean = false
 )
