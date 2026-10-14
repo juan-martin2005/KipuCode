@@ -1,4 +1,4 @@
-package com.kipucode.functional
+package com.kipucode.ui
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.assertIsDisplayed
