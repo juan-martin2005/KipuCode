@@ -37,8 +37,6 @@ import com.kipucode.ui.screens.exercise.components.Flashcard
 import com.kipucode.ui.screens.exercise.components.UniqueChoice
 import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.KipuTeal
-import com.kipucode.viewmodel.ExerciseSessionData
-import com.kipucode.viewmodel.ExerciseViewModel
 
 // --- SCREEN ---
 @Composable
@@ -52,30 +50,21 @@ fun ExerciseScreen(
 ) {
     var showBackDialog by remember { mutableStateOf(false) }
 
-    val completeState by exerciseViewModel.completeState.collectAsStateWithLifecycle()
-    val isLoading = completeState is Response.Loading
+    val uiState by exerciseViewModel.uiState.collectAsStateWithLifecycle()
+    val isLoading = uiState.isCompleting
 
     LaunchedEffect(lessonId, type, onlyDue) {
         exerciseViewModel.resetExerciseProgress()
         exerciseViewModel.loadExercises(lessonId, type = type, onlyDue = onlyDue)
     }
 
-    if (completeState is Response.Success) {
+    if (uiState.completeState is Response.Success) {
         val sessionData = exerciseViewModel.getSessionSummary()
         exerciseViewModel.resetCompleteState()
         onFinished(sessionData)
     }
 
-    val exercises by exerciseViewModel.exercisesState.collectAsStateWithLifecycle()
-    val currentIndex by exerciseViewModel.currentExerciseIndex.collectAsStateWithLifecycle()
-    val selectedOptionId by exerciseViewModel.selectedOptionId.collectAsStateWithLifecycle()
-    val explanation by exerciseViewModel.answerExplanation.collectAsStateWithLifecycle()
-    val lessonName by exerciseViewModel.lessonName.collectAsStateWithLifecycle()
-    val placedBlocks by exerciseViewModel.placedBlocks.collectAsStateWithLifecycle()
-    val availableBlocks by exerciseViewModel.availableBlocks.collectAsStateWithLifecycle()
-    val isBlockEvaluated by exerciseViewModel.isBlockAnswerEvaluated.collectAsStateWithLifecycle()
-
-    val currentExercise = exercises.getOrNull(currentIndex)
+    val currentExercise = uiState.currentExercise
     val isFlashCard = currentExercise?.type?.contains("FLASHCARD", ignoreCase = true) == true
 
     LaunchedEffect(currentExercise?.id) {
@@ -88,16 +77,16 @@ fun ExerciseScreen(
         containerColor = BackgroundGray,
         bottomBar = {
             AnimatedVisibility(
-                visible = explanation != null && !isFlashCard,
+                visible = uiState.answerExplanation != null && !isFlashCard,
                 enter = slideInVertically(initialOffsetY = { it }),
                 exit = slideOutVertically(targetOffsetY = { it })
             ) {
-                explanation?.let {
+                uiState.answerExplanation?.let {
                     ExplanationDialog(
                         isCorrect = it.isCorrect,
                         isLoading = isLoading,
                         onContinue = {
-                            if (currentIndex < exercises.size - 1) {
+                            if (!uiState.isLastExercise) {
                                 exerciseViewModel.nextExercise()
                             } else {
                                 exerciseViewModel.finishLessonExercises(lessonId)
@@ -115,15 +104,15 @@ fun ExerciseScreen(
             modifier = Modifier.padding(paddingValues),
             currentExercise = currentExercise,
             currentExerciseId = currentExercise?.id,
-            lessonName = lessonName,
+            lessonName = uiState.lessonName,
             instruction = currentExercise?.instruction,
             options = currentExercise?.options,
-            currentIndex = currentIndex,
-            totalExercises = exercises.size,
-            selectedOptionId = selectedOptionId,
-            placedBlocks = placedBlocks,
-            availableBlocks = availableBlocks,
-            isBlockEvaluated = isBlockEvaluated,
+            currentIndex = uiState.currentIndex,
+            totalExercises = uiState.totalExercises,
+            selectedOptionId = uiState.selectedOptionId,
+            placedBlocks = uiState.placedBlocks,
+            availableBlocks = uiState.availableBlocks,
+            isBlockEvaluated = uiState.isBlockEvaluated,
             onBackClick = { showBackDialog = true },
             onOptionSelected = { exerciseViewModel.submitAnswer(it) },
             onRatingSelected = { rating -> exerciseViewModel.rateFlashCard(rating, lessonId) },

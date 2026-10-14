@@ -1,11 +1,11 @@
-package com.kipucode.viewmodel
+package com.kipucode.ui.screens.code
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kipucode.domain.model.PracticeMethod
-import com.kipucode.domain.repository.ExerciseRepository
-import com.kipucode.domain.usecase.RefreshCoursesUseCase
-import com.kipucode.domain.usecase.RefreshLearningProgressUseCase
+import com.kipucode.domain.usecase.course.RefreshCoursesUseCase
+import com.kipucode.domain.usecase.exercise.GetCodePracticeAvailabilityUseCase
+import com.kipucode.domain.usecase.learning.RefreshLearningProgressUseCase
 import com.kipucode.domain.usecase.user.RefreshUserProgressUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,21 +15,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-data class CodePracticeAvailability(
-    val completeCodeCount: Int = 0,
-    val whatsOutputCount: Int = 0
-)
-
-data class CodeUiState(
-    val isLoading: Boolean = false,
-    val isRefreshing: Boolean = false,
-    val availability: CodePracticeAvailability = CodePracticeAvailability(),
-    val selectedMethod: PracticeMethod = PracticeMethod.COMPLETE_CODE
-)
-
 @HiltViewModel
 class CodeViewModel @Inject constructor(
-    private val exerciseRepository: ExerciseRepository,
+    private val getCodePracticeAvailabilityUseCase: GetCodePracticeAvailabilityUseCase,
     private val refreshLearningProgressUseCase: RefreshLearningProgressUseCase,
     private val refreshCoursesUseCase: RefreshCoursesUseCase,
     private val refreshUserProgressUseCase: RefreshUserProgressUseCase
@@ -45,15 +33,12 @@ class CodeViewModel @Inject constructor(
 
     private fun observeAvailableExercises() {
         viewModelScope.launch {
-            exerciseRepository.getAllExercises().collect { exercises ->
-                val completeCount = exercises.count { it.type == "COMPLETE_CODE" }
-                val whatsOutputCount = exercises.count { it.type == "WHATS_OUTPUT" }
-
+            getCodePracticeAvailabilityUseCase().collect { availabilityDomain ->
                 _uiState.update { state ->
                     state.copy(
                         availability = CodePracticeAvailability(
-                            completeCodeCount = completeCount,
-                            whatsOutputCount = whatsOutputCount
+                            completeCodeCount = availabilityDomain.completeCodeCount,
+                            whatsOutputCount = availabilityDomain.whatsOutputCount
                         )
                     )
                 }

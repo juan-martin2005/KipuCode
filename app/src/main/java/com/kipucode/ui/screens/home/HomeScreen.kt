@@ -40,7 +40,6 @@ import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.LightGray
 import com.kipucode.ui.theme.Nunito
-import com.kipucode.viewmodel.HomeViewModel
 
 @Composable
 fun HomeScreen(

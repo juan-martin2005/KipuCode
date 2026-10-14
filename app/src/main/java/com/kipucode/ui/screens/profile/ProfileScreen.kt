@@ -33,7 +33,6 @@ import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.Nunito
-import com.kipucode.viewmodel.ProfileViewModel
 
 @Composable
 fun ProfileScreen(

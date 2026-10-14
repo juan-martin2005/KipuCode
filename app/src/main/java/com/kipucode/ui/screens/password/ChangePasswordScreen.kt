@@ -1,4 +1,4 @@
-package com.kipucode.ui.screens.profile
+package com.kipucode.ui.screens.password
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
@@ -47,7 +47,6 @@ import com.kipucode.ui.theme.Gray
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.Nunito
-import com.kipucode.viewmodel.PasswordViewModel
 
 @Composable
 fun ChangePasswordScreen(

@@ -33,7 +33,6 @@ import com.kipucode.ui.screens.code.components.PracticeCodeSelectorContent
 import com.kipucode.ui.theme.Gray
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.Nunito
-import com.kipucode.viewmodel.CodeViewModel
 
 @Composable
 fun CodeScreen(
@@ -61,7 +60,7 @@ fun CodeScreen(
                 onStartPractice = { method ->
                     navController.navigate(
                         ExerciseRoute(
-                            lessonId = "csharp_lesson_01",
+                            lessonId = "",
                             type = method.name
                         )
                     )

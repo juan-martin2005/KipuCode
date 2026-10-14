@@ -65,14 +65,14 @@ fun AvatarItem(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun PreviewAvatarItem() {
-    AvatarItem(
-        avatar = AvatarProvider.defaultAvatar,
-        selected = true,
-        onClick = {}
-    )
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun PreviewAvatarItem() {
+//    AvatarItem(
+//        avatar = AvatarProvider.defaultAvatar,
+//        selected = true,
+//        onClick = {}
+//    )
+//}
 
 

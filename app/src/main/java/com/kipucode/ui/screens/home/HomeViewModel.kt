@@ -1,17 +1,18 @@
-package com.kipucode.viewmodel
+package com.kipucode.ui.screens.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kipucode.domain.usecase.GetCognitiveMasteryOverviewUseCase
-import com.kipucode.domain.usecase.GetCourseWithLessonsUseCase
-import com.kipucode.domain.usecase.RefreshCoursesUseCase
-import com.kipucode.domain.usecase.RefreshLearningProgressUseCase
-import com.kipucode.domain.usecase.UpdateLastViewedLessonUseCase
+import com.kipucode.domain.model.CognitiveMasteryDomain
+import com.kipucode.domain.usecase.course.GetCognitiveMasteryOverviewUseCase
+import com.kipucode.domain.usecase.course.GetCourseWithLessonsUseCase
+import com.kipucode.domain.usecase.course.RefreshCoursesUseCase
+import com.kipucode.domain.usecase.course.UpdateLastViewedLessonUseCase
+import com.kipucode.domain.usecase.learning.RefreshLearningProgressUseCase
+import com.kipucode.domain.usecase.user.CalculateStreakUseCase
 import com.kipucode.domain.usecase.user.GetUserProfileUseCase
 import com.kipucode.domain.usecase.user.GetUserProgressUseCase
 import com.kipucode.domain.usecase.user.RefreshUserProfileUseCase
 import com.kipucode.domain.usecase.user.RefreshUserProgressUseCase
-import com.kipucode.ui.screens.home.HomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -19,10 +20,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
-import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 
 @HiltViewModel
@@ -31,6 +28,7 @@ class HomeViewModel @Inject constructor(
     getUserProgressUseCase: GetUserProgressUseCase,
     getCourseWithLessonsUseCase: GetCourseWithLessonsUseCase,
     getCognitiveMasteryOverviewUseCase: GetCognitiveMasteryOverviewUseCase,
+    private val calculateStreakUseCase: CalculateStreakUseCase,
     private val updateLastViewedLessonUseCase: UpdateLastViewedLessonUseCase,
     private val refreshUserProfileUseCase: RefreshUserProfileUseCase,
     private val refreshUserProgressUseCase: RefreshUserProgressUseCase,
@@ -86,10 +84,10 @@ class HomeViewModel @Inject constructor(
 
         val activeCourseId = courseData?.id.orEmpty()
         val courseMastery = masteryOverview.courseMastery[activeCourseId]
-            ?: com.kipucode.domain.model.CognitiveMasteryDomain()
+            ?: CognitiveMasteryDomain()
 
-        // 4. Calcular la racha activa
-        val streak = calculateActiveStreak(
+        // 4. Calcular la racha activa delegando al caso de uso del dominio
+        val streak = calculateStreakUseCase.calculateActiveStreak(
             lastCompletedMillis = userProgress?.completedAt,
             databaseStreak = userProgress?.streakDay ?: 0
         )
@@ -154,21 +152,5 @@ class HomeViewModel @Inject constructor(
                 _isRefreshing.value = false
             }
         }
-    }
-
-    // ============================================================================================
-    //  Cálculo de racha diaria
-    // ============================================================================================
-    private fun calculateActiveStreak(lastCompletedMillis: Long?, databaseStreak: Int): Int {
-        if (lastCompletedMillis == null) return 0
-
-        val lastDate = Instant.ofEpochMilli(lastCompletedMillis)
-            .atZone(ZoneId.systemDefault())
-            .toLocalDate()
-
-        val todayDate = LocalDate.now()
-        val daysBetween = ChronoUnit.DAYS.between(lastDate, todayDate)
-
-        return if (daysBetween > 1L) 0 else databaseStreak
     }
 }

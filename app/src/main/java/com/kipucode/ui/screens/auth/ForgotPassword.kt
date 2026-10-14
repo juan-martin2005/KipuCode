@@ -26,7 +26,6 @@ import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.Gray
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.Nunito
-import com.kipucode.viewmodel.AuthViewModel
 
 // --- SCREEN ---
 @Composable

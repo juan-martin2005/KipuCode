@@ -37,7 +37,6 @@ import com.kipucode.ui.screens.lesson.components.LessonSummaryBlock
 import com.kipucode.ui.screens.lesson.components.PracticeMethodSelector
 import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.KipuTeal
-import com.kipucode.viewmodel.LessonViewModel
 
 @Composable
 fun LessonScreen(
@@ -46,9 +45,8 @@ fun LessonScreen(
     onBack: () -> Unit,
     onNavigateToExercises: (lessonId: String, type: String) -> Unit
 ) {
-    val lesson by lessonViewModel.lessonState.collectAsStateWithLifecycle()
-    val availableMethods by lessonViewModel.availableMethods.collectAsStateWithLifecycle()
-    val currentLesson = lesson
+    val uiState by lessonViewModel.uiState.collectAsStateWithLifecycle()
+    val currentLesson = uiState.lesson
 
     LaunchedEffect(lessonId) {
         if (lessonId != null) {
@@ -65,11 +63,11 @@ fun LessonScreen(
                 .background(BackgroundGray)
                 .padding(paddingValues)
         ) {
-            if (currentLesson != null) {
+            if (!uiState.isLoading && currentLesson != null) {
                 LessonContent(
                     title = "Volver al Inicio",
                     blocks = currentLesson.blocks,
-                    availableMethods = availableMethods,
+                    availableMethods = uiState.availableMethods,
                     onClickBack = onBack,
                     onStartPractice = { selectedMethod ->
                         onNavigateToExercises(currentLesson.id, selectedMethod.name)

@@ -1,13 +1,13 @@
-package com.kipucode.viewmodel
+package com.kipucode.ui.screens.password
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kipucode.domain.model.Response
 import com.kipucode.domain.model.ValidationErrorType
-import com.kipucode.domain.usecase.user.ReauthenticateUseCase
-import com.kipucode.domain.usecase.user.UpdatePasswordUseCase
-import com.kipucode.domain.usecase.user.ValidateConfirmPasswordUseCase
-import com.kipucode.domain.usecase.user.ValidatePasswordUseCase
+import com.kipucode.domain.usecase.auth.ReauthenticateUseCase
+import com.kipucode.domain.usecase.auth.UpdatePasswordUseCase
+import com.kipucode.domain.usecase.auth.ValidateConfirmPasswordUseCase
+import com.kipucode.domain.usecase.auth.ValidatePasswordUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,16 +15,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
-data class PasswordUiState(
-    val currentStep: Int = 1, // 1: Verificar contraseña actual, 2: Nueva contraseña
-    val currentPasswordError: ValidationErrorType? = null,
-    val newPasswordError: ValidationErrorType? = null,
-    val confirmPasswordError: ValidationErrorType? = null,
-    val isLoading: Boolean = false,
-    val isSuccess: Boolean = false,
-    val serverError: String? = null
-)
 
 @HiltViewModel
 class PasswordViewModel @Inject constructor(
@@ -82,7 +72,6 @@ class PasswordViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-
             _uiState.update { it.copy(isLoading = true, serverError = null) }
             when (val result = updatePasswordUseCase(newPass)) {
                 is Response.Success -> {

@@ -1,14 +1,13 @@
-package com.kipucode.viewmodel
+package com.kipucode.ui.screens.explore
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kipucode.domain.usecase.GetCognitiveMasteryOverviewUseCase
-import com.kipucode.domain.usecase.GetCourseWithLessonsUseCase
-import com.kipucode.domain.usecase.RefreshCoursesUseCase
-import com.kipucode.domain.usecase.UpdateLastViewedLessonUseCase
+import com.kipucode.domain.usecase.course.GetCognitiveMasteryOverviewUseCase
+import com.kipucode.domain.usecase.course.GetCourseWithLessonsUseCase
+import com.kipucode.domain.usecase.course.RefreshCoursesUseCase
+import com.kipucode.domain.usecase.course.UpdateLastViewedLessonUseCase
 import com.kipucode.domain.usecase.user.GetUserProgressUseCase
 import com.kipucode.domain.usecase.user.RefreshUserProgressUseCase
-import com.kipucode.ui.screens.explore.ExploreUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted

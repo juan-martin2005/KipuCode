@@ -25,11 +25,11 @@ import com.kipucode.ui.screens.exercise.ExerciseScreen
 import com.kipucode.ui.screens.home.HomeScreen
 import com.kipucode.ui.screens.lesson.LessonScreen
 import com.kipucode.ui.screens.onboarding.OnboardingScreen
-import com.kipucode.ui.screens.profile.ChangePasswordScreen
+import com.kipucode.ui.screens.password.ChangePasswordScreen
 import com.kipucode.ui.screens.profile.ProfileScreen
 import com.kipucode.ui.screens.splash.SplashScreen
 import com.kipucode.ui.screens.summary.SummaryScreen
-import com.kipucode.viewmodel.AuthViewModel
+import com.kipucode.ui.screens.auth.AuthViewModel
 
 @Composable
 fun AppNavigation() {

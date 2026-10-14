@@ -1,7 +1,7 @@
 package com.kipucode.ui.screens.explore
 
 import com.kipucode.domain.model.CourseWithLessonsDomain
-import com.kipucode.domain.usecase.CognitiveMasteryOverview
+import com.kipucode.domain.usecase.course.CognitiveMasteryOverview
 
 // ================================================================================================
 //  ESTADO DE UI PARA EXPLORE SCREEN

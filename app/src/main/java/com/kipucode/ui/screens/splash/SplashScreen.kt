@@ -37,7 +37,7 @@ import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.Nunito
 import com.kipucode.ui.theme.White
-import com.kipucode.viewmodel.AuthViewModel
+import com.kipucode.ui.screens.auth.AuthViewModel
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 

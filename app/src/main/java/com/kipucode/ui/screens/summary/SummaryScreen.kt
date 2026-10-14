@@ -24,8 +24,6 @@ import com.kipucode.ui.screens.summary.components.FinalSummary
 import com.kipucode.ui.screens.summary.components.RepetitionSchedule
 import com.kipucode.ui.screens.summary.components.WeeklyStreak
 import com.kipucode.ui.theme.BackgroundGray
-import com.kipucode.viewmodel.SummaryUiState
-import com.kipucode.viewmodel.SummaryViewModel
 
 // --- SCREEN (Stateful / Hilt) ---
 @Composable

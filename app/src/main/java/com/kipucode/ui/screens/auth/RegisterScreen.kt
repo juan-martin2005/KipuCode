@@ -28,8 +28,6 @@ import com.kipucode.ui.components.text_field.ClickableLink
 import com.kipucode.ui.components.text_field.KipuForm
 import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.Nunito
-import com.kipucode.viewmodel.AuthViewModel
-import com.kipucode.viewmodel.RegisterFormErrors
 
 @Composable
 fun RegisterScreen(

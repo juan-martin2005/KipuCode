@@ -38,7 +38,7 @@ import com.kipucode.R
 import com.kipucode.domain.model.CourseDomain
 import com.kipucode.domain.model.CourseWithLessonsDomain
 import com.kipucode.domain.model.LessonDomain
-import com.kipucode.domain.usecase.CognitiveMasteryOverview
+import com.kipucode.domain.usecase.course.CognitiveMasteryOverview
 import com.kipucode.ui.components.KipuBottomBar
 import com.kipucode.ui.components.KipuTopBar
 import com.kipucode.ui.components.card.HomeCard
@@ -49,7 +49,6 @@ import com.kipucode.ui.theme.Gray
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.Nunito
-import com.kipucode.viewmodel.ExploreViewModel
 
 @Composable
 fun ExploreScreen(
