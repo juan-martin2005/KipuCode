@@ -1,4 +1,4 @@
-package com.kipucode.domain.usecase
+package com.kipucode.domain.usecase.learning
 
 import com.kipucode.domain.model.LearningProgressDomain
 import com.kipucode.domain.model.Response

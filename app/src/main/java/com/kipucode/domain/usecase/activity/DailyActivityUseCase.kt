@@ -1,4 +1,4 @@
-package com.kipucode.domain.usecase
+package com.kipucode.domain.usecase.activity
 
 import com.kipucode.domain.model.DailyActivityDomain
 import com.kipucode.domain.model.Response
@@ -16,6 +16,37 @@ class GetActivityCalendarUseCase @Inject constructor(
 ) {
     operator fun invoke(year: Int = LocalDate.now().year): Flow<List<DailyActivityDomain>> {
         return activityCalendarRepository.getActivityCalendarForYear(year)
+    }
+}
+
+class RefreshActivityCalendarUseCase @Inject constructor(
+    private val activityCalendarRepository: ActivityCalendarRepository
+) {
+    suspend operator fun invoke(): Response<Unit> {
+        return activityCalendarRepository.refreshActivityCalendar()
+    }
+}
+
+data class ProfileHeatmapDomain(
+    val year: Int,
+    val totalActiveDays: Int,
+    val totalExercises: Int,
+    val totalXp: Int,
+    val activityMap: Map<String, DailyActivityDomain>
+)
+
+class CalculateProfileHeatmapUseCase @Inject constructor() {
+    operator fun invoke(
+        activities: List<DailyActivityDomain>,
+        year: Int = LocalDate.now().year
+    ): ProfileHeatmapDomain {
+        return ProfileHeatmapDomain(
+            year = year,
+            totalActiveDays = activities.count { it.exercisesCount > 0 },
+            totalExercises = activities.sumOf { it.exercisesCount },
+            totalXp = activities.sumOf { it.xpEarned },
+            activityMap = activities.associateBy { it.date }
+        )
     }
 }
 

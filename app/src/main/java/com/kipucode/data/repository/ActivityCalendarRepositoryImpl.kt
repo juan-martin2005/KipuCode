@@ -13,7 +13,6 @@ import com.kipucode.domain.model.ServerErrorType
 import com.kipucode.domain.repository.ActivityCalendarRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import java.time.LocalDate
 import javax.inject.Inject
@@ -50,17 +49,15 @@ internal class ActivityCalendarRepositoryImpl @Inject constructor(
             val currentYear = today.year
 
             val existing = dailyActivityDao.getActivityForDate(currentUid, todayDate)
-            val updatedEntity = if (existing != null) {
-                existing.copy(
-                    exercisesCount = existing.exercisesCount + exercisesDelta,
-                    correctCount = existing.correctCount + correctDelta,
-                    incorrectCount = existing.incorrectCount + incorrectDelta,
-                    xpEarned = existing.xpEarned + xpDelta,
-                    lessonsCount = existing.lessonsCount + lessonsDelta,
-                    timestamp = System.currentTimeMillis()
-                )
-            } else {
-                DailyActivityEntity(
+            val updatedEntity = existing?.copy(
+                exercisesCount = existing.exercisesCount + exercisesDelta,
+                correctCount = existing.correctCount + correctDelta,
+                incorrectCount = existing.incorrectCount + incorrectDelta,
+                xpEarned = existing.xpEarned + xpDelta,
+                lessonsCount = existing.lessonsCount + lessonsDelta,
+                timestamp = System.currentTimeMillis()
+            )
+                ?: DailyActivityEntity(
                     id = "${currentUid}_$todayDate",
                     userId = currentUid,
                     date = todayDate,
@@ -72,7 +69,6 @@ internal class ActivityCalendarRepositoryImpl @Inject constructor(
                     xpEarned = xpDelta,
                     lessonsCount = lessonsDelta
                 )
-            }
 
             dailyActivityDao.insertOrUpdate(updatedEntity)
             Response.Success(updatedEntity.toDomain())
@@ -86,27 +82,27 @@ internal class ActivityCalendarRepositoryImpl @Inject constructor(
             val currentUid = userRemoteDataSource.currentUserId
                 ?: return Response.Error("Usuario no autenticado", ServerErrorType.FIRESTORE_ERROR)
 
-            // 1. Obtener progreso de usuario local más reciente (XP, Racha, Lecciones completadas)
+            // Obtener progreso de usuario local más reciente (XP, Racha, Lecciones completadas)
             val userProgressEntity = userProgressDao.getUserProgressWithDetails(currentUid).firstOrNull()
             val userProgressDto = userProgressEntity?.toDomain()?.toDto()
 
-            // 2. Obtener lote de ejercicios FSRS locales
+            // Obtener lote de ejercicios FSRS locales
             val localExercises = learningProgressDao.getAllProgressForUserDirect(currentUid)
             val exercisesMap = localExercises.associate { entity ->
                 entity.exerciseId to entity.toDomain().toDto()
             }
 
-            // 3. Extraer actividad de hoy si aplica
+            // Extraer actividad de hoy si aplica
             val todayDate = todayActivity?.date
             val todayDto = todayActivity?.toDto()
 
-            // 4. Obtener intentos locales de ejercicios para el usuario
+            // Obtener intentos locales de ejercicios para el usuario
             val localAttempts = exerciseAttemptDao.getAllAttemptsForUser(currentUid)
             val attemptsMap = localAttempts.associate { entity ->
                 entity.exerciseId to entity.toDomain().toDto()
             }
 
-            // 5. Enviar TODO en 1 solo WriteBatch atómico a Firestore
+            // Enviar en 1 solo WriteBatch atómico a Firestore
             userRemoteDataSource.syncSessionBatch(
                 userProgressDto = userProgressDto,
                 exercisesMap = exercisesMap,
@@ -129,7 +125,8 @@ internal class ActivityCalendarRepositoryImpl @Inject constructor(
             val remoteDays = userRemoteDataSource.getAllActivityCalendar()
             if (remoteDays.isNotEmpty()) {
                 val entities = remoteDays.map { (date, dto) ->
-                    dto.toEntity(userId = currentUid, date = date)
+                    val year = date.substringBefore("-").toIntOrNull() ?: LocalDate.now().year
+                    dto.toEntity(userId = currentUid, date = date, year = year)
                 }
                 dailyActivityDao.insertAll(entities)
             }

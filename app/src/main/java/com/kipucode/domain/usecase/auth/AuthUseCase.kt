@@ -1,4 +1,4 @@
-package com.kipucode.domain.usecase.user
+package com.kipucode.domain.usecase.auth
 
 import com.kipucode.domain.model.Response
 import com.kipucode.domain.model.UserDomain
@@ -37,13 +37,11 @@ class ResetPasswordUseCase @Inject constructor(
     }
 }
 
-
 class ReauthenticateUseCase @Inject constructor(
     private val authRepository: AuthRepository
 ){
     suspend operator fun invoke(password: String): Response<Unit> =
         authRepository.reAutenticateUser(password)
-
 }
 
 class UpdatePasswordUseCase @Inject constructor(
@@ -51,7 +49,6 @@ class UpdatePasswordUseCase @Inject constructor(
 ){
     suspend operator fun invoke(newPassword: String): Response<Unit> =
         authRepository.changePassword(newPassword)
-
 }
 
 class LogoutUseCase @Inject constructor(

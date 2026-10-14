@@ -2,12 +2,10 @@ package com.kipucode.data.mapper
 
 import com.kipucode.data.local.model.LessonEntity
 import com.kipucode.domain.model.LessonDomain
-
 import com.kipucode.data.local.converter.LessonBlockConverter
 
-// ===================================
-//  Room (Entity) -> Dominio
-// ===================================
+// =========================================================================================
+//  Entity -> Domain
 fun LessonEntity.toDomain() =
     LessonDomain(
         id = id,

@@ -130,13 +130,16 @@ internal class LearningProgressRepositoryImpl @Inject constructor(
             val result = scheduler.reviewCard(currentCard, rating)
             val updatedCard = result.card()
 
-            val wasLapse = rating == Rating.AGAIN
+            val currentReps = existingEntity?.reps ?: 0
+            val currentLapses = existingEntity?.lapses ?: 0
+            val newReps = currentReps + 1
+            val newLapses = if (rating == Rating.AGAIN) currentLapses + 1 else currentLapses
+
             val updatedEntity = updatedCard.toEntity(
                 exerciseId = exerciseId,
                 userId = currentUid,
-                prevReps = existingEntity?.reps ?: 0,
-                prevLapses = existingEntity?.lapses ?: 0,
-                wasLapse = wasLapse
+                reps = newReps,
+                lapses = newLapses
             )
 
             // 1. Guardado local prioritario instantáneo en Room SQLite (0 ms de red)

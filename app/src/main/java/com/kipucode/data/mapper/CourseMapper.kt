@@ -3,9 +3,8 @@ package com.kipucode.data.mapper
 import com.kipucode.data.local.model.CourseEntity
 import com.kipucode.domain.model.CourseDomain
 
-// ===================================
-//  Room (Entity) -> Dominio
-// ===================================
+// =========================================================================================
+//  Entity -> Domain
 fun CourseEntity.toDomain(): CourseDomain =
     CourseDomain(
         id = id,

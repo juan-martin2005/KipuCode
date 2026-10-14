@@ -2,13 +2,11 @@ package com.kipucode.data.mapper
 
 import com.kipucode.data.local.dao.relation.ExerciseWithOptions
 import com.kipucode.data.local.model.BlockOptionEntity
-import com.kipucode.data.local.model.ExerciseEntity
 import com.kipucode.domain.model.BlockOptionDomain
 import com.kipucode.domain.model.ExerciseDomain
 
-// ==========================================
-// Mapeo de Room (Relation) a Dominio (Domain)
-// ==========================================
+// =========================================================================================
+//  Relation -> Domain
 fun ExerciseWithOptions.toDomain(): ExerciseDomain {
     return ExerciseDomain(
         id = this.exercise.id,
@@ -21,7 +19,8 @@ fun ExerciseWithOptions.toDomain(): ExerciseDomain {
         options = this.options.sortedBy { it.orderIndex }.map { it.toDomain() }
     )
 }
-
+// =========================================================================================
+//  Entity -> Domain
 fun BlockOptionEntity.toDomain(): BlockOptionDomain {
     return BlockOptionDomain(
         id = this.id,

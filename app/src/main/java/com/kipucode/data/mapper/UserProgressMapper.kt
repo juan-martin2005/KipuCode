@@ -9,10 +9,8 @@ import com.kipucode.data.remote.firebase.dto.UserProgressDto
 import com.kipucode.domain.model.UserProgressDomain
 import java.util.Date
 
-// ===================================
-//  Room (Entity / Relation) -> Dominio
-// ===================================
-
+// =========================================================================================
+//  Relation -> Domain
 fun UserProgressWithDetails.toDomain(): UserProgressDomain {
     return UserProgressDomain(
         id = this.progress.userId,
@@ -27,10 +25,8 @@ fun UserProgressWithDetails.toDomain(): UserProgressDomain {
         lessonsXpRecord = this.completedLessons.associate { it.lessonId to it.xpEarned }
     )
 }
-
-// ===================================
-//  Firebase (DTO) -> Room Entities
-// ===================================
+// =========================================================================================
+//  DTO -> Progress Entity
 fun UserProgressDto.toEntity(): UserProgressEntity {
     return UserProgressEntity(
         userId = this.userId,
@@ -41,9 +37,10 @@ fun UserProgressDto.toEntity(): UserProgressEntity {
         completedAt = this.completedAt?.toDate()?.time
     )
 }
-
+// =========================================================================================
+//  DTO -> Completed Lessons Entities
 fun UserProgressDto.toCompletedLessonsEntities(): List<UserCompletedLessonEntity> {
-    val fallbackTime = this.completedAt?.toDate()?.time ?: System.currentTimeMillis()
+    val fallbackTime = this.completedAt?.toDate()?.time ?: 0L
     return this.completedLessons.map { lessonId ->
         UserCompletedLessonEntity(
             userId = this.userId,
@@ -53,9 +50,10 @@ fun UserProgressDto.toCompletedLessonsEntities(): List<UserCompletedLessonEntity
         )
     }
 }
-
+// =========================================================================================
+//  DTO -> Completed Courses Entities
 fun UserProgressDto.toCompletedCoursesEntities(): List<UserCompletedCourseEntity> {
-    val fallbackTime = this.completedAt?.toDate()?.time ?: System.currentTimeMillis()
+    val fallbackTime = this.completedAt?.toDate()?.time ?: 0L
     return this.completedCourses.map { courseId ->
         UserCompletedCourseEntity(
             userId = this.userId,
@@ -64,10 +62,8 @@ fun UserProgressDto.toCompletedCoursesEntities(): List<UserCompletedCourseEntity
         )
     }
 }
-
-// ===================================
-//  Domain -> Firebase (DTO)
-// ===================================
+// =========================================================================================
+//  Domain -> DTO
 fun UserProgressDomain.toDto(): UserProgressDto {
     return UserProgressDto(
         userId = this.userId,
@@ -81,10 +77,8 @@ fun UserProgressDomain.toDto(): UserProgressDto {
         lessonsXpRecord = this.lessonsXpRecord
     )
 }
-
-// ===================================
-//  Domain -> Room Entities
-// ===================================
+// =========================================================================================
+//  Domain -> Progress Entity
 fun UserProgressDomain.toEntity(): UserProgressEntity {
     return UserProgressEntity(
         userId = this.userId,
@@ -95,9 +89,10 @@ fun UserProgressDomain.toEntity(): UserProgressEntity {
         completedAt = this.completedAt
     )
 }
-
+// =========================================================================================
+//  Domain -> Completed Lessons Entities
 fun UserProgressDomain.toCompletedLessonsEntities(): List<UserCompletedLessonEntity> {
-    val time = this.completedAt ?: System.currentTimeMillis()
+    val time = this.completedAt ?: 0L
     return this.completedLessons.map { lessonId ->
         UserCompletedLessonEntity(
             userId = this.userId,
@@ -107,9 +102,10 @@ fun UserProgressDomain.toCompletedLessonsEntities(): List<UserCompletedLessonEnt
         )
     }
 }
-
+// =========================================================================================
+//  Domain -> Completed Courses Entities
 fun UserProgressDomain.toCompletedCoursesEntities(): List<UserCompletedCourseEntity> {
-    val time = this.completedAt ?: System.currentTimeMillis()
+    val time = this.completedAt ?: 0L
     return this.completedCourses.map { courseId ->
         UserCompletedCourseEntity(
             userId = this.userId,

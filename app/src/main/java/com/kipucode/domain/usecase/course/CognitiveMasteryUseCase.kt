@@ -1,4 +1,4 @@
-package com.kipucode.domain.usecase
+package com.kipucode.domain.usecase.course
 
 import com.kipucode.domain.model.CognitiveMasteryDomain
 import com.kipucode.domain.repository.CourseRepository

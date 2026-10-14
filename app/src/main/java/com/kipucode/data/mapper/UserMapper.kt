@@ -4,21 +4,17 @@ import com.kipucode.data.local.model.UserEntity
 import com.kipucode.data.remote.firebase.dto.UserDto
 import com.kipucode.domain.model.UserDomain
 
-// ===================================
-//  Dominio -> Firebase (DTO)
-// ===================================
+// =========================================================================================
+//  Domain -> DTO
 fun UserDomain.toDto(): UserDto =
     UserDto(
         id = this.id,
         name = this.name,
         email = this.email,
         avatarId = this.avatarId
-        )
-
-
-// ===================================
-//  Firebase (DTO) -> Dominio
-// ===================================
+    )
+// =========================================================================================
+//  DTO -> Domain
 fun UserDto.toDomain(): UserDomain =
     UserDomain(
         id = this.id,
@@ -26,10 +22,8 @@ fun UserDto.toDomain(): UserDomain =
         email = this.email,
         avatarId = this.avatarId
     )
-
-// ===================================
-//  Firebase (DTO) -> Room (Entity)
-// ===================================
+// =========================================================================================
+//  DTO -> Entity
 fun UserDto.toEntity(): UserEntity =
     UserEntity(
         id = this.id,
@@ -37,11 +31,9 @@ fun UserDto.toEntity(): UserEntity =
         email = this.email,
         avatarId = this.avatarId
     )
-
-// ===================================
-//  Room (Entity) -> Dominio
-// ===================================
-fun UserEntity.toDomain() : UserDomain =
+// =========================================================================================
+//  Entity -> Domain
+fun UserEntity.toDomain(): UserDomain =
     UserDomain(
         id = this.id,
         name = this.name,

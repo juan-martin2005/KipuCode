@@ -1,54 +1,30 @@
 package com.kipucode.data.repository
 
-import android.util.Log
 import com.kipucode.data.local.dao.UserProgressDao
 import com.kipucode.data.mapper.toCompletedCoursesEntities
 import com.kipucode.data.mapper.toCompletedLessonsEntities
 import com.kipucode.data.mapper.toDomain
-import com.kipucode.data.mapper.toDto
 import com.kipucode.data.mapper.toEntity
 import com.kipucode.data.remote.firebase.service.UserRemoteDataSource
-import com.kipucode.domain.model.CourseWithLessonsDomain
-import com.kipucode.domain.model.ServerErrorType
 import com.kipucode.domain.model.Response
+import com.kipucode.domain.model.ServerErrorType
 import com.kipucode.domain.model.UserProgressDomain
 import com.kipucode.domain.repository.UserProgressRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withTimeout
-import java.time.Instant
-import java.time.ZoneId
-import java.time.temporal.ChronoUnit
 import javax.inject.Inject
-import kotlin.time.Duration.Companion.milliseconds
 
 // ===============================================================================================
-//  IMPLEMENTACIÓN DEL CONTRATO USER_PROGRESS_REPOSITORY
+//  IMPLEMENTACIÓN DEL CONTRATO USER_PROGRESS_REPOSITORY (ACCESO Y PERSISTENCIA DE DATOS PURA)
 // ===============================================================================================
 internal class UserProgressRepositoryImpl @Inject constructor(
-    //  Instancia de UserRemoteDataSource -> Acceso a datos remotos en Firestore
-    //  Instancia de UserProgressDao -> Acceso a operaciones locales del Progreso de Usuario (Room)
     private val userRemoteDataSource: UserRemoteDataSource,
-    private val userProgressDao: UserProgressDao,
+    private val userProgressDao: UserProgressDao
 ): UserProgressRepository {
-    //  ! IMPORTANTE
-    //  Offline-First: Los flujos 'get' consumen directamente de Room (DB Local). La UI nunca
-    //     experimenta retrasos de red al consultar datos ya almacenados.
 
-    //  Mappers: Se usa '.map { ... }' de Flow para convertir las entidades de la base de datos
-    //     (Entity) a modelos de negocio (Domain).
-
-    //  SINCRONIZACIÓN: El 'refresh' descarga primero la estructura de cursos para traer las
-    //     lecciones de cada uno desde Firestore.
-
-    // ===========================================================================================
-    //  Observa los datos locales del progreso de usuario
-    // ===========================================================================================
     override fun getUserProgress(): Flow<UserProgressDomain?> {
         val currentUid = userRemoteDataSource.currentUserId
-
         return if (currentUid != null) {
             userProgressDao.getUserProgressWithDetails(currentUid).map { it?.toDomain() }
         } else {
@@ -56,31 +32,25 @@ internal class UserProgressRepositoryImpl @Inject constructor(
         }
     }
 
-    // ===========================================================================================
-    //  Sincronización Remota -> Descarga de Firestore el progreso y actualiza la DB local
-    // ===========================================================================================
     override suspend fun refreshUserProgress(): Response<Unit> {
         return try {
-            val userProgressDto = userRemoteDataSource.getUserProgress()
+            val currentUid = userRemoteDataSource.currentUserId
+                ?: return Response.Error("Usuario no autenticado", ServerErrorType.FIRESTORE_ERROR)
 
-            if (userProgressDto != null) {
+            val remoteProgressDto = userRemoteDataSource.getUserProgress()
+            if (remoteProgressDto != null) {
                 userProgressDao.insertFullProgress(
-                    userProgressDto.toEntity(),
-                    userProgressDto.toCompletedLessonsEntities(),
-                    userProgressDto.toCompletedCoursesEntities()
+                    remoteProgressDto.toEntity(),
+                    remoteProgressDto.toCompletedLessonsEntities(),
+                    remoteProgressDto.toCompletedCoursesEntities()
                 )
-                Response.Success(Unit)
-            }else{
-                Response.Error(message = "Progress not found", error = ServerErrorType.FIRESTORE_ERROR)
             }
-        }catch (ex: Exception){
-            Response.Error(message = ex.message, error = ServerErrorType.FIRESTORE_ERROR)
+            Response.Success(Unit)
+        } catch (ex: Exception) {
+            Response.Error(ex.message, ServerErrorType.FIRESTORE_ERROR)
         }
     }
 
-    // ===========================================================================================
-    //  Sincronización Remota -> Actualiza el progreso del usuario actual
-    // ===========================================================================================
     override suspend fun saveUserProgress(userProgress: UserProgressDomain): Response<Unit> {
         return try {
             userProgressDao.insertFullProgress(
@@ -88,14 +58,7 @@ internal class UserProgressRepositoryImpl @Inject constructor(
                 userProgress.toCompletedLessonsEntities(),
                 userProgress.toCompletedCoursesEntities()
             )
-
-            val id = userRemoteDataSource.currentUserId
-            if (id != null) {
-                userRemoteDataSource.createUserProgress(userProgress.toDto())
-                Response.Success(Unit)
-            } else {
-                Response.Error("User_Progress Sync Error", ServerErrorType.FIRESTORE_ERROR)
-            }
+            Response.Success(Unit)
         } catch (ex: Exception) {
             Response.Error(ex.message, ServerErrorType.FIRESTORE_ERROR)
         }
@@ -109,121 +72,6 @@ internal class UserProgressRepositoryImpl @Inject constructor(
             Response.Success(Unit)
         } catch (ex: Exception) {
             Response.Error(ex.message, ServerErrorType.FIRESTORE_ERROR)
-        }
-    }
-
-    override suspend fun completeLesson(
-        completedLessonId: String,
-        xpEarned: Int,
-        coursesWithLessons: List<CourseWithLessonsDomain>
-    ): Response<Unit> {
-        return try {
-            val currentUid = userRemoteDataSource.currentUserId
-                ?: return Response.Error("Usuario no autenticado", ServerErrorType.FIRESTORE_ERROR)
-
-            val currentProgress = userProgressDao.getUserProgressWithDetails(currentUid).first()?.toDomain()
-                ?: return Response.Error("No se encontró el progreso del usuario", ServerErrorType.FIRESTORE_ERROR)
-
-            val currentCourseWithLessons = coursesWithLessons.find { c -> c.lessons.any { it.id == completedLessonId } }
-                ?: return Response.Error("Lección no mapeada en ningún curso", ServerErrorType.FIRESTORE_ERROR)
-
-            // Calcular XP y Puntos
-            val previousXp = currentProgress.lessonsXpRecord[completedLessonId] ?: 0
-            val xpDifference = maxOf(0, xpEarned - previousXp)
-            val updatedXp = currentProgress.totalXp + xpDifference
-
-            val updatedLessonsXpRecord = currentProgress.lessonsXpRecord +
-                    (completedLessonId to maxOf(previousXp, xpEarned))
-
-            // Actualizar Lecciones y Cursos completados
-            val isAlreadyCompleted = currentProgress.completedLessons.contains(completedLessonId)
-            val updatedLessons = if (isAlreadyCompleted) currentProgress.completedLessons else currentProgress.completedLessons + completedLessonId
-
-            val isCourseCompleted = currentCourseWithLessons.lessons.all { updatedLessons.contains(it.id) }
-            val updatedCourses = if (isCourseCompleted && !currentProgress.completedCourses.contains(currentCourseWithLessons.course.id)) {
-                currentProgress.completedCourses + currentCourseWithLessons.course.id
-            } else currentProgress.completedCourses
-
-            // Determinar siguiente lección
-            val nextLessonId = determineNextStep(
-                currentProgress = currentProgress,
-                coursesWithLessons = coursesWithLessons,
-                justCompletedLessonId = completedLessonId
-            )
-
-            // Calcular Racha
-            val now = System.currentTimeMillis()
-            val newStreak = calculateStreak(currentProgress.completedAt, now, currentProgress.streakDay)
-
-            val courseTrack = currentCourseWithLessons.course.track
-
-            // Construir y guardar el nuevo estado en Room (la sincronización remota se realiza en el batch consolidado)
-            val updatedProgress = currentProgress.copy(
-                completedLessons = updatedLessons,
-                completedCourses = updatedCourses,
-                totalXp = updatedXp,
-                lessonsXpRecord = updatedLessonsXpRecord,
-                streakDay = newStreak,
-                activeTrack = courseTrack.ifEmpty { currentProgress.activeTrack },
-                lastVisitedLessonId = nextLessonId,
-                completedAt = now
-            )
-
-            userProgressDao.insertFullProgress(
-                updatedProgress.toEntity(),
-                updatedProgress.toCompletedLessonsEntities(),
-                updatedProgress.toCompletedCoursesEntities()
-            )
-            Response.Success(Unit)
-
-        } catch (e: Exception) {
-            Response.Error(e.localizedMessage ?: "Error desconocido", ServerErrorType.FIRESTORE_ERROR)
-        }
-    }
-
-    // ===========================================================================================
-    //  Funciones Privadas
-    // ===========================================================================================
-    private fun determineNextStep(
-        currentProgress: UserProgressDomain,
-        coursesWithLessons: List<CourseWithLessonsDomain>,
-        justCompletedLessonId: String
-    ): String {
-        val targetLessonId = if (justCompletedLessonId.isNotEmpty()) justCompletedLessonId else currentProgress.lastVisitedLessonId.orEmpty()
-
-        val activeCourse = coursesWithLessons.find { c -> c.lessons.any { it.id == targetLessonId } }
-            ?: return targetLessonId
-
-        val lessonIdx = activeCourse.lessons.indexOfFirst { it.id == targetLessonId }
-
-        // Hay una siguiente lección en el mismo curso
-        if (lessonIdx != -1 && lessonIdx < activeCourse.lessons.size - 1) {
-            return activeCourse.lessons[lessonIdx + 1].id
-        }
-
-        // Última lección del curso -> revisar el siguiente curso del mismo track
-        val activeTrack = activeCourse.course.track.ifEmpty { currentProgress.activeTrack }
-        val trackCourses = coursesWithLessons.filter { it.course.track == activeTrack }.sortedBy { it.course.orderIndex }
-        val courseIdx = trackCourses.indexOfFirst { it.course.id == activeCourse.course.id }
-
-        if (courseIdx != -1 && courseIdx < trackCourses.size - 1) {
-            val nextCourse = trackCourses[courseIdx + 1]
-            return nextCourse.lessons.firstOrNull()?.id ?: targetLessonId
-        }
-
-        return targetLessonId
-    }
-
-    private fun calculateStreak(lastCompletedMillis: Long?, currentMillis: Long, currentStreak: Int): Int {
-        if (lastCompletedMillis == null) return 1
-
-        val lastDate = Instant.ofEpochMilli(lastCompletedMillis).atZone(ZoneId.systemDefault()).toLocalDate()
-        val todayDate = Instant.ofEpochMilli(currentMillis).atZone(ZoneId.systemDefault()).toLocalDate()
-
-        return when (ChronoUnit.DAYS.between(lastDate, todayDate)) {
-            0L -> currentStreak       // Mismo día
-            1L -> currentStreak + 1   // Día siguiente
-            else -> 1                 // Racha rota
         }
     }
 }

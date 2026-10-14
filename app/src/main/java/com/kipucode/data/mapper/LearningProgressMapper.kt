@@ -7,6 +7,8 @@ import io.github.openspacedrepetition.Card
 import io.github.openspacedrepetition.State
 import java.time.Instant
 
+// =========================================================================================
+//  Entity -> Domain
 fun LearningProgressEntity.toDomain(): LearningProgressDomain {
     return LearningProgressDomain(
         exerciseId = this.exerciseId,
@@ -20,7 +22,8 @@ fun LearningProgressEntity.toDomain(): LearningProgressDomain {
         lastReviewed = this.lastReviewed
     )
 }
-
+// =========================================================================================
+//  Domain -> Entity
 fun LearningProgressDomain.toEntity(): LearningProgressEntity {
     return LearningProgressEntity(
         exerciseId = this.exerciseId,
@@ -34,7 +37,8 @@ fun LearningProgressDomain.toEntity(): LearningProgressEntity {
         lastReviewed = this.lastReviewed
     )
 }
-
+// =========================================================================================
+//  Entity -> FSRS Card
 fun LearningProgressEntity.toFsrsCard(): Card {
     val builder = Card.builder()
         .difficulty(this.difficulty)
@@ -55,30 +59,28 @@ fun LearningProgressEntity.toFsrsCard(): Card {
 
     return builder.build()
 }
-
+// =========================================================================================
+//  FSRS Card -> Entity
 fun Card.toEntity(
     exerciseId: String,
     userId: String,
-    prevReps: Int = 0,
-    prevLapses: Int = 0,
-    wasLapse: Boolean = false
+    reps: Int,
+    lapses: Int
 ): LearningProgressEntity {
     return LearningProgressEntity(
         exerciseId = exerciseId,
         userId = userId,
         difficulty = this.difficulty ?: 0.0,
         stability = this.stability ?: 0.0,
-        reps = prevReps + 1,
-        lapses = if (wasLapse) prevLapses + 1 else prevLapses,
+        reps = reps,
+        lapses = lapses,
         state = this.state?.ordinal ?: State.LEARNING.ordinal,
         dueDate = this.due?.toEpochMilli() ?: System.currentTimeMillis(),
         lastReviewed = this.lastReview?.toEpochMilli() ?: System.currentTimeMillis()
     )
 }
-
-// ============================================================================================
-//  Mappers para Firebase (DTO)
-// ============================================================================================
+// =========================================================================================
+//  Domain -> DTO
 fun LearningProgressDomain.toDto(): LearningProgressDto {
     return LearningProgressDto(
         exerciseId = this.exerciseId,
@@ -91,7 +93,8 @@ fun LearningProgressDomain.toDto(): LearningProgressDto {
         lastReviewed = this.lastReviewed
     )
 }
-
+// =========================================================================================
+//  DTO -> Entity
 fun LearningProgressDto.toEntity(userId: String): LearningProgressEntity {
     return LearningProgressEntity(
         exerciseId = this.exerciseId,

@@ -1,9 +1,8 @@
-package com.kipucode.domain.usecase.user
+package com.kipucode.domain.usecase.auth
 
 import com.kipucode.domain.model.ValidationErrorType
 import com.kipucode.domain.model.ValidationResult
 import javax.inject.Inject
-
 
 class ValidateFullNameUseCase @Inject constructor(){
     operator fun invoke(fullName: String): ValidationResult{
@@ -14,6 +13,7 @@ class ValidateFullNameUseCase @Inject constructor(){
         return ValidationResult(true)
     }
 }
+
 class ValidateEmailUseCase @Inject constructor(){
     private val emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.(com|pe)$".toRegex()
 

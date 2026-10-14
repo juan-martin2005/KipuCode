@@ -4,6 +4,8 @@ import com.kipucode.data.local.model.ExerciseAttemptEntity
 import com.kipucode.data.remote.firebase.dto.ExerciseAttemptDto
 import com.kipucode.domain.model.ExerciseAttemptDomain
 
+// =========================================================================================
+//  Entity -> Domain
 fun ExerciseAttemptEntity.toDomain() = ExerciseAttemptDomain(
     exerciseId = exerciseId,
     userId = userId,
@@ -16,7 +18,8 @@ fun ExerciseAttemptEntity.toDomain() = ExerciseAttemptDomain(
     lastIsCorrect = lastIsCorrect,
     lastAttemptAt = lastAttemptAt
 )
-
+// =========================================================================================
+//  Domain -> Entity
 fun ExerciseAttemptDomain.toEntity() = ExerciseAttemptEntity(
     exerciseId = exerciseId,
     userId = userId,
@@ -29,7 +32,8 @@ fun ExerciseAttemptDomain.toEntity() = ExerciseAttemptEntity(
     lastIsCorrect = lastIsCorrect,
     lastAttemptAt = lastAttemptAt
 )
-
+// =========================================================================================
+//  Domain -> DTO
 fun ExerciseAttemptDomain.toDto() = ExerciseAttemptDto(
     exerciseId = exerciseId,
     lessonId = lessonId,
@@ -41,7 +45,8 @@ fun ExerciseAttemptDomain.toDto() = ExerciseAttemptDto(
     lastIsCorrect = lastIsCorrect,
     lastAttemptAt = lastAttemptAt
 )
-
+// =========================================================================================
+//  DTO -> Entity
 fun ExerciseAttemptDto.toEntity(userId: String) = ExerciseAttemptEntity(
     exerciseId = exerciseId,
     userId = userId,

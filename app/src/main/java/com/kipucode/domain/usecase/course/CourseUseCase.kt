@@ -1,4 +1,4 @@
-package com.kipucode.domain.usecase
+package com.kipucode.domain.usecase.course
 
 import com.kipucode.domain.model.CourseWithLessonsDomain
 import com.kipucode.domain.model.Response
