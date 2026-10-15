@@ -46,15 +46,16 @@ class UserRepositoryImpl @Inject constructor(
     }
 
     override suspend fun updateUserAvatar(avatarId: String): Response<Unit> {
-        val currentId = userRemoteDataSource.currentUserId
+        val currentId = userRemoteDataSource.currentUserId ?: return Response.Error(
+            "User avatar not change", ServerErrorType.FIRESTORE_ERROR
+        )
 
-        return if (currentId != null){
+        return try {
             userDao.updateAvatar(avatarId, currentId)
             userRemoteDataSource.updateUserAvatar(avatarId)
             Response.Success(Unit)
-        }
-        else{
-            Response.Error("User avatar not change", ServerErrorType.FIRESTORE_ERROR)
+        } catch (e: Exception) {
+            Response.Error(e.message ?: "Error al actualizar avatar", ServerErrorType.FIRESTORE_ERROR)
         }
     }
 

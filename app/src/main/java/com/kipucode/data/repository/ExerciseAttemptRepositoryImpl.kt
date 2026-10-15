@@ -1,6 +1,7 @@
 package com.kipucode.data.repository
 
 import com.kipucode.data.local.dao.ExerciseAttemptDao
+import com.kipucode.data.local.dao.ExerciseDao
 import com.kipucode.data.local.model.ExerciseAttemptEntity
 import com.kipucode.data.mapper.toDomain
 import com.kipucode.data.mapper.toEntity
@@ -13,6 +14,7 @@ import javax.inject.Inject
 
 class ExerciseAttemptRepositoryImpl @Inject constructor(
     private val exerciseAttemptDao: ExerciseAttemptDao,
+    private val exerciseDao: ExerciseDao,
     private val userRemoteDataSource: UserRemoteDataSource
 ) : ExerciseAttemptRepository {
 
@@ -70,8 +72,13 @@ class ExerciseAttemptRepositoryImpl @Inject constructor(
 
             val remoteList = userRemoteDataSource.getAllExerciseAttempts()
             if (remoteList.isNotEmpty()) {
-                val entities = remoteList.map { it.toEntity(userId = currentUid) }
-                exerciseAttemptDao.insertAll(entities)
+                val localExerciseIds = exerciseDao.getAllExerciseIds().toSet()
+                val entities = remoteList
+                    .filter { localExerciseIds.contains(it.exerciseId) }
+                    .map { it.toEntity(userId = currentUid) }
+                if (entities.isNotEmpty()) {
+                    exerciseAttemptDao.insertAll(entities)
+                }
             }
             Response.Success(Unit)
         } catch (e: Exception) {

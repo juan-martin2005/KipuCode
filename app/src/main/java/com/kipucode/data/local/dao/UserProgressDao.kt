@@ -32,6 +32,9 @@ interface UserProgressDao {
     @Upsert
     suspend fun insertCompletedCourses(courses: List<UserCompletedCourseEntity>)
 
+    @Query("SELECT * FROM user_completed_lessons WHERE user_id = :userId")
+    suspend fun getCompletedLessonsDirect(userId: String): List<UserCompletedLessonEntity>
+
     @Transaction
     suspend fun insertFullProgress(
         progress: UserProgressEntity,
@@ -40,7 +43,13 @@ interface UserProgressDao {
     ) {
         insert(progress)
         if (completedLessons.isNotEmpty()) {
-            insertCompletedLessons(completedLessons)
+            val existingLessons = getCompletedLessonsDirect(progress.userId).associateBy { it.lessonId }
+            val mergedLessons = completedLessons.map { incoming ->
+                existingLessons[incoming.lessonId]?.let { existing ->
+                    incoming.copy(completedAt = existing.completedAt)
+                } ?: incoming
+            }
+            insertCompletedLessons(mergedLessons)
         }
         if (completedCourses.isNotEmpty()) {
             insertCompletedCourses(completedCourses)

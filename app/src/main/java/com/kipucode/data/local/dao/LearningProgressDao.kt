@@ -26,4 +26,10 @@ interface LearningProgressDao {
 
     @Upsert
     suspend fun insertAll(progressList: List<LearningProgressEntity>)
+
+    @Query("DELETE FROM learning_progress WHERE user_id = :userId")
+    suspend fun clearUserProgress(userId: String)
+
+    @Query("DELETE FROM learning_progress")
+    suspend fun clearAllProgress()
 }

@@ -249,18 +249,20 @@ class UserRemoteDataSource @Inject constructor(
                 calendarDoc,
                 mapOf(
                     "userId" to id,
-                    "updatedAt" to System.currentTimeMillis(),
-                    "days" to mapOf(
-                        todayDate to mapOf(
-                            "exercises" to todayActivity.exercises,
-                            "correct" to todayActivity.correct,
-                            "incorrect" to todayActivity.incorrect,
-                            "xp" to todayActivity.xp,
-                            "lessons" to todayActivity.lessons
-                        )
-                    )
+                    "updatedAt" to System.currentTimeMillis()
                 ),
                 SetOptions.merge()
+            )
+            batch.update(
+                calendarDoc,
+                "days.$todayDate",
+                mapOf(
+                    "exercises" to todayActivity.exercises,
+                    "correct" to todayActivity.correct,
+                    "incorrect" to todayActivity.incorrect,
+                    "xp" to todayActivity.xp,
+                    "lessons" to todayActivity.lessons
+                )
             )
         }
 

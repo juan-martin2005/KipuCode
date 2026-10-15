@@ -33,6 +33,9 @@ interface CourseDao {
     @Query("SELECT COUNT(*) FROM courses WHERE track = :track")
     suspend fun getCoursesCountByTrack(track: String): Int
 
+    @Query("SELECT id FROM courses")
+    suspend fun getAllCourseIds(): List<String>
+
     // ========================================================================================
     //  Obtener cursos con sus respectivas Lecciones ordenados por posición
     // ========================================================================================

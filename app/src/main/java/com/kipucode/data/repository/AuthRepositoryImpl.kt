@@ -4,10 +4,12 @@ import android.util.Log
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.kipucode.data.local.dao.CourseDao
 import com.kipucode.data.local.dao.DailyActivityDao
 import com.kipucode.data.local.dao.ExerciseAttemptDao
 import com.kipucode.data.local.dao.ExerciseDao
 import com.kipucode.data.local.dao.LearningProgressDao
+import com.kipucode.data.local.dao.LessonDao
 import com.kipucode.data.local.dao.UserDao
 import com.kipucode.data.local.dao.UserProgressDao
 import com.kipucode.data.mapper.toCompletedCoursesEntities
@@ -36,6 +38,8 @@ internal class AuthRepositoryImpl @Inject constructor(
     private val userProgressDao: UserProgressDao,
     private val learningProgressDao: LearningProgressDao,
     private val exerciseDao: ExerciseDao,
+    private val courseDao: CourseDao,
+    private val lessonDao: LessonDao,
     private val databaseSeedService: com.kipucode.data.local.DatabaseSeedService,
     private val dailyActivityDao: DailyActivityDao,
     private val exerciseAttemptDao: ExerciseAttemptDao
@@ -107,11 +111,18 @@ internal class AuthRepositoryImpl @Inject constructor(
             // Aseguramos que el catálogo local de cursos y lecciones esté pre-poblado antes de vincular el progreso
             databaseSeedService.seedIfNeeded()
 
+            val localLessonIds = lessonDao.getAllLessonIds().toSet()
+            val localCourseIds = courseDao.getAllCourseIds().toSet()
+            val validCompletedLessons = progressDto.toCompletedLessonsEntities()
+                .filter { localLessonIds.contains(it.lessonId) }
+            val validCompletedCourses = progressDto.toCompletedCoursesEntities()
+                .filter { localCourseIds.contains(it.courseId) }
+
             userDao.insert(userDto.toEntity())
             userProgressDao.insertFullProgress(
                 progressDto.toEntity(),
-                progressDto.toCompletedLessonsEntities(),
-                progressDto.toCompletedCoursesEntities()
+                validCompletedLessons,
+                validCompletedCourses
             )
 
             // Sincronizar de inmediato el progreso de ejercicios FSRS que correspondan al catálogo local
@@ -150,9 +161,14 @@ internal class AuthRepositoryImpl @Inject constructor(
             try {
                 val remoteAttempts = userRemoteDataSource.getAllExerciseAttempts()
                 if (remoteAttempts.isNotEmpty()) {
-                    val entities = remoteAttempts.map { it.toEntity(userId = currentUser.uid) }
-                    exerciseAttemptDao.insertAll(entities)
-                    Log.d("AuthRepository", "Sincronizados ${entities.size} intentos de ejercicios en login.")
+                    val localExerciseIds = exerciseDao.getAllExerciseIds().toSet()
+                    val validEntities = remoteAttempts
+                        .filter { localExerciseIds.contains(it.exerciseId) }
+                        .map { it.toEntity(userId = currentUser.uid) }
+                    if (validEntities.isNotEmpty()) {
+                        exerciseAttemptDao.insertAll(validEntities)
+                        Log.d("AuthRepository", "Sincronizados ${validEntities.size} intentos de ejercicios en login.")
+                    }
                 }
             } catch (e: Exception) {
                 Log.e("AuthRepository", "Error al precargar intentos de ejercicios en login: ${e.message}", e)
@@ -181,7 +197,8 @@ internal class AuthRepositoryImpl @Inject constructor(
                 userId = user.id,
                 activeTrack = "c_sharp",
                 lastVisitedLessonId = initialLessonId,
-                streakDay = 1
+                streakDay = 0,
+                completedAt = null
             )
 
             userRemoteDataSource.saveUserProfile(user.toDto())
@@ -250,6 +267,12 @@ internal class AuthRepositoryImpl @Inject constructor(
         val currentUid = userRemoteDataSource.currentUserId
         if (currentUid != null) {
             dailyActivityDao.clearUserActivity(currentUid)
+            learningProgressDao.clearUserProgress(currentUid)
+            exerciseAttemptDao.clearUserAttempts(currentUid)
+        } else {
+            dailyActivityDao.clearAllActivities()
+            learningProgressDao.clearAllProgress()
+            exerciseAttemptDao.clearAllAttempts()
         }
         authRemoteDataSource.logoutUser()
         userProgressDao.clearProgressData()

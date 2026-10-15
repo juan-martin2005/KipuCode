@@ -23,4 +23,6 @@ interface LessonDao {
     @Query("SELECT * FROM lessons WHERE id = :lessonId")
     fun getLessonById(lessonId: String): Flow<LessonEntity?>
 
+    @Query("SELECT id FROM lessons")
+    suspend fun getAllLessonIds(): List<String>
 }

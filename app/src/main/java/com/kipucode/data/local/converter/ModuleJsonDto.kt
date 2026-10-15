@@ -30,7 +30,7 @@ data class LessonJsonDto(
     @SerializedName("title") val title: String = "",
     @SerializedName("content") val content: com.google.gson.JsonElement? = null,
     @SerializedName("orderIndex") val orderIndex: Int = 1,
-    @SerializedName("xp") val xp: Int = 200,
+    @SerializedName("xp") val xp: Int = 0,
     @SerializedName("exercises") val exercises: List<ExerciseJsonDto> = emptyList()
 )
 
@@ -40,7 +40,7 @@ data class ExerciseJsonDto(
     @SerializedName("instruction") val instruction: String = "",
     @SerializedName("answer") val answer: String = "",
     @SerializedName("orderIndex") val orderIndex: Int = 1,
-    @SerializedName("xp") val xp: Int = 20,
+    @SerializedName("xp") val xp: Int = 0,
     @SerializedName("options") val options: List<OptionJsonDto> = emptyList()
 )
 

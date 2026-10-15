@@ -26,4 +26,7 @@ interface DailyActivityDao {
 
     @Query("DELETE FROM daily_activities WHERE user_id = :userId")
     suspend fun clearUserActivity(userId: String)
+
+    @Query("DELETE FROM daily_activities")
+    suspend fun clearAllActivities()
 }

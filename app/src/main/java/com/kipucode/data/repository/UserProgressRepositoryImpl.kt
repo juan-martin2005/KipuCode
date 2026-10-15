@@ -1,5 +1,7 @@
 package com.kipucode.data.repository
 
+import com.kipucode.data.local.dao.CourseDao
+import com.kipucode.data.local.dao.LessonDao
 import com.kipucode.data.local.dao.UserProgressDao
 import com.kipucode.data.mapper.toCompletedCoursesEntities
 import com.kipucode.data.mapper.toCompletedLessonsEntities
@@ -20,7 +22,9 @@ import javax.inject.Inject
 // ===============================================================================================
 internal class UserProgressRepositoryImpl @Inject constructor(
     private val userRemoteDataSource: UserRemoteDataSource,
-    private val userProgressDao: UserProgressDao
+    private val userProgressDao: UserProgressDao,
+    private val lessonDao: LessonDao,
+    private val courseDao: CourseDao
 ): UserProgressRepository {
 
     override fun getUserProgress(): Flow<UserProgressDomain?> {
@@ -39,10 +43,16 @@ internal class UserProgressRepositoryImpl @Inject constructor(
 
             val remoteProgressDto = userRemoteDataSource.getUserProgress()
             if (remoteProgressDto != null) {
+                val localLessonIds = lessonDao.getAllLessonIds().toSet()
+                val localCourseIds = courseDao.getAllCourseIds().toSet()
+                val validCompletedLessons = remoteProgressDto.toCompletedLessonsEntities()
+                    .filter { localLessonIds.contains(it.lessonId) }
+                val validCompletedCourses = remoteProgressDto.toCompletedCoursesEntities()
+                    .filter { localCourseIds.contains(it.courseId) }
                 userProgressDao.insertFullProgress(
                     remoteProgressDto.toEntity(),
-                    remoteProgressDto.toCompletedLessonsEntities(),
-                    remoteProgressDto.toCompletedCoursesEntities()
+                    validCompletedLessons,
+                    validCompletedCourses
                 )
             }
             Response.Success(Unit)

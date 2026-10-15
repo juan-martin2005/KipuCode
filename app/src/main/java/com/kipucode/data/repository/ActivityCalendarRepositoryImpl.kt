@@ -13,6 +13,7 @@ import com.kipucode.domain.model.ServerErrorType
 import com.kipucode.domain.repository.ActivityCalendarRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import java.time.LocalDate
 import javax.inject.Inject
@@ -28,7 +29,8 @@ internal class ActivityCalendarRepositoryImpl @Inject constructor(
 ) : ActivityCalendarRepository {
 
     override fun getActivityCalendarForYear(year: Int): Flow<List<DailyActivityDomain>> {
-        return dailyActivityDao.getAllActivitiesForYear(year).map { list ->
+        val currentUid = userRemoteDataSource.currentUserId ?: return flowOf(emptyList())
+        return dailyActivityDao.getActivitiesForYear(currentUid, year).map { list ->
             list.map { it.toDomain() }
         }
     }

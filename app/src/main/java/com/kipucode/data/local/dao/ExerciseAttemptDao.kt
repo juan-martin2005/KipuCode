@@ -33,4 +33,7 @@ interface ExerciseAttemptDao {
 
     @Query("DELETE FROM exercise_attempts WHERE user_id = :userId")
     suspend fun clearUserAttempts(userId: String)
+
+    @Query("DELETE FROM exercise_attempts")
+    suspend fun clearAllAttempts()
 }
