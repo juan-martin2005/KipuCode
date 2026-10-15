@@ -95,8 +95,9 @@ class ExercisePriorityUnitTest(
         private val CARD_DUE_RECENT = ExerciseDomain(id = "card_due_recent", lessonId = "l1", type = "FLASHCARD", instruction = "Q2", orderIndex = 2)
         private val CARD_NEW = ExerciseDomain(id = "card_new", lessonId = "l1", type = "DEFAULT_FLASHCARDS", instruction = "Q3", orderIndex = 3)
         private val CARD_UPCOMING = ExerciseDomain(id = "card_upcoming", lessonId = "l1", type = "DEFAULT_FLASHCARDS", instruction = "Q4", orderIndex = 4)
+        private val CARD_NEW_2 = ExerciseDomain(id = "card_new_2", lessonId = "l1", type = "DEFAULT_FLASHCARDS", instruction = "Q5", orderIndex = 5)
 
-        private val FLASHCARDS_POOL = listOf(CARD_UPCOMING, CARD_NEW, CARD_DUE_RECENT, CARD_DUE_OLDER)
+        private val FLASHCARDS_POOL = listOf(CARD_UPCOMING, CARD_NEW_2, CARD_NEW, CARD_DUE_RECENT, CARD_DUE_OLDER)
 
         private val FSRS_PROGRESS_LIST = listOf(
             LearningProgressDomain(exerciseId = "card_due_old", userId = "u1", dueDate = NOW_MILLIS - 10_000L, reps = 4),
@@ -181,17 +182,17 @@ class ExercisePriorityUnitTest(
                     progressList = FSRS_PROGRESS_LIST,
                     currentTimeMillis = NOW_MILLIS,
                     limit = 5,
-                    expectedOrderedIds = listOf("card_due_old", "card_due_recent", "card_new", "card_upcoming"),
+                    expectedOrderedIds = listOf("card_due_old", "card_due_recent", "card_new", "card_new_2", "card_upcoming"),
                     scenario = "Jerarquía FSRS vencidas primero"
                 ),
                 ExerciseSessionTestCase.FlashcardOrderCase(
-                    exercises = listOf(CARD_UPCOMING, CARD_NEW),
+                    exercises = listOf(CARD_DUE_RECENT, CARD_DUE_OLDER),
                     type = "DEFAULT_FLASHCARDS",
                     onlyDue = false,
-                    progressList = emptyList(),
+                    progressList = FSRS_PROGRESS_LIST,
                     currentTimeMillis = NOW_MILLIS,
                     limit = 1,
-                    expectedOrderedIds = listOf(CARD_UPCOMING.id),
+                    expectedOrderedIds = listOf("card_due_old"),
                     scenario = "Respeta límite de sesión"
                 ),
 
@@ -276,13 +277,11 @@ class ExercisePriorityUnitTest(
                     case.expectedOrderedIds.size,
                     result.size
                 )
-                if (case.expectedOrderedIds.size > 1) {
-                    assertEquals(
-                        "Fallo en orden de priorización FSRS-6 (${case.scenario})",
-                        case.expectedOrderedIds,
-                        result.map { it.id }
-                    )
-                }
+                assertEquals(
+                    "Fallo en orden de priorización FSRS-6 (${case.scenario})",
+                    case.expectedOrderedIds,
+                    result.map { it.id }
+                )
             }
         }
     }

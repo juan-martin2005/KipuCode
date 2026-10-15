@@ -108,8 +108,8 @@ class SummaryMetricsUnitTest(
                     totalCount = 0,
                     timeSeconds = 0L,
                     expectedAccuracy = 0.0f,
-                    expectedReinforceCount = 1,
-                    expectedRetentionPct = 75,
+                    expectedReinforceCount = 0,
+                    expectedRetentionPct = 0,
                     expectedTimeFormatted = "0 seg",
                     expectedSummaryMessage = "¡No te rindas! La repetición te ayudará a dominarlo",
                     scenario = "Total en cero"
@@ -119,13 +119,43 @@ class SummaryMetricsUnitTest(
                 // --- (PU-18) - RESUMEN DE RACHA SEMANAL ---
                 // ====================================================================================
                 SummaryMetricsTestCase.WeeklyStreakSummaryCase(
+                    streakDays = 0,
+                    todayDayOfWeekIndex = 2,
+                    expectedNextStreakText = "¡Mantén el ritmo mañana para alcanzar tu meta de 3 días!",
+                    expectedStatuses = listOf(
+                        WeekDayStatus.PENDING,
+                        WeekDayStatus.PENDING,
+                        WeekDayStatus.CURRENT,
+                        WeekDayStatus.PENDING,
+                        WeekDayStatus.PENDING,
+                        WeekDayStatus.PENDING,
+                        WeekDayStatus.PENDING
+                    ),
+                    scenario = "Racha cero en miércoles"
+                ),
+                SummaryMetricsTestCase.WeeklyStreakSummaryCase(
+                    streakDays = 1,
+                    todayDayOfWeekIndex = 3,
+                    expectedNextStreakText = "¡Mantén el ritmo mañana para alcanzar tu meta de 3 días!",
+                    expectedStatuses = listOf(
+                        WeekDayStatus.PENDING,
+                        WeekDayStatus.PENDING,
+                        WeekDayStatus.PENDING,
+                        WeekDayStatus.COMPLETED,
+                        WeekDayStatus.PENDING,
+                        WeekDayStatus.PENDING,
+                        WeekDayStatus.PENDING
+                    ),
+                    scenario = "Racha de 1 día en jueves"
+                ),
+                SummaryMetricsTestCase.WeeklyStreakSummaryCase(
                     streakDays = 3,
                     todayDayOfWeekIndex = 2,
-                    expectedNextStreakText = "¡Mantén el ritmo mañana para sumar 7 días!",
+                    expectedNextStreakText = "¡Mantén el ritmo mañana para alcanzar tu meta de 7 días!",
                     expectedStatuses = listOf(
                         WeekDayStatus.COMPLETED,
                         WeekDayStatus.COMPLETED,
-                        WeekDayStatus.CURRENT,
+                        WeekDayStatus.COMPLETED,
                         WeekDayStatus.PENDING,
                         WeekDayStatus.PENDING,
                         WeekDayStatus.PENDING,
@@ -138,7 +168,7 @@ class SummaryMetricsUnitTest(
                     todayDayOfWeekIndex = 0,
                     expectedNextStreakText = "A solo 1 día de superar tu meta de 7 días",
                     expectedStatuses = listOf(
-                        WeekDayStatus.CURRENT,
+                        WeekDayStatus.COMPLETED,
                         WeekDayStatus.PENDING,
                         WeekDayStatus.PENDING,
                         WeekDayStatus.PENDING,
@@ -151,7 +181,7 @@ class SummaryMetricsUnitTest(
                 SummaryMetricsTestCase.WeeklyStreakSummaryCase(
                     streakDays = 7,
                     todayDayOfWeekIndex = 6,
-                    expectedNextStreakText = "A solo 1 día de superar tu meta de 8 días",
+                    expectedNextStreakText = "¡Mantén el ritmo mañana para alcanzar tu meta de 14 días!",
                     expectedStatuses = listOf(
                         WeekDayStatus.COMPLETED,
                         WeekDayStatus.COMPLETED,
@@ -159,7 +189,7 @@ class SummaryMetricsUnitTest(
                         WeekDayStatus.COMPLETED,
                         WeekDayStatus.COMPLETED,
                         WeekDayStatus.COMPLETED,
-                        WeekDayStatus.CURRENT
+                        WeekDayStatus.COMPLETED
                     ),
                     scenario = "Meta superada en domingo"
                 )

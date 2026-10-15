@@ -3,6 +3,7 @@ package com.kipucode.unit
 import com.kipucode.domain.model.BlockOptionDomain
 import com.kipucode.domain.usecase.exercise.CalculateExerciseSessionSummaryUseCase
 import com.kipucode.domain.usecase.exercise.EvaluateBlockCompletionUseCase
+import com.kipucode.domain.usecase.exercise.EvaluateFlashCardUseCase
 import com.kipucode.domain.usecase.exercise.EvaluateUniqueChoiceUseCase
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -50,6 +51,16 @@ sealed class ExerciseEvaluationTestCase(
     ) : ExerciseEvaluationTestCase(scenario) {
         override fun toString(): String = "sessionSummary: '$correctCount/$totalCount aciertos' -> expectedXp: $expectedTotalXp ($scenario)"
     }
+
+    class FlashCardCase(
+        val baseXp: Int,
+        val rating: Int,
+        val expectedXp: Int,
+        val expectedFeedback: String,
+        scenario: String
+    ) : ExerciseEvaluationTestCase(scenario) {
+        override fun toString(): String = "flashCard: 'rating=$rating' ($baseXp XP) -> expectedXp: $expectedXp ($scenario)"
+    }
 }
 
 @RunWith(Parameterized::class)
@@ -60,12 +71,14 @@ class ExerciseEvaluationUnitTest(
     private lateinit var evaluateUniqueChoiceUseCase: EvaluateUniqueChoiceUseCase
     private lateinit var evaluateBlockCompletionUseCase: EvaluateBlockCompletionUseCase
     private lateinit var calculateExerciseSessionSummaryUseCase: CalculateExerciseSessionSummaryUseCase
+    private lateinit var evaluateFlashCardUseCase: EvaluateFlashCardUseCase
 
     @Before
     fun setUp() {
         evaluateUniqueChoiceUseCase = EvaluateUniqueChoiceUseCase()
         evaluateBlockCompletionUseCase = EvaluateBlockCompletionUseCase()
         calculateExerciseSessionSummaryUseCase = CalculateExerciseSessionSummaryUseCase()
+        evaluateFlashCardUseCase = EvaluateFlashCardUseCase()
     }
 
     companion object {
@@ -207,6 +220,38 @@ class ExerciseEvaluationUnitTest(
                     expectedTotalXp = 0,
                     expectedTimeSeconds = 1L,
                     scenario = "Tiempo mínimo de 1s"
+                ),
+
+                // ====================================================================================
+                // --- (PU-FLASHCARD) - EVALUACIÓN DE FLASHCARDS / AUTOEVALUACIÓN ---
+                // ====================================================================================
+                ExerciseEvaluationTestCase.FlashCardCase(
+                    baseXp = 20,
+                    rating = 4,
+                    expectedXp = 20,
+                    expectedFeedback = "¡Excelente retencion! Dominas este concepto",
+                    scenario = "Rating 4 Easy 100% XP"
+                ),
+                ExerciseEvaluationTestCase.FlashCardCase(
+                    baseXp = 20,
+                    rating = 3,
+                    expectedXp = 20,
+                    expectedFeedback = "¡Buen trabajo! Concepto aprendido",
+                    scenario = "Rating 3 Good 100% XP"
+                ),
+                ExerciseEvaluationTestCase.FlashCardCase(
+                    baseXp = 20,
+                    rating = 2,
+                    expectedXp = 15,
+                    expectedFeedback = "Comprendido, pero requiere mas practica",
+                    scenario = "Rating 2 Hard 75% XP"
+                ),
+                ExerciseEvaluationTestCase.FlashCardCase(
+                    baseXp = 20,
+                    rating = 1,
+                    expectedXp = 10,
+                    expectedFeedback = "No te preocupes, la repeticion espaciada te ayudara",
+                    scenario = "Rating 1 Again 50% XP"
                 )
             )
         }
@@ -302,6 +347,26 @@ class ExerciseEvaluationUnitTest(
                     "Fallo en `timeSeconds` (${case.scenario})",
                     case.expectedTimeSeconds,
                     result.timeSeconds
+                )
+            }
+
+            is ExerciseEvaluationTestCase.FlashCardCase -> {
+                // Act
+                val result = evaluateFlashCardUseCase(
+                    baseXp = case.baseXp,
+                    rating = case.rating
+                )
+
+                // Assert
+                assertEquals(
+                    "Fallo en `earnedXp` (${case.scenario})",
+                    case.expectedXp,
+                    result.earnedXp
+                )
+                assertEquals(
+                    "Fallo en `feedbackMessage` (${case.scenario})",
+                    case.expectedFeedback,
+                    result.feedbackMessage
                 )
             }
         }

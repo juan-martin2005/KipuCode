@@ -90,11 +90,11 @@ class UserProgressUnitTest(
         private val LESSON_1_C2 = LessonDomain(id = "c2_l1", orderIndex = 1)
 
         private val COURSE_1 = CourseWithLessonsDomain(
-            course = CourseDomain(id = "course_1", track = "csharp", orderIndex = 1),
+            course = CourseDomain(id = "course_1", track = "c_sharp", orderIndex = 1),
             lessons = listOf(LESSON_1_C1, LESSON_2_C1)
         )
         private val COURSE_2 = CourseWithLessonsDomain(
-            course = CourseDomain(id = "course_2", track = "csharp", orderIndex = 2),
+            course = CourseDomain(id = "course_2", track = "c_sharp", orderIndex = 2),
             lessons = listOf(LESSON_1_C2)
         )
         private val CSHARP_CURRICULUM = listOf(COURSE_1, COURSE_2)
@@ -228,28 +228,28 @@ class UserProgressUnitTest(
                 // --- (PU-08) - DETERMINACIÓN DE SIGUIENTE LECCIÓN ---
                 // ====================================================================================
                 UserProgressTestCase.NextLessonCase(
-                    currentProgress = UserProgressDomain(id = "u1", userId = "u1", activeTrack = "csharp", lastVisitedLessonId = "c1_l1"),
+                    currentProgress = UserProgressDomain(id = "u1", userId = "u1", activeTrack = "c_sharp", lastVisitedLessonId = "c1_l1"),
                     courses = CSHARP_CURRICULUM,
                     justCompletedLessonId = "c1_l1",
                     expectedNextLessonId = "c1_l2",
                     scenario = "Avanza en el mismo curso"
                 ),
                 UserProgressTestCase.NextLessonCase(
-                    currentProgress = UserProgressDomain(id = "u1", userId = "u1", activeTrack = "csharp", lastVisitedLessonId = "c1_l2"),
+                    currentProgress = UserProgressDomain(id = "u1", userId = "u1", activeTrack = "c_sharp", lastVisitedLessonId = "c1_l2"),
                     courses = CSHARP_CURRICULUM,
                     justCompletedLessonId = "c1_l2",
                     expectedNextLessonId = "c2_l1",
                     scenario = "Salta al siguiente curso"
                 ),
                 UserProgressTestCase.NextLessonCase(
-                    currentProgress = UserProgressDomain(id = "u1", userId = "u1", activeTrack = "csharp", lastVisitedLessonId = "c2_l1"),
+                    currentProgress = UserProgressDomain(id = "u1", userId = "u1", activeTrack = "c_sharp", lastVisitedLessonId = "c2_l1"),
                     courses = CSHARP_CURRICULUM,
                     justCompletedLessonId = "c2_l1",
                     expectedNextLessonId = "c2_l1",
                     scenario = "Última lección del currículum"
                 ),
                 UserProgressTestCase.NextLessonCase(
-                    currentProgress = UserProgressDomain(id = "u1", userId = "u1", activeTrack = "csharp", lastVisitedLessonId = "c1_l1"),
+                    currentProgress = UserProgressDomain(id = "u1", userId = "u1", activeTrack = "c_sharp", lastVisitedLessonId = "c1_l1"),
                     courses = CSHARP_CURRICULUM,
                     justCompletedLessonId = "",
                     expectedNextLessonId = "c1_l2",

@@ -8,8 +8,8 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.kipucode.ui.screens.auth.LoginContent
-import com.kipucode.ui.screens.auth.RegisterContent
+import com.kipucode.ui.screens.login.LoginContent
+import com.kipucode.ui.screens.register.RegisterContent
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue

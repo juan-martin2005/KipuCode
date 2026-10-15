@@ -93,11 +93,23 @@ class ProfileHeatmapUnitTest(
                         DailyActivityDomain(date = "2026-10-12", year = 2026, exercisesCount = 7, xpEarned = 140)
                     ),
                     year = 2026,
-                    expectedActiveDays = 2,
+                    expectedActiveDays = 1,
                     expectedTotalExercises = 10,
                     expectedTotalXp = 200,
                     expectedMapSize = 1,
                     scenario = "Fechas duplicadas en mapa"
+                ),
+                ProfileHeatmapTestCase(
+                    activities = listOf(
+                        DailyActivityDomain(date = "2025-10-10", year = 2025, exercisesCount = 5, xpEarned = 100),
+                        DailyActivityDomain(date = "2026-10-10", year = 2026, exercisesCount = 4, xpEarned = 80)
+                    ),
+                    year = 2026,
+                    expectedActiveDays = 1,
+                    expectedTotalExercises = 4,
+                    expectedTotalXp = 80,
+                    expectedMapSize = 1,
+                    scenario = "Filtra actividades de otros años"
                 )
             )
         }
@@ -137,5 +149,8 @@ class ProfileHeatmapUnitTest(
             testCase.expectedMapSize,
             heatmap.activityMap.size
         )
+        if (testCase.scenario == "Fechas duplicadas en mapa") {
+            assertEquals(10, heatmap.activityMap["2026-10-12"]?.exercisesCount)
+        }
     }
 }
