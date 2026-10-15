@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kipucode.R
 import com.kipucode.ui.theme.BackgroundGray
+import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuTealDark
 import com.kipucode.ui.theme.Nunito
 import com.kipucode.ui.theme.White
@@ -191,38 +192,42 @@ fun HomeCard(
     }
 }
 
-@Preview(showBackground = true, name = "Con Icono Drawable")
+@Preview(showBackground = true, name = "HomeCard - With Icon")
 @Composable
-fun HomeCardPreviewWithIcon() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(BackgroundGray)
-            .padding(16.dp)
-    ) {
-        HomeCard(
-            courseName = "Fundamentos Básicos de Programación Python",
-            currentLessons = 3,
-            totalLessons = 10,
-            iconResId = R.drawable.ic_python
-        )
+private fun HomeCardPreviewWithIcon() {
+    KipuCodeTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(BackgroundGray)
+                .padding(16.dp)
+        ) {
+            HomeCard(
+                courseName = "Fundamentos Básicos de Programación Python",
+                currentLessons = 3,
+                totalLessons = 10,
+                iconResId = R.drawable.ic_python
+            )
+        }
     }
 }
 
-@Preview(showBackground = true, name = "Con Número de Curso")
+@Preview(showBackground = true, name = "HomeCard - With Course Number")
 @Composable
-fun HomeCardPreviewWithNumber() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(BackgroundGray)
-            .padding(16.dp)
-    ) {
-        HomeCard(
-            courseName = "Fundamentos Básicos de Programación Python",
-            currentLessons = 4,
-            totalLessons = 4,
-            courseNumber = 1
-        )
+private fun HomeCardPreviewWithNumber() {
+    KipuCodeTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(BackgroundGray)
+                .padding(16.dp)
+        ) {
+            HomeCard(
+                courseName = "Fundamentos Básicos de Programación Python",
+                currentLessons = 4,
+                totalLessons = 4,
+                courseNumber = 1
+            )
+        }
     }
 }

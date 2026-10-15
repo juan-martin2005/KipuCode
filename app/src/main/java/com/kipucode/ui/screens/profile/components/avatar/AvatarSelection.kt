@@ -43,6 +43,7 @@ import com.kipucode.ui.components.button.FilledButton
 import com.kipucode.ui.components.button.OutlineButton
 import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.Gray
+import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.Nunito
 
@@ -192,21 +193,23 @@ fun AvatarSelectionContent(
     }
 }
 
-//@Preview(showBackground = true, widthDp = 380, heightDp = 640)
-//@Composable
-//fun PreviewAvatarSelectionContent() {
-//    Box(
-//        modifier = Modifier
-//            .fillMaxSize()
-//            .background(Color(0x80000000)),
-//        contentAlignment = Alignment.Center
-//    ) {
-//        AvatarSelectionContent(
-//            selectedAvatarId = "avatar_001",
-//            avatarList = AvatarProvider,
-//            onAvatarSelected = {},
-//            onDismiss = {},
-//            onSave = {}
-//        )
-//    }
-//}
+@Preview(name = "AvatarSelection - Content", showBackground = true, widthDp = 380, heightDp = 640)
+@Composable
+private fun AvatarSelectionContentPreview() {
+    KipuCodeTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0x80000000)),
+            contentAlignment = Alignment.Center
+        ) {
+            AvatarSelectionContent(
+                selectedAvatarId = "avatar_001",
+                avatarList = AvatarProvider.avatars,
+                onAvatarSelected = {},
+                onDismiss = {},
+                onSave = {}
+            )
+        }
+    }
+}

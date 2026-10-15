@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kipucode.domain.model.BlockOptionDomain
 import com.kipucode.ui.components.KipuTopBar
+import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.Nunito
@@ -81,40 +82,42 @@ fun UniqueChoice(
     }
 }
 
-@Preview(showBackground = true, name = "Multiple Choice Exercise Preview")
+@Preview(showBackground = true, name = "UniqueChoice - Default")
 @Composable
-fun MultipleChoiceExercisePreview() {
-    var selectedId by remember { mutableStateOf<String?>(null) }
+private fun MultipleChoiceExercisePreview() {
+    KipuCodeTheme {
+        var selectedId by remember { mutableStateOf<String?>(null) }
 
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        KipuTopBar(
-            title = "",
-            onBackClick = {},
-            modifier = Modifier.padding(vertical = 16.dp)
-        )
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f),
-            contentAlignment = Alignment.Center
+        Column(
+            modifier = Modifier.fillMaxSize()
         ) {
-            UniqueChoice(
-                current = 3,
-                total = 10,
-                instruction = "Tras ejecutar `dotnet new console`, ¿cuál es el archivo de entrada generado por defecto?",
-                options = listOf(
-                    BlockOptionDomain(id = "1", exerciseId = "ex1", content = "App.config", isCorrect = false),
-                    BlockOptionDomain(id = "2", exerciseId = "ex1", content = "Program.cs", isCorrect = true),
-                    BlockOptionDomain(id = "3", exerciseId = "ex1", content = "Main.java", isCorrect = false),
-                    BlockOptionDomain(id = "4", exerciseId = "ex1", content = "Startup.cs", isCorrect = false)
-                ),
-                selectedOptionId = selectedId,
-                onOptionSelected = { option -> selectedId = option.id },
-                modifier = Modifier.padding(horizontal = 16.dp)
+            KipuTopBar(
+                title = "",
+                onBackClick = {},
+                modifier = Modifier.padding(vertical = 16.dp)
             )
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                UniqueChoice(
+                    current = 3,
+                    total = 10,
+                    instruction = "Tras ejecutar `dotnet new console`, ¿cuál es el archivo de entrada generado por defecto?",
+                    options = listOf(
+                        BlockOptionDomain(id = "1", exerciseId = "ex1", content = "App.config", isCorrect = false),
+                        BlockOptionDomain(id = "2", exerciseId = "ex1", content = "Program.cs", isCorrect = true),
+                        BlockOptionDomain(id = "3", exerciseId = "ex1", content = "Main.java", isCorrect = false),
+                        BlockOptionDomain(id = "4", exerciseId = "ex1", content = "Startup.cs", isCorrect = false)
+                    ),
+                    selectedOptionId = selectedId,
+                    onOptionSelected = { option -> selectedId = option.id },
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+            }
         }
     }
 }

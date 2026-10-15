@@ -11,8 +11,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kipucode.R
+import com.kipucode.ui.theme.KipuCodeTheme
 
 data class OnboardingPageInfo(
     @param:StringRes val descriptionRes: Int
@@ -43,6 +45,19 @@ fun PagerIndicator(
                     .padding(4.dp)
                     .size(8.dp)
                     .background(color, shape = CircleShape)
+            )
+        }
+    }
+}
+
+@Preview(name = "PagerIndicator - Active Page 1", showBackground = true)
+@Composable
+private fun PagerIndicatorPreview() {
+    KipuCodeTheme {
+        Box(modifier = Modifier.padding(16.dp)) {
+            PagerIndicator(
+                pageCount = 4,
+                currentPage = 1
             )
         }
     }

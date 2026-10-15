@@ -11,7 +11,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import com.kipucode.ui.theme.KipuCodeTheme
 
 // Componente reutilizable en Login & Register Screen.
 // Nos ahorra estar repitiendo la misma lógica para cada vista.
@@ -47,4 +49,16 @@ fun ClickableLink(
         text = annotatedText,
         modifier = modifier
     )
+}
+
+@Preview(name = "ClickableLink - Default", showBackground = true)
+@Composable
+private fun ClickableLinkPreview() {
+    KipuCodeTheme {
+        ClickableLink(
+            normalText = "¿Ya tienes una cuenta? ",
+            linkText = "Inicia sesión",
+            onLinkClick = {}
+        )
+    }
 }

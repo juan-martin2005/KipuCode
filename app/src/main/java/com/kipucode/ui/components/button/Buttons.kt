@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.Nunito
 
@@ -127,36 +128,38 @@ fun OutlineButton(
     }
 }
 
-@Preview(showBackground = true, name = "Vista de Botones")
+@Preview(showBackground = true, name = "Buttons - Variants")
 @Composable
-fun ButtonsPreview() {
-    Column(
-        modifier = Modifier.padding(16.dp)
-    ) {
-        // --- Filled Button ---
-        FilledButton(
-            textButton = "Botón Principal",
-            onClickFilledButton = {}
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        FilledButton(
-            textButton = "Cargando...",
-            isLoading = true,
-            onClickFilledButton = {}
-        )
+private fun ButtonsPreview() {
+    KipuCodeTheme {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            // --- Filled Button ---
+            FilledButton(
+                textButton = "Botón Principal",
+                onClickFilledButton = {}
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            FilledButton(
+                textButton = "Cargando...",
+                isLoading = true,
+                onClickFilledButton = {}
+            )
 
-        Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-        // --- Outline Button ---
-        OutlineButton(
-            textButton = "Botón Secundario",
-            onClickFilledButton = {}
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        OutlineButton(
-            textButton = "Cargando...",
-            isLoading = true,
-            onClickFilledButton = {}
-        )
+            // --- Outline Button ---
+            OutlineButton(
+                textButton = "Botón Secundario",
+                onClickFilledButton = {}
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            OutlineButton(
+                textButton = "Cargando...",
+                isLoading = true,
+                onClickFilledButton = {}
+            )
+        }
     }
 }

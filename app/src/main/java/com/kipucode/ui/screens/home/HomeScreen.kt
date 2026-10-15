@@ -36,6 +36,7 @@ import com.kipucode.ui.components.card.HeadlineHome
 import com.kipucode.ui.components.card.HomeCard
 import com.kipucode.ui.components.card.LessonCard
 import com.kipucode.ui.theme.BackgroundGray
+import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.LightGray
@@ -207,58 +208,60 @@ fun HomeContent(
 }
 
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, showSystemUi = true, name = "HomeScreen - Default")
 @Composable
-fun HomePreview() {
-    val mockDomainLessons = listOf(
-        LessonDomain(
-            id = "1",
-            courseId = "1",
-            title = "1. Logic and Algorithms",
-            content = "",
-            xp = 10,
-            orderIndex = 1
-        ),
-        LessonDomain(
-            id = "2",
-            courseId = "1",
-            title = "2. Variables and Data Types",
-            content = "",
-            xp = 10,
-            orderIndex = 2
-        ),
-        LessonDomain(
-            id = "3",
-            courseId = "1",
-            title = "3. Control Structures",
-            content = "",
-            xp = 10,
-            orderIndex = 3
-        ),
-    )
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(BackgroundGray)
-    ) {
-        val previewCurrentLessonOrderIndex = 3
-
-        HomeContent(
-            userName = "Test_User_Full_Name",
-            userAvatarId = R.drawable.avatar_000,
-            totalXp = 999,
-            streakDay = 999,
-            courseTitle = "Introduction to Python Programing",
-
-            currentLessonsProgress = previewCurrentLessonOrderIndex,
-            totalLessons = mockDomainLessons.size,
-            lessons = mockDomainLessons,
-
-            isLessonCompleted = { lesson -> lesson.orderIndex <= previewCurrentLessonOrderIndex },
-            isLessonLocked = { lesson -> lesson.orderIndex > previewCurrentLessonOrderIndex },
-
-            onLessonClick = {}
+private fun HomePreview() {
+    KipuCodeTheme {
+        val mockDomainLessons = listOf(
+            LessonDomain(
+                id = "1",
+                courseId = "1",
+                title = "1. Logic and Algorithms",
+                content = "",
+                xp = 10,
+                orderIndex = 1
+            ),
+            LessonDomain(
+                id = "2",
+                courseId = "1",
+                title = "2. Variables and Data Types",
+                content = "",
+                xp = 10,
+                orderIndex = 2
+            ),
+            LessonDomain(
+                id = "3",
+                courseId = "1",
+                title = "3. Control Structures",
+                content = "",
+                xp = 10,
+                orderIndex = 3
+            ),
         )
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(BackgroundGray)
+        ) {
+            val previewCurrentLessonOrderIndex = 3
+
+            HomeContent(
+                userName = "Test_User_Full_Name",
+                userAvatarId = R.drawable.avatar_000,
+                totalXp = 999,
+                streakDay = 999,
+                courseTitle = "Introduction to Python Programing",
+
+                currentLessonsProgress = previewCurrentLessonOrderIndex,
+                totalLessons = mockDomainLessons.size,
+                lessons = mockDomainLessons,
+
+                isLessonCompleted = { lesson -> lesson.orderIndex <= previewCurrentLessonOrderIndex },
+                isLessonLocked = { lesson -> lesson.orderIndex > previewCurrentLessonOrderIndex },
+
+                onLessonClick = {}
+            )
+        }
     }
 }

@@ -29,6 +29,7 @@ import com.kipucode.R
 import com.kipucode.ui.components.button.FilledButton
 import com.kipucode.ui.components.button.OutlineButton
 import com.kipucode.ui.theme.BackgroundGray
+import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.Nunito
 
 // --- SCREEN ---
@@ -149,16 +150,18 @@ fun OnboardingScreenContent(
 }
 
 // --- PREVIEW ---
-@Preview(showBackground = true, name = "Pantalla de Onboarding")
+@Preview(showBackground = true, showSystemUi = true, name = "Onboarding - Default")
 @Composable
-fun OnboardingPreview() {
-    Scaffold(
-        containerColor = BackgroundGray
-    ) { paddingValues ->
-        OnboardingScreenContent(
-            onLoginClick = {},
-            onRegisterClick = {},
-            modifier = Modifier.padding(paddingValues)
-        )
+private fun OnboardingPreview() {
+    KipuCodeTheme {
+        Scaffold(
+            containerColor = BackgroundGray
+        ) { paddingValues ->
+            OnboardingScreenContent(
+                onLoginClick = {},
+                onRegisterClick = {},
+                modifier = Modifier.padding(paddingValues)
+            )
+        }
     }
 }

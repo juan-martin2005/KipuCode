@@ -32,19 +32,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kipucode.R
 import com.kipucode.ui.components.text_field.KipucodeText
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.kipucode.ui.theme.BackgroundGray
+import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.Nunito
 import com.kipucode.ui.theme.White
-import com.kipucode.ui.screens.auth.AuthViewModel
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun SplashScreen(
-    authViewModel: AuthViewModel,
-    onSplashFinished: (isUserLogged: Boolean) -> Unit
+    onSplashFinished: (isUserLogged: Boolean) -> Unit,
+    splashViewModel: SplashViewModel = hiltViewModel()
 ){
     val animationState = remember { Animatable(0f) }
 
@@ -55,7 +56,7 @@ fun SplashScreen(
         )
         delay(800.milliseconds)
 
-        val isLogged = authViewModel.isUserLoggedIn()
+        val isLogged = splashViewModel.isUserLoggedIn()
         onSplashFinished(isLogged)
     }
 
@@ -136,8 +137,10 @@ fun SplashContent(
 }
 
 // --- PREVIEW ---
-@Preview(showBackground = true, name = "Splash Inicial")
+@Preview(showBackground = true, name = "Splash - Default", showSystemUi = true)
 @Composable
-fun SplashScreenPreview() {
-    SplashContent(animationScale = 1f)
+private fun SplashScreenPreview() {
+    KipuCodeTheme {
+        SplashContent(animationScale = 1f)
+    }
 }

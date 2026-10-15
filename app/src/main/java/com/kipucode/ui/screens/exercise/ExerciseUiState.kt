@@ -28,7 +28,7 @@ data class ExerciseUiState(
     val placedBlocks: Map<Int, BlockOptionDomain> = emptyMap(),
     val availableBlocks: List<BlockOptionDomain> = emptyList(),
     val isBlockEvaluated: Boolean = false,
-    val completeState: Response<Unit>? = null
+    val completeState: Response<Int>? = null
 ) {
     val currentExercise: ExerciseDomain?
         get() = exercises.getOrNull(currentIndex)

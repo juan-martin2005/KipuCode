@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import com.kipucode.R
 import com.kipucode.ui.theme.Gray
 import com.kipucode.ui.theme.Green
+import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.MoonFrost
 import com.kipucode.ui.theme.Nunito
@@ -189,19 +190,21 @@ private fun DayStreakItem(day: DayStreakUI) {
 
 @Preview(showBackground = true, backgroundColor = 0xFFF3F7FA, name = "WeeklyStreak")
 @Composable
-fun WeeklyStreakPreview() {
-    WeeklyStreak(
-        currentStreakDays = 6,
-        weekDays = listOf(
-            DayStreakUI("L", DayStatus.COMPLETED),
-            DayStreakUI("M", DayStatus.COMPLETED),
-            DayStreakUI("X", DayStatus.COMPLETED),
-            DayStreakUI("J", DayStatus.COMPLETED),
-            DayStreakUI("V", DayStatus.COMPLETED),
-            DayStreakUI("S", DayStatus.CURRENT),
-            DayStreakUI("D", DayStatus.PENDING)
-        ),
-        modifier = Modifier.padding(16.dp),
-        nextStreakText = "A solo 1 dia de superar la Racha"
-    )
+private fun WeeklyStreakPreview() {
+    KipuCodeTheme {
+        WeeklyStreak(
+            currentStreakDays = 6,
+            weekDays = listOf(
+                DayStreakUI("L", DayStatus.COMPLETED),
+                DayStreakUI("M", DayStatus.COMPLETED),
+                DayStreakUI("X", DayStatus.COMPLETED),
+                DayStreakUI("J", DayStatus.COMPLETED),
+                DayStreakUI("V", DayStatus.COMPLETED),
+                DayStreakUI("S", DayStatus.CURRENT),
+                DayStreakUI("D", DayStatus.PENDING)
+            ),
+            modifier = Modifier.padding(16.dp),
+            nextStreakText = "A solo 1 dia de superar la Racha"
+        )
+    }
 }

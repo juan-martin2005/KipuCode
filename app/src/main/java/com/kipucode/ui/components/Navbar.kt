@@ -28,6 +28,7 @@ import com.kipucode.ui.navigation.CodeRoute
 import com.kipucode.ui.navigation.ExploreRoute
 import com.kipucode.ui.navigation.HomeRoute
 import com.kipucode.ui.navigation.ProfileRoute
+import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuTeal
 
@@ -140,19 +141,23 @@ fun KipuTopBar(
     }
 }
 
-@Preview(showBackground = true, name = "Vista del TopBar")
+@Preview(showBackground = true, name = "TopBar - Default")
 @Composable
-fun TopBarPreview() {
-    KipuTopBar(
-        title = "Pensamiento Computacional y Entornos Base",
-        onBackClick = {}
-    )
+private fun TopBarPreview() {
+    KipuCodeTheme {
+        KipuTopBar(
+            title = "Pensamiento Computacional y Entornos Base",
+            onBackClick = {}
+        )
+    }
 }
 
-@Preview(showBackground = true, name = "Vista del Navbar")
+@Preview(showBackground = true, name = "Navbar - Default")
 @Composable
-fun NavbarPreview() {
-    val navController = rememberNavController()
-    KipuBottomBar(navController = navController)
+private fun NavbarPreview() {
+    KipuCodeTheme {
+        val navController = rememberNavController()
+        KipuBottomBar(navController = navController)
+    }
 }
 

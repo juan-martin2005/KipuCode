@@ -11,6 +11,7 @@ import androidx.compose.ui.text.style.TextAlign
 import com.kipucode.domain.model.LessonBlock
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.tooling.preview.Preview
+import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuH2
 import com.kipucode.ui.theme.KipuParagraph
 
@@ -42,14 +43,16 @@ fun LessonConceptBlock(
     }
 }
 
-@Preview(showBackground = true, name = "Lesson Concept Block Preview")
+@Preview(showBackground = true, name = "LessonConceptBlock - Default")
 @Composable
-fun LessonConceptBlockPreview() {
-    LessonConceptBlock(
-        block = LessonBlock.Concept(
-            title = "Arquitectura general de la plataforma .NET",
-            text = "La plataforma .NET se compone de tres pilares esenciales: el **CLR** (_Common Language Runtime_), que administra la memoria y ejecución; la `BCL` (_Base Class Library_), que provee tipos estándar; y el `SDK`, que incluye el compilador Roslyn y la CLI."
-        ),
-        modifier = Modifier.padding(16.dp)
-    )
+private fun LessonConceptBlockPreview() {
+    KipuCodeTheme {
+        LessonConceptBlock(
+            block = LessonBlock.Concept(
+                title = "Arquitectura general de la plataforma .NET",
+                text = "La plataforma .NET se compone de tres pilares esenciales: el **CLR** (_Common Language Runtime_), que administra la memoria y ejecución; la `BCL` (_Base Class Library_), que provee tipos estándar; y el `SDK`, que incluye el compilador Roslyn y la CLI."
+            ),
+            modifier = Modifier.padding(16.dp)
+        )
+    }
 }

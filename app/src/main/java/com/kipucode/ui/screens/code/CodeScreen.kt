@@ -31,6 +31,7 @@ import com.kipucode.ui.components.button.FilledButton
 import com.kipucode.ui.navigation.ExerciseRoute
 import com.kipucode.ui.screens.code.components.PracticeCodeSelectorContent
 import com.kipucode.ui.theme.Gray
+import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.Nunito
 
@@ -134,22 +135,24 @@ fun CodeContent(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, showSystemUi = true, name = "CodeScreen - Default")
 @Composable
-fun CodeScreenPreview() {
-    val mockNavController = rememberNavController()
-    Scaffold(
-        bottomBar = { KipuBottomBar(navController = mockNavController) },
-        containerColor = Color.White
-    ) { paddingValues ->
-        Box(modifier = Modifier.padding(paddingValues)) {
-            CodeContent(
-                selectedMethod = PracticeMethod.COMPLETE_CODE,
-                completeCodeCount = 1,
-                whatsOutputCount = 0,
-                onMethodSelected = {},
-                onStartPractice = {}
-            )
+private fun CodeScreenPreview() {
+    KipuCodeTheme {
+        val mockNavController = rememberNavController()
+        Scaffold(
+            bottomBar = { KipuBottomBar(navController = mockNavController) },
+            containerColor = Color.White
+        ) { paddingValues ->
+            Box(modifier = Modifier.padding(paddingValues)) {
+                CodeContent(
+                    selectedMethod = PracticeMethod.COMPLETE_CODE,
+                    completeCodeCount = 1,
+                    whatsOutputCount = 0,
+                    onMethodSelected = {},
+                    onStartPractice = {}
+                )
+            }
         }
     }
 }

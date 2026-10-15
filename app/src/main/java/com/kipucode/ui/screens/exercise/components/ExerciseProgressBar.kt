@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.Nunito
@@ -135,14 +136,16 @@ fun ExerciseProgressBar(
     }
 }
 
-@Preview(showBackground = true, name = "Exercise Progress Bar Preview")
+@Preview(showBackground = true, name = "ExerciseProgressBar - Default")
 @Composable
-fun ExerciseProgressBarPreview() {
-    Column(
-        modifier = Modifier.padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        ExerciseProgressBar(current = 2, total = 5)
-        ExerciseProgressBar(current = 4, total = 10, label = "Preguntas")
+private fun ExerciseProgressBarPreview() {
+    KipuCodeTheme {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            ExerciseProgressBar(current = 2, total = 5)
+            ExerciseProgressBar(current = 4, total = 10, label = "Preguntas")
+        }
     }
 }

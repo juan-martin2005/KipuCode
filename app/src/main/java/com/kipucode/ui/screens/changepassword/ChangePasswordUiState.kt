@@ -1,8 +1,8 @@
-package com.kipucode.ui.screens.password
+package com.kipucode.ui.screens.changepassword
 
 import com.kipucode.domain.model.ValidationErrorType
 
-data class PasswordUiState(
+data class ChangePasswordUiState(
     val currentStep: Int = 1, // 1: Verificar contraseña actual, 2: Nueva contraseña
     val currentPasswordError: ValidationErrorType? = null,
     val newPasswordError: ValidationErrorType? = null,

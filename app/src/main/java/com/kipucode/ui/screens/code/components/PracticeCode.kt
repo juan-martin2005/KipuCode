@@ -49,6 +49,7 @@ import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.BorderLightGray
 import com.kipucode.ui.theme.Gray
 import com.kipucode.ui.theme.Green
+import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.Nunito
@@ -439,39 +440,43 @@ fun PracticeCodeCardContent(
 @Preview(name = "1. Tarjeta Desbloqueada", showBackground = true)
 @Composable
 private fun PracticeCodeCardUnlockedPreview() {
-    PracticeCodeCardContent(
-        title = "Completar código",
-        subtitle = "Sintaxis y estructura",
-        badgeText = "Bloques interactivos",
-        description = "Arrastra y encaja bloques de código para estructurar la solución correcta.",
-        detailedDescription = "Construcción lógica por ranuras: te ayuda a interiorizar la estructura y orden de ejecución del lenguaje sin tener que lidiar con errores de tipeo en celular.",
-        iconRes = R.drawable.ic_code,
-        selected = true,
-        isLocked = false,
-        isExpanded = false,
-        onToggleExpand = {},
-        onClick = {},
-        modifier = Modifier.padding(16.dp)
-    )
+    KipuCodeTheme {
+        PracticeCodeCardContent(
+            title = "Completar código",
+            subtitle = "Sintaxis y estructura",
+            badgeText = "Bloques interactivos",
+            description = "Arrastra y encaja bloques de código para estructurar la solución correcta.",
+            detailedDescription = "Construcción lógica por ranuras: te ayuda a interiorizar la estructura y orden de ejecución del lenguaje sin tener que lidiar con errores de tipeo en celular.",
+            iconRes = R.drawable.ic_code,
+            selected = true,
+            isLocked = false,
+            isExpanded = false,
+            onToggleExpand = {},
+            onClick = {},
+            modifier = Modifier.padding(16.dp)
+        )
+    }
 }
 
 @Preview(name = "2. Tarjeta Bloqueada", showBackground = true)
 @Composable
 private fun PracticeCodeCardLockedPreview() {
-    PracticeCodeCardContent(
-        title = "¿Cuál es la salida?",
-        subtitle = "Rastreo mental",
-        badgeText = null,
-        description = "Analiza el fragmento de código e identifica qué imprime o devuelve la consola.",
-        detailedDescription = "Lectura crítica y ejecución mental: ejercitas tu mente para interpretar variables, condiciones y bucles prediciendo el resultado exacto como un compilador.",
-        iconRes = R.drawable.ic_terminal_rounded,
-        selected = false,
-        isLocked = true,
-        isExpanded = false,
-        onToggleExpand = {},
-        onClick = {},
-        modifier = Modifier.padding(16.dp)
-    )
+    KipuCodeTheme {
+        PracticeCodeCardContent(
+            title = "¿Cuál es la salida?",
+            subtitle = "Rastreo mental",
+            badgeText = null,
+            description = "Analiza el fragmento de código e identifica qué imprime o devuelve la consola.",
+            detailedDescription = "Lectura crítica y ejecución mental: ejercitas tu mente para interpretar variables, condiciones y bucles prediciendo el resultado exacto como un compilador.",
+            iconRes = R.drawable.ic_terminal_rounded,
+            selected = false,
+            isLocked = true,
+            isExpanded = false,
+            onToggleExpand = {},
+            onClick = {},
+            modifier = Modifier.padding(16.dp)
+        )
+    }
 }
 
 @Preview(name = "3. Selector Completo (1 activo, 1 bloqueado)", showBackground = true)
@@ -479,12 +484,14 @@ private fun PracticeCodeCardLockedPreview() {
 private fun PracticeCodeSelectorPreview() {
     var selected by remember { mutableStateOf(PracticeMethod.COMPLETE_CODE) }
 
-    Surface(color = BackgroundGray, modifier = Modifier.padding(16.dp)) {
-        PracticeCodeSelectorContent(
-            selectedMethod = selected,
-            completeCodeCount = 1,
-            whatsOutputCount = 0,
-            onMethodSelected = { selected = it }
-        )
+    KipuCodeTheme {
+        Surface(color = BackgroundGray, modifier = Modifier.padding(16.dp)) {
+            PracticeCodeSelectorContent(
+                selectedMethod = selected,
+                completeCodeCount = 1,
+                whatsOutputCount = 0,
+                onMethodSelected = { selected = it }
+            )
+        }
     }
 }

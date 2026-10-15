@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import com.kipucode.R
 import com.kipucode.ui.components.button.FilledButton
 import com.kipucode.ui.components.text.FormattedText
+import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuH4
 import com.kipucode.ui.theme.KipuParagraph
@@ -301,16 +302,18 @@ fun Flashcard(
     }
 }
 
-@Preview(showBackground = true, name = "Flashcard Preview")
+@Preview(showBackground = true, name = "Flashcard - Default")
 @Composable
-fun FlashcardPreview() {
-    Flashcard(
-        currentFc = 4,
-        totalFc = 15,
-        instruction = "Zen de Python: ¿Qué principio promueve `Explicit is better than implicit`?",
-        answer = "Significa que el código debe ser `claro`, `directo` y evitar **'magia'** o comportamientos ocultos.",
-        module = "Gestion de errores",
-        modifier = Modifier.padding(horizontal = 24.dp),
-        onRatingSelect = {}
-    )
+private fun FlashcardPreview() {
+    KipuCodeTheme {
+        Flashcard(
+            currentFc = 4,
+            totalFc = 15,
+            instruction = "Zen de Python: ¿Qué principio promueve `Explicit is better than implicit`?",
+            answer = "Significa que el código debe ser `claro`, `directo` y evitar **'magia'** o comportamientos ocultos.",
+            module = "Gestion de errores",
+            modifier = Modifier.padding(horizontal = 24.dp),
+            onRatingSelect = {}
+        )
+    }
 }

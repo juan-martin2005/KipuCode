@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kipucode.R
+import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuTealDark
 import com.kipucode.ui.theme.Nunito
@@ -102,20 +103,22 @@ fun UserProfileCard(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, name = "UserProfileCard - Default")
 @Composable
-fun ProfileHeaderCardPreview() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color(0xFFf6f7f9))
-            .padding(16.dp)
-    ) {
-        UserProfileCard(
-            name = "User Test Alpha",
-            email = "n00123456@upn.pe",
-            avatarId = R.drawable.avatar_002,
-            onClick = {}
-        )
+private fun ProfileHeaderCardPreview() {
+    KipuCodeTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color(0xFFf6f7f9))
+                .padding(16.dp)
+        ) {
+            UserProfileCard(
+                name = "User Test Alpha",
+                email = "n00123456@upn.pe",
+                avatarId = R.drawable.avatar_002,
+                onClick = {}
+            )
+        }
     }
 }

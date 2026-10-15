@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kipucode.R
+import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.Nunito
@@ -143,10 +144,12 @@ fun RepetitionSchedule(
 
 @Preview(showBackground = true, backgroundColor = 0xFFF3F7FA, name = "RepetitionSchedule")
 @Composable
-fun RepetitionSchedulePreview() {
-    RepetitionSchedule(
-        memoryRetentionPct = 0,
-        nextReviewText = "En 3 días",
-        modifier = Modifier.padding(16.dp)
-    )
+private fun RepetitionSchedulePreview() {
+    KipuCodeTheme {
+        RepetitionSchedule(
+            memoryRetentionPct = 75,
+            nextReviewText = "En 3 días",
+            modifier = Modifier.padding(16.dp)
+        )
+    }
 }

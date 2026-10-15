@@ -25,6 +25,7 @@ import com.kipucode.ui.screens.summary.components.FinalSummary
 import com.kipucode.ui.screens.summary.components.RepetitionSchedule
 import com.kipucode.ui.screens.summary.components.WeeklyStreak
 import com.kipucode.ui.theme.BackgroundGray
+import com.kipucode.ui.theme.KipuCodeTheme
 
 // --- SCREEN (Stateful / Hilt) ---
 @Composable
@@ -124,32 +125,34 @@ fun SummaryScreenContent(
 }
 
 // --- PREVIEW ---
-@Preview(showBackground = true, name = "Summary Screen Preview", heightDp = 1000)
+@Preview(showBackground = true, name = "Summary Screen - Default", showSystemUi = true, heightDp = 1000)
 @Composable
-fun SummaryScreenContentPreview() {
-    SummaryScreenContent(
-        uiState = SummaryUiState(
-            xpEarned = 180,
-            accuracy = 0.80f,
-            correctCount = 8,
-            reinforceCount = 2,
-            timeFormatted = "1m 45s",
-            summaryMessage = "¡Compiló con éxito!",
-            memoryRetentionPct = 85,
-            nextReviewText = "En 3 días",
-            currentStreakDays = 6,
-            weekDays = listOf(
-                DayStreakUI("L", DayStatus.COMPLETED),
-                DayStreakUI("M", DayStatus.COMPLETED),
-                DayStreakUI("X", DayStatus.COMPLETED),
-                DayStreakUI("J", DayStatus.COMPLETED),
-                DayStreakUI("V", DayStatus.COMPLETED),
-                DayStreakUI("S", DayStatus.CURRENT),
-                DayStreakUI("D", DayStatus.PENDING)
+private fun SummaryScreenContentPreview() {
+    KipuCodeTheme {
+        SummaryScreenContent(
+            uiState = SummaryUiState(
+                xpEarned = 180,
+                accuracy = 0.80f,
+                correctCount = 8,
+                reinforceCount = 2,
+                timeFormatted = "1m 45s",
+                summaryMessage = "¡Compiló con éxito!",
+                memoryRetentionPct = 85,
+                nextReviewText = "En 3 días",
+                currentStreakDays = 6,
+                weekDays = listOf(
+                    DayStreakUI("L", DayStatus.COMPLETED),
+                    DayStreakUI("M", DayStatus.COMPLETED),
+                    DayStreakUI("X", DayStatus.COMPLETED),
+                    DayStreakUI("J", DayStatus.COMPLETED),
+                    DayStreakUI("V", DayStatus.COMPLETED),
+                    DayStreakUI("S", DayStatus.CURRENT),
+                    DayStreakUI("D", DayStatus.PENDING)
+                ),
+                nextStreakText = "¡A solo 1 día de alcanzar tu objetivo semanal!"
             ),
-            nextStreakText = "¡A solo 1 día de alcanzar tu objetivo semanal!"
-        ),
-        onClickResetFilledButton = {},
-        onClickFilledButton = {}
-    )
+            onClickResetFilledButton = {},
+            onClickFilledButton = {}
+        )
+    }
 }

@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import com.kipucode.R
 import com.kipucode.ui.theme.BorderLightGray
 import com.kipucode.ui.theme.JetBrains
+import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.MoonFrost
@@ -150,20 +151,22 @@ fun CodeMarkdown(
     }
 }
 
-@Preview(showBackground = true, name = "Code Terminal Preview")
+@Preview(showBackground = true, name = "CodeMarkdown - Variants")
 @Composable
-fun CodeMarkdownPreview() {
-    Column(
-        modifier = Modifier.padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        CodeMarkdown(
-            code = "dotnet new console -n HolaMundo\ncd HolaMundo\ndotnet run",
-            language = "terminal"
-        )
-        CodeMarkdown(
-            code = "using System;\n\nConsole.WriteLine(\"¡Hola desde C#!\");",
-            language = "c#"
-        )
+private fun CodeMarkdownPreview() {
+    KipuCodeTheme {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            CodeMarkdown(
+                code = "dotnet new console -n HolaMundo\ncd HolaMundo\ndotnet run",
+                language = "terminal"
+            )
+            CodeMarkdown(
+                code = "using System;\n\nConsole.WriteLine(\"¡Hola desde C#!\");",
+                language = "c#"
+            )
+        }
     }
 }

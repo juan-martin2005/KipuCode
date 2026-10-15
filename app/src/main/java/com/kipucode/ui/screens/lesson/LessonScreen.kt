@@ -18,6 +18,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,7 +37,12 @@ import com.kipucode.ui.screens.lesson.components.LessonHeaderBlock
 import com.kipucode.ui.screens.lesson.components.LessonSummaryBlock
 import com.kipucode.ui.screens.lesson.components.PracticeMethodSelector
 import com.kipucode.ui.theme.BackgroundGray
+import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuTeal
+
+import androidx.compose.material3.Text
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.graphics.Color
 
 @Composable
 fun LessonScreen(
@@ -63,29 +69,63 @@ fun LessonScreen(
                 .background(BackgroundGray)
                 .padding(paddingValues)
         ) {
-            if (!uiState.isLoading && currentLesson != null) {
-                LessonContent(
-                    title = "Volver al Inicio",
-                    blocks = currentLesson.blocks,
-                    availableMethods = uiState.availableMethods,
-                    onClickBack = onBack,
-                    onStartPractice = { selectedMethod ->
-                        onNavigateToExercises(currentLesson.id, selectedMethod.name)
+            when {
+                uiState.isLoading -> {
+                    KipuTopBar(
+                        title = "Volver al Inicio",
+                        onBackClick = onBack,
+                        modifier = Modifier.padding(top = 16.dp)
+                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .weight(1f),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator(color = KipuTeal)
                     }
-                )
-            } else {
-                KipuTopBar(
-                    title = "Volver al Inicio",
-                    onBackClick = onBack,
-                    modifier = Modifier.padding(top = 16.dp)
-                )
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .weight(1f),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(color = KipuTeal)
+                }
+                currentLesson != null -> {
+                    LessonContent(
+                        title = "Volver al Inicio",
+                        blocks = currentLesson.blocks,
+                        availableMethods = uiState.availableMethods,
+                        selectedMethod = uiState.selectedMethod ?: uiState.availableMethods.firstOrNull() ?: PracticeMethod.DEFAULT_FLASHCARDS,
+                        onMethodSelected = { lessonViewModel.selectMethod(it) },
+                        onClickBack = onBack,
+                        onStartPractice = { selectedMethod ->
+                            onNavigateToExercises(currentLesson.id, selectedMethod.name)
+                        }
+                    )
+                }
+                else -> {
+                    KipuTopBar(
+                        title = "Volver al Inicio",
+                        onBackClick = onBack,
+                        modifier = Modifier.padding(top = 16.dp)
+                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .weight(1f)
+                            .padding(24.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            Text(
+                                text = uiState.errorMessage ?: "No se pudo encontrar la lección solicitada.",
+                                color = Color.White,
+                                textAlign = TextAlign.Center
+                            )
+                            FilledButton(
+                                textButton = "Regresar",
+                                onClickFilledButton = onBack
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -97,20 +137,12 @@ fun LessonContent(
     title: String,
     blocks: List<LessonBlock>,
     availableMethods: List<PracticeMethod>,
+    selectedMethod: PracticeMethod = availableMethods.firstOrNull() ?: PracticeMethod.DEFAULT_FLASHCARDS,
+    onMethodSelected: (PracticeMethod) -> Unit = {},
     onClickBack: () -> Unit,
     onStartPractice: (PracticeMethod) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var selectedMethod by remember(availableMethods) {
-        mutableStateOf(
-            if (availableMethods.contains(PracticeMethod.DEFAULT_FLASHCARDS)) {
-                PracticeMethod.DEFAULT_FLASHCARDS
-            } else {
-                availableMethods.firstOrNull() ?: PracticeMethod.UNIQUE_CHOICE
-            }
-        )
-    }
-
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(bottom = 24.dp),
@@ -141,7 +173,7 @@ fun LessonContent(
                 PracticeMethodSelector(
                     availableMethods = availableMethods,
                     selectedMethod = selectedMethod,
-                    onMethodSelected = { selectedMethod = it },
+                    onMethodSelected = onMethodSelected,
                     modifier = Modifier.padding(horizontal = 16.dp)
                 )
             }
@@ -168,33 +200,35 @@ fun LessonContent(
     }
 }
 
-@Preview(showBackground = true, name = "Lesson Content Preview")
+@Preview(showBackground = true, showSystemUi = true, name = "LessonScreen - Default")
 @Composable
-fun LessonContentPreview() {
-    val mockBlocks = listOf(
-        LessonBlock.Summary(
-            items = listOf(
-                ".NET divide su arquitectura en **CLR**, **BCL** y herramientas **SDK**.",
-                "El **.NET Runtime** ejecuta programas existentes."
+private fun LessonContentPreview() {
+    KipuCodeTheme {
+        val mockBlocks = listOf(
+            LessonBlock.Summary(
+                items = listOf(
+                    ".NET divide su arquitectura en **CLR**, **BCL** y herramientas **SDK**.",
+                    "El **.NET Runtime** ejecuta programas existentes."
+                )
             )
         )
-    )
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(BackgroundGray)
-    ) {
-        LessonContent(
-            title = "1. Introducción a Variables",
-            blocks = mockBlocks,
-            availableMethods = listOf(
-                PracticeMethod.UNIQUE_CHOICE,
-                PracticeMethod.DEFAULT_FLASHCARDS,
-                PracticeMethod.FEYNMAN_FLASHCARDS
-            ),
-            onClickBack = {},
-            onStartPractice = {}
-        )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(BackgroundGray)
+        ) {
+            LessonContent(
+                title = "1. Introducción a Variables",
+                blocks = mockBlocks,
+                availableMethods = listOf(
+                    PracticeMethod.UNIQUE_CHOICE,
+                    PracticeMethod.DEFAULT_FLASHCARDS,
+                    PracticeMethod.FEYNMAN_FLASHCARDS
+                ),
+                onClickBack = {},
+                onStartPractice = {}
+            )
+        }
     }
 }

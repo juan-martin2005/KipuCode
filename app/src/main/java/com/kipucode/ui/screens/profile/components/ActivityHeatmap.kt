@@ -462,12 +462,35 @@ private fun generateWeeksForYear(year: Int): List<HeatmapWeek> {
 // ============================================================================================
 //  PREVIEWS
 // ============================================================================================
-@Preview(showBackground = true, backgroundColor = 0xFFF5F7FA, name = "Heatmap")
+@Preview(showBackground = true, backgroundColor = 0xFFF5F7FA, name = "Heatmap - Empty Card")
 @Composable
 private fun ActivityHeatmapCardEmptyPreview() {
-    Box(modifier = Modifier.padding(16.dp)) {
-        ActivityHeatmapCard(
-            heatmapData = HeatmapUiData()
-        )
+    KipuCodeTheme {
+        Box(modifier = Modifier.padding(16.dp)) {
+            ActivityHeatmapCard(
+                heatmapData = HeatmapUiData()
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, backgroundColor = 0xFFF5F7FA, name = "Heatmap - Day Detail Card")
+@Composable
+private fun DayDetailCardPreview() {
+    KipuCodeTheme {
+        Box(modifier = Modifier.padding(16.dp)) {
+            DayDetailCard(
+                date = LocalDate.now(),
+                activity = DailyActivityDomain(
+                    date = LocalDate.now().toString(),
+                    year = LocalDate.now().year,
+                    exercisesCount = 12,
+                    correctCount = 10,
+                    incorrectCount = 2,
+                    xpEarned = 150,
+                    lessonsCount = 2
+                )
+            )
+        }
     }
 }

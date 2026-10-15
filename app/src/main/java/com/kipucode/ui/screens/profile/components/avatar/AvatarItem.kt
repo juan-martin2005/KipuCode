@@ -4,7 +4,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -22,6 +24,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.kipucode.R
 import com.kipucode.domain.model.Avatar
+import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuTeal
 
 @Composable
@@ -65,14 +68,26 @@ fun AvatarItem(
     }
 }
 
-//@Preview(showBackground = true)
-//@Composable
-//fun PreviewAvatarItem() {
-//    AvatarItem(
-//        avatar = AvatarProvider.defaultAvatar,
-//        selected = true,
-//        onClick = {}
-//    )
-//}
+@Preview(name = "AvatarItem - States", showBackground = true)
+@Composable
+private fun AvatarItemPreview() {
+    KipuCodeTheme {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            AvatarItem(
+                avatar = AvatarProvider.avatars.first(),
+                selected = true,
+                onClick = {}
+            )
+            AvatarItem(
+                avatar = AvatarProvider.avatars.getOrElse(1) { AvatarProvider.avatars.first() },
+                selected = false,
+                onClick = {}
+            )
+        }
+    }
+}
 
 

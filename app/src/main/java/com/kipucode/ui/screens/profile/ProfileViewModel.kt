@@ -6,6 +6,7 @@ import com.kipucode.domain.model.Response
 import com.kipucode.domain.usecase.activity.CalculateProfileHeatmapUseCase
 import com.kipucode.domain.usecase.activity.GetActivityCalendarUseCase
 import com.kipucode.domain.usecase.activity.RefreshActivityCalendarUseCase
+import com.kipucode.domain.usecase.auth.LogoutUseCase
 import com.kipucode.domain.usecase.user.GetUserProfileUseCase
 import com.kipucode.domain.usecase.user.RefreshUserProfileUseCase
 import com.kipucode.domain.usecase.user.UpdateUserAvatarUseCase
@@ -25,7 +26,8 @@ class ProfileViewModel @Inject constructor(
     private val calculateProfileHeatmapUseCase: CalculateProfileHeatmapUseCase,
     private val updateUserAvatarUseCase: UpdateUserAvatarUseCase,
     private val refreshUserProfileUseCase: RefreshUserProfileUseCase,
-    private val refreshActivityCalendarUseCase: RefreshActivityCalendarUseCase
+    private val refreshActivityCalendarUseCase: RefreshActivityCalendarUseCase,
+    private val logoutUseCase: LogoutUseCase
 ) : ViewModel() {
 
     private val _isRefreshing = MutableStateFlow(false)
@@ -92,5 +94,12 @@ class ProfileViewModel @Inject constructor(
 
     fun resetAvatarSuccess() {
         _updateAvatarSuccess.value = false
+    }
+
+    fun logout(onSuccess: () -> Unit) {
+        viewModelScope.launch {
+            logoutUseCase()
+            onSuccess()
+        }
     }
 }

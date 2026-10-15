@@ -18,6 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.kipucode.R
 import com.kipucode.domain.model.LessonBlock
+import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuH1
 import com.kipucode.ui.theme.KipuH5
 import com.kipucode.ui.theme.KipuParagraph
@@ -81,14 +82,16 @@ fun LessonHeaderBlock(
     }
 }
 
-@Preview(showBackground = true, name = "Lesson Header Block Preview")
+@Preview(showBackground = true, name = "LessonHeaderBlock - Default")
 @Composable
-fun LessonHeaderBlockPreview() {
-    LessonHeaderBlock(
-        block = LessonBlock.Header(
-            title = "01 - Introducción a la Plataforma .NET",
-            objective = "Comprender la **arquitectura general** de .NET, los pilares esenciales (`CLR`, `BCL`, `SDK`) y la diferencia práctica entre el **SDK** y el **Runtime**."
-        ),
-        modifier = Modifier.padding(16.dp)
-    )
+private fun LessonHeaderBlockPreview() {
+    KipuCodeTheme {
+        LessonHeaderBlock(
+            block = LessonBlock.Header(
+                title = "01 - Introducción a la Plataforma .NET",
+                objective = "Comprender la **arquitectura general** de .NET, los pilares esenciales (`CLR`, `BCL`, `SDK`) y la diferencia práctica entre el **SDK** y el **Runtime**."
+            ),
+            modifier = Modifier.padding(16.dp)
+        )
+    }
 }

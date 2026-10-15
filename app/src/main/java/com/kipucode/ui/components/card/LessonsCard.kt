@@ -106,33 +106,35 @@ fun LessonCard(
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFF5F7FA)
+@Preview(showBackground = true, backgroundColor = 0xFFF5F7FA, name = "LessonCard - States")
 @Composable
-fun LessonCardPreview() {
-    Column(
-        modifier = Modifier.padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        LessonCard(
-            lessonId = "",
-            title = "Pensamiento Computacional y Lenguajes Formales",
-            isCompleted = true,
-            isLocked = false,
-            onLessonClick = {}
-        )
-        LessonCard(
-            lessonId = "",
-            title = "El Intérprete de Python y tu Primer Script",
-            isCompleted = true,
-            isLocked = false,
-            onLessonClick = {}
-        )
-        LessonCard(
-            lessonId = "",
-            title = "Tipos de Datos Fundamentales",
-            isCompleted = false,
-            isLocked = true,
-            onLessonClick = {}
-        )
+private fun LessonCardPreview() {
+    KipuCodeTheme {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            LessonCard(
+                lessonId = "",
+                title = "Pensamiento Computacional y Lenguajes Formales",
+                isCompleted = true,
+                isLocked = false,
+                onLessonClick = {}
+            )
+            LessonCard(
+                lessonId = "",
+                title = "El Intérprete de Python y tu Primer Script",
+                isCompleted = true,
+                isLocked = false,
+                onLessonClick = {}
+            )
+            LessonCard(
+                lessonId = "",
+                title = "Tipos de Datos Fundamentales",
+                isCompleted = false,
+                isLocked = true,
+                onLessonClick = {}
+            )
+        }
     }
 }

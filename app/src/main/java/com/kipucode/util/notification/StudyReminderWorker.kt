@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.google.firebase.auth.FirebaseAuth
+import com.kipucode.data.local.dao.DailyActivityDao
 import com.kipucode.data.local.dao.ExerciseAttemptDao
 import com.kipucode.data.local.dao.LearningProgressDao
 import dagger.hilt.EntryPoint
@@ -34,6 +35,7 @@ class StudyReminderWorker(
     interface StudyReminderEntryPoint {
         fun learningProgressDao(): LearningProgressDao
         fun exerciseAttemptDao(): ExerciseAttemptDao
+        fun dailyActivityDao(): DailyActivityDao
         fun auth(): FirebaseAuth
     }
 
@@ -80,10 +82,9 @@ class StudyReminderWorker(
                 )
                 notificationSent = true
             } else {
-                // Caso 2: Verificar si ha hecho algún intento hoy
-                val startOfDay = getStartOfDayMillis()
-                val attempts = entryPoint.exerciseAttemptDao().getAllAttemptsForUser(currentUserId)
-                val hasPracticedToday = attempts.any { it.lastAttemptAt >= startOfDay }
+                // Caso 2: Verificar si ha hecho alguna actividad hoy
+                val todayActivity = entryPoint.dailyActivityDao().getActivityForDate(currentUserId, todayStr)
+                val hasPracticedToday = (todayActivity?.exercisesCount ?: 0) > 0
 
                 if (!hasPracticedToday) {
                     // No ha practicado hoy: Notificación motivacional

@@ -5,25 +5,29 @@ import androidx.lifecycle.viewModelScope
 import com.kipucode.domain.model.BlockOptionDomain
 import com.kipucode.domain.model.ExerciseDomain
 import com.kipucode.domain.model.Response
-import com.kipucode.domain.repository.ExerciseAttemptRepository
 import com.kipucode.domain.usecase.activity.RecordDailyActivityUseCase
 import com.kipucode.domain.usecase.exercise.CalculateExerciseSessionSummaryUseCase
 import com.kipucode.domain.usecase.exercise.EvaluateBlockCompletionUseCase
+import com.kipucode.domain.usecase.exercise.EvaluateFlashCardUseCase
 import com.kipucode.domain.usecase.exercise.EvaluateUniqueChoiceUseCase
+import com.kipucode.domain.usecase.exercise.GetAllExerciseAttemptsUseCase
+import com.kipucode.domain.usecase.exercise.GetCompletedExerciseIdsUseCase
 import com.kipucode.domain.usecase.exercise.GetExercisesByLessonUseCase
 import com.kipucode.domain.usecase.exercise.GetExercisesForPracticePoolUseCase
 import com.kipucode.domain.usecase.exercise.PrioritizeExerciseSessionUseCase
+import com.kipucode.domain.usecase.exercise.RecordExerciseAttemptUseCase
 import com.kipucode.domain.usecase.learning.GetAllLearningProgressUseCase
 import com.kipucode.domain.usecase.learning.GetDueExercisesUseCase
 import com.kipucode.domain.usecase.learning.RecordRatingAttemptUseCase
-import com.kipucode.domain.usecase.learning.SyncLearningProgressUseCase
 import com.kipucode.domain.usecase.lesson.CompleteLessonUseCase
 import com.kipucode.domain.usecase.lesson.GetLessonByCourseUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -36,12 +40,14 @@ class ExerciseViewModel @Inject constructor(
     private val getDueExercisesUseCase: GetDueExercisesUseCase,
     private val completeLessonUseCase: CompleteLessonUseCase,
     private val recordRatingAttemptUseCase: RecordRatingAttemptUseCase,
-    private val syncLearningProgressUseCase: SyncLearningProgressUseCase,
     private val recordDailyActivityUseCase: RecordDailyActivityUseCase,
-    private val exerciseAttemptRepository: ExerciseAttemptRepository,
+    private val recordExerciseAttemptUseCase: RecordExerciseAttemptUseCase,
+    private val getCompletedExerciseIdsUseCase: GetCompletedExerciseIdsUseCase,
+    private val getAllExerciseAttemptsUseCase: GetAllExerciseAttemptsUseCase,
     private val getAllLearningProgressUseCase: GetAllLearningProgressUseCase,
     private val evaluateUniqueChoiceUseCase: EvaluateUniqueChoiceUseCase,
     private val evaluateBlockCompletionUseCase: EvaluateBlockCompletionUseCase,
+    private val evaluateFlashCardUseCase: EvaluateFlashCardUseCase,
     private val calculateExerciseSessionSummaryUseCase: CalculateExerciseSessionSummaryUseCase,
     private val prioritizeExerciseSessionUseCase: PrioritizeExerciseSessionUseCase
 ) : ViewModel() {
@@ -57,14 +63,19 @@ class ExerciseViewModel @Inject constructor(
     private val incorrectExerciseIds = mutableSetOf<String>()
     private var sessionStartTime: Long = 0L
     private var currentLessonId: String = ""
+    private var effectiveSessionXp: Int? = null
+    private var isRatingCard: Boolean = false
+    private var loadJob: Job? = null
+    private var lessonNameJob: Job? = null
 
     fun loadExercises(lessonId: String, type: String? = null, onlyDue: Boolean = false) {
         currentLessonId = lessonId
         sessionStartTime = System.currentTimeMillis()
         _uiState.update { it.copy(isLoading = true) }
 
+        lessonNameJob?.cancel()
         if (lessonId.isNotEmpty()) {
-            viewModelScope.launch {
+            lessonNameJob = viewModelScope.launch {
                 getLessonUseCase(lessonId).collect { lesson ->
                     _uiState.update { it.copy(lessonName = lesson?.title.orEmpty()) }
                 }
@@ -79,21 +90,21 @@ class ExerciseViewModel @Inject constructor(
             getExercisesForPracticePoolUseCase()
         }
 
-        viewModelScope.launch {
-            combine(
-                exercisesFlow,
-                getAllLearningProgressUseCase()
-            ) { exercises, allProgress ->
+        loadJob?.cancel()
+        loadJob = viewModelScope.launch {
+            try {
+                val exercises = exercisesFlow.first()
+                val allProgress = getAllLearningProgressUseCase().first()
                 val completedIds = if (lessonId.isNotEmpty()) {
-                    exerciseAttemptRepository.getCompletedExerciseIdsForLesson(lessonId).toSet()
+                    getCompletedExerciseIdsUseCase(lessonId).toSet()
                 } else {
-                    exerciseAttemptRepository.getAllAttemptsForUser()
+                    getAllExerciseAttemptsUseCase()
                         .filter { it.isCompleted }
                         .map { it.exerciseId }
                         .toSet()
                 }
 
-                prioritizeExerciseSessionUseCase(
+                val selectedList = prioritizeExerciseSessionUseCase(
                     exercises = exercises,
                     type = type,
                     onlyDue = onlyDue,
@@ -101,10 +112,10 @@ class ExerciseViewModel @Inject constructor(
                     completedExerciseIds = completedIds,
                     limit = EXERCISES_PER_SESSION
                 )
-            }.collect { selectedList ->
-                if (_uiState.value.exercises.isEmpty() && selectedList.isNotEmpty()) {
-                    _uiState.update { it.copy(isLoading = false, exercises = selectedList) }
-                }
+
+                _uiState.update { it.copy(isLoading = false, exercises = selectedList) }
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isLoading = false) }
             }
         }
     }
@@ -118,7 +129,7 @@ class ExerciseViewModel @Inject constructor(
             startTimeMillis = sessionStartTime
         )
         return ExerciseSessionData(
-            xpEarned = summary.xpEarned,
+            xpEarned = effectiveSessionXp ?: summary.xpEarned,
             correctCount = summary.correctCount,
             totalCount = summary.totalCount,
             timeSeconds = summary.timeSeconds
@@ -126,27 +137,28 @@ class ExerciseViewModel @Inject constructor(
     }
 
     fun submitAnswer(option: BlockOptionDomain) {
-        val currentExercise = _uiState.value.currentExercise
-        val baseExerciseXp = currentExercise?.xp ?: 0
+        if (_uiState.value.selectedOptionId != null) return
+        val currentExercise = _uiState.value.currentExercise ?: return
+        if (correctExerciseIds.contains(currentExercise.id) || incorrectExerciseIds.contains(currentExercise.id)) return
+
+        val baseExerciseXp = currentExercise.xp
 
         val evaluation = evaluateUniqueChoiceUseCase(baseExerciseXp, option.isCorrect)
 
-        currentExercise?.let { ex ->
-            earnedXpByExercise[ex.id] = evaluation.earnedXp
-            if (evaluation.isCorrect) {
-                correctExerciseIds.add(ex.id)
-            } else {
-                incorrectExerciseIds.add(ex.id)
-            }
+        earnedXpByExercise[currentExercise.id] = evaluation.earnedXp
+        if (evaluation.isCorrect) {
+            correctExerciseIds.add(currentExercise.id)
+        } else {
+            incorrectExerciseIds.add(currentExercise.id)
+        }
 
-            viewModelScope.launch {
-                exerciseAttemptRepository.recordAttempt(
-                    exerciseId = ex.id,
-                    lessonId = currentLessonId,
-                    exerciseType = ex.type,
-                    isCorrect = evaluation.isCorrect
-                )
-            }
+        viewModelScope.launch {
+            recordExerciseAttemptUseCase(
+                exerciseId = currentExercise.id,
+                lessonId = currentLessonId,
+                exerciseType = currentExercise.type,
+                isCorrect = evaluation.isCorrect
+            )
         }
 
         val explanation = AnswerExplanation(
@@ -224,7 +236,7 @@ class ExerciseViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            exerciseAttemptRepository.recordAttempt(
+            recordExerciseAttemptUseCase(
                 exerciseId = currentExercise.id,
                 lessonId = currentLessonId,
                 exerciseType = currentExercise.type,
@@ -262,6 +274,7 @@ class ExerciseViewModel @Inject constructor(
     }
 
     fun finishLessonExercises(lessonId: String) {
+        if (_uiState.value.completeState is Response.Loading || _uiState.value.completeState is Response.Success) return
         viewModelScope.launch {
             _uiState.update { it.copy(completeState = Response.Loading) }
             val totalXpEarned = earnedXpByExercise.values.sum()
@@ -270,27 +283,28 @@ class ExerciseViewModel @Inject constructor(
             val exercisesCompleted = _uiState.value.exercises.size.coerceAtLeast(correctCount + incorrectCount)
             val lessonsCompleted = if (lessonId.isNotEmpty()) 1 else 0
 
-            val result = if (lessonId.isNotEmpty()) {
-                completeLessonUseCase(lessonId, totalXpEarned)
-            } else {
-                Response.Success(Unit)
+            val result = completeLessonUseCase(lessonId, totalXpEarned)
+
+            if (result is Response.Success) {
+                effectiveSessionXp = totalXpEarned
+                // Registro de actividad diaria y sincronización consolidada
+                recordDailyActivityUseCase(
+                    exercisesDelta = exercisesCompleted,
+                    correctDelta = correctCount,
+                    incorrectDelta = incorrectCount,
+                    xpDelta = totalXpEarned,
+                    lessonsDelta = lessonsCompleted
+                )
             }
 
-            // Registro de actividad diaria y sincronización consolidada
-            recordDailyActivityUseCase(
-                exercisesDelta = exercisesCompleted,
-                correctDelta = correctCount,
-                incorrectDelta = incorrectCount,
-                xpDelta = totalXpEarned,
-                lessonsDelta = lessonsCompleted
-            )
-
             _uiState.update { it.copy(completeState = result) }
+            isRatingCard = false
         }
     }
 
     // Avanza al siguiente ejercicio en la lista
     fun nextExercise() {
+        isRatingCard = false
         _uiState.update {
             val nextIndex = if (it.currentIndex < it.exercises.size - 1) it.currentIndex + 1 else it.currentIndex
             it.copy(
@@ -306,15 +320,12 @@ class ExerciseViewModel @Inject constructor(
 
     // Flash Card Exercise
     fun rateFlashCard(ratingValue: Int, lessonId: String) {
+        if (isRatingCard) return
         val currentExercise = _uiState.value.currentExercise ?: return
+        isRatingCard = true
 
-        val baseExerciseXp = currentExercise.xp
-        val earnedXp = when (ratingValue) {
-            4 -> baseExerciseXp
-            3 -> baseExerciseXp
-            2 -> (baseExerciseXp * 0.75).toInt()
-            else -> baseExerciseXp / 2
-        }
+        val evaluation = evaluateFlashCardUseCase(currentExercise.xp, ratingValue)
+        val earnedXp = evaluation.earnedXp
         earnedXpByExercise[currentExercise.id] = earnedXp
 
         if (ratingValue >= 3) {
@@ -333,7 +344,7 @@ class ExerciseViewModel @Inject constructor(
             )
 
             // Registrar en historial de intentos (exercise_attempts)
-            exerciseAttemptRepository.recordAttempt(
+            recordExerciseAttemptUseCase(
                 exerciseId = currentExercise.id,
                 lessonId = lessonId,
                 exerciseType = currentExercise.type,
@@ -357,6 +368,8 @@ class ExerciseViewModel @Inject constructor(
         earnedXpByExercise.clear()
         incorrectExerciseIds.clear()
         sessionStartTime = 0L
+        effectiveSessionXp = null
+        isRatingCard = false
     }
 
     fun resetCompleteState() {

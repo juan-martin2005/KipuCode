@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import com.kipucode.R
 import com.kipucode.domain.model.LessonBlock
 import com.kipucode.ui.theme.BorderLightGray
+import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuH4
 import com.kipucode.ui.theme.KipuParagraph
@@ -180,24 +181,28 @@ private val sampleCue = LessonBlock.Cue(
     answer = "El `SDK` contiene los compiladores y herramientas para programar y compilar. El `Runtime` (`CLR` + `BCL`) es el paquete mínimo necesario únicamente para ejecutar binarios ya creados."
 )
 
-@Preview(name = "1. Colapsado (Oculto)", showBackground = true)
+@Preview(name = "LessonCueBlock - Collapsed", showBackground = true)
 @Composable
-fun LessonCueBlockCollapsedPreview() {
-    LessonCueBlockContent(
-        block = sampleCue,
-        isAnswerVisible = false,
-        onToggleVisibility = {},
-        modifier = Modifier.padding(16.dp)
-    )
+private fun LessonCueBlockCollapsedPreview() {
+    KipuCodeTheme {
+        LessonCueBlockContent(
+            block = sampleCue,
+            isAnswerVisible = false,
+            onToggleVisibility = {},
+            modifier = Modifier.padding(16.dp)
+        )
+    }
 }
 
-@Preview(name = "2. Desplegado (Visible)", showBackground = true)
+@Preview(name = "LessonCueBlock - Expanded", showBackground = true)
 @Composable
-fun LessonCueBlockExpandedPreview() {
-    LessonCueBlockContent(
-        block = sampleCue,
-        isAnswerVisible = true,
-        onToggleVisibility = {},
-        modifier = Modifier.padding(16.dp)
-    )
+private fun LessonCueBlockExpandedPreview() {
+    KipuCodeTheme {
+        LessonCueBlockContent(
+            block = sampleCue,
+            isAnswerVisible = true,
+            onToggleVisibility = {},
+            modifier = Modifier.padding(16.dp)
+        )
+    }
 }

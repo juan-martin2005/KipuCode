@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kipucode.R
 import com.kipucode.ui.theme.BorderLightGray
+import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.Nunito
 import com.kipucode.ui.theme.Red
@@ -119,34 +120,36 @@ fun MultipleChoicesCard(
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFFF3F4F6)
+@Preview(showBackground = true, backgroundColor = 0xFFF3F4F6, name = "MultipleChoicesCard - Menu Items")
 @Composable
-fun ProfileMenuCardPreview() {
-    Column(
-        modifier = Modifier.padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(0.dp)
-    ) {
-        MultipleChoicesCard(
-            text = "Feedback",
-            iconRes = R.drawable.ic_feedback,
-            isFirst = true,
-            onClick = {}
-        )
+private fun ProfileMenuCardPreview() {
+    KipuCodeTheme {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(0.dp)
+        ) {
+            MultipleChoicesCard(
+                text = "Feedback",
+                iconRes = R.drawable.ic_feedback,
+                isFirst = true,
+                onClick = {}
+            )
 
-        MultipleChoicesCard(
-            text = "Cerrar sesión",
-            iconRes = R.drawable.ic_exit,
-            isRed = true,
-            disableArrow = true,
-            isMiddle = true,
-            onClick = {}
-        )
-        MultipleChoicesCard(
-            text = "Utiliza en Python para mostrar texto ",
-            orderIndex = 3,
-            disableArrow = true,
-            isEnd = true,
-            onClick = {}
-        )
+            MultipleChoicesCard(
+                text = "Cerrar sesión",
+                iconRes = R.drawable.ic_exit,
+                isRed = true,
+                disableArrow = true,
+                isMiddle = true,
+                onClick = {}
+            )
+            MultipleChoicesCard(
+                text = "Utiliza en Python para mostrar texto ",
+                orderIndex = 3,
+                disableArrow = true,
+                isEnd = true,
+                onClick = {}
+            )
+        }
     }
 }

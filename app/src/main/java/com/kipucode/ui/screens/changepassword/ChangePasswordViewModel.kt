@@ -1,9 +1,8 @@
-package com.kipucode.ui.screens.password
+package com.kipucode.ui.screens.changepassword
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kipucode.domain.model.Response
-import com.kipucode.domain.model.ValidationErrorType
 import com.kipucode.domain.usecase.auth.ReauthenticateUseCase
 import com.kipucode.domain.usecase.auth.UpdatePasswordUseCase
 import com.kipucode.domain.usecase.auth.ValidateConfirmPasswordUseCase
@@ -17,15 +16,15 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class PasswordViewModel @Inject constructor(
+class ChangePasswordViewModel @Inject constructor(
     private val reauthenticateUseCase: ReauthenticateUseCase,
     private val updatePasswordUseCase: UpdatePasswordUseCase,
     private val validatePasswordUseCase: ValidatePasswordUseCase,
     private val validateConfirmPasswordUseCase: ValidateConfirmPasswordUseCase
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(PasswordUiState())
-    val uiState: StateFlow<PasswordUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(ChangePasswordUiState())
+    val uiState: StateFlow<ChangePasswordUiState> = _uiState.asStateFlow()
 
     // --- PASO 1: Verificar contraseña actual ---
     fun verifyCurrentPassword(currentPass: String) {
@@ -109,6 +108,6 @@ class PasswordViewModel @Inject constructor(
     }
 
     fun resetState() {
-        _uiState.value = PasswordUiState()
+        _uiState.value = ChangePasswordUiState()
     }
 }

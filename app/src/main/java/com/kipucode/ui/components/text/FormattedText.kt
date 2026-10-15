@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.kipucode.ui.theme.JetBrains
+import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuParagraph
 import com.kipucode.ui.theme.KipuTeal
@@ -128,19 +129,21 @@ fun parseFormattedSpans(
     }
 }
 
-@Preview(showBackground = true, name = "Formatted Text Preview")
+@Preview(showBackground = true, name = "FormattedText - Default")
 @Composable
-fun FormattedTextPreview() {
-    Column(
-        modifier = Modifier.padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        FormattedText(
-            text = "Texto base con **palabras en negrita**, *texto en cursiva* y código inline como `dotnet run` o `Program.cs`."
-        )
-        FormattedText(
-            text = "El compilador Roslyn genera código CIL que el **CLR** compila con **JIT** (`Just-In-Time`).",
-            style = KipuParagraph
-        )
+private fun FormattedTextPreview() {
+    KipuCodeTheme {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            FormattedText(
+                text = "Texto base con **palabras en negrita**, *texto en cursiva* y código inline como `dotnet run` o `Program.cs`."
+            )
+            FormattedText(
+                text = "El compilador Roslyn genera código CIL que el **CLR** compila con **JIT** (`Just-In-Time`).",
+                style = KipuParagraph
+            )
+        }
     }
 }

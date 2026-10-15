@@ -58,7 +58,7 @@ class SummaryViewModel @Inject constructor(
     private fun loadStreakData() {
         viewModelScope.launch {
             getUserProgressUseCase().collect { progress ->
-                val streakDays = progress?.streakDay ?: 1
+                val streakDays = progress?.streakDay ?: 0
                 val streakSummary = calculateWeeklyStreakSummaryUseCase(streakDays)
 
                 val weekDaysUi = streakSummary.weekDays.map { day ->

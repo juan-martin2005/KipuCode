@@ -16,20 +16,19 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.kipucode.ui.screens.auth.ForgotPasswordScreen
-import com.kipucode.ui.screens.auth.LoginScreen
-import com.kipucode.ui.screens.auth.RegisterScreen
+import com.kipucode.ui.screens.forgotpassword.ForgotPasswordScreen
+import com.kipucode.ui.screens.login.LoginScreen
+import com.kipucode.ui.screens.register.RegisterScreen
 import com.kipucode.ui.screens.code.CodeScreen
 import com.kipucode.ui.screens.explore.ExploreScreen
 import com.kipucode.ui.screens.exercise.ExerciseScreen
 import com.kipucode.ui.screens.home.HomeScreen
 import com.kipucode.ui.screens.lesson.LessonScreen
 import com.kipucode.ui.screens.onboarding.OnboardingScreen
-import com.kipucode.ui.screens.password.ChangePasswordScreen
+import com.kipucode.ui.screens.changepassword.ChangePasswordScreen
 import com.kipucode.ui.screens.profile.ProfileScreen
 import com.kipucode.ui.screens.splash.SplashScreen
 import com.kipucode.ui.screens.summary.SummaryScreen
-import com.kipucode.ui.screens.auth.AuthViewModel
 
 @Composable
 fun AppNavigation() {
@@ -45,9 +44,7 @@ fun AppNavigation() {
         popExitTransition = { fadeOut(animationSpec = tween(200)) }
     ) {
         composable<SplashRoute> {
-            val authViewModel: AuthViewModel = hiltViewModel()
             SplashScreen(
-                authViewModel = authViewModel,
                 onSplashFinished = { isUserLogged ->
                     if (isUserLogged) {
                         navController.navigate(HomeRoute) {
@@ -70,7 +67,6 @@ fun AppNavigation() {
         }
 
         composable<RegisterRoute> {
-            val authViewModel: AuthViewModel = hiltViewModel()
             RegisterScreen(
                 onRegisterSuccess = {
                     navController.navigate(LoginRoute) {
@@ -82,13 +78,11 @@ fun AppNavigation() {
                         popUpTo<RegisterRoute> { inclusive = true }
                     }
                 },
-                onBack = { navController.popBackStack() },
-                authViewModel = authViewModel
+                onBack = { navController.popBackStack() }
             )
         }
 
         composable<LoginRoute> {
-            val authViewModel: AuthViewModel = hiltViewModel()
             LoginScreen(
                 onLoginSuccess = {
                     navController.navigate(HomeRoute) { popUpTo(0) }
@@ -101,8 +95,7 @@ fun AppNavigation() {
                 onNavigateToForgotPassword = {
                     navController.navigate(ForgotPasswordRoute)
                 },
-                onBack = { navController.popBackStack() },
-                authViewModel = authViewModel
+                onBack = { navController.popBackStack() }
             )
         }
 
@@ -176,11 +169,9 @@ fun AppNavigation() {
         }
 
         composable<ProfileRoute> {
-            val authViewModel: AuthViewModel = hiltViewModel()
             ProfileScreen(
                 navController = navController,
                 onLogoutClick = {
-                    authViewModel.logout()
                     navController.navigate(OnboardingRoute) {
                         popUpTo(0) { inclusive = true }
                     }

@@ -46,6 +46,7 @@ import com.kipucode.ui.components.card.LessonCard
 import com.kipucode.ui.navigation.LessonRoute
 import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.Gray
+import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.Nunito
@@ -246,19 +247,43 @@ fun ModuleLessonsContent(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, showSystemUi = true, name = "ExploreScreen - Modules")
 @Composable
-fun ExploreScreenModulesPreview() {
-    val mockCourse = CourseDomain(id = "c1", title = "Fundamentos de C#", orderIndex = 1)
-    val mockLessons = listOf(
-        LessonDomain(id = "l1", courseId = "c1", title = "Variables y Tipos", orderIndex = 1),
-        LessonDomain(id = "l2", courseId = "c1", title = "Condicionales", orderIndex = 2)
-    )
-    val mockList = listOf(CourseWithLessonsDomain(mockCourse, mockLessons))
+private fun ExploreScreenModulesPreview() {
+    KipuCodeTheme {
+        val mockCourse = CourseDomain(id = "c1", title = "Fundamentos de C#", orderIndex = 1)
+        val mockLessons = listOf(
+            LessonDomain(id = "l1", courseId = "c1", title = "Variables y Tipos", orderIndex = 1),
+            LessonDomain(id = "l2", courseId = "c1", title = "Condicionales", orderIndex = 2)
+        )
+        val mockList = listOf(CourseWithLessonsDomain(mockCourse, mockLessons))
 
-    ModulesListContent(
-        coursesWithLessons = mockList,
-        masteryOverview = CognitiveMasteryOverview(),
-        onCourseClick = {}
-    )
+        ModulesListContent(
+            coursesWithLessons = mockList,
+            masteryOverview = CognitiveMasteryOverview(),
+            onCourseClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true, name = "ExploreScreen - Module Lessons")
+@Composable
+private fun ExploreScreenLessonsPreview() {
+    KipuCodeTheme {
+        val mockCourse = CourseDomain(id = "c1", title = "Fundamentos de C#", orderIndex = 1)
+        val mockLessons = listOf(
+            LessonDomain(id = "l1", courseId = "c1", title = "Variables y Tipos", orderIndex = 1),
+            LessonDomain(id = "l2", courseId = "c1", title = "Condicionales", orderIndex = 2),
+            LessonDomain(id = "l3", courseId = "c1", title = "Bucles y Colecciones", orderIndex = 3)
+        )
+        val mockCourseWithLessons = CourseWithLessonsDomain(mockCourse, mockLessons)
+
+        ModuleLessonsContent(
+            courseWithLessons = mockCourseWithLessons,
+            masteryOverview = CognitiveMasteryOverview(),
+            completedLessons = listOf("l1"),
+            onBackClick = {},
+            onLessonClick = {}
+        )
+    }
 }

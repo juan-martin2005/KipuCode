@@ -9,6 +9,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kipucode.ui.components.text.FormattedText
+import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuParagraph
 
@@ -29,11 +30,13 @@ fun FormattedLessonText(
     )
 }
 
-@Preview(showBackground = true, name = "Formatted Lesson Text Preview")
+@Preview(showBackground = true, name = "FormattedLessonText - Default")
 @Composable
-fun FormattedLessonTextPreview() {
-    FormattedLessonText(
-        text = "La plataforma .NET provee el **CLR** (_Common Language Runtime_) y la `BCL` (_Base Class Library_).",
-        modifier = Modifier.padding(16.dp)
-    )
+private fun FormattedLessonTextPreview() {
+    KipuCodeTheme {
+        FormattedLessonText(
+            text = "La plataforma .NET provee el **CLR** (_Common Language Runtime_) y la `BCL` (_Base Class Library_).",
+            modifier = Modifier.padding(16.dp)
+        )
+    }
 }

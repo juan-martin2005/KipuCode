@@ -11,6 +11,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kipucode.ui.components.code.CodeMarkdown
 import com.kipucode.ui.components.text.FormattedText
+import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuH4
 
 /**
@@ -89,15 +90,17 @@ fun parseInstructionParts(raw: String): List<InstructionPart> {
     return parts
 }
 
-@Preview(showBackground = true, name = "Exercise Instruction Preview")
+@Preview(showBackground = true, name = "ExerciseInstruction - Default")
 @Composable
-fun ExerciseInstructionPreview() {
-    Column(
-        modifier = Modifier.padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        ExerciseInstruction(
-            instruction = "Tras ejecutar:\n```terminal\ndotnet new console -n HolaMundo\n```\n, reemplazas el contenido de un archivo por este código. ¿De qué archivo se trata?\n\n```c#\nConsole.WriteLine(\"¡Hola, C#!\");\n```"
-        )
+private fun ExerciseInstructionPreview() {
+    KipuCodeTheme {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            ExerciseInstruction(
+                instruction = "Tras ejecutar:\n```terminal\ndotnet new console -n HolaMundo\n```\n, reemplazas el contenido de un archivo por este código. ¿De qué archivo se trata?\n\n```c#\nConsole.WriteLine(\"¡Hola, C#!\");\n```"
+            )
+        }
     }
 }

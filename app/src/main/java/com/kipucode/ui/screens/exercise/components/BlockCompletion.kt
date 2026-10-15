@@ -53,6 +53,7 @@ import com.kipucode.R
 import com.kipucode.domain.model.BlockOptionDomain
 import com.kipucode.ui.components.text.FormattedText
 import com.kipucode.ui.theme.JetBrains
+import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuH4
 import com.kipucode.ui.theme.KipuTeal
@@ -587,32 +588,34 @@ fun parseInstructionAndCode(
 //  PREVIEW
 // ============================================================================================
 
-@Preview(showBackground = true, name = "Block Completion Styled Preview")
+@Preview(showBackground = true, name = "BlockCompletion - Styled")
 @Composable
-fun BlockCompletionStyledPreview() {
-    val options = listOf(
-        BlockOptionDomain(id = "1", exerciseId = "ex1", content = "\"Hola\"", isCorrect = true, orderIndex = 0),
-        BlockOptionDomain(id = "2", exerciseId = "ex1", content = "WriteLine", isCorrect = true, orderIndex = 1),
-        BlockOptionDomain(id = "3", exerciseId = "ex1", content = "\"Adiós\"", isCorrect = false, orderIndex = 1),
-        BlockOptionDomain(id = "4", exerciseId = "ex1", content = "ReadLine", isCorrect = false, orderIndex = 0)
-    )
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        BlockCompletion(
-            current = 3,
-            total = 5,
-            instruction = "Completa el saludo:\n```c#\n// Saludo en C#\nstring mensaje = [[slot]];\n// Muestra el mensaje\nConsole.[[slot]](mensaje);\n```",
-            options = options,
-            placedBlocks = emptyMap(),
-            availableBlocks = options,
-            isEvaluated = false,
-            onSelectBlock = { _, _ -> },
-            onRemoveBlock = {},
-            onSubmitAnswer = {}
+private fun BlockCompletionStyledPreview() {
+    KipuCodeTheme {
+        val options = listOf(
+            BlockOptionDomain(id = "1", exerciseId = "ex1", content = "\"Hola\"", isCorrect = true, orderIndex = 0),
+            BlockOptionDomain(id = "2", exerciseId = "ex1", content = "WriteLine", isCorrect = true, orderIndex = 1),
+            BlockOptionDomain(id = "3", exerciseId = "ex1", content = "\"Adiós\"", isCorrect = false, orderIndex = 1),
+            BlockOptionDomain(id = "4", exerciseId = "ex1", content = "ReadLine", isCorrect = false, orderIndex = 0)
         )
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            BlockCompletion(
+                current = 3,
+                total = 5,
+                instruction = "Completa el saludo:\n```c#\n// Saludo en C#\nstring mensaje = [[slot]];\n// Muestra el mensaje\nConsole.[[slot]](mensaje);\n```",
+                options = options,
+                placedBlocks = emptyMap(),
+                availableBlocks = options,
+                isEvaluated = false,
+                onSelectBlock = { _, _ -> },
+                onRemoveBlock = {},
+                onSubmitAnswer = {}
+            )
+        }
     }
 }

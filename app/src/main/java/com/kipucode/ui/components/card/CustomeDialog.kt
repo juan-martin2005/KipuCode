@@ -28,6 +28,7 @@ import androidx.compose.ui.window.Dialog
 import com.kipucode.R
 import com.kipucode.ui.components.button.FilledButton
 import com.kipucode.ui.components.button.OutlineButton
+import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.Nunito
 
 @Composable
@@ -144,16 +145,18 @@ fun KipuDialogContent(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(name = "KipuDialog - Default", showBackground = true)
 @Composable
-fun KipuDialogPreview() {
-    KipuDialogContent(
-        title = "Delete Account",
-        description = "You're going to delete your \"Account\"",
-        dismissButtonText = "No, keep it.",
-        confirmButtonText = "Yes, Delete!",
-        onConfirmClick = {},
-        onDismissClick = {},
-        iconRes = R.drawable.ic_correct
-    )
+private fun KipuDialogPreview() {
+    KipuCodeTheme {
+        KipuDialogContent(
+            title = "Delete Account",
+            description = "You're going to delete your \"Account\"",
+            dismissButtonText = "No, keep it.",
+            confirmButtonText = "Yes, Delete!",
+            onConfirmClick = {},
+            onDismissClick = {},
+            iconRes = R.drawable.ic_correct
+        )
+    }
 }

@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import com.kipucode.R
 import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.Gray
+import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.Nunito
 import kotlinx.coroutines.delay
@@ -172,20 +173,22 @@ fun HeadlineHome(
     }
 }
 
-@Preview(showBackground = true, name = "Headline Home Preview")
+@Preview(showBackground = true, name = "HeadlineHome - Default")
 @Composable
-fun HeadlineHomePreview() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(BackgroundGray)
-            .padding(16.dp)
-    ) {
-        HeadlineHome(
-            userName = "Juan Martin Gonzales Sinarahua",
-            userXp = 1250,
-            userAvatarId = R.drawable.avatar_000,
-            userStreak = 365
-        )
+private fun HeadlineHomePreview() {
+    KipuCodeTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(BackgroundGray)
+                .padding(16.dp)
+        ) {
+            HeadlineHome(
+                userName = "Juan Martin Gonzales Sinarahua",
+                userXp = 1250,
+                userAvatarId = R.drawable.avatar_000,
+                userStreak = 365
+            )
+        }
     }
 }

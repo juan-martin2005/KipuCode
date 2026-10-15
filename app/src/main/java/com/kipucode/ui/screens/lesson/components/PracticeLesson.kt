@@ -47,6 +47,7 @@ import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.BorderLightGray
 import com.kipucode.ui.theme.Gray
 import com.kipucode.ui.theme.Green
+import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.LightGreen
@@ -399,37 +400,41 @@ fun PracticeMethodCardContent(
 @Preview(name = "1. Tarjeta Colapsada (No seleccionada)", showBackground = true)
 @Composable
 private fun PracticeMethodCardUnselectedPreview() {
-    PracticeMethodCardContent(
-        title = "Opción única",
-        subtitle = "Evaluación conceptual",
-        description = "Preguntas con alternativas para validar conceptos y sintaxis clave.",
-        detailedDescription = "Modo de evaluación inmediata con retroalimentación instantánea: se te presentan preguntas de opción múltiple con justificación detallada de cada alternativa tras responder.",
-        iconRes = R.drawable.ic_multiple_choice,
-        selected = false,
-        isRecommended = false,
-        isExpanded = false,
-        onToggleExpand = {},
-        onClick = {},
-        modifier = Modifier.padding(16.dp)
-    )
+    KipuCodeTheme {
+        PracticeMethodCardContent(
+            title = "Opción única",
+            subtitle = "Evaluación conceptual",
+            description = "Preguntas con alternativas para validar conceptos y sintaxis clave.",
+            detailedDescription = "Modo de evaluación inmediata con retroalimentación instantánea: se te presentan preguntas de opción múltiple con justificación detallada de cada alternativa tras responder.",
+            iconRes = R.drawable.ic_multiple_choice,
+            selected = false,
+            isRecommended = false,
+            isExpanded = false,
+            onToggleExpand = {},
+            onClick = {},
+            modifier = Modifier.padding(16.dp)
+        )
+    }
 }
 
 @Preview(name = "2. Tarjeta Desplegada (Seleccionada)", showBackground = true)
 @Composable
 private fun PracticeMethodCardSelectedPreview() {
-    PracticeMethodCardContent(
-        title = "Tarjetas de memoria",
-        subtitle = "Repaso espaciado · FSRS-6",
-        description = "Recuerda la respuesta activamente antes de voltear cada tarjeta.",
-        detailedDescription = "Algoritmo de repetición espaciada FSRS-6 que calcula el intervalo óptimo para repasar cada tarjeta según tu dificultad percibida (Otra vez, Difícil, Bien, Fácil), maximizando la retención a largo plazo.",
-        iconRes = R.drawable.ic_flashcards,
-        selected = true,
-        isRecommended = true,
-        isExpanded = true,
-        onToggleExpand = {},
-        onClick = {},
-        modifier = Modifier.padding(16.dp)
-    )
+    KipuCodeTheme {
+        PracticeMethodCardContent(
+            title = "Tarjetas de memoria",
+            subtitle = "Repaso espaciado · FSRS-6",
+            description = "Recuerda la respuesta activamente antes de voltear cada tarjeta.",
+            detailedDescription = "Algoritmo de repetición espaciada FSRS-6 que calcula el intervalo óptimo para repasar cada tarjeta según tu dificultad percibida (Otra vez, Difícil, Bien, Fácil), maximizando la retención a largo plazo.",
+            iconRes = R.drawable.ic_flashcards,
+            selected = true,
+            isRecommended = true,
+            isExpanded = true,
+            onToggleExpand = {},
+            onClick = {},
+            modifier = Modifier.padding(16.dp)
+        )
+    }
 }
 
 @Preview(name = "3. Selector Completo", showBackground = true)
@@ -437,15 +442,17 @@ private fun PracticeMethodCardSelectedPreview() {
 private fun PracticeMethodSelectorFullPreview() {
     var selected by remember { mutableStateOf(PracticeMethod.DEFAULT_FLASHCARDS) }
 
-    Surface(color = BackgroundGray, modifier = Modifier.padding(16.dp)) {
-        PracticeMethodSelectorContent(
-            availableMethods = listOf(
-                PracticeMethod.UNIQUE_CHOICE,
-                PracticeMethod.DEFAULT_FLASHCARDS,
-                PracticeMethod.FEYNMAN_FLASHCARDS
-            ),
-            selectedMethod = selected,
-            onMethodSelected = { selected = it }
-        )
+    KipuCodeTheme {
+        Surface(color = BackgroundGray, modifier = Modifier.padding(16.dp)) {
+            PracticeMethodSelectorContent(
+                availableMethods = listOf(
+                    PracticeMethod.UNIQUE_CHOICE,
+                    PracticeMethod.DEFAULT_FLASHCARDS,
+                    PracticeMethod.FEYNMAN_FLASHCARDS
+                ),
+                selectedMethod = selected,
+                onMethodSelected = { selected = it }
+            )
+        }
     }
 }

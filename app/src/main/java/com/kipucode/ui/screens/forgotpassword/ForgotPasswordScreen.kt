@@ -1,9 +1,10 @@
-package com.kipucode.ui.screens.auth
+package com.kipucode.ui.screens.forgotpassword
 
 import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,31 +25,30 @@ import com.kipucode.ui.components.button.FilledButton
 import com.kipucode.ui.components.text_field.KipuForm
 import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.Gray
+import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.Nunito
 
-// --- SCREEN ---
 @Composable
 fun ForgotPasswordScreen(
     onBack: () -> Unit,
-    authViewModel: AuthViewModel = hiltViewModel()
+    forgotPasswordViewModel: ForgotPasswordViewModel = hiltViewModel()
 ) {
-    var email by remember { mutableStateOf("") }
-    var emailError by remember { mutableStateOf<String?>(null) }
-
-    val resetState by authViewModel.resetPasswordState.collectAsStateWithLifecycle()
+    var email by rememberSaveable { mutableStateOf("") }
+    val uiState by forgotPasswordViewModel.uiState.collectAsStateWithLifecycle()
+    val resetState = uiState.resetResponse
+    val emailError = uiState.emailError
 
     LaunchedEffect(resetState) {
         when (resetState) {
             is Response.Loading -> {}
             is Response.Success -> {
-//                Toast.makeText(context, "Correo de recuperación enviado. Revisa tu bandeja de entrada.", Toast.LENGTH_LONG).show()
-                authViewModel.resetForgotPasswordState()
+                forgotPasswordViewModel.resetState()
                 onBack()
             }
             is Response.Error -> {
-                val errorMsg = (resetState as Response.Error).message
-                emailError = errorMsg ?: "Ocurrió un error inesperado"
+                val errorMsg = resetState.message
+                forgotPasswordViewModel.setEmailError(errorMsg ?: "Ocurrió un error inesperado")
                 Log.d("FIREBASE_ERROR", errorMsg ?: "Unknown Error")
             }
             null -> {}
@@ -58,36 +58,36 @@ fun ForgotPasswordScreen(
     Scaffold(
         containerColor = BackgroundGray,
     ) { paddingValues ->
-            val emailRequiredText = stringResource(R.string.error_email_required)
-            val emailInvalidDomainText = stringResource(R.string.error_email_domain)
+        val emailRequiredText = stringResource(R.string.error_email_required)
+        val emailInvalidDomainText = stringResource(R.string.error_email_domain)
 
-            ForgotPasswordScreenContent(
-                email = email,
-                emailError = emailError,
-                onEmailChange = {
-                    email = it
-                    emailError = null
-                },
-                onBackClick = onBack,
-                onSendClick = {
-                    val validation = authViewModel.validateEmail(email)
-                    if (!validation.successful) {
-                        emailError = when (validation.errorType) {
-                            ValidationErrorType.EMPTY_FIELD -> emailRequiredText
-                            ValidationErrorType.INVALID_EMAIL_DOMAIN -> emailInvalidDomainText
-                            else -> "Correo inválido"
-                        }
-                    } else {
-                        authViewModel.resetPassword(email.trim().lowercase())
+        ForgotPasswordScreenContent(
+            email = email,
+            emailError = emailError,
+            onEmailChange = {
+                email = it
+                forgotPasswordViewModel.setEmailError(null)
+            },
+            onBackClick = onBack,
+            onSendClick = {
+                val validation = forgotPasswordViewModel.validateEmail(email)
+                if (!validation.successful) {
+                    val errorText = when (validation.errorType) {
+                        ValidationErrorType.EMPTY_FIELD -> emailRequiredText
+                        ValidationErrorType.INVALID_EMAIL_DOMAIN -> emailInvalidDomainText
+                        else -> "Correo inválido"
                     }
-                },
+                    forgotPasswordViewModel.setEmailError(errorText)
+                } else {
+                    forgotPasswordViewModel.resetPassword(email.trim().lowercase())
+                }
+            },
             isLoading = resetState is Response.Loading,
             modifier = Modifier.padding(paddingValues)
         )
     }
 }
 
-// --- CONTENT ---
 @Composable
 fun ForgotPasswordScreenContent(
     modifier: Modifier = Modifier,
@@ -103,7 +103,6 @@ fun ForgotPasswordScreenContent(
             .fillMaxSize()
             .padding(12.dp)
     ) {
-        // Botón Atrás
         IconButton(onClick = onBackClick, modifier = Modifier.size(48.dp)) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_arrow_left),
@@ -166,11 +165,10 @@ fun ForgotPasswordScreenContent(
     }
 }
 
-// --- PREVIEW ---
-@Preview(showBackground = true, name = "Recuperar Contraseña")
+@Preview(showBackground = true, showSystemUi = true, name = "ForgotPassword - Default")
 @Composable
-fun ForgotPasswordScreenPreview() {
-    MaterialTheme {
+private fun ForgotPasswordScreenPreview() {
+    KipuCodeTheme {
         Scaffold(containerColor = BackgroundGray) { padding ->
             ForgotPasswordScreenContent(
                 email = "",
@@ -184,10 +182,10 @@ fun ForgotPasswordScreenPreview() {
     }
 }
 
-@Preview(showBackground = true, name = "Recuperar Contraseña (Con Error)")
+@Preview(showBackground = true, name = "ForgotPassword - Error State")
 @Composable
-fun ForgotPasswordScreenErrorPreview() {
-    MaterialTheme {
+private fun ForgotPasswordScreenErrorPreview() {
+    KipuCodeTheme {
         Scaffold(containerColor = BackgroundGray) { padding ->
             ForgotPasswordScreenContent(
                 email = "usuario@gmail.com",

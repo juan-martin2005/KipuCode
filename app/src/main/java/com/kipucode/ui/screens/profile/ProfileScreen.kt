@@ -30,6 +30,7 @@ import com.kipucode.ui.components.card.UserProfileCard
 import com.kipucode.ui.navigation.ChangePasswordRoute
 import com.kipucode.ui.screens.profile.components.ActivityHeatmapCard
 import com.kipucode.ui.theme.BackgroundGray
+import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.Nunito
@@ -88,7 +89,9 @@ fun ProfileScreen(
             },
             onConfirmClick = {
                 showLogoutDialog = false
-                onLogoutClick()
+                profileViewModel.logout {
+                    onLogoutClick()
+                }
             },
             iconTint = KipuTeal
         )
@@ -184,16 +187,18 @@ fun ProfileContent(
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+@Preview(showBackground = true, showSystemUi = true, name = "ProfileScreen - Default")
 @Composable
-fun ProfileScreenPreview() {
-    ProfileContent(
-        name = "Pepeito Gonzles",
-        email = "pedro@upn.pe",
-        avatarId = R.drawable.avatar_001,
-        heatmapData = HeatmapUiData(),
-        onLogoutClick = {},
-        onEditAvatar = {},
-        onChangePassword = {}
-    )
+private fun ProfileScreenPreview() {
+    KipuCodeTheme {
+        ProfileContent(
+            name = "Pepeito Gonzles",
+            email = "pedro@upn.pe",
+            avatarId = R.drawable.avatar_001,
+            heatmapData = HeatmapUiData(),
+            onLogoutClick = {},
+            onEditAvatar = {},
+            onChangePassword = {}
+        )
+    }
 }

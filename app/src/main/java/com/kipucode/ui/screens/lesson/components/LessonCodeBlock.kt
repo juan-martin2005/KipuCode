@@ -9,6 +9,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kipucode.domain.model.LessonBlock
 import com.kipucode.ui.components.code.CodeMarkdown
+import com.kipucode.ui.theme.KipuCodeTheme
 
 @Composable
 fun LessonCodeBlock(
@@ -23,26 +24,28 @@ fun LessonCodeBlock(
     )
 }
 
-@Preview(showBackground = true, name = "Lesson Code Block Preview")
+@Preview(showBackground = true, name = "LessonCodeBlock - Variants")
 @Composable
-fun LessonCodeBlockPreview() {
-    Column(
-        modifier = Modifier.padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        LessonCodeBlock(
-            block = LessonBlock.Code(
-                code = "dotnet new console -n HolaMundo\ncd HolaMundo\ndotnet run",
-                language = "terminal",
-                isDiagram = false
+private fun LessonCodeBlockPreview() {
+    KipuCodeTheme {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            LessonCodeBlock(
+                block = LessonBlock.Code(
+                    code = "dotnet new console -n HolaMundo\ncd HolaMundo\ndotnet run",
+                    language = "terminal",
+                    isDiagram = false
+                )
             )
-        )
-        LessonCodeBlock(
-            block = LessonBlock.Code(
-                code = "// Program.cs\nConsole.WriteLine(\"¡Hola, C#!\");",
-                language = "csharp",
-                isDiagram = false
+            LessonCodeBlock(
+                block = LessonBlock.Code(
+                    code = "// Program.cs\nConsole.WriteLine(\"¡Hola, C#!\");",
+                    language = "csharp",
+                    isDiagram = false
+                )
             )
-        )
+        }
     }
 }

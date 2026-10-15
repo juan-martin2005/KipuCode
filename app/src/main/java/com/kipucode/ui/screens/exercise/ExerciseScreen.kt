@@ -4,7 +4,9 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -12,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -20,9 +23,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kipucode.R
@@ -30,13 +37,16 @@ import com.kipucode.domain.model.BlockOptionDomain
 import com.kipucode.domain.model.ExerciseDomain
 import com.kipucode.domain.model.Response
 import com.kipucode.ui.components.KipuTopBar
+import com.kipucode.ui.components.button.FilledButton
 import com.kipucode.ui.components.card.KipuDialog
 import com.kipucode.ui.screens.exercise.components.BlockCompletion
 import com.kipucode.ui.screens.exercise.components.ExplanationDialog
 import com.kipucode.ui.screens.exercise.components.Flashcard
 import com.kipucode.ui.screens.exercise.components.UniqueChoice
 import com.kipucode.ui.theme.BackgroundGray
+import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuTeal
+import com.kipucode.ui.theme.Nunito
 
 // --- SCREEN ---
 @Composable
@@ -58,10 +68,12 @@ fun ExerciseScreen(
         exerciseViewModel.loadExercises(lessonId, type = type, onlyDue = onlyDue)
     }
 
-    if (uiState.completeState is Response.Success) {
-        val sessionData = exerciseViewModel.getSessionSummary()
-        exerciseViewModel.resetCompleteState()
-        onFinished(sessionData)
+    LaunchedEffect(uiState.completeState) {
+        if (uiState.completeState is Response.Success) {
+            val sessionData = exerciseViewModel.getSessionSummary()
+            exerciseViewModel.resetCompleteState()
+            onFinished(sessionData)
+        }
     }
 
     val currentExercise = uiState.currentExercise
@@ -102,6 +114,7 @@ fun ExerciseScreen(
     ) { paddingValues ->
         ExerciseScreenContent(
             modifier = Modifier.padding(paddingValues),
+            isLoading = uiState.isLoading,
             currentExercise = currentExercise,
             currentExerciseId = currentExercise?.id,
             lessonName = uiState.lessonName,
@@ -148,6 +161,7 @@ fun ExerciseScreen(
 @Composable
 fun ExerciseScreenContent(
     modifier: Modifier = Modifier,
+    isLoading: Boolean = false,
     currentExercise: ExerciseDomain?,
     currentExerciseId: String?,
     lessonName: String,
@@ -166,12 +180,45 @@ fun ExerciseScreenContent(
     onRemoveBlock: (Int) -> Unit = {},
     onSubmitBlockAnswer: (Int) -> Unit = {}
 ) {
-    if (currentExerciseId == null || instruction == null || options == null) {
+    if (isLoading) {
         Box(
             modifier = modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            CircularProgressIndicator()
+            CircularProgressIndicator(color = KipuTeal)
+        }
+        return
+    }
+
+    if (currentExerciseId == null || instruction == null || options == null) {
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .background(BackgroundGray)
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "¡Todo al día!",
+                fontFamily = Nunito,
+                fontWeight = FontWeight.Bold,
+                fontSize = 22.sp,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = "No hay ejercicios pendientes por repasar en este momento.",
+                fontFamily = Nunito,
+                fontSize = 16.sp,
+                color = Color.Gray,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(24.dp))
+            FilledButton(
+                textButton = "Volver",
+                onClickFilledButton = onBackClick
+            )
         }
         return
     }
@@ -238,31 +285,33 @@ fun ExerciseScreenContent(
 }
 
 // --- PREVIEW ---
-@Preview(showBackground = true, name = "Exercise Screen Content")
+@Preview(showBackground = true, showSystemUi = true, name = "ExerciseScreen - Content")
 @Composable
-fun ExerciseScreenContentPreview() {
-    val exercise = ExerciseDomain(
-        id = "ex_01",
-        type = "UNIQUE_CHOICE",
-        lessonId = "",
-        instruction = "Pregunta de prueba",
-        orderIndex = 1,
-        answer = "Respuesta de prueba"
-    )
-    ExerciseScreenContent(
-        currentExercise = exercise,
-        currentExerciseId = "ex_01",
-        lessonName = "Historia de Java",
-        instruction = "#### ¿En qué año nació Java?",
-        options = listOf(
-            BlockOptionDomain(id = "1", exerciseId = "ex_01", content = "##### 1995", isCorrect = true),
-            BlockOptionDomain(id = "2", exerciseId = "ex_01", content = "##### 2000", isCorrect = false)
-        ),
-        currentIndex = 0,
-        totalExercises = 1,
-        selectedOptionId = null,
-        onBackClick = {},
-        onOptionSelected = {},
-        onRatingSelected = {}
-    )
+private fun ExerciseScreenContentPreview() {
+    KipuCodeTheme {
+        val exercise = ExerciseDomain(
+            id = "ex_01",
+            type = "UNIQUE_CHOICE",
+            lessonId = "",
+            instruction = "Pregunta de prueba",
+            orderIndex = 1,
+            answer = "Respuesta de prueba"
+        )
+        ExerciseScreenContent(
+            currentExercise = exercise,
+            currentExerciseId = "ex_01",
+            lessonName = "Historia de Java",
+            instruction = "#### ¿En qué año nació Java?",
+            options = listOf(
+                BlockOptionDomain(id = "1", exerciseId = "ex_01", content = "##### 1995", isCorrect = true),
+                BlockOptionDomain(id = "2", exerciseId = "ex_01", content = "##### 2000", isCorrect = false)
+            ),
+            currentIndex = 0,
+            totalExercises = 1,
+            selectedOptionId = null,
+            onBackClick = {},
+            onOptionSelected = {},
+            onRatingSelected = {}
+        )
+    }
 }

@@ -25,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kipucode.R
+import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.Nunito
 
 @Composable
@@ -117,48 +118,54 @@ fun KipuForm(
     }
 }
 
-@Preview(showBackground = true, name = "Vista del KipuForm (Texto Normal)")
+@Preview(showBackground = true, name = "KipuForm - Normal Text")
 @Composable
-fun KipuFormNormalPreview() {
-    Column(modifier = Modifier.padding(16.dp)) {
-        KipuForm(
-            label = "Correo Electrónico",
-            value = "",
-            onValueChange = {},
-            placeholder = "ejemplo@correo.com",
-            iconRes = R.drawable.ic_mail
-        )
+private fun KipuFormNormalPreview() {
+    KipuCodeTheme {
+        Column(modifier = Modifier.padding(16.dp)) {
+            KipuForm(
+                label = "Correo Electrónico",
+                value = "",
+                onValueChange = {},
+                placeholder = "ejemplo@correo.com",
+                iconRes = R.drawable.ic_mail
+            )
+        }
     }
 }
 
-@Preview(showBackground = true, name = "Vista del KipuForm (Contraseña)")
+@Preview(showBackground = true, name = "KipuForm - Password")
 @Composable
-fun KipuFormPasswordPreview() {
-    Column(modifier = Modifier.padding(16.dp)) {
-        KipuForm(
-            label = "Contraseña",
-            value = "miSuperClave123",
-            onValueChange = {},
-            placeholder = "Ingresa tu contraseña",
-            iconRes = R.drawable.ic_lock,
-            isPasswordField = true,
-            isPasswordVisible = false
-        )
+private fun KipuFormPasswordPreview() {
+    KipuCodeTheme {
+        Column(modifier = Modifier.padding(16.dp)) {
+            KipuForm(
+                label = "Contraseña",
+                value = "miSuperClave123",
+                onValueChange = {},
+                placeholder = "Ingresa tu contraseña",
+                iconRes = R.drawable.ic_lock,
+                isPasswordField = true,
+                isPasswordVisible = false
+            )
+        }
     }
 }
 
-@Preview(showBackground = true, name = "Vista del KipuForm (Error)")
+@Preview(showBackground = true, name = "KipuForm - Error State")
 @Composable
-fun KipuFormErrorPreview() {
-    Column(modifier = Modifier.padding(16.dp)) {
-        KipuForm(
-            label = "Nombre de Usuario",
-            value = "abc",
-            onValueChange = {},
-            placeholder = "Ingresa tu usuario",
-            iconRes = R.drawable.ic_user,
-            isError = true,
-            errorMessage = "El nombre de usuario debe tener al menos 6 caracteres."
-        )
+private fun KipuFormErrorPreview() {
+    KipuCodeTheme {
+        Column(modifier = Modifier.padding(16.dp)) {
+            KipuForm(
+                label = "Nombre de Usuario",
+                value = "abc",
+                onValueChange = {},
+                placeholder = "Ingresa tu usuario",
+                iconRes = R.drawable.ic_user,
+                isError = true,
+                errorMessage = "El nombre de usuario debe tener al menos 6 caracteres."
+            )
+        }
     }
 }

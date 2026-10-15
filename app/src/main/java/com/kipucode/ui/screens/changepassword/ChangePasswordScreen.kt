@@ -1,4 +1,4 @@
-package com.kipucode.ui.screens.password
+package com.kipucode.ui.screens.changepassword
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
@@ -44,6 +44,7 @@ import com.kipucode.ui.components.card.KipuDialog
 import com.kipucode.ui.components.text_field.KipuForm
 import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.Gray
+import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.Nunito
@@ -51,7 +52,7 @@ import com.kipucode.ui.theme.Nunito
 @Composable
 fun ChangePasswordScreen(
     onBack: () -> Unit,
-    viewModel: PasswordViewModel = hiltViewModel()
+    viewModel: ChangePasswordViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -346,16 +347,39 @@ private fun NewPasswordStep(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, showSystemUi = true, name = "ChangePassword - Step 1: Verify Current Password")
 @Composable
-fun ChangePasswordPreview() {
-    VerifyCurrentPasswordStep(
-        currentPassword = "",
-        onCurrentPasswordChange = {},
-        currentPasswordVisible = false,
-        onToggleVisibility = {},
-        isLoading = false,
-        errorMessage = null,
-        onContinueClick = {}
-    )
+private fun ChangePasswordPreview() {
+    KipuCodeTheme {
+        VerifyCurrentPasswordStep(
+            currentPassword = "",
+            onCurrentPasswordChange = {},
+            currentPasswordVisible = false,
+            onToggleVisibility = {},
+            isLoading = false,
+            errorMessage = null,
+            onContinueClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true, name = "ChangePassword - Step 2: New Password")
+@Composable
+private fun NewPasswordStepPreview() {
+    KipuCodeTheme {
+        NewPasswordStep(
+            newPassword = "",
+            onNewPasswordChange = {},
+            confirmPassword = "",
+            onConfirmPasswordChange = {},
+            newPasswordVisible = false,
+            onToggleNewPasswordVisibility = {},
+            confirmPasswordVisible = false,
+            onToggleConfirmPasswordVisibility = {},
+            newPasswordError = null,
+            confirmPasswordError = null,
+            isLoading = false,
+            onSaveClick = {}
+        )
+    }
 }

@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import com.kipucode.R
 import com.kipucode.domain.model.LessonBlock
 import com.kipucode.ui.theme.BorderLightGray
+import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuH4
 import com.kipucode.ui.theme.KipuParagraph
 import com.kipucode.ui.theme.KipuTeal
@@ -98,17 +99,19 @@ fun LessonSummaryBlock(
     }
 }
 
-@Preview(showBackground = true, name = "Lesson Summary Block Preview")
+@Preview(showBackground = true, name = "LessonSummaryBlock - Default")
 @Composable
-fun LessonSummaryBlockPreview() {
-    LessonSummaryBlock(
-        block = LessonBlock.Summary(
-            items = listOf(
-                ".NET divide su arquitectura en el **CLR** (ejecución y memoria), la **BCL** (biblioteca base) y el **SDK** (herramientas).",
-                "El **.NET Runtime** combina `CLR` y `BCL` para ejecutar aplicaciones ya compiladas.",
-                "El comando `dotnet run` compila en memoria y ejecuta el proyecto en un solo paso."
-            )
-        ),
-        modifier = Modifier.padding(16.dp)
-    )
+private fun LessonSummaryBlockPreview() {
+    KipuCodeTheme {
+        LessonSummaryBlock(
+            block = LessonBlock.Summary(
+                items = listOf(
+                    ".NET divide su arquitectura en el **CLR** (ejecución y memoria), la **BCL** (biblioteca base) y el **SDK** (herramientas).",
+                    "El **.NET Runtime** combina `CLR` y `BCL` para ejecutar aplicaciones ya compiladas.",
+                    "El comando `dotnet run` compila en memoria y ejecuta el proyecto en un solo paso."
+                )
+            ),
+            modifier = Modifier.padding(16.dp)
+        )
+    }
 }

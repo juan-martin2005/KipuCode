@@ -29,6 +29,7 @@ import com.kipucode.R
 import com.kipucode.ui.components.button.FilledButton
 import com.kipucode.ui.components.text.FormattedText
 import com.kipucode.ui.theme.Green
+import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuParagraph
 import com.kipucode.ui.theme.Nunito
 import com.kipucode.ui.theme.Red
@@ -169,36 +170,37 @@ fun ExplanationDialog(
     }
 }
 
-@Preview(showBackground = true, name = "Feedback Dialog")
+@Preview(showBackground = true, name = "ExplanationDialog - Combined States")
 @Composable
-fun ExplanationDialogCombinedPreview() {
-    Column {
-        // Correcto
-        ExplanationDialog(
-            isCorrect = true,
-            isLoading = false,
-            onContinue = {},
-            experience = "50",
-            explanation = """
-            Comprender el origen de `Python`, asimilar la filosofía de su diseño y dimensionar su rol y capacidades en la industria de la ingeniería de software moderna.
-        """.trimIndent(),
-            message = "¡Excelente! Concepto dominado"
-        )
+private fun ExplanationDialogCombinedPreview() {
+    KipuCodeTheme {
+        Column {
+            // Correcto
+            ExplanationDialog(
+                isCorrect = true,
+                isLoading = false,
+                onContinue = {},
+                experience = "50",
+                explanation = """
+                Comprender el origen de `Python`, asimilar la filosofía de su diseño y dimensionar su rol y capacidades en la industria de la ingeniería de software moderna.
+            """.trimIndent(),
+                message = "¡Excelente! Concepto dominado"
+            )
 
-        Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-        // Incorrecto
-        ExplanationDialog(
-            isCorrect = false,
-            isLoading = false,
-            onContinue = {},
-            experience = "25",
-            explanation = """Comprender el origen de Python, asimilar la filosofía de su diseño y dimensionar su rol y capacidades en la industria de la ingeniería de software moderna.
-        """,
-            message = "¡Cerca! Equivocarse es parte de aprender"
-        )
+            // Incorrecto
+            ExplanationDialog(
+                isCorrect = false,
+                isLoading = false,
+                onContinue = {},
+                experience = "25",
+                explanation = """Comprender el origen de Python, asimilar la filosofía de su diseño y dimensionar su rol y capacidades en la industria de la ingeniería de software moderna.
+            """,
+                message = "¡Cerca! Equivocarse es parte de aprender"
+            )
 
-        Spacer(modifier = Modifier.height(24.dp))
-
+            Spacer(modifier = Modifier.height(24.dp))
+        }
     }
 }

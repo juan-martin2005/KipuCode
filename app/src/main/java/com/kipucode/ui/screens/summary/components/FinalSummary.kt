@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import com.kipucode.R
 import com.kipucode.ui.theme.Gray
 import com.kipucode.ui.theme.Green
+import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.Nunito
@@ -247,14 +248,16 @@ private fun StatPill(
 
 @Preview(showBackground = true, backgroundColor = 0xFFF3F7FA, name = "FinalSummary")
 @Composable
-fun FinalSummaryPreview() {
-    FinalSummary(
-        xpEarned = 180,
-        accuracy = 0.80f,
-        correctCount = 8,
-        reinforceCount = 2,
-        timeFormatted = "12m",
-        modifier = Modifier.padding(16.dp),
-        summaryMessage = "¡Felicidades! Dominaste la mayoría de conceptos"
-    )
+private fun FinalSummaryPreview() {
+    KipuCodeTheme {
+        FinalSummary(
+            xpEarned = 180,
+            accuracy = 0.80f,
+            correctCount = 8,
+            reinforceCount = 2,
+            timeFormatted = "12m",
+            modifier = Modifier.padding(16.dp),
+            summaryMessage = "¡Felicidades! Dominaste la mayoría de conceptos"
+        )
+    }
 }

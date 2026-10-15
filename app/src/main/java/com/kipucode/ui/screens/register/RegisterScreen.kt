@@ -1,10 +1,11 @@
-package com.kipucode.ui.screens.auth
+package com.kipucode.ui.screens.register
 
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,17 +17,18 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kipucode.R
-import com.kipucode.domain.model.ServerErrorType
 import com.kipucode.domain.model.Response
+import com.kipucode.domain.model.ServerErrorType
 import com.kipucode.domain.model.UserDomain
 import com.kipucode.domain.model.ValidationErrorType
 import com.kipucode.ui.components.button.FilledButton
 import com.kipucode.ui.components.text_field.ClickableLink
 import com.kipucode.ui.components.text_field.KipuForm
 import com.kipucode.ui.theme.BackgroundGray
+import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.Nunito
 
 @Composable
@@ -34,34 +36,33 @@ fun RegisterScreen(
     onRegisterSuccess: () -> Unit,
     onNavigateToLogin: () -> Unit,
     onBack: () -> Unit,
-    authViewModel: AuthViewModel = hiltViewModel()
+    registerViewModel: RegisterViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
 
-    val registerState by authViewModel.authState.collectAsStateWithLifecycle()
-    val formErrors by authViewModel.registerFormErrorsState.collectAsStateWithLifecycle()
+    val uiState by registerViewModel.uiState.collectAsStateWithLifecycle()
+    val registerState = uiState.registerResponse
+    val formErrors = uiState.formErrors
 
     var serverEmailError by remember { mutableStateOf<String?>(null) }
 
     val authMsgErrorEmailAlreadyExist = stringResource(id = R.string.auth_repository_email_already_exist)
     val authMsgErrorNetworkError = stringResource(id = R.string.auth_repository_network_error)
 
-
     LaunchedEffect(registerState) {
         when (registerState) {
-            is Response.Loading -> {
-            }
+            is Response.Loading -> {}
             is Response.Success -> {
                 Toast.makeText(
                     context,
                     "¡Estudiante registrado!\nRevisa tu correo para ser verificado",
                     Toast.LENGTH_LONG
                 ).show()
-                authViewModel.resetState()
+                registerViewModel.resetState()
                 onRegisterSuccess()
             }
             is Response.Error -> {
-                val errorType = (registerState as Response.Error).error
+                val errorType = registerState.error
                 when (errorType) {
                     ServerErrorType.EMAIL_ALREADY_EXIST -> {
                         serverEmailError = authMsgErrorEmailAlreadyExist
@@ -70,7 +71,7 @@ fun RegisterScreen(
                         Toast.makeText(context, authMsgErrorNetworkError, Toast.LENGTH_SHORT).show()
                     }
                     else -> {
-                        val msg = (registerState as Response.Error).message ?: "Error al registrarse"
+                        val msg = registerState.message ?: "Error al registrarse"
                         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
                     }
                 }
@@ -84,22 +85,19 @@ fun RegisterScreen(
             modifier = Modifier.padding(paddingValues),
             onNavigateToLogin = onNavigateToLogin,
             onBack = onBack,
-
             formErrors = formErrors,
             serverEmailError = serverEmailError,
             onClearServerEmailError = { serverEmailError = null },
-
-            onClearNameError = { authViewModel.clearNameError() },
-            onClearEmailError = { authViewModel.clearEmailError() },
-            onClearPasswordError = { authViewModel.clearPasswordError() },
-            onClearConfirmPasswordError = { authViewModel.clearConfirmPasswordError() },
-
+            onClearNameError = { registerViewModel.clearNameError() },
+            onClearEmailError = { registerViewModel.clearEmailError() },
+            onClearPasswordError = { registerViewModel.clearPasswordError() },
+            onClearConfirmPasswordError = { registerViewModel.clearConfirmPasswordError() },
             onValidate = { name, email, pass, confirmPass ->
-                authViewModel.validateRegisterForm(name, email, pass, confirmPass)
+                registerViewModel.validateRegisterForm(name, email, pass, confirmPass)
             },
             onRegisterClick = { name, email, password ->
                 val userDomain = UserDomain(name = name.trim(), email = email.trim().lowercase())
-                authViewModel.register(userDomain, password)
+                registerViewModel.register(userDomain, password)
             },
             isLoading = registerState is Response.Loading
         )
@@ -125,15 +123,13 @@ fun RegisterContent(
     onRegisterClick: (String, String, String) -> Unit,
     isLoading: Boolean = false,
 ) {
-    // ESTADOS PARA LOS CAMPOS
-    var name by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
+    var name by rememberSaveable { mutableStateOf("") }
+    var email by rememberSaveable { mutableStateOf("") }
+    var password by rememberSaveable { mutableStateOf("") }
+    var confirmPassword by rememberSaveable { mutableStateOf("") }
 
-    // ESTADOS PARA LAS CONTRASEÑAS
-    var passwordVisible by remember { mutableStateOf(false) }
-    var confirmPasswordVisible by remember { mutableStateOf(false) }
+    var passwordVisible by rememberSaveable { mutableStateOf(false) }
+    var confirmPasswordVisible by rememberSaveable { mutableStateOf(false) }
 
     val nameErrorText = when (formErrors.nameError) {
         ValidationErrorType.EMPTY_FIELD -> stringResource(R.string.error_name_required)
@@ -212,7 +208,7 @@ fun RegisterContent(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // --- CAMPO: NAME ---
+            // Campo: Name
             KipuForm(
                 label = stringResource(R.string.full_name),
                 value = name,
@@ -226,7 +222,7 @@ fun RegisterContent(
                 errorMessage = nameErrorText
             )
 
-            // --- CAMPO: EMAIL ---
+            // Campo: Email
             KipuForm(
                 label = stringResource(R.string.email),
                 value = email,
@@ -242,7 +238,7 @@ fun RegisterContent(
                 errorMessage = emailErrorText
             )
 
-            // --- CAMPO: PASSWORD ---
+            // Campo: Password
             KipuForm(
                 label = stringResource(R.string.password),
                 value = password,
@@ -260,7 +256,7 @@ fun RegisterContent(
                 errorMessage = passwordErrorText
             )
 
-            // --- CAMPO: CONFIRM PASSWORD ---
+            // Campo: Confirm Password
             KipuForm(
                 label = stringResource(R.string.confirm_password),
                 value = confirmPassword,
@@ -303,19 +299,44 @@ fun RegisterContent(
     }
 }
 
-// PREVIEWS
-@Preview(showBackground = true, name = "Register Screen")
+@Preview(showBackground = true, showSystemUi = true, name = "Register Screen - Default")
 @Composable
-fun RegisterScreenPreview() {
-    Scaffold(
-        containerColor = BackgroundGray
-    ) { paddingValues ->
-        RegisterContent(
-            onNavigateToLogin = {},
-            onBack = {},
-            onValidate = { _, _, _, _ -> true },
-            onRegisterClick = { _, _, _ -> },
-            modifier = Modifier.padding(paddingValues)
-        )
+private fun RegisterScreenPreview() {
+    KipuCodeTheme {
+        Scaffold(
+            containerColor = BackgroundGray
+        ) { paddingValues ->
+            RegisterContent(
+                onNavigateToLogin = {},
+                onBack = {},
+                onValidate = { _, _, _, _ -> true },
+                onRegisterClick = { _, _, _ -> },
+                modifier = Modifier.padding(paddingValues)
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true, name = "Register Screen - Error State")
+@Composable
+private fun RegisterScreenErrorPreview() {
+    KipuCodeTheme {
+        Scaffold(
+            containerColor = BackgroundGray
+        ) { paddingValues ->
+            RegisterContent(
+                onNavigateToLogin = {},
+                onBack = {},
+                onValidate = { _, _, _, _ -> false },
+                onRegisterClick = { _, _, _ -> },
+                formErrors = RegisterFormErrors(
+                    emailError = ValidationErrorType.INVALID_EMAIL_DOMAIN,
+                    passwordError = ValidationErrorType.PASSWORD_TOO_SHORT
+                ),
+                serverEmailError = null,
+                isLoading = false,
+                modifier = Modifier.padding(paddingValues)
+            )
+        }
     }
 }

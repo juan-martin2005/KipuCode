@@ -1,4 +1,4 @@
-package com.kipucode.ui.screens.auth
+package com.kipucode.ui.screens.login
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,11 +20,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kipucode.R
-import com.kipucode.domain.model.ServerErrorType
 import com.kipucode.domain.model.Response
+import com.kipucode.domain.model.ServerErrorType
 import com.kipucode.domain.model.ValidationErrorType
 import com.kipucode.ui.components.button.FilledButton
 import com.kipucode.ui.components.text_field.ClickableLink
@@ -37,13 +38,13 @@ fun LoginScreen(
     onNavigateToRegister: () -> Unit,
     onBack: () -> Unit,
     onNavigateToForgotPassword: () -> Unit,
-
-    authViewModel: AuthViewModel = hiltViewModel()
+    loginViewModel: LoginViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
 
-    val loginState by authViewModel.authState.collectAsStateWithLifecycle()
-    val formErrors by authViewModel.loginFormErrorsState.collectAsStateWithLifecycle()
+    val uiState by loginViewModel.uiState.collectAsStateWithLifecycle()
+    val loginState = uiState.loginResponse
+    val formErrors = uiState.formErrors
 
     var serverEmailVerified by remember { mutableStateOf<String?>(null) }
     var serverCredentialsError by remember { mutableStateOf<String?>(null) }
@@ -54,15 +55,14 @@ fun LoginScreen(
 
     LaunchedEffect(loginState) {
         when (loginState) {
-            is Response.Loading -> {
-            }
+            is Response.Loading -> {}
             is Response.Success -> {
                 Toast.makeText(context, "¡Bienvenido de nuevo!", Toast.LENGTH_SHORT).show()
-                authViewModel.resetState()
+                loginViewModel.resetState()
                 onLoginSuccess()
             }
             is Response.Error -> {
-                val errorType = (loginState as Response.Error).error
+                val errorType = loginState.error
                 when (errorType) {
                     ServerErrorType.EMAIL_NOT_VERIFIED -> {
                         serverEmailVerified = authMsgErrorEmailNotVerified
@@ -74,7 +74,7 @@ fun LoginScreen(
                         Toast.makeText(context, authMsgErrorNetworkError, Toast.LENGTH_SHORT).show()
                     }
                     else -> {
-                        val msg = (loginState as Response.Error).message ?: "Error al iniciar sesión"
+                        val msg = loginState.message ?: "Error al iniciar sesión"
                         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
                     }
                 }
@@ -91,27 +91,21 @@ fun LoginScreen(
             onNavigateToRegister = onNavigateToRegister,
             onBack = onBack,
             onNavigateToForgotPassword = onNavigateToForgotPassword,
-
             formErrors = formErrors,
             serverCredentialsError = serverCredentialsError,
             serverEmailVerified = serverEmailVerified,
-
             onClearCredentialsError = { serverCredentialsError = null },
             onClearEmailVerified = { serverEmailVerified = null },
-
-            onClearEmailError = { authViewModel.clearEmailError() },
-            onClearPasswordError = { authViewModel.clearPasswordError() },
-
+            onClearEmailError = { loginViewModel.clearEmailError() },
+            onClearPasswordError = { loginViewModel.clearPasswordError() },
             onValidate = { email, pass ->
-                authViewModel.validateLoginForm(email, pass)
+                loginViewModel.validateLoginForm(email, pass)
             },
             onLoginClick = { email, password ->
-                authViewModel.resetState()
-                authViewModel.login(email, password)
+                loginViewModel.resetState()
+                loginViewModel.login(email, password)
             },
-
             isLoading = loginState is Response.Loading,
-
         )
     }
 }
@@ -137,12 +131,9 @@ fun LoginContent(
     onLoginClick: (String, String) -> Unit,
     isLoading: Boolean = false,
 ) {
-    // ESTADOS PARA LOS CAMPOS
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-
-    // ESTADOS PARA LAS CONTRASEÑAS
-    var passwordVisible by remember { mutableStateOf(false) }
+    var email by rememberSaveable { mutableStateOf("") }
+    var password by rememberSaveable { mutableStateOf("") }
+    var passwordVisible by rememberSaveable { mutableStateOf(false) }
 
     val localEmailErrorText = when (formErrors.emailError) {
         ValidationErrorType.EMPTY_FIELD -> stringResource(R.string.error_email_required)
@@ -224,7 +215,7 @@ fun LoginContent(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // --- CAMPO: EMAIL ---
+            // Campo: Email
             KipuForm(
                 label = stringResource(R.string.email),
                 value = email,
@@ -241,7 +232,7 @@ fun LoginContent(
                 errorMessage = emailErrorText
             )
 
-            // --- CAMPO: PASSWORD ---
+            // Campo: Password
             KipuForm(
                 label = stringResource(R.string.password),
                 value = password,
@@ -304,19 +295,49 @@ fun LoginContent(
     }
 }
 
-@Preview(showBackground = true, name = "Login Screen")
+@Preview(
+    name = "Login Screen - Default",
+    showBackground = true,
+    showSystemUi = true
+)
 @Composable
-fun LoginScreenPreview() {
-    Scaffold(
-        containerColor = BackgroundGray
-    ) { paddingValues ->
-        LoginContent(
-            onNavigateToRegister = {},
-            onBack = {},
-            onNavigateToForgotPassword = {},
-            onValidate = { _, _ -> true },
-            onLoginClick = { _, _ -> },
-            modifier = Modifier.padding(paddingValues)
-        )
+private fun LoginScreenPreview() {
+    MaterialTheme {
+        Scaffold(
+            containerColor = BackgroundGray
+        ) { paddingValues ->
+            LoginContent(
+                modifier = Modifier.padding(paddingValues),
+                onNavigateToRegister = {},
+                onBack = {},
+                onNavigateToForgotPassword = {},
+                onValidate = { _, _ -> true },
+                onLoginClick = { _, _ -> }
+            )
+        }
+    }
+}
+
+@Preview(
+    name = "Login Screen - Error State",
+    showBackground = true
+)
+@Composable
+private fun LoginScreenErrorPreview() {
+    MaterialTheme {
+        Scaffold(
+            containerColor = BackgroundGray
+        ) { paddingValues ->
+            LoginContent(
+                modifier = Modifier.padding(paddingValues),
+                onNavigateToRegister = {},
+                onBack = {},
+                onNavigateToForgotPassword = {},
+                onValidate = { _, _ -> false },
+                onLoginClick = { _, _ -> },
+                serverCredentialsError = "Correo o contraseña incorrectos",
+                isLoading = false
+            )
+        }
     }
 }
