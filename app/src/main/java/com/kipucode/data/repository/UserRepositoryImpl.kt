@@ -13,6 +13,10 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
+import android.util.Log
+import kotlinx.coroutines.withTimeout
+import kotlin.time.Duration.Companion.milliseconds
+
 // ===============================================================================================
 //  IMPLEMENTACIÓN DEL CONTRATO USER_REPOSITORY
 // ===============================================================================================
@@ -50,13 +54,19 @@ class UserRepositoryImpl @Inject constructor(
             "User avatar not change", ServerErrorType.FIRESTORE_ERROR
         )
 
-        return try {
-            userDao.updateAvatar(avatarId, currentId)
-            userRemoteDataSource.updateUserAvatar(avatarId)
-            Response.Success(Unit)
+        // 1. Guardado prioritario local en Room SQLite (0 ms de red)
+        userDao.updateAvatar(avatarId, currentId)
+
+        // 2. Sincronización remota tolerante a fallos y latencia
+        try {
+            withTimeout(2500L.milliseconds) {
+                userRemoteDataSource.updateUserAvatar(avatarId)
+            }
         } catch (e: Exception) {
-            Response.Error(e.message ?: "Error al actualizar avatar", ServerErrorType.FIRESTORE_ERROR)
+            Log.w("UserRepository", "Sync remoto de avatar diferido/offline: ${e.message}")
         }
+
+        return Response.Success(Unit)
     }
 
     // ===========================================================================================

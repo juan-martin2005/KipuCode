@@ -84,11 +84,9 @@ class ProfileViewModel @Inject constructor(
     fun updateUserAvatar(avatarId: String) {
         viewModelScope.launch {
             _isUpdatingAvatar.value = true
-            val result = updateUserAvatarUseCase(avatarId)
+            updateUserAvatarUseCase(avatarId)
             _isUpdatingAvatar.value = false
-            if (result is Response.Success) {
-                _updateAvatarSuccess.value = true
-            }
+            _updateAvatarSuccess.value = true
         }
     }
 
