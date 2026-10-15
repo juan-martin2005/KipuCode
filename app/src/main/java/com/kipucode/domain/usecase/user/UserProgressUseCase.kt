@@ -82,11 +82,12 @@ class CalculateStreakUseCase @Inject constructor() {
 
         val lastDate = Instant.ofEpochMilli(lastCompletedMillis).atZone(ZoneId.systemDefault()).toLocalDate()
         val todayDate = Instant.ofEpochMilli(currentMillis).atZone(ZoneId.systemDefault()).toLocalDate()
+        val daysBetween = ChronoUnit.DAYS.between(lastDate, todayDate)
 
-        return when (ChronoUnit.DAYS.between(lastDate, todayDate)) {
-            0L -> currentStreak       // Mismo día
-            1L -> currentStreak + 1   // Día consecutivo
-            else -> 1                 // Racha reiniciada
+        return when {
+            daysBetween <= 0L -> maxOf(1, currentStreak)
+            daysBetween == 1L -> currentStreak + 1
+            else -> 1
         }
     }
 

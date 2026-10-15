@@ -64,3 +64,14 @@ class GetAllLearningProgressUseCase @Inject constructor(
         return learningProgressRepository.getAllProgressForCurrentUser()
     }
 }
+
+// ============================================================================================
+//  CASO DE USO: CALCULO DE RETENCION DE MEMORIA (FSRS)
+// ============================================================================================
+class CalculateCardRetrievabilityUseCase @Inject constructor(
+    private val learningProgressRepository: LearningProgressRepository
+) {
+    operator fun invoke(progress: LearningProgressDomain): Double {
+        return learningProgressRepository.calculateCardRetrievability(progress)
+    }
+}

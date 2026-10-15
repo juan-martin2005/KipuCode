@@ -40,12 +40,34 @@ class CalculateProfileHeatmapUseCase @Inject constructor() {
         activities: List<DailyActivityDomain>,
         year: Int = LocalDate.now().year
     ): ProfileHeatmapDomain {
+        val yearActivities = activities.filter { it.year == year }
+        val consolidatedMap = mutableMapOf<String, DailyActivityDomain>()
+
+        yearActivities.forEach { act ->
+            val existing = consolidatedMap[act.date]
+            if (existing != null) {
+                consolidatedMap[act.date] = existing.copy(
+                    exercisesCount = existing.exercisesCount + act.exercisesCount,
+                    correctCount = existing.correctCount + act.correctCount,
+                    incorrectCount = existing.incorrectCount + act.incorrectCount,
+                    xpEarned = existing.xpEarned + act.xpEarned,
+                    lessonsCount = existing.lessonsCount + act.lessonsCount
+                )
+            } else {
+                consolidatedMap[act.date] = act
+            }
+        }
+
+        val activeDays = consolidatedMap.values.count { it.exercisesCount > 0 }
+        val totalExercises = consolidatedMap.values.sumOf { it.exercisesCount }
+        val totalXp = consolidatedMap.values.sumOf { it.xpEarned }
+
         return ProfileHeatmapDomain(
             year = year,
-            totalActiveDays = activities.count { it.exercisesCount > 0 },
-            totalExercises = activities.sumOf { it.exercisesCount },
-            totalXp = activities.sumOf { it.xpEarned },
-            activityMap = activities.associateBy { it.date }
+            totalActiveDays = activeDays,
+            totalExercises = totalExercises,
+            totalXp = totalXp,
+            activityMap = consolidatedMap
         )
     }
 }

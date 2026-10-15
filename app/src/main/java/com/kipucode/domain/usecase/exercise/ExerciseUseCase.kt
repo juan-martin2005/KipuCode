@@ -133,7 +133,7 @@ class PrioritizeExerciseSessionUseCase @Inject constructor() {
                 val newCards = typeFiltered.filter { ex ->
                     val p = progressMap[ex.id]
                     p == null || p.reps == 0
-                }.shuffled()
+                }.sortedBy { it.orderIndex }
 
                 // 3. Próximas / Al día (dueDate > currentTimeMillis) ordenadas por la más próxima a vencer
                 val upcomingCards = typeFiltered.filter { ex ->
@@ -157,5 +157,37 @@ class PrioritizeExerciseSessionUseCase @Inject constructor() {
             .map { exercise ->
                 exercise.copy(options = exercise.options.shuffled())
             }
+    }
+}
+
+// ============================================================================================
+//  CASOS DE USO: INTENTOS DE EJERCICIOS (DESACOPLAMIENTO DE VIEWMODEL)
+// ============================================================================================
+class RecordExerciseAttemptUseCase @Inject constructor(
+    private val exerciseAttemptRepository: com.kipucode.domain.repository.ExerciseAttemptRepository
+) {
+    suspend operator fun invoke(
+        exerciseId: String,
+        lessonId: String,
+        exerciseType: String,
+        isCorrect: Boolean
+    ): com.kipucode.domain.model.Response<com.kipucode.domain.model.ExerciseAttemptDomain> {
+        return exerciseAttemptRepository.recordAttempt(exerciseId, lessonId, exerciseType, isCorrect)
+    }
+}
+
+class GetCompletedExerciseIdsUseCase @Inject constructor(
+    private val exerciseAttemptRepository: com.kipucode.domain.repository.ExerciseAttemptRepository
+) {
+    suspend operator fun invoke(lessonId: String): List<String> {
+        return exerciseAttemptRepository.getCompletedExerciseIdsForLesson(lessonId)
+    }
+}
+
+class GetAllExerciseAttemptsUseCase @Inject constructor(
+    private val exerciseAttemptRepository: com.kipucode.domain.repository.ExerciseAttemptRepository
+) {
+    suspend operator fun invoke(): List<com.kipucode.domain.model.ExerciseAttemptDomain> {
+        return exerciseAttemptRepository.getAllAttemptsForUser()
     }
 }

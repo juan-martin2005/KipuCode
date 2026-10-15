@@ -23,7 +23,18 @@ class CalculateSessionMetricsUseCase @Inject constructor() {
         totalCount: Int,
         timeSeconds: Long
     ): SessionMetricsResult {
-        val effectiveTotal = if (totalCount > 0) totalCount else maxOf(1, correctCount)
+        if (totalCount <= 0 && correctCount <= 0) {
+            return SessionMetricsResult(
+                accuracy = 0f,
+                correctCount = 0,
+                reinforceCount = 0,
+                timeFormatted = formatDuration(timeSeconds),
+                summaryMessage = calculateSummaryMessage(0f),
+                memoryRetentionPct = 0
+            )
+        }
+
+        val effectiveTotal = if (totalCount > 0) totalCount else correctCount
         val accuracy = if (effectiveTotal > 0) correctCount.toFloat() / effectiveTotal.toFloat() else 0f
         val reinforceCount = maxOf(0, effectiveTotal - correctCount)
         val timeFormatted = formatDuration(timeSeconds)
@@ -84,7 +95,7 @@ class CalculateWeeklyStreakSummaryUseCase @Inject constructor() {
         todayDayOfWeekIndex: Int = LocalDate.now().dayOfWeek.value - 1 // 0 = Lunes, 6 = Domingo
     ): WeeklyStreakSummaryResult {
         val nextStreakText = generateNextStreakMessage(streakDays)
-        val weekDays = generateWeekDays(todayDayOfWeekIndex)
+        val weekDays = generateWeekDays(todayDayOfWeekIndex, streakDays)
 
         return WeeklyStreakSummaryResult(
             currentStreakDays = streakDays,
@@ -94,21 +105,24 @@ class CalculateWeeklyStreakSummaryUseCase @Inject constructor() {
     }
 
     private fun generateNextStreakMessage(streakDays: Int): String {
-        val nextMilestone = if (streakDays < 7) 7 else streakDays + 1
+        val milestones = listOf(3, 7, 14, 30, 60, 100, 365)
+        val nextMilestone = milestones.firstOrNull { it > streakDays } ?: ((streakDays / 50 + 1) * 50)
         val remaining = nextMilestone - streakDays
         return if (remaining == 1) {
             "A solo 1 día de superar tu meta de $nextMilestone días"
         } else {
-            "¡Mantén el ritmo mañana para sumar $nextMilestone días!"
+            "¡Mantén el ritmo mañana para alcanzar tu meta de $nextMilestone días!"
         }
     }
 
-    private fun generateWeekDays(todayIndex: Int): List<WeekDayStreakDomain> {
+    private fun generateWeekDays(todayIndex: Int, streakDays: Int): List<WeekDayStreakDomain> {
         val dayLabels = listOf("L", "M", "X", "J", "V", "S", "D")
+        val startCompletedIndex = if (streakDays >= 1) maxOf(0, todayIndex - (streakDays - 1)) else -1
+
         return dayLabels.mapIndexed { index, label ->
             val status = when {
-                index < todayIndex -> WeekDayStatus.COMPLETED
-                index == todayIndex -> WeekDayStatus.CURRENT
+                streakDays >= 1 && index in startCompletedIndex..todayIndex -> WeekDayStatus.COMPLETED
+                streakDays == 0 && index == todayIndex -> WeekDayStatus.CURRENT
                 else -> WeekDayStatus.PENDING
             }
             WeekDayStreakDomain(label, status)

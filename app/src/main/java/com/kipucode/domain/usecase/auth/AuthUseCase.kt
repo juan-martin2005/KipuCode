@@ -5,7 +5,7 @@ import com.kipucode.domain.model.UserDomain
 import com.kipucode.domain.repository.AuthRepository
 import javax.inject.Inject
 
-class LoginUseCases @Inject constructor(
+class LoginUseCase @Inject constructor(
     private val authRepository: AuthRepository
 ) {
     suspend operator fun invoke(email: String, password: String): Response<UserDomain> {
@@ -54,7 +54,7 @@ class UpdatePasswordUseCase @Inject constructor(
 class LogoutUseCase @Inject constructor(
     private val authRepository: AuthRepository
 ) {
-    suspend fun invoke() {
+    suspend operator fun invoke() {
         authRepository.logout()
     }
 }

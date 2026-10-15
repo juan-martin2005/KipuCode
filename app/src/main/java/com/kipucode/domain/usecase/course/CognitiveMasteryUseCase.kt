@@ -66,7 +66,7 @@ class GetCognitiveMasteryOverviewUseCase @Inject constructor(
                         }
 
                         val lessonPct = if (practicedCount > 0) {
-                            Math.round((lessonMasterySum / practicedCount) * 100).toInt().coerceIn(1, 100)
+                            Math.round((lessonMasterySum / flashcards.size) * 100).toInt().coerceIn(1, 100)
                         } else {
                             0
                         }
@@ -90,14 +90,6 @@ class GetCognitiveMasteryOverviewUseCase @Inject constructor(
 }
 
 // ============================================================================================
-//  CASO DE USO: ACTUALIZAR ÚLTIMA LECCIÓN VISITADA (MARCAPÁGINAS)
+//  COMPATIBILIDAD CON IMPORTS PREVIOS DE UPDATE_LAST_VIEWED_LESSON_USE_CASE
 // ============================================================================================
-class UpdateLastViewedLessonUseCase @Inject constructor(
-    private val userProgressRepository: UserProgressRepository
-) {
-    suspend operator fun invoke(lessonId: String) {
-        try {
-            userProgressRepository.updateLastVisitedLessonLocal(lessonId)
-        } catch (_: Exception) {}
-    }
-}
+typealias UpdateLastViewedLessonUseCase = com.kipucode.domain.usecase.lesson.UpdateLastViewedLessonUseCase

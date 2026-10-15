@@ -115,3 +115,32 @@ class CalculateExerciseSessionSummaryUseCase @Inject constructor() {
         )
     }
 }
+
+// =========================================================================================
+//  Caso de Uso: Evaluacion de Flashcards / Autoevaluacion
+// =========================================================================================
+data class FlashCardEvaluationResult(
+    val earnedXp: Int,
+    val feedbackMessage: String
+)
+
+class EvaluateFlashCardUseCase @Inject constructor() {
+    operator fun invoke(baseXp: Int, rating: Int): FlashCardEvaluationResult {
+        // rating: 1: Again, 2: Hard, 3: Good, 4: Easy
+        val earnedXp = when (rating) {
+            4, 3 -> baseXp
+            2 -> (baseXp * 0.75).toInt()
+            else -> baseXp / 2
+        }
+        val feedback = when (rating) {
+            4 -> "¡Excelente retencion! Dominas este concepto"
+            3 -> "¡Buen trabajo! Concepto aprendido"
+            2 -> "Comprendido, pero requiere mas practica"
+            else -> "No te preocupes, la repeticion espaciada te ayudara"
+        }
+        return FlashCardEvaluationResult(
+            earnedXp = earnedXp,
+            feedbackMessage = feedback
+        )
+    }
+}
