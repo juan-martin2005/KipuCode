@@ -21,8 +21,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kipucode.R
 import com.kipucode.domain.model.Response
 import com.kipucode.domain.model.ValidationErrorType
-import com.kipucode.ui.components.button.FilledButton
-import com.kipucode.ui.components.text_field.KipuForm
+import com.kipucode.ui.components.buttons.FilledButton
+import com.kipucode.ui.components.textfields.KipuForm
 import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.Gray
 import com.kipucode.ui.theme.KipuCodeTheme

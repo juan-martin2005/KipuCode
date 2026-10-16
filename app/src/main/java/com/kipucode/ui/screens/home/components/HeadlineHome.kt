@@ -1,4 +1,4 @@
-package com.kipucode.ui.components.card
+package com.kipucode.ui.screens.home.components
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
@@ -48,11 +48,11 @@ import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun HeadlineHome(
+    modifier: Modifier = Modifier,
     userName: String,
     userAvatarId: Int ? = null,
     userXp: Int,
     userStreak: Int,
-    modifier: Modifier = Modifier
 ){
     var showXp by remember { mutableStateOf(true) }
 

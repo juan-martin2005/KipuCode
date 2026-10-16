@@ -21,12 +21,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.kipucode.R
-import com.kipucode.ui.components.KipuBottomBar
+import com.kipucode.ui.components.navbar.KipuBottomBar
 import com.kipucode.ui.screens.profile.components.avatar.AvatarProvider
 import com.kipucode.ui.screens.profile.components.avatar.AvatarSelectionDialog
-import com.kipucode.ui.components.card.KipuDialog
-import com.kipucode.ui.components.card.MultipleChoicesCard
-import com.kipucode.ui.components.card.UserProfileCard
+import com.kipucode.ui.components.cards.KipuDialog
+import com.kipucode.ui.screens.home.components.MultipleChoicesCard
+import com.kipucode.ui.screens.profile.components.UserProfileCard
 import com.kipucode.ui.navigation.ChangePasswordRoute
 import com.kipucode.ui.screens.profile.components.ActivityHeatmapCard
 import com.kipucode.ui.screens.profile.components.DayStatus

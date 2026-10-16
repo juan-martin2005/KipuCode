@@ -1,5 +1,6 @@
-package com.kipucode.ui.components.code
+package com.kipucode.ui.screens.exercise.components.formats
 
+import android.content.ClipData
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
@@ -20,12 +21,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.platform.toClipEntry
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,20 +41,18 @@ import com.kipucode.ui.theme.MoonFrost
 import com.kipucode.ui.theme.Nunito
 import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
-/**
- * Contenedor nativo de bloque de código y diagramas tipo terminal,
- * con barra superior, botón de copiar con animación y tipografía JetBrains Mono.
- */
 @Composable
-fun CodeMarkdown(
+fun FormattedCode(
+    modifier: Modifier = Modifier,
     code: String,
     language: String = "text",
-    modifier: Modifier = Modifier,
     isDiagram: Boolean = false
 ) {
-    val clipboardManager = LocalClipboardManager.current
+    val clipboardManager = LocalClipboard.current
+    val coroutineScope = rememberCoroutineScope()
     var isCopied by remember { mutableStateOf(false) }
 
     LaunchedEffect(isCopied) {
@@ -116,8 +116,14 @@ fun CodeMarkdown(
 
             IconButton(
                 onClick = {
-                    clipboardManager.setText(AnnotatedString(code))
-                    isCopied = true
+                    coroutineScope.launch {
+                        val clipData = ClipData.newPlainText("code_snippet", code)
+                        clipboardManager.setClipEntry(clipData.toClipEntry())
+
+                        isCopied = true
+                        delay(2000.milliseconds)
+                        isCopied = false
+                    }
                 },
                 modifier = Modifier.size(28.dp)
             ) {
@@ -153,17 +159,17 @@ fun CodeMarkdown(
 
 @Preview(showBackground = true, name = "CodeMarkdown - Variants")
 @Composable
-private fun CodeMarkdownPreview() {
+private fun FormattedCodePreview() {
     KipuCodeTheme {
         Column(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            CodeMarkdown(
+            FormattedCode(
                 code = "dotnet new console -n HolaMundo\ncd HolaMundo\ndotnet run",
                 language = "terminal"
             )
-            CodeMarkdown(
+            FormattedCode(
                 code = "using System;\n\nConsole.WriteLine(\"¡Hola desde C#!\");",
                 language = "c#"
             )

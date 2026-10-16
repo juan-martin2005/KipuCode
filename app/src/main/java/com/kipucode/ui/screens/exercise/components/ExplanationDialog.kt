@@ -26,8 +26,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kipucode.R
-import com.kipucode.ui.components.button.FilledButton
-import com.kipucode.ui.components.text.FormattedText
+import com.kipucode.ui.components.buttons.FilledButton
+import com.kipucode.ui.screens.exercise.components.formats.FormattedText
 import com.kipucode.ui.theme.Green
 import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuParagraph

@@ -1,6 +1,5 @@
-package com.kipucode.ui.components.button
+package com.kipucode.ui.components.buttons
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,7 +10,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -75,59 +73,6 @@ fun FilledButton(
     }
 }
 
-@Composable
-fun OutlineButton(
-    textButton: String,
-    onClickFilledButton: () -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    isLoading: Boolean = false,
-    fontSize: TextUnit = 18.sp,
-    containerColor: Color = KipuTeal
-) {
-    val isInteractive = enabled && !isLoading
-    val activeColor = if (isInteractive) containerColor else containerColor.copy(alpha = 0.5f)
-
-    OutlinedButton(
-        onClick = {
-            if (isInteractive) {
-                onClickFilledButton()
-            }
-        },
-        modifier = modifier
-            .fillMaxWidth()
-            .height(50.dp),
-        enabled = isInteractive,
-        shape = RoundedCornerShape(14.dp),
-        border = BorderStroke(
-            width = 2.dp,
-            color = activeColor
-        ),
-        colors = ButtonDefaults.outlinedButtonColors(
-            contentColor = containerColor,
-            disabledContentColor = containerColor.copy(alpha = 0.5f)
-        )
-    ) {
-        if (isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier.size(24.dp),
-                color = activeColor,
-                strokeWidth = 2.5.dp
-            )
-        } else {
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center,
-                text = textButton,
-                fontFamily = Nunito,
-                fontWeight = FontWeight.Bold,
-                fontSize = fontSize,
-                color = activeColor
-            )
-        }
-    }
-}
-
 @Preview(showBackground = true, name = "Buttons - Variants")
 @Composable
 private fun ButtonsPreview() {
@@ -142,20 +87,6 @@ private fun ButtonsPreview() {
             )
             Spacer(modifier = Modifier.height(8.dp))
             FilledButton(
-                textButton = "Cargando...",
-                isLoading = true,
-                onClickFilledButton = {}
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // --- Outline Button ---
-            OutlineButton(
-                textButton = "Botón Secundario",
-                onClickFilledButton = {}
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            OutlineButton(
                 textButton = "Cargando...",
                 isLoading = true,
                 onClickFilledButton = {}

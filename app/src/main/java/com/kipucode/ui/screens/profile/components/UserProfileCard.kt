@@ -1,4 +1,4 @@
-package com.kipucode.ui.components.card
+package com.kipucode.ui.screens.profile.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

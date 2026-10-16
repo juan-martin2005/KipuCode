@@ -1,4 +1,4 @@
-package com.kipucode.ui.components.text_field
+package com.kipucode.ui.components.textfields
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

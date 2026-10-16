@@ -26,8 +26,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.kipucode.domain.model.PracticeMethod
-import com.kipucode.ui.components.KipuBottomBar
-import com.kipucode.ui.components.button.FilledButton
+import com.kipucode.ui.components.navbar.KipuBottomBar
+import com.kipucode.ui.components.buttons.FilledButton
 import com.kipucode.ui.navigation.ExerciseRoute
 import com.kipucode.ui.screens.code.components.PracticeCodeSelectorContent
 import com.kipucode.ui.theme.Gray

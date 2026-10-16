@@ -29,12 +29,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.kipucode.R
 import com.kipucode.domain.model.LessonDomain
-import com.kipucode.ui.components.KipuBottomBar
-import com.kipucode.ui.components.KipuTopBar
+import com.kipucode.ui.components.navbar.KipuBottomBar
+import com.kipucode.ui.components.navbar.KipuTopBar
 import com.kipucode.ui.screens.profile.components.avatar.AvatarProvider
-import com.kipucode.ui.components.card.HeadlineHome
-import com.kipucode.ui.components.card.HomeCard
-import com.kipucode.ui.components.card.LessonCard
+import com.kipucode.ui.screens.home.components.HeadlineHome
+import com.kipucode.ui.components.cards.CoursesCard
+import com.kipucode.ui.components.cards.LessonCard
 import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuDarkBlue
@@ -151,7 +151,7 @@ fun HomeContent(
 
         // --- SECCIÓN 2: TARJETA DE PROGRESO FSRS-6 ---
         item {
-            HomeCard(
+            CoursesCard(
                 courseName = courseTitle,
                 currentLessons = currentLessonsProgress,
                 totalLessons = totalLessons,

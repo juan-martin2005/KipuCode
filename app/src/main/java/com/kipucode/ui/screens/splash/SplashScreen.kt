@@ -31,7 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kipucode.R
-import com.kipucode.ui.components.text_field.KipucodeText
+import com.kipucode.ui.components.textfields.KipucodeText
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.KipuCodeTheme

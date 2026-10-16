@@ -1,4 +1,4 @@
-package com.kipucode.ui.components.text_field
+package com.kipucode.ui.components.textfields
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable

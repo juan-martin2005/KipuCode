@@ -1,4 +1,4 @@
-package com.kipucode.ui.components.card
+package com.kipucode.ui.screens.home.components
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke

@@ -33,16 +33,15 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.kipucode.R
 import com.kipucode.domain.model.CourseDomain
 import com.kipucode.domain.model.CourseWithLessonsDomain
 import com.kipucode.domain.model.LessonDomain
 import com.kipucode.domain.usecase.course.CognitiveMasteryOverview
-import com.kipucode.ui.components.KipuBottomBar
-import com.kipucode.ui.components.KipuTopBar
-import com.kipucode.ui.components.card.HomeCard
-import com.kipucode.ui.components.card.LessonCard
+import com.kipucode.ui.components.navbar.KipuBottomBar
+import com.kipucode.ui.components.navbar.KipuTopBar
+import com.kipucode.ui.components.cards.CoursesCard
+import com.kipucode.ui.components.cards.LessonCard
 import com.kipucode.ui.navigation.LessonRoute
 import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.Gray
@@ -154,7 +153,7 @@ fun ModulesListContent(
                 val totalLessons = item.lessons.size
                 val courseMastery = masteryOverview.courseMastery[course.id]
 
-                HomeCard(
+                CoursesCard(
                     courseName = course.title,
                     totalLessons = totalLessons,
                     courseNumber = course.orderIndex,
@@ -197,7 +196,7 @@ fun ModuleLessonsContent(
                 modifier = Modifier.padding(top = 16.dp, bottom = 12.dp)
             )
 
-            HomeCard(
+            CoursesCard(
                 courseName = course.title,
                 totalLessons = lessons.size,
                 courseNumber = course.orderIndex,

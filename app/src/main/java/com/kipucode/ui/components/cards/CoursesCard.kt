@@ -1,4 +1,4 @@
-package com.kipucode.ui.components.card
+package com.kipucode.ui.components.cards
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -24,7 +24,7 @@ import com.kipucode.ui.theme.Nunito
 import com.kipucode.ui.theme.White
 
 @Composable
-fun HomeCard(
+fun CoursesCard(
     modifier: Modifier = Modifier,
 
     courseName: String,
@@ -194,7 +194,7 @@ fun HomeCard(
 
 @Preview(showBackground = true, name = "HomeCard - With Icon")
 @Composable
-private fun HomeCardPreviewWithIcon() {
+private fun CoursesCardPreviewWithIcon() {
     KipuCodeTheme {
         Box(
             modifier = Modifier
@@ -202,7 +202,7 @@ private fun HomeCardPreviewWithIcon() {
                 .background(BackgroundGray)
                 .padding(16.dp)
         ) {
-            HomeCard(
+            CoursesCard(
                 courseName = "Fundamentos Básicos de Programación Python",
                 currentLessons = 3,
                 totalLessons = 10,
@@ -214,7 +214,7 @@ private fun HomeCardPreviewWithIcon() {
 
 @Preview(showBackground = true, name = "HomeCard - With Course Number")
 @Composable
-private fun HomeCardPreviewWithNumber() {
+private fun CoursesCardPreviewWithNumber() {
     KipuCodeTheme {
         Box(
             modifier = Modifier
@@ -222,7 +222,7 @@ private fun HomeCardPreviewWithNumber() {
                 .background(BackgroundGray)
                 .padding(16.dp)
         ) {
-            HomeCard(
+            CoursesCard(
                 courseName = "Fundamentos Básicos de Programación Python",
                 currentLessons = 4,
                 totalLessons = 4,

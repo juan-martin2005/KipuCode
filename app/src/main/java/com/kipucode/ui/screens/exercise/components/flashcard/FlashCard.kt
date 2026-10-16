@@ -33,12 +33,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kipucode.R
-import com.kipucode.ui.components.button.FilledButton
-import com.kipucode.ui.components.text.FormattedText
+import com.kipucode.ui.components.buttons.FilledButton
+import com.kipucode.ui.screens.exercise.components.text.FormattedText
 import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuH4
@@ -208,7 +209,7 @@ fun Flashcard(
                         FormattedText(
                             text = instruction,
                             style = KipuH4.copy(fontSize = 18.sp),
-                            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                            textAlign = TextAlign.Center,
                             modifier = Modifier.fillMaxWidth()
                         )
                     } else {
@@ -216,7 +217,7 @@ fun Flashcard(
                         FormattedText(
                             text = answer,
                             style = KipuParagraph,
-                            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                            textAlign = TextAlign.Center,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .graphicsLayer { rotationY = 180f }

@@ -26,8 +26,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kipucode.R
-import com.kipucode.ui.components.button.FilledButton
-import com.kipucode.ui.components.button.OutlineButton
+import com.kipucode.ui.components.buttons.FilledButton
+import com.kipucode.ui.components.buttons.OutlineButton
 import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.Nunito

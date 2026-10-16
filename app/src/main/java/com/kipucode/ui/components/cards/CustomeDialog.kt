@@ -1,4 +1,4 @@
-package com.kipucode.ui.components.card
+package com.kipucode.ui.components.cards
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
@@ -26,8 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.kipucode.R
-import com.kipucode.ui.components.button.FilledButton
-import com.kipucode.ui.components.button.OutlineButton
+import com.kipucode.ui.components.buttons.FilledButton
+import com.kipucode.ui.components.buttons.OutlineButton
 import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.Nunito
 

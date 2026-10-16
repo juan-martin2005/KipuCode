@@ -18,7 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.kipucode.ui.components.button.FilledButton
+import com.kipucode.ui.components.buttons.FilledButton
 import com.kipucode.ui.screens.summary.components.FinalSummary
 import com.kipucode.ui.screens.summary.components.RepetitionSchedule
 import com.kipucode.ui.theme.BackgroundGray

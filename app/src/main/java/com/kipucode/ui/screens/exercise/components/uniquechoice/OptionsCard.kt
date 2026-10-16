@@ -1,4 +1,4 @@
-package com.kipucode.ui.screens.exercise.components
+package com.kipucode.ui.screens.exercise.components.uniquechoice
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -25,7 +25,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kipucode.R
-import com.kipucode.ui.components.text.FormattedText
+import com.kipucode.ui.screens.exercise.components.formats.FormattedText
 import com.kipucode.ui.theme.Gray
 import com.kipucode.ui.theme.Green
 import com.kipucode.ui.theme.KipuCodeTheme

@@ -1,4 +1,4 @@
-package com.kipucode.ui.components.card
+package com.kipucode.ui.components.cards
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*

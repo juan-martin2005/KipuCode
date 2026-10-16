@@ -1,4 +1,4 @@
-package com.kipucode.ui.components
+package com.kipucode.ui.components.navbar
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
@@ -95,60 +95,6 @@ fun KipuBottomBar(navController: NavController) {
                 )
             )
         }
-    }
-}
-
-@Composable
-fun KipuTopBar(
-    title: String,
-    onBackClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        // Botón
-        IconButton(
-            onClick = onBackClick,
-            modifier = Modifier
-                .align(Alignment.CenterStart)
-                .size(40.dp)
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_arrow_left),
-                contentDescription = "Volver",
-                tint = KipuDarkBlue,
-                modifier = Modifier.size(30.dp)
-            )
-        }
-
-        // Título
-        Text(
-            text = title,
-            fontSize = 18.sp,
-            fontFamily = Nunito,
-            fontWeight = FontWeight.ExtraBold,
-            color = KipuDarkBlue,
-            lineHeight = 19.sp,
-            maxLines = 2,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .padding(horizontal = 48.dp)
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "TopBar - Default")
-@Composable
-private fun TopBarPreview() {
-    KipuCodeTheme {
-        KipuTopBar(
-            title = "Pensamiento Computacional y Entornos Base",
-            onBackClick = {}
-        )
     }
 }
 

@@ -24,9 +24,9 @@ import com.kipucode.domain.model.Response
 import com.kipucode.domain.model.ServerErrorType
 import com.kipucode.domain.model.UserDomain
 import com.kipucode.domain.model.ValidationErrorType
-import com.kipucode.ui.components.button.FilledButton
-import com.kipucode.ui.components.text_field.ClickableLink
-import com.kipucode.ui.components.text_field.KipuForm
+import com.kipucode.ui.components.buttons.FilledButton
+import com.kipucode.ui.components.textfields.ClickableLink
+import com.kipucode.ui.components.textfields.KipuForm
 import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.Nunito

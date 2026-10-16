@@ -1,4 +1,4 @@
-package com.kipucode.ui.components.text
+package com.kipucode.ui.screens.exercise.components.formats
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

@@ -9,15 +9,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.kipucode.ui.components.code.CodeMarkdown
-import com.kipucode.ui.components.text.FormattedText
+import com.kipucode.ui.screens.exercise.components.formats.FormattedCode
+import com.kipucode.ui.screens.exercise.components.formats.FormattedText
 import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuH4
 
-/**
- * Representa los segmentos consecutivos de la instrucción de un ejercicio:
- * puede contener múltiples bloques de texto intercalados con bloques de código o terminal.
- */
 sealed interface InstructionPart {
     data class Text(val text: String) : InstructionPart
     data class Code(val code: String, val language: String) : InstructionPart
@@ -45,7 +41,7 @@ fun ExerciseInstruction(
                     )
                 }
                 is InstructionPart.Code -> {
-                    CodeMarkdown(
+                    FormattedCode(
                         code = part.code,
                         language = part.language
                     )

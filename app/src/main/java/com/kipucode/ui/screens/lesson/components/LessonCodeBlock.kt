@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.kipucode.domain.model.LessonBlock
-import com.kipucode.ui.components.code.CodeMarkdown
+import com.kipucode.ui.screens.exercise.components.formats.FormattedCode
 import com.kipucode.ui.theme.KipuCodeTheme
 
 @Composable
@@ -16,7 +16,7 @@ fun LessonCodeBlock(
     block: LessonBlock.Code,
     modifier: Modifier = Modifier
 ) {
-    CodeMarkdown(
+    FormattedCode(
         code = block.code,
         language = block.language,
         modifier = modifier,

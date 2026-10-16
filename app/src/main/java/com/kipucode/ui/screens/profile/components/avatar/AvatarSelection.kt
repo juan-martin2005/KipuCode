@@ -39,8 +39,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.kipucode.domain.model.Avatar
-import com.kipucode.ui.components.button.FilledButton
-import com.kipucode.ui.components.button.OutlineButton
+import com.kipucode.ui.components.buttons.FilledButton
+import com.kipucode.ui.components.buttons.OutlineButton
 import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.Gray
 import com.kipucode.ui.theme.KipuCodeTheme
