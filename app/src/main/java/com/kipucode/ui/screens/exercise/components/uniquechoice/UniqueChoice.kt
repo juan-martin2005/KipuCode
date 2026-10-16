@@ -45,7 +45,7 @@ fun UniqueChoice(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         // --- PREGUNTA (INSTRUCTION) ---
         ExerciseInstruction(

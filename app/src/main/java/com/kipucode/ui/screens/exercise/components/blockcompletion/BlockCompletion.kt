@@ -50,7 +50,7 @@ import androidx.compose.ui.unit.sp
 import com.kipucode.R
 import com.kipucode.domain.model.BlockOptionDomain
 import com.kipucode.ui.screens.exercise.components.ExerciseProgressBar
-import com.kipucode.ui.screens.exercise.components.text.FormattedText
+import com.kipucode.ui.screens.exercise.components.formats.FormattedText
 import com.kipucode.ui.theme.JetBrains
 import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuDarkBlue
@@ -120,7 +120,7 @@ fun BlockCompletion(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(14.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         // --- ENUNCIADO / INSTRUCCIÓN DEL EJERCICIO ---
         if (descriptionText.isNotBlank()) {
@@ -214,7 +214,7 @@ fun BlockCompletion(
             }
         }
 
-        Spacer(modifier = Modifier.height(28.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         // --- BOTÓN COMPROBAR ESTILO MOCKUP ---
         Button(

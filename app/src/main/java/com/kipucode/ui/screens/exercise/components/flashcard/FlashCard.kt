@@ -1,9 +1,8 @@
-package com.kipucode.ui.screens.exercise.components
+package com.kipucode.ui.screens.exercise.components.flashcard
 
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,31 +31,26 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kipucode.R
 import com.kipucode.ui.components.buttons.FilledButton
-import com.kipucode.ui.screens.exercise.components.text.FormattedText
+import com.kipucode.ui.screens.exercise.components.ExerciseProgressBar
+import com.kipucode.ui.screens.exercise.components.formats.FormattedText
 import com.kipucode.ui.theme.KipuCodeTheme
-import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuH4
 import com.kipucode.ui.theme.KipuParagraph
-import com.kipucode.ui.theme.KipuTeal
-import com.kipucode.ui.theme.KipuTealDark
 import com.kipucode.ui.theme.MoonFrost
 import com.kipucode.ui.theme.Nunito
-import kotlin.math.roundToInt
 
 @Composable
 fun Flashcard(
-    currentFc: Int,
-    totalFc: Int,
+    current: Int,
+    total: Int,
     instruction: String,
     answer: String,
-    module: String,
     modifier: Modifier = Modifier,
     onRatingSelect: (rating: Int) -> Unit
 ) {
@@ -70,109 +64,19 @@ fun Flashcard(
         ),
         label = "flipAnimation"
     )
-    val horizontalProgressFactor = if (totalFc > 0) currentFc.toFloat() / totalFc.toFloat() else 0f
-    val progressPorcentaje = horizontalProgressFactor * 100
 
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(8.dp))
+        // --- BARRA DE PROGRESO REUTILIZABLE ---
+        ExerciseProgressBar(
+            current = current,
+            total = total,
+            modifier = Modifier.fillMaxWidth()
+        )
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(5.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = ImageVector.vectorResource(R.drawable.ic_terminal_rounded),
-                contentDescription = "Terminal icon",
-                modifier = Modifier.size(18.dp),
-                tint = KipuTealDark
-            )
-
-            Text(
-                text = "MODULO: ${module.uppercase()}",
-                fontSize = 13.sp,
-                fontFamily = Nunito,
-                modifier = Modifier.weight(1f)
-            )
-        }
-        Spacer(modifier = Modifier.height(12.dp))
-
-        Box(
-            modifier = Modifier
-                .height(60.dp)
-                .background(
-                    MoonFrost.copy(alpha = 0.5f),
-                    shape = RoundedCornerShape(16.dp)
-                )
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 5.dp)
-        ) {
-            Column(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = currentFc.toString(),
-                        color = KipuTealDark,
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 18.sp,
-                        fontFamily = Nunito
-                    )
-                    Text(
-                        text = " / $totalFc",
-                        color = KipuDarkBlue.copy(alpha = 0.9f),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
-                        fontFamily = Nunito,
-                        modifier = Modifier.padding(end = 25.dp)
-                    )
-
-                    Text(
-                        text = "Tarjetas",
-                        fontFamily = Nunito,
-                        fontSize = 14.sp
-                    )
-
-                    Spacer(modifier = Modifier.weight(1f))
-
-                    Text(
-                        text = "${progressPorcentaje.roundToInt()}% COMPLETADO",
-                        fontFamily = Nunito,
-                        color = KipuTealDark,
-                        fontSize = 13.sp
-                    )
-                }
-                Spacer(modifier = Modifier.weight(1f))
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(6.dp)
-                        .background(
-                            MoonFrost.copy(alpha = 0.5f),
-                            shape = RoundedCornerShape(4.dp)
-                        )
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth(horizontalProgressFactor)
-                            .height(6.dp)
-                            .background(
-                                KipuTeal,
-                                shape = RoundedCornerShape(4.dp)
-                            )
-                    )
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         // --- TARJETA CON EFECTO 3D ---
         Card(
@@ -238,7 +142,7 @@ fun Flashcard(
             }
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         Text(
             text = stringResource(R.string.rating_question),
@@ -246,7 +150,7 @@ fun Flashcard(
             fontFamily = Nunito
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         // --- SECCIÓN DE BOTONES DE EVALUACIÓN FSRS ---
         Row(
@@ -308,11 +212,10 @@ fun Flashcard(
 private fun FlashcardPreview() {
     KipuCodeTheme {
         Flashcard(
-            currentFc = 4,
-            totalFc = 15,
+            current = 4,
+            total = 15,
             instruction = "Zen de Python: ¿Qué principio promueve `Explicit is better than implicit`?",
             answer = "Significa que el código debe ser `claro`, `directo` y evitar **'magia'** o comportamientos ocultos.",
-            module = "Gestion de errores",
             modifier = Modifier.padding(horizontal = 24.dp),
             onRatingSelect = {}
         )

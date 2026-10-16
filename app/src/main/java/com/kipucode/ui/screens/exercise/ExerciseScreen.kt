@@ -36,13 +36,13 @@ import com.kipucode.R
 import com.kipucode.domain.model.BlockOptionDomain
 import com.kipucode.domain.model.ExerciseDomain
 import com.kipucode.domain.model.Response
-import com.kipucode.ui.components.KipuTopBar
-import com.kipucode.ui.components.button.FilledButton
-import com.kipucode.ui.components.card.KipuDialog
-import com.kipucode.ui.screens.exercise.components.BlockCompletion
+import com.kipucode.ui.components.navbar.KipuTopBar
+import com.kipucode.ui.components.buttons.FilledButton
+import com.kipucode.ui.components.cards.KipuDialog
+import com.kipucode.ui.screens.exercise.components.blockcompletion.BlockCompletion
 import com.kipucode.ui.screens.exercise.components.ExplanationDialog
-import com.kipucode.ui.screens.exercise.components.Flashcard
-import com.kipucode.ui.screens.exercise.components.UniqueChoice
+import com.kipucode.ui.screens.exercise.components.flashcard.Flashcard
+import com.kipucode.ui.screens.exercise.components.uniquechoice.UniqueChoice
 import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuTeal
@@ -240,13 +240,12 @@ fun ExerciseScreenContent(
             when (currentExercise?.type) {
                 "DEFAULT_FLASHCARDS", "FEYNMAN_FLASHCARDS", "FLASHCARD" -> {
                     Flashcard(
-                        currentFc = currentIndex + 1,
-                        totalFc = totalExercises,
+                        current = currentIndex + 1,
+                        total = totalExercises,
                         instruction = instruction,
                         answer = currentExercise.answer.ifBlank { options.firstOrNull()?.content.orEmpty() },
-                        module = lessonName.ifBlank { "Módulo actual" },
                         onRatingSelect = onRatingSelected,
-                        modifier = Modifier.padding(horizontal = 20.dp)
+                        modifier = Modifier.padding(vertical = 8.dp, horizontal = 20.dp)
                     )
                 }
                 "UNIQUE_CHOICE" -> {
