@@ -29,6 +29,7 @@ sealed class SummaryMetricsTestCase(
     class WeeklyStreakSummaryCase(
         val streakDays: Int,
         val todayDayOfWeekIndex: Int,
+        val activeWeekDayIndices: Set<Int> = emptySet(),
         val expectedNextStreakText: String,
         val expectedStatuses: List<WeekDayStatus>,
         scenario: String
@@ -192,6 +193,38 @@ class SummaryMetricsUnitTest(
                         WeekDayStatus.COMPLETED
                     ),
                     scenario = "Meta superada en domingo"
+                ),
+                SummaryMetricsTestCase.WeeklyStreakSummaryCase(
+                    streakDays = 1,
+                    todayDayOfWeekIndex = 2,
+                    activeWeekDayIndices = setOf(0, 2),
+                    expectedNextStreakText = "¡Mantén el ritmo mañana para alcanzar tu meta de 3 días!",
+                    expectedStatuses = listOf(
+                        WeekDayStatus.COMPLETED,
+                        WeekDayStatus.PENDING,
+                        WeekDayStatus.COMPLETED,
+                        WeekDayStatus.PENDING,
+                        WeekDayStatus.PENDING,
+                        WeekDayStatus.PENDING,
+                        WeekDayStatus.PENDING
+                    ),
+                    scenario = "Estudió lunes, faltó martes y estudió miércoles"
+                ),
+                SummaryMetricsTestCase.WeeklyStreakSummaryCase(
+                    streakDays = 0,
+                    todayDayOfWeekIndex = 4,
+                    activeWeekDayIndices = setOf(0, 2),
+                    expectedNextStreakText = "¡Mantén el ritmo mañana para alcanzar tu meta de 3 días!",
+                    expectedStatuses = listOf(
+                        WeekDayStatus.COMPLETED,
+                        WeekDayStatus.PENDING,
+                        WeekDayStatus.COMPLETED,
+                        WeekDayStatus.PENDING,
+                        WeekDayStatus.CURRENT,
+                        WeekDayStatus.PENDING,
+                        WeekDayStatus.PENDING
+                    ),
+                    scenario = "Viernes aún pendiente habiendo practicado lunes y miércoles"
                 )
             )
         }
@@ -246,7 +279,8 @@ class SummaryMetricsUnitTest(
                 // Act
                 val result = calculateWeeklyStreakSummaryUseCase(
                     streakDays = case.streakDays,
-                    todayDayOfWeekIndex = case.todayDayOfWeekIndex
+                    todayDayOfWeekIndex = case.todayDayOfWeekIndex,
+                    activeWeekDayIndices = case.activeWeekDayIndices
                 )
 
                 // Assert

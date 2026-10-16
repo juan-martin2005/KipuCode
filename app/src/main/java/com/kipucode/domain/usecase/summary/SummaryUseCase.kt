@@ -1,5 +1,6 @@
 package com.kipucode.domain.usecase.summary
 
+import com.kipucode.domain.model.DailyActivityDomain
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -92,16 +93,38 @@ class CalculateWeeklyStreakSummaryUseCase @Inject constructor() {
 
     operator fun invoke(
         streakDays: Int,
-        todayDayOfWeekIndex: Int = LocalDate.now().dayOfWeek.value - 1 // 0 = Lunes, 6 = Domingo
+        todayDayOfWeekIndex: Int = LocalDate.now().dayOfWeek.value - 1, // 0 = Lunes, 6 = Domingo
+        activeWeekDayIndices: Set<Int> = emptySet()
     ): WeeklyStreakSummaryResult {
         val nextStreakText = generateNextStreakMessage(streakDays)
-        val weekDays = generateWeekDays(todayDayOfWeekIndex, streakDays)
+        val weekDays = generateWeekDays(
+            todayIndex = todayDayOfWeekIndex,
+            streakDays = streakDays,
+            activeWeekDayIndices = activeWeekDayIndices
+        )
 
         return WeeklyStreakSummaryResult(
             currentStreakDays = streakDays,
             nextStreakText = nextStreakText,
             weekDays = weekDays
         )
+    }
+
+    fun extractActiveWeekDayIndices(
+        activities: List<DailyActivityDomain>,
+        todayDate: LocalDate = LocalDate.now()
+    ): Set<Int> {
+        val todayIndex = todayDate.dayOfWeek.value - 1
+        val weekStart = todayDate.minusDays(todayIndex.toLong())
+        val activeDates = activities
+            .filter { it.exercisesCount > 0 || it.lessonsCount > 0 || it.xpEarned > 0 }
+            .map { it.date }
+            .toSet()
+
+        return (0..6).filter { index ->
+            val dateStr = weekStart.plusDays(index.toLong()).toString()
+            dateStr in activeDates
+        }.toSet()
     }
 
     private fun generateNextStreakMessage(streakDays: Int): String {
@@ -115,14 +138,21 @@ class CalculateWeeklyStreakSummaryUseCase @Inject constructor() {
         }
     }
 
-    private fun generateWeekDays(todayIndex: Int, streakDays: Int): List<WeekDayStreakDomain> {
+    private fun generateWeekDays(
+        todayIndex: Int,
+        streakDays: Int,
+        activeWeekDayIndices: Set<Int>
+    ): List<WeekDayStreakDomain> {
         val dayLabels = listOf("L", "M", "X", "J", "V", "S", "D")
         val startCompletedIndex = if (streakDays >= 1) maxOf(0, todayIndex - (streakDays - 1)) else -1
 
         return dayLabels.mapIndexed { index, label ->
+            val isCompletedByStreak = streakDays >= 1 && index in startCompletedIndex..todayIndex
+            val isCompletedByActivity = index <= todayIndex && index in activeWeekDayIndices
+
             val status = when {
-                streakDays >= 1 && index in startCompletedIndex..todayIndex -> WeekDayStatus.COMPLETED
-                streakDays == 0 && index == todayIndex -> WeekDayStatus.CURRENT
+                isCompletedByStreak || isCompletedByActivity -> WeekDayStatus.COMPLETED
+                index == todayIndex -> WeekDayStatus.CURRENT
                 else -> WeekDayStatus.PENDING
             }
             WeekDayStreakDomain(label, status)
