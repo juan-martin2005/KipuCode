@@ -1,5 +1,6 @@
 package com.kipucode.ui.screens.exercise
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -59,6 +60,15 @@ fun ExerciseScreen(
     exerciseViewModel: ExerciseViewModel = hiltViewModel()
 ) {
     var showBackDialog by remember { mutableStateOf(false) }
+
+    // Intercepta el botón Atrás del sistema (gestos o botón físico) para mostrar el diálogo de confirmación
+    BackHandler {
+        if (showBackDialog) {
+            showBackDialog = false
+        } else {
+            showBackDialog = true
+        }
+    }
 
     val uiState by exerciseViewModel.uiState.collectAsStateWithLifecycle()
     val isLoading = uiState.isCompleting
