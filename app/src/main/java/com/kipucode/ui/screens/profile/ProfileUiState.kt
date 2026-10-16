@@ -1,6 +1,7 @@
 package com.kipucode.ui.screens.profile
 
 import com.kipucode.domain.model.DailyActivityDomain
+import com.kipucode.ui.screens.profile.components.DayStreakUI
 import java.time.LocalDate
 
 data class HeatmapUiData(
@@ -19,5 +20,9 @@ data class ProfileUiState(
     val avatarId: String = "",
     val heatmapData: HeatmapUiData = HeatmapUiData(),
     val isUpdatingAvatar: Boolean = false,
-    val updateAvatarSuccess: Boolean = false
+    val updateAvatarSuccess: Boolean = false,
+
+    val currentStreakDays: Int = 0,
+    val weekDays: List<DayStreakUI> = emptyList(),
+    val nextStreakText: String = ""
 )

@@ -29,6 +29,9 @@ import com.kipucode.ui.components.card.MultipleChoicesCard
 import com.kipucode.ui.components.card.UserProfileCard
 import com.kipucode.ui.navigation.ChangePasswordRoute
 import com.kipucode.ui.screens.profile.components.ActivityHeatmapCard
+import com.kipucode.ui.screens.profile.components.DayStatus
+import com.kipucode.ui.screens.profile.components.DayStreakUI
+import com.kipucode.ui.screens.profile.components.WeeklyStreak
 import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuDarkBlue
@@ -66,6 +69,9 @@ fun ProfileScreen(
                 name = uiState.name,
                 email = uiState.email,
                 avatarId = AvatarProvider.getDrawableById(uiState.avatarId),
+                currentStreakDays = uiState.currentStreakDays,
+                weekDays = uiState.weekDays,
+                nextStreakText = uiState.nextStreakText,
                 heatmapData = uiState.heatmapData,
                 onLogoutClick = { showLogoutDialog = true },
                 onEditAvatar = { showAvatarList = true },
@@ -118,6 +124,9 @@ fun ProfileContent(
     name: String,
     email: String,
     avatarId: Int?,
+    currentStreakDays: Int,
+    weekDays: List<DayStreakUI>,
+    nextStreakText: String,
     heatmapData: HeatmapUiData,
     onLogoutClick: () -> Unit,
     onEditAvatar: () -> Unit,
@@ -151,20 +160,32 @@ fun ProfileContent(
                 onClick = onEditAvatar
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(15.dp))
         }
 
-        // --- SECCIÓN 2: MAPA DE CALOR DE ACTIVIDAD ANUAL ---
+        // --- SECCIÓN 2: RACHA SEMANAL ---
+        item {
+            WeeklyStreak(
+                currentStreakDays = currentStreakDays,
+                weekDays = weekDays,
+                nextStreakText = nextStreakText,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(15.dp))
+        }
+
+        // --- SECCIÓN 3: MAPA DE CALOR DE ACTIVIDAD ANUAL ---
         item {
             ActivityHeatmapCard(
                 heatmapData = heatmapData,
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(15.dp))
         }
 
-        // --- SECCIÓN 3: OPCIONES ---
+        // --- SECCIÓN 4: OPCIONES ---
         item {
             MultipleChoicesCard(
                 text = stringResource(id = R.string.change_password),
@@ -183,6 +204,8 @@ fun ProfileContent(
                 isEnd = true,
                 onClick = onLogoutClick,
             )
+
+            Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }
@@ -192,9 +215,20 @@ fun ProfileContent(
 private fun ProfileScreenPreview() {
     KipuCodeTheme {
         ProfileContent(
-            name = "Pepeito Gonzles",
+            name = "Pepito Gonzales",
             email = "pedro@upn.pe",
             avatarId = R.drawable.avatar_001,
+            currentStreakDays = 6,
+            weekDays = listOf(
+                DayStreakUI("L", DayStatus.COMPLETED),
+                DayStreakUI("M", DayStatus.COMPLETED),
+                DayStreakUI("X", DayStatus.COMPLETED),
+                DayStreakUI("J", DayStatus.COMPLETED),
+                DayStreakUI("V", DayStatus.COMPLETED),
+                DayStreakUI("S", DayStatus.COMPLETED),
+                DayStreakUI("D", DayStatus.PENDING)
+            ),
+            nextStreakText = "A solo 1 día de superar la racha",
             heatmapData = HeatmapUiData(),
             onLogoutClick = {},
             onEditAvatar = {},

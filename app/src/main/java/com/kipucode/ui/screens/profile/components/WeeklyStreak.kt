@@ -1,5 +1,6 @@
-package com.kipucode.ui.screens.summary.components
+package com.kipucode.ui.screens.profile.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -13,6 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kipucode.R
+import com.kipucode.ui.theme.BorderLightGray
 import com.kipucode.ui.theme.Gray
 import com.kipucode.ui.theme.Green
 import com.kipucode.ui.theme.KipuCodeTheme
@@ -48,78 +52,92 @@ fun WeeklyStreak(
     weekDays: List<DayStreakUI>,
     nextStreakText: String
 ) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(18.dp)
+    val isTodayPending = weekDays.any { it.status == DayStatus.CURRENT }
+
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = White),
+        border = BorderStroke(1.dp, BorderLightGray),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_fire),
-                    contentDescription = null,
-                    tint = Color.Unspecified,
-                    modifier = Modifier.size(28.dp)
-                )
-
-                Column {
-                    Text(
-                        text = "¡Racha de $currentStreakDays días!",
-                        fontFamily = Nunito,
-                        fontWeight = FontWeight.ExtraBold,
-                        fontSize = 16.sp,
-                        color = KipuDarkBlue
-                    )
-                    Text(
-                        text = "Completaste tu cuota del día de hoy",
-                        fontFamily = Nunito,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 13.sp,
-                        color = Gray
-                    )
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Gray.copy(alpha = 0.05f), RoundedCornerShape(16.dp))
-//                .border(2.dp, Gray.copy(alpha = 0.12f), RoundedCornerShape(16.dp))
-                .padding(vertical = 12.dp, horizontal = 10.dp)
+                .padding(20.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                weekDays.forEach { day ->
-                    DayStreakItem(day = day)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_fire),
+                        contentDescription = null,
+                        tint = Color.Unspecified,
+                        modifier = Modifier.size(28.dp)
+                    )
+
+                    Column {
+                        Text(
+                            text = "¡Racha de $currentStreakDays días!",
+                            fontFamily = Nunito,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 16.sp,
+                            color = KipuDarkBlue
+                        )
+                        Text(
+                            text = if (isTodayPending) {
+                                "¡Completa un ejercicio hoy para mantener tu racha!"
+                            } else {
+                                "Completaste tu cuota del día de hoy"
+                            },
+                            fontFamily = Nunito,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 13.sp,
+                            color = Gray
+                        )
+                    }
                 }
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Gray.copy(alpha = 0.05f), RoundedCornerShape(16.dp))
+                    .padding(vertical = 12.dp, horizontal = 10.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    weekDays.forEach { day ->
+                        DayStreakItem(day = day)
+                    }
+                }
+            }
+
+            if (nextStreakText.isNotBlank()) {
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Text(
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    text = nextStreakText,
+                    fontFamily = Nunito,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 12.sp,
+                    color = Color(0xFF6C757D)
+                )
+            }
         }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        Text(
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            text = nextStreakText,
-            fontFamily = Nunito,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 12.sp,
-            color = Color(0xFF6C757D)
-        )
     }
 }
-
 
 @Composable
 private fun DayStreakItem(day: DayStreakUI) {
@@ -161,7 +179,7 @@ private fun DayStreakItem(day: DayStreakUI) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_fire),
                         contentDescription = null,
-                        tint = Orange, // Naranja fuego
+                        tint = Orange,
                         modifier = Modifier.size(18.dp)
                     )
                 }
@@ -200,7 +218,7 @@ private fun WeeklyStreakPreview() {
                 DayStreakUI("X", DayStatus.COMPLETED),
                 DayStreakUI("J", DayStatus.COMPLETED),
                 DayStreakUI("V", DayStatus.COMPLETED),
-                DayStreakUI("S", DayStatus.CURRENT),
+                DayStreakUI("S", DayStatus.COMPLETED),
                 DayStreakUI("D", DayStatus.PENDING)
             ),
             modifier = Modifier.padding(16.dp),

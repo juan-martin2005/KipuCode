@@ -19,11 +19,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kipucode.ui.components.button.FilledButton
-import com.kipucode.ui.screens.summary.components.DayStatus
-import com.kipucode.ui.screens.summary.components.DayStreakUI
 import com.kipucode.ui.screens.summary.components.FinalSummary
 import com.kipucode.ui.screens.summary.components.RepetitionSchedule
-import com.kipucode.ui.screens.summary.components.WeeklyStreak
 import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.KipuCodeTheme
 
@@ -91,15 +88,6 @@ fun SummaryScreenContent(
             )
         }
 
-        // Racha semanal
-        item(key = "weekly_streak") {
-            WeeklyStreak(
-                currentStreakDays = uiState.currentStreakDays,
-                weekDays = uiState.weekDays,
-                nextStreakText = uiState.nextStreakText
-            )
-        }
-
         // Botón reiniciar los ejercicios
         item(key = "button_reset") {
             FilledButton(
@@ -138,18 +126,7 @@ private fun SummaryScreenContentPreview() {
                 timeFormatted = "1m 45s",
                 summaryMessage = "¡Compiló con éxito!",
                 memoryRetentionPct = 85,
-                nextReviewText = "En 3 días",
-                currentStreakDays = 6,
-                weekDays = listOf(
-                    DayStreakUI("L", DayStatus.COMPLETED),
-                    DayStreakUI("M", DayStatus.COMPLETED),
-                    DayStreakUI("X", DayStatus.COMPLETED),
-                    DayStreakUI("J", DayStatus.COMPLETED),
-                    DayStreakUI("V", DayStatus.COMPLETED),
-                    DayStreakUI("S", DayStatus.CURRENT),
-                    DayStreakUI("D", DayStatus.PENDING)
-                ),
-                nextStreakText = "¡A solo 1 día de alcanzar tu objetivo semanal!"
+                nextReviewText = "En 3 días"
             ),
             onClickResetFilledButton = {},
             onClickFilledButton = {}

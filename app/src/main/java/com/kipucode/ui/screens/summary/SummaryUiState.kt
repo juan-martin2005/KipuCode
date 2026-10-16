@@ -1,7 +1,5 @@
 package com.kipucode.ui.screens.summary
 
-import com.kipucode.ui.screens.summary.components.DayStreakUI
-
 data class SummaryUiState(
     // FinalSummary
     val xpEarned: Int = 0,
@@ -15,9 +13,6 @@ data class SummaryUiState(
     val memoryRetentionPct: Int = 85,
     val nextReviewText: String = "Mañana",
 
-    // WeeklyStreak
-    val currentStreakDays: Int = 0,
-    val weekDays: List<DayStreakUI> = emptyList(),
-    val nextStreakText: String = "",
     val isLoading: Boolean = false
 )
+
