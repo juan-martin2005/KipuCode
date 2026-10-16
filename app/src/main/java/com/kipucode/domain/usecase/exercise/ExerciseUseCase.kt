@@ -1,8 +1,11 @@
 package com.kipucode.domain.usecase.exercise
 
+import com.kipucode.domain.model.ExerciseAttemptDomain
 import com.kipucode.domain.model.ExerciseDomain
 import com.kipucode.domain.model.LearningProgressDomain
 import com.kipucode.domain.model.PracticeMethod
+import com.kipucode.domain.model.Response
+import com.kipucode.domain.repository.ExerciseAttemptRepository
 import com.kipucode.domain.repository.ExerciseRepository
 import com.kipucode.domain.repository.UserProgressRepository
 import kotlinx.coroutines.flow.Flow
@@ -164,20 +167,20 @@ class PrioritizeExerciseSessionUseCase @Inject constructor() {
 //  CASOS DE USO: INTENTOS DE EJERCICIOS (DESACOPLAMIENTO DE VIEWMODEL)
 // ============================================================================================
 class RecordExerciseAttemptUseCase @Inject constructor(
-    private val exerciseAttemptRepository: com.kipucode.domain.repository.ExerciseAttemptRepository
+    private val exerciseAttemptRepository: ExerciseAttemptRepository
 ) {
     suspend operator fun invoke(
         exerciseId: String,
         lessonId: String,
         exerciseType: String,
         isCorrect: Boolean
-    ): com.kipucode.domain.model.Response<com.kipucode.domain.model.ExerciseAttemptDomain> {
+    ): Response<ExerciseAttemptDomain> {
         return exerciseAttemptRepository.recordAttempt(exerciseId, lessonId, exerciseType, isCorrect)
     }
 }
 
 class GetCompletedExerciseIdsUseCase @Inject constructor(
-    private val exerciseAttemptRepository: com.kipucode.domain.repository.ExerciseAttemptRepository
+    private val exerciseAttemptRepository: ExerciseAttemptRepository
 ) {
     suspend operator fun invoke(lessonId: String): List<String> {
         return exerciseAttemptRepository.getCompletedExerciseIdsForLesson(lessonId)
@@ -185,9 +188,9 @@ class GetCompletedExerciseIdsUseCase @Inject constructor(
 }
 
 class GetAllExerciseAttemptsUseCase @Inject constructor(
-    private val exerciseAttemptRepository: com.kipucode.domain.repository.ExerciseAttemptRepository
+    private val exerciseAttemptRepository: ExerciseAttemptRepository
 ) {
-    suspend operator fun invoke(): List<com.kipucode.domain.model.ExerciseAttemptDomain> {
+    suspend operator fun invoke(): List<ExerciseAttemptDomain> {
         return exerciseAttemptRepository.getAllAttemptsForUser()
     }
 }
