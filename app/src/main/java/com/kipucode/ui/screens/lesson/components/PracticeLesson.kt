@@ -38,6 +38,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -118,37 +119,37 @@ fun PracticeMethodSelectorContent(
                     title = "Opción única",
                     subtitle = "Evaluación conceptual",
                     badgeText = "Rápido · 2 min",
-                    description = "Preguntas con alternativas para validar conceptos y sintaxis clave.",
-                    detailedDescription = "Modo de evaluación inmediata con retroalimentación instantánea: se te presentan preguntas de opción múltiple con justificación detallada de cada alternativa tras responder.",
+                    description = "Elige la alternativa correcta y comprueba si dominas el concepto.",
+                    detailedDescription = "Se te muestra una pregunta con varias alternativas y solo una es correcta. Al responder, ves de inmediato si acertaste y por qué cada alternativa es correcta o incorrecta.",
                     iconRes = R.drawable.ic_multiple_choice,
                     selected = selectedMethod == PracticeMethod.UNIQUE_CHOICE,
                     onClick = { onMethodSelected(PracticeMethod.UNIQUE_CHOICE) }
                 )
             }
 
-            // 2. Tarjetas de memoria (FSRS-6)
+            // 2. Tarjetas de memoria
             if (availableMethods.contains(PracticeMethod.DEFAULT_FLASHCARDS)) {
                 PracticeMethodCard(
                     title = "Tarjetas de memoria",
-                    subtitle = "Repaso espaciado · FSRS-6",
+                    subtitle = "Repaso espaciado",
                     badgeText = "Recomendado",
                     isRecommended = true,
-                    description = "Recuerda la respuesta activamente antes de voltear cada tarjeta.",
-                    detailedDescription = "Algoritmo de repetición espaciada FSRS-6 que calcula el intervalo óptimo para repasar cada tarjeta según tu dificultad percibida (Otra vez, Difícil, Bien, Fácil), maximizando la retención a largo plazo.",
+                    description = "Intenta recordar la respuesta de memoria antes de voltear la tarjeta.",
+                    detailedDescription = "Lee la pregunta y trata de responder mentalmente. Luego voltea la tarjeta y califica qué tan difícil te resultó: Otra vez, Difícil, Bien o Fácil. Las tarjetas que te costaron reaparecen antes y las fáciles se espacian más.",
                     iconRes = R.drawable.ic_flashcards,
                     selected = selectedMethod == PracticeMethod.DEFAULT_FLASHCARDS,
                     onClick = { onMethodSelected(PracticeMethod.DEFAULT_FLASHCARDS) }
                 )
             }
 
-            // 3. Tarjetas con Técnica Feynman
+            // 3. Técnica Feynman
             if (availableMethods.contains(PracticeMethod.FEYNMAN_FLASHCARDS)) {
                 PracticeMethodCard(
                     title = "Técnica Feynman",
                     subtitle = "Aprendizaje profundo",
                     badgeText = "Explicación activa",
-                    description = "Explica el concepto con tus propias palabras con sencillez antes de comparar la tarjeta.",
-                    detailedDescription = "Antes de voltear la tarjeta, formula una explicación clara y sencilla en voz alta o mentalmente como si se la enseñaras a un principiante de 10 años. Luego compara tu explicación con la definición técnica.",
+                    description = "Explica el concepto con tus palabras, de forma simple, y compáralo con la tarjeta.",
+                    detailedDescription = "Antes de voltear la tarjeta, explica el concepto en voz alta o mentalmente, como si se lo enseñaras a alguien que desconoce el tema. Luego voltea la tarjeta y compara, lo que no pudiste explicar bien es lo que debes reforzar. Después califica tu explicación: Otra vez, Difícil, Bien o Fácil. Igual que en las tarjetas de memoria, las que te costaron reaparecen antes.",
                     iconRes = R.drawable.ic_flash_card,
                     selected = selectedMethod == PracticeMethod.FEYNMAN_FLASHCARDS,
                     onClick = { onMethodSelected(PracticeMethod.FEYNMAN_FLASHCARDS) }
@@ -364,18 +365,18 @@ fun PracticeMethodCardContent(
                                 shape = RoundedCornerShape(10.dp)
                             )
                             .border(
-                                width = 1.dp,
+                                width = 0.dp,
                                 color = BorderLightGray,
                                 shape = RoundedCornerShape(10.dp)
                             )
-                            .padding(12.dp),
+                            .padding(8.dp),
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Text(
                             text = "Detalles del modo:",
                             fontFamily = Nunito,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 11.sp,
+                            fontSize = 12.sp,
                             color = KipuTeal
                         )
                         Text(
@@ -383,6 +384,7 @@ fun PracticeMethodCardContent(
                             fontFamily = Nunito,
                             fontWeight = FontWeight.Normal,
                             fontSize = 12.sp,
+                            textAlign = TextAlign.Justify,
                             lineHeight = 16.sp,
                             color = KipuDarkBlue
                         )

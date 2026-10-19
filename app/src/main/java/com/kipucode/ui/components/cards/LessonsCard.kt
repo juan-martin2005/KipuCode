@@ -66,7 +66,7 @@ fun LessonCard(
                     text = title,
                     fontFamily = Nunito,
                     fontWeight = FontWeight.ExtraBold,
-                    lineHeight = 17.sp,
+                    lineHeight = 20.sp,
                     color = KipuDarkBlue,
                     fontSize = 16.sp
                 )

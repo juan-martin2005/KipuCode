@@ -54,45 +54,45 @@ val KipuH2 = TextStyle(
 
 val KipuH3 = TextStyle(
     fontFamily = Nunito,
-    fontWeight = FontWeight.Bold,
+    fontWeight = FontWeight.ExtraBold,
     fontSize = 18.sp,
-    color = KipuDarkBlue
+    color = KipuTeal
 )
 
 val KipuH4 = TextStyle(
     fontFamily = Nunito,
     fontWeight = FontWeight.ExtraBold,
     fontSize = 18.sp,
-    color = KipuDarkBlue
+    color = KipuTealDark
 )
 
 val KipuH5 = TextStyle(
     fontFamily = Nunito,
     fontWeight = FontWeight.Bold,
     fontSize = 16.sp,
-    color = KipuDarkBlue
+    color = KipuTealDark
 )
 
 val KipuParagraph = TextStyle(
     fontFamily = Nunito,
     fontWeight = FontWeight.Medium,
     fontSize = 15.sp,
-    lineHeight = 23.sp,
+    lineHeight = 22.sp,
     color = KipuDarkBlue
 )
 
-val KipuCodeText = TextStyle(
-    fontFamily = JetBrains,
-    fontWeight = FontWeight.Normal,
-    fontSize = 13.sp,
-    color = KipuDarkBlue
-)
-
-val KipuQuoteText = TextStyle(
-    fontFamily = Nunito,
-    fontWeight = FontWeight.Normal,
-    fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
-    fontSize = 15.sp,
-    color = KipuDarkBlue.copy(alpha = 0.85f)
-)
+//val KipuCodeText = TextStyle(
+//    fontFamily = JetBrains,
+//    fontWeight = FontWeight.Normal,
+//    fontSize = 13.sp,
+//    color = KipuDarkBlue
+//)
+//
+//val KipuQuoteText = TextStyle(
+//    fontFamily = Nunito,
+//    fontWeight = FontWeight.Normal,
+//    fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
+//    fontSize = 15.sp,
+//    color = KipuDarkBlue.copy(alpha = 0.85f)
+//)
 
