@@ -12,6 +12,8 @@ import com.kipucode.ui.screens.exercise.components.formats.FormattedText
 import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuParagraph
+import com.kipucode.ui.theme.KipuTeal
+import com.kipucode.ui.theme.KipuTealDark
 
 @Composable
 fun FormattedLessonText(
@@ -26,6 +28,7 @@ fun FormattedLessonText(
         modifier = modifier,
         style = style,
         color = color,
+        boldColor = KipuDarkBlue,
         textAlign = textAlign
     )
 }
@@ -35,7 +38,7 @@ fun FormattedLessonText(
 private fun FormattedLessonTextPreview() {
     KipuCodeTheme {
         FormattedLessonText(
-            text = "La plataforma .NET provee el **CLR** (_Common Language Runtime_) y la `BCL` (_Base Class Library_).",
+            text = "La **plataforma** .NET provee el **CLR** (_Common Language Runtime_) y la `BCL` (_Base Class Library_).",
             modifier = Modifier.padding(16.dp)
         )
     }

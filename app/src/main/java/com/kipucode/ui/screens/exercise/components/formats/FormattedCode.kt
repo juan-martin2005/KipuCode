@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -33,12 +34,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kipucode.R
 import com.kipucode.ui.theme.BorderLightGray
+import com.kipucode.ui.theme.Gray
 import com.kipucode.ui.theme.JetBrains
 import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.MoonFrost
 import com.kipucode.ui.theme.Nunito
+import com.kipucode.ui.theme.White
 import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -49,6 +52,7 @@ fun FormattedCode(
     modifier: Modifier = Modifier,
     code: String,
     language: String = "text",
+    output: String? = null,
     isDiagram: Boolean = false
 ) {
     val clipboardManager = LocalClipboard.current
@@ -74,7 +78,7 @@ fun FormattedCode(
         modifier = modifier
             .fillMaxWidth()
             .background(
-                color = MoonFrost.copy(alpha = 0.2f),
+                color = MoonFrost.copy(alpha = 0.35f),
                 shape = RoundedCornerShape(12.dp)
             )
             .border(
@@ -142,6 +146,7 @@ fun FormattedCode(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
+                .background(White.copy(alpha = 0.5f))
                 .horizontalScroll(rememberScrollState())
                 .padding(14.dp)
         ) {
@@ -153,6 +158,58 @@ fun FormattedCode(
                 lineHeight = 20.sp,
                 color = KipuDarkBlue
             )
+        }
+
+        // --- Sección opcional de Salida (Opción A: Consola Clara Minimalista) ---
+        if (!output.isNullOrBlank()) {
+            HorizontalDivider(
+                color = BorderLightGray,
+                thickness = 1.dp
+            )
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(color = MoonFrost.copy(alpha = 0.35f))
+                    .padding(horizontal = 12.dp, vertical = 6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_terminal_rounded),
+                    contentDescription = null,
+                    tint = Gray,
+                    modifier = Modifier.size(14.dp)
+                )
+                Text(
+                    text = "SALIDA",
+                    fontFamily = Nunito,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 11.sp,
+                    letterSpacing = 0.5.sp,
+                    color = Gray
+                )
+            }
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        color = White.copy(alpha = 0.5f),
+                        shape = RoundedCornerShape(bottomStart = 12.dp, bottomEnd = 12.dp)
+                    )
+                    .horizontalScroll(rememberScrollState())
+                    .padding(horizontal = 14.dp, vertical = 10.dp)
+            ) {
+                Text(
+                    text = output,
+                    fontFamily = JetBrains,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 13.sp,
+                    lineHeight = 19.sp,
+                    color = KipuDarkBlue.copy(alpha = 0.9f)
+                )
+            }
         }
     }
 }
@@ -171,7 +228,8 @@ private fun FormattedCodePreview() {
             )
             FormattedCode(
                 code = "using System;\n\nConsole.WriteLine(\"¡Hola desde C#!\");",
-                language = "c#"
+                language = "c#",
+                output = "¡Hola desde C#!"
             )
         }
     }

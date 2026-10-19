@@ -24,6 +24,7 @@ import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuParagraph
 import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.MoonFrost
+import com.kipucode.ui.theme.Nunito
 
 @Composable
 fun FormattedText(
@@ -83,7 +84,8 @@ fun parseFormattedSpans(
                     addStyle(
                         SpanStyle(
                             fontFamily = JetBrains,
-                            fontWeight = FontWeight.SemiBold,
+                            fontStyle = FontStyle.Italic,
+                            fontWeight = FontWeight.Normal,
                             fontSize = 13.sp,
                             color = codeColor,
                             background = codeBackground
