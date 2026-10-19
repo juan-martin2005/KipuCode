@@ -39,6 +39,8 @@ import com.kipucode.ui.theme.KipuTeal
 import androidx.compose.material3.Text
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.graphics.Color
+import com.kipucode.ui.screens.lesson.components.LessonFactBlock
+import com.kipucode.ui.screens.lesson.components.LessonSubconceptBlock
 
 @Composable
 fun LessonScreen(
@@ -157,8 +159,10 @@ fun LessonContent(
                 when (block) {
                     is LessonBlock.Header -> LessonHeaderBlock(block)
                     is LessonBlock.Concept -> LessonConceptBlock(block)
+                    is LessonBlock.Subconcept -> LessonSubconceptBlock(block)
                     is LessonBlock.Code -> LessonCodeBlock(block)
                     is LessonBlock.Cue -> LessonCueBlock(block)
+                    is LessonBlock.Fact -> LessonFactBlock(block)
                     is LessonBlock.Summary -> LessonSummaryBlock(block)
                 }
             }
