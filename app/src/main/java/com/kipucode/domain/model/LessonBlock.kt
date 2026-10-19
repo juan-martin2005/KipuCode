@@ -11,13 +11,23 @@ sealed interface LessonBlock {
         val text: String
     ) : LessonBlock
 
+    data class Subconcept(
+        val title: String,
+        val text: String = ""
+    ) : LessonBlock
+
     data class Code(
         val language: String = "text",
         val code: String,
+        val output: String? = null,
         val isDiagram: Boolean = false
     ) : LessonBlock
 
     data class Cue(
+        val question: String,
+        val answer: String
+    ) : LessonBlock
+    data class Fact(
         val question: String,
         val answer: String
     ) : LessonBlock

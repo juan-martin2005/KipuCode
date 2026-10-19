@@ -1,18 +1,9 @@
 package com.kipucode.data.local.converter
 
-import com.google.gson.Gson
-import com.google.gson.JsonArray
 import com.google.gson.JsonParser
 import com.kipucode.domain.model.LessonBlock
 
 object LessonBlockConverter {
-    private val gson = Gson()
-
-    /**
-     * Parsea un String de contenido. Si contiene un array JSON de bloques,
-     * retorna la lista estructurada de [LessonBlock].
-     * Si es texto Markdown clásico o inválido, retorna una lista vacía de forma segura.
-     */
     fun parse(rawContent: String?): List<LessonBlock> {
         if (rawContent.isNullOrBlank()) return emptyList()
 
@@ -48,11 +39,20 @@ object LessonBlockConverter {
                             )
                         )
                     }
+                    "subconcept" -> {
+                        blocks.add(
+                            LessonBlock.Subconcept(
+                                title = obj.get("title")?.asString.orEmpty(),
+                                text = obj.get("text")?.asString.orEmpty()
+                            )
+                        )
+                    }
                     "code" -> {
                         blocks.add(
                             LessonBlock.Code(
                                 language = obj.get("language")?.asString ?: "text",
                                 code = obj.get("code")?.asString.orEmpty(),
+                                output = obj.get("output")?.asString?.takeIf { it.isNotBlank() },
                                 isDiagram = false
                             )
                         )
@@ -62,6 +62,7 @@ object LessonBlockConverter {
                             LessonBlock.Code(
                                 language = obj.get("language")?.asString ?: "text",
                                 code = obj.get("code")?.asString.orEmpty(),
+                                output = obj.get("output")?.asString?.takeIf { it.isNotBlank() },
                                 isDiagram = true
                             )
                         )
@@ -69,6 +70,14 @@ object LessonBlockConverter {
                     "cue", "qa" -> {
                         blocks.add(
                             LessonBlock.Cue(
+                                question = obj.get("question")?.asString.orEmpty(),
+                                answer = obj.get("answer")?.asString.orEmpty()
+                            )
+                        )
+                    }
+                    "fact" -> {
+                        blocks.add(
+                            LessonBlock.Fact(
                                 question = obj.get("question")?.asString.orEmpty(),
                                 answer = obj.get("answer")?.asString.orEmpty()
                             )
