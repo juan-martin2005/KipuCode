@@ -33,13 +33,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kipucode.R
 import com.kipucode.domain.model.LessonBlock
-import com.kipucode.ui.theme.BorderLightGray
 import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuH4
 import com.kipucode.ui.theme.KipuParagraph
 import com.kipucode.ui.theme.KipuTeal
-import com.kipucode.ui.theme.MoonFrost
 import com.kipucode.ui.theme.Nunito
 import com.kipucode.ui.theme.White
 
@@ -72,7 +70,7 @@ fun LessonCueBlockContent(
             .clip(RoundedCornerShape(16.dp))
             .background(White)
             .border(
-                width = 1.5.dp,
+                width = 0.dp,
                 color = KipuTeal.copy(alpha = 0.35f),
                 shape = RoundedCornerShape(16.dp)
             )
@@ -142,28 +140,12 @@ fun LessonCueBlockContent(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(
-                        color = MoonFrost.copy(alpha = 0.25f),
-                        shape = RoundedCornerShape(10.dp)
-                    )
-                    .border(
-                        width = 1.dp,
-                        color = BorderLightGray,
-                        shape = RoundedCornerShape(10.dp)
-                    )
-                    .padding(12.dp),
+                    .padding(8.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                Text(
-                    text = "Respuesta:",
-                    fontFamily = Nunito,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 12.sp,
-                    color = KipuTeal
-                )
                 FormattedLessonText(
                     text = block.answer,
-                    style = KipuParagraph.copy(fontSize = 14.sp),
+                    style = KipuParagraph.copy(fontSize = 15.sp),
                     textAlign = TextAlign.Justify,
                     modifier = Modifier.fillMaxWidth()
                 )

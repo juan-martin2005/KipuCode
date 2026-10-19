@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.kipucode.R
 import com.kipucode.domain.model.LessonBlock
@@ -25,6 +26,7 @@ import com.kipucode.ui.theme.KipuParagraph
 import com.kipucode.ui.theme.KipuTeal
 import com.kipucode.ui.theme.MoonFrost
 import androidx.compose.ui.tooling.preview.Preview
+import com.kipucode.ui.theme.KipuTealDark
 
 @Composable
 fun LessonHeaderBlock(
@@ -46,11 +48,11 @@ fun LessonHeaderBlock(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(
-                        color = MoonFrost.copy(alpha = 0.25f),
+                        color = MoonFrost.copy(alpha = 0.2f),
                         shape = RoundedCornerShape(14.dp)
                     )
                     .border(
-                        width = 1.dp,
+                        width = 0.dp,
                         color = KipuTeal.copy(alpha = 0.35f),
                         shape = RoundedCornerShape(14.dp)
                     )
@@ -69,12 +71,13 @@ fun LessonHeaderBlock(
                     )
                     Text(
                         text = "Objetivo de Aprendizaje",
-                        style = KipuH5.copy(color = KipuTeal)
+                        style = KipuH5.copy(color = KipuTealDark)
                     )
                 }
 
                 FormattedLessonText(
                     text = block.objective,
+                    textAlign = TextAlign.Justify,
                     style = KipuParagraph
                 )
             }

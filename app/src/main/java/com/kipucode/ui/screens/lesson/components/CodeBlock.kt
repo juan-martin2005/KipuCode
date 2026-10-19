@@ -19,6 +19,7 @@ fun LessonCodeBlock(
     FormattedCode(
         code = block.code,
         language = block.language,
+        output = block.output,
         modifier = modifier,
         isDiagram = block.isDiagram
     )
