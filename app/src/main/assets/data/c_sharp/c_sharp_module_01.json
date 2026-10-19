@@ -1,5 +1,5 @@
 {
-  "version": 13,
+  "version": 10,
   "course": {
     "id": "csharp_module_01",
     "title": "Fundamentos de .NET, Lógica y Diagramación",
@@ -11,158 +11,265 @@
   "lessons": [
     {
       "id": "csharp_lesson_01",
-      "title": "Introducción a la Plataforma .NET y Entornos de Desarrollo",
+      "title": "Plataforma .NET e instalar SDK",
       "orderIndex": 1,
       "xp": 700,
       "content": [
         {
           "type": "header",
-          "title": "01 - Introducción a la Plataforma .NET y Entornos de Desarrollo",
-          "objective": "Comprender la arquitectura de .NET, diferenciar SDK y Runtime, analizar la compilación JIT y el recolector de basura, y configurar el entorno de trabajo con la CLI."
+          "title": "01 - Plataforma .NET e instalar SDK",
+          "objective": "Comprender qué es la **plataforma .NET** y cómo se **compila y ejecuta el código C#**.\nDiferenciar el **SDK** de los **Runtimes**, conocer las diferencias entre **LTS y STS**, e instalar y verificar correctamente el **SDK de .NET 10 LTS**."
         },
         {
           "type": "concept",
-          "title": "Arquitectura general de la plataforma .NET",
-          "text": "La plataforma .NET se compone de tres pilares esenciales: el **CLR** (_Common Language Runtime_ / Entorno de Ejecución de Lenguaje Común), que administra la memoria y la ejecución; la **BCL** (_Base Class Library_ / Biblioteca Base de Clases), que provee tipos estándar y utilidades; y el **SDK** (_Software Development Kit_ / Kit de Desarrollo de Software), que incluye el compilador Roslyn y la **CLI** (_Command-Line Interface_ / Interfaz de Línea de Comandos). El **.NET Runtime** combina el **CLR** y la **BCL** para ejecutar aplicaciones previamente compiladas, mientras que el **SDK** añade las herramientas para crearlas."
+          "title": "1. ¿Es .NET un lenguaje de programación? ",
+          "text": "No. **.NET no es un lenguaje de programación**, sino una **plataforma de desarrollo** que incluye un **entorno de ejecución** y un conjunto de **bibliotecas de clases** para crear y ejecutar aplicaciones.\n\n.NET admite varios lenguajes, principalmente **C#, F# y VB.NET**, siendo **C# el más utilizado**. Todos pueden aprovechar las capacidades de la misma plataforma.\n\nVeamos cómo se escribe un mismo programa en los tres lenguajes."
+        },
+        {
+          "type": "subconcept",
+          "title": "1.1 C# (estilo basado en llaves)",
+          "text": "Utiliza **llaves** `{ }` **para delimitar bloques** y **punto y coma** `;` para terminar instrucciones. Su sintaxis es habitual en la programación orientada a objetos."
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "string nombre = \"Carlos\";\nint edad = 30;\n\nint nacimiento = 2026 - edad;\n\nConsole.WriteLine(\n$\"Hola {nombre}, naciste en {nacimiento}.\"\n);"
+        },
+        {
+          "type": "subconcept",
+          "title": "1.2 F# (estilo funcional)",
+          "text": "Prioriza un estilo **funcional y conciso**. Utiliza la **indentación** para organizar el código y permite la **inferencia de tipos**, sin necesidad de declarar explícitamente cada tipo de dato."
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "let nombre = \"Carlos\"\nlet edad = 30\n\nlet nacimiento = 2026 - edad\n\nprintfn \"Hola %s, naciste en %d.\" nombre nacimiento"
+        },
+        {
+          "type": "subconcept",
+          "title": "1.3 VB.NET (estilo verbal)",
+          "text": "Utiliza **palabras clave descriptivas** como `Dim`, `As` y `End Sub` en lugar de una sintaxis basada principalmente en símbolos. Esto hace que el código se parezca más al inglés escrito."
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Dim nombre As String = \"Carlos\"\nDim edad As Integer = 30\n\nDim nacimiento = 2026 - edad\n\nConsole.WriteLine(\n$\"Hola {nombre}, naciste en {nacimiento}.\"\n)"
+        },
+        {
+          "type": "concept",
+          "title": "",
+          "text": "Los tres lenguajes tienen **sintaxis diferentes**, pero pueden utilizar la **misma plataforma .NET** para desarrollar aplicaciones."
+        },
+        {
+          "type": "cue",
+          "question": "¿Cómo pueden C#, F# y VB.NET terminar siendo lo mismo?",
+          "answer": "Aunque **C#, F# y VB.NET** tienen sintaxis diferentes, cada uno utiliza su propio **compilador** para generar un mismo tipo de código intermedio: **CIL**.\n\nLos tres también comparten la **BCL (Base Class Library)** para realizar tareas comunes, como mostrar texto o leer archivos.\n\nFinalmente, el **CLR (Common Language Runtime)** ejecuta ese código intermedio sin importar en qué lenguaje se escribió originalmente.\n"
+        },
+        {
+          "type": "concept",
+          "title": "2. BCL y CLR: Motor y Biblioteca",
+          "text": "Para comprender cómo funciona **.NET**, es importante conocer sus dos componentes fundamentales: la **BCL**, que proporciona funcionalidades reutilizables, y el **CLR**, que se encarga de ejecutar el código."
+        },
+        {
+          "type": "subconcept",
+          "title": "2.1 La BCL (Base Class Library): la biblioteca común",
+          "text": "Sin importar el lenguaje que utilices, las aplicaciones necesitan realizar tareas similares: **leer archivos, manipular texto o almacenar datos**.\n\nEn lugar de implementar estas funcionalidades desde cero, los lenguajes de .NET comparten la **BCL (Biblioteca Base de Clases)**, que proporciona tipos y funcionalidades reutilizables.\n\nCuando usas `Console.WriteLine` en **C#** o **VB.NET**, o `printfn` en **F#**, por detrás todos llaman a la misma función estandarizada de la **BCL** para mostrar texto en pantalla."
+        },
+        {
+          "type": "subconcept",
+          "title": "2.2 El CLR (Common Language Runtime): el motor de ejecución",
+          "text": "Cada lenguaje utiliza su propio **compilador** para transformar el código fuente en **CIL (Common Intermediate Language)**, que posteriormente puede ejecutar el **CLR**.\n\nEl **CLR** es el motor encargado de **ejecutar el código**, **administrar la memoria** y proporcionar servicios como la gestión de excepciones y la recolección de basura.\n\nPor eso, el CLR puede ejecutar programas escritos en distintos lenguajes de .NET sin depender de su sintaxis original."
+        },
+        {
+          "type": "cue",
+          "question": "¿Cuál es la diferencia entre CLR y BCL?",
+          "answer": "La diferencia está en su función:\n- **CLR (Common Language Runtime):** es el **motor de ejecución** que administra y ejecuta el programa.\n- **BCL (Base Class Library):** es la **biblioteca de funcionalidades** que proporciona herramientas para trabajar con archivos, textos, colecciones y otras tareas comunes.\n\nEl **CLR ejecuta el programa**, mientras que la **BCL proporciona las herramientas** que el programa utiliza."
+        },
+        {
+          "type": "concept",
+          "title": "3. El ciclo del código administrado",
+          "text": "C# es un **lenguaje administrado** (_managed language_). En el modelo tradicional de .NET, el código fuente no se compila directamente a instrucciones del procesador, sino a un **código intermedio llamado CIL** (_Common Intermediate Language_), también conocido como **IL**.\n\nEste proceso lo realiza **Roslyn**, el compilador de C#, que transforma los archivos `.cs` en un **ensamblado** (_assembly_), normalmente un archivo `.dll`.\n\nUn ensamblado contiene tres elementos principales:\n1. **Código CIL:** las instrucciones intermedias del programa.\n2. **Metadatos:** información sobre clases, métodos, propiedades y otros tipos.\n3. **Manifiesto:** identifica el ensamblado y registra sus dependencias.\n\nCuando se ejecuta la aplicación, entra en acción el **CLR**, que utiliza el compilador **JIT** (_Just-In-Time_) para transformar el CIL en **código máquina nativo**, compatible con el procesador."
+        },
+        {
+          "type": "cue",
+          "question": "¿Qué significa que C# sea administrado?",
+          "answer": "Significa que la ejecución del programa está **supervisada por el CLR**, que proporciona servicios como:\n\n- **Gestión automática de memoria**, mediante el _Garbage Collector (GC)_.\n- **Seguridad de tipos**, para ayudar a prevenir operaciones incompatibles.\n- **Manejo de excepciones**, para gestionar errores durante la ejecución.\n\nA diferencia de lenguajes como **C o C++**, donde la gestión de recursos suele requerir mayor intervención del programador, .NET automatiza muchas de estas tareas."
+        },
+        {
+          "type": "subconcept",
+          "title": "3.1 Paso a paso de C# al procesador",
+          "text": "1. **Código fuente:** escribes instrucciones en un archivo `.cs`.\n2. **Compilación:** Roslyn genera un ensamblado con CIL, metadatos y manifiesto.\n3. **Carga:** el CLR carga el ensamblado y resuelve las dependencias necesarias.\n4. **Traducción:** el JIT convierte el CIL de los métodos en código máquina.\n5. **Ejecución:** el procesador ejecuta las instrucciones nativas."
         },
         {
           "type": "diagram",
           "language": "text",
-          "code": "┌────────────────────────────────┐\n│           .NET SDK             │\n│  Roslyn + CLI (dotnet)         │\n│ ┌────────────────────────────┐ │\n│ │        .NET Runtime        │ │\n│ │ ┌──────────┬─────────────┐ │ │\n│ │ │   BCL    │     CLR     │ │ │\n│ │ └──────────┴─────────────┘ │ │\n│ └────────────────────────────┘ │\n└────────────────────────────────┘"
+          "code": "Código fuente (.cs)\n        │\n        ▼\n  Roslyn (compilador)\n        │\n        ▼\n  Ensamblado (.dll)\n  ├─ CIL\n  ├─ Metadatos\n  └─ Manifiesto\n        │\n        ▼\n   CLR (Runtime)\n        │\n        ▼\n   JIT (compilador)\n        │\n        ▼\n   Código máquina\n        │\n        ▼\n       CPU"
         },
         {
           "type": "cue",
-          "question": "¿Cuál es la diferencia fundamental entre el .NET SDK y el .NET Runtime?",
-          "answer": "El **SDK** contiene los compiladores y herramientas para programar y compilar. El **Runtime** (**CLR** + **BCL**) es el paquete mínimo necesario únicamente para ejecutar binarios ya creados."
+          "question": "¿Por qué utilizar CIL en lugar de código máquina directamente?",
+          "answer": "El uso de **CIL** ofrece varias ventajas:\n- **Interoperabilidad:** C#, F# y VB.NET pueden generar el mismo tipo de código intermedio.\n- **Portabilidad:** un ensamblado compatible puede ejecutarse en distintas arquitecturas, como x64 y ARM64.\n- **Optimización:** el JIT puede generar código nativo adaptado al procesador y entorno de ejecución."
+        },
+        {
+          "type": "fact",
+          "question": "¿Sabías que Roslyn solo compila C# y Visual Basic?",
+          "answer": "Aunque **F#** también pertenece a la plataforma .NET, **no utiliza Roslyn**, sino su propio compilador, llamado **Fsc**.\n\nEsto se debe a que F# tiene un enfoque **principalmente funcional** y utiliza la **indentación** para estructurar su código, de forma similar a Python."
+        },
+        {
+          "type": "concept",
+          "title": "4. SDK frente a Runtime",
+          "text": "En .NET existen dos componentes fundamentales: el **SDK**, que proporciona las herramientas para **desarrollar aplicaciones**, y el **Runtime**, que permite **ejecutarlas**.\n\nAunque trabajan juntos, cada uno cumple una función diferente."
+        },
+        {
+          "type": "subconcept",
+          "title": "4.1 ¿Qué es el SDK?",
+          "text": "El **SDK** (_Software Development Kit_ o _Kit de Desarrollo de Software_) es un conjunto de **herramientas, compiladores y bibliotecas** que permiten crear, compilar y publicar aplicaciones.\n\nPiensa en él como una **caja de herramientas para desarrolladores**.\n\nEn C# utilizamos el **.NET SDK**, que incluye las herramientas necesarias para trabajar con la plataforma .NET."
+        },
+        {
+          "type": "cue",
+          "question": "¿El usuario final necesita instalar el SDK?",
+          "answer": "**No.** El SDK está destinado a quienes desarrollan aplicaciones. Para ejecutar un programa normalmente basta con tener el **Runtime compatible**.\n\nSin embargo, algunas aplicaciones ya incluyen su propio Runtime y no requieren instalarlo por separado."
+        },
+        {
+          "type": "subconcept",
+          "title": "4.2 ¿Qué es el Runtime?",
+          "text": "El **Runtime** (_Entorno de Ejecución_) es el conjunto de **componentes y bibliotecas** que permiten ejecutar aplicaciones desarrolladas en .NET.\n\nPiensa en él como el **motor que hace funcionar una aplicación** una vez que ha sido creada.\n\nEn .NET, el Runtime incluye el **CLR**, encargado de ejecutar el código administrado, y las **bibliotecas necesarias** para que el programa funcione correctamente."
+        },
+        {
+          "type": "fact",
+          "question": "¿Sabías que algunas aplicaciones necesitan un Runtime específico de .NET para funcionar?",
+          "answer": "Seguramente alguna vez viste un mensaje como este:\n\t`Esta aplicación requiere .NET Desktop Runtime para ejecutarse.`\n\nEsto sucede porque existen **diferentes tipos de Runtime**, cada uno destinado a determinadas aplicaciones:\n\n- **.NET Runtime:** ejecuta aplicaciones de consola y programas que utilizan el entorno base.\n- **.NET Desktop Runtime:** permite ejecutar aplicaciones de escritorio de Windows, como **Windows Forms y WPF**.\n- **ASP.NET Core Runtime:** permite ejecutar **aplicaciones web, APIs y servicios backend** desarrollados con ASP.NET Core."
+        },
+        {
+          "type": "subconcept",
+          "title": "¿Cómo verifico los Runtimes instalados?",
+          "text": "Abre una terminal y ejecuta:"
         },
         {
           "type": "code",
           "language": "text",
-          "code": "# Comprobacion en terminal:\ndotnet --version\ndotnet --list-sdks\ndotnet --list-runtimes"
+          "code": "dotnet --list-runtimes",
+          "output": "Microsoft.NETCore.App 8.0.22\nMicrosoft.NETCore.App 10.0.0\nMicrosoft.WindowsDesktop.App 8.0.22\nMicrosoft.AspNetCore.App 10.0.0"
         },
         {
-          "type": "concept",
-          "title": "El ciclo de ejecución del código administrado",
-          "text": "C# genera código administrado que no interactúa directo con la **CPU** (_Central Processing Unit_ / Unidad Central de Procesamiento). El código fuente (`.cs`) se traduce a un lenguaje binario intermedio denominado **CIL** (_Common Intermediate Language_ / Lenguaje Intermedio Común) o **IL**. Este binario se almacena en un ensamblado (`.dll`) junto a sus metadatos y un host ejecutable nativo."
+          "type": "subconcept",
+          "title": "",
+          "text": "Este comando muestra los **Runtimes instalados**, sus **versiones** y las rutas donde se encuentran.\n\n_La salida real también incluye la ruta de instalación y puede variar según tu computadora._"
         },
         {
-          "type": "concept",
-          "title": "Funciones críticas del CLR",
-          "text": "Al iniciar el programa, el motor **CLR** ejecuta dos tareas: compila mediante **JIT** (_Just-In-Time_ / Justo a Tiempo) el código **CIL** a lenguaje máquina nativo al invocar cada método, y delega en el **GC** (_Garbage Collector_ / Recolector de Basura) la liberación automática de objetos huérfanos en la memoria dinámica (_Heap_). El **GC** no administra recursos del sistema operativo como archivos o conexiones de red."
-        },
-        {
-          "type": "diagram",
-          "language": "text",
-          "code": "Código fuente (.cs)\n        │\n        ▼\n[ Compilador Roslyn ]\n        │\n        ▼\nEnsamblado (.dll + host)\n        │\n        ▼\n[ CLR: JIT + GC ]\n        │\n        ▼\nInstrucciones de CPU"
+          "type": "subconcept",
+          "title": "¿Por qué tengo varias versiones instaladas?",
+          "text": "Es **normal tener varias versiones de .NET** en una misma computadora.\nCada aplicación se desarrolla para una **versión determinada** del entorno de ejecución.\n\nPor ejemplo, un programa creado para **.NET 8** normalmente necesita un Runtime compatible con esa versión. Tener instalado **.NET 10** no garantiza que pueda ejecutarlo automáticamente.\n\nEsto ocurre porque las aplicaciones no cambian de versión principal de Runtime por defecto."
         },
         {
           "type": "cue",
-          "question": "¿Por qué se le denomina \"código administrado\" a una aplicación en C#?",
-          "answer": "Porque se ejecuta bajo la supervisión continua del **CLR**, el cual traduce el binario en tiempo de ejecución (**JIT**), garantiza la seguridad de tipos y libera la memoria con el **GC**."
+          "question": "Si ya tengo el SDK, ¿necesito instalar el Runtime?",
+          "answer": "**Normalmente no necesitas instalarlo por separado**, porque el **.NET SDK ya incluye los Runtimes correspondientes**.\n\nEn Windows, el SDK incorpora:\n- **.NET Runtime**, para ejecutar aplicaciones generales.\n- **.NET Desktop Runtime**, para aplicaciones de escritorio.\n- **ASP.NET Core Runtime**, para aplicaciones web.\n\nSin embargo, **tener el SDK 10 no significa tener todos los Runtimes de versiones anteriores**. Una aplicación que depende de .NET 8 podría seguir necesitando su Runtime correspondiente."
         },
         {
           "type": "concept",
-          "title": "Estructura de proyectos y herramientas CLI",
-          "text": "Los proyectos de .NET se configuran en archivos `.csproj` (versión del framework, librerías) y se pueden agrupar en soluciones `.sln` o `.slnx`. Todo el ciclo de vida del software puede operarse desde la terminal con comandos de la **CLI** _dotnet_ y un editor plano sin depender de entornos gráficos."
+          "title": "5. Instalación y verificación del SDK",
+          "text": "Aprenderás a **elegir el instalador adecuado**, diferenciar las versiones **LTS y STS**, e instalar y verificar el **SDK de .NET 10 LTS** en Windows.\n\nEsta guía está orientada a **Windows 11** y a las ediciones compatibles de **Windows 10**."
+        },
+        {
+          "type": "subconcept",
+          "title": "5.1 Elegir la arquitectura del instalador",
+          "text": "Antes de instalar .NET, debes identificar la **arquitectura de tu procesador y sistema operativo**.\n\nExisten tres opciones principales:\n- **x64 (64 bits):** para la mayoría de computadoras modernas con procesadores **Intel o AMD**. Es la opción más común.\n- **Arm64 (64 bits):** para equipos Windows con procesadores **ARM**, como algunas laptops con Qualcomm Snapdragon.\n- **x86 (32 bits):** para sistemas Windows de **32 bits** compatibles. No debes elegirlo únicamente porque tu computadora sea antigua."
+        },
+        {
+          "type": "cue",
+          "question": "¿Cómo sé qué arquitectura tiene mi PC?",
+          "answer": "Abre **Configuración** con `Win + I` y dirígete a:\n**Sistema - Información - Tipo de sistema**\nRevisa la información del procesador y del sistema operativo:\n- **Procesador x64:** selecciona `x64`.\n- **Procesador ARM64:** selecciona `Arm64`.\n- **Sistema de 32 bits:** selecciona `x86`, si tu versión de Windows es compatible.\n\nTambién puedes abrir el **Símbolo del sistema (CMD)** y ejecutar\n`echo %PROCESSOR_ARCHITECTURE%`\n\nEl resultado puede mostrar **AMD64** (equivalente a x64), **ARM64** o **x86**(equivalente a 32 bits)."
+        },
+        {
+          "type": "subconcept",
+          "title": "5.2 LTS frente a STS",
+          "text": ".NET ofrece dos modelos de soporte: **LTS** y **STS**. Ambos reciben actualizaciones de seguridad y correcciones, pero durante períodos diferentes.\n\n**LTS (_Long Term Support_)**\nSignifica **soporte a largo plazo**.\nRecibe actualizaciones durante **3 años**, lo que permite mantener proyectos sin migrar constantemente.\n\nSus principales ventajas son:\n- **Soporte prolongado:** más tiempo para planificar actualizaciones.\n- **Seguridad:** parches y correcciones durante su ciclo de soporte.\n- **Menos migraciones:** ideal para aplicaciones que deben mantenerse durante años.\n\n**STS (_Standard Term Support_)**\nSignifica **soporte de duración estándar**.\nRecibe actualizaciones durante **2 años** y requiere migrar antes para mantener el soporte.\n\nSus principales ventajas son:\n- **Actualizaciones frecuentes:** facilita adoptar nuevas versiones de .NET.\n- **Acceso a novedades:** permite aprovechar funcionalidades recientes.\n- **Migraciones periódicas:** promueve mantener los proyectos actualizados."
+        },
+        {
+          "type": "cue",
+          "question": "¿Qué versión debería instalar si estoy aprendiendo?",
+          "answer": "Para este curso utilizaremos **.NET 10 LTS**, que tiene soporte hasta **noviembre de 2028**.\n\nEs una buena opción porque permite aprender con una versión respaldada durante varios años, recibe actualizaciones de seguridad y facilita seguir los ejercicios del curso utilizando el mismo SDK.\n\nMás adelante podrás instalar versiones **STS** en paralelo para explorar nuevas funcionalidades."
+        },
+
+        {
+          "type": "subconcept",
+          "title": "5.3 Pasos de instalación",
+          "text": "Para instalar el **SDK de .NET 10 LTS**, sigue estos pasos:\n\n1. Abre tu navegador y busca **descargar SDK .NET 10**.\n2. Entre los resultados, selecciona la página de descarga cuyo dominio sea `dotnet.microsoft.com`.\n3. Busca la sección **SDK 10.0 (LTS)** y descarga el instalador según tu arquitectura (`x64`, `x86` o `Arm64`).\n4. Ejecuta el instalador y sigue las instrucciones.\n5. Abre una nueva terminal para **verificar la instalación**.\n\n**Importante:** comprueba que el dominio sea `dotnet.microsoft.com` y no un foro o sitio de terceros."
+        },
+
+        {
+          "type": "subconcept",
+          "title": "5.5 Verificar el SDK",
+          "text": "Abre una terminal y ejecuta:"
         },
         {
           "type": "code",
           "language": "text",
-          "code": "# Crear proyecto consola\ndotnet new console -n App\n\n# Crear la solucion\ndotnet new sln -n Sol\n\n# Vincular proyecto\ndotnet sln add App/App.csproj\n\n# Compilar solucion\ndotnet build\n\n# Ejecutar el proyecto\ndotnet run --project App"
+          "code": "dotnet --list-sdks",
+          "output": "10.0.402 [C:\\Program Files\\dotnet\\sdk]"
+        },
+        {
+          "type": "subconcept",
+          "title": "",
+          "text": "Este comando muestra **todos los SDK instalados** junto con sus versiones y rutas.\n\n_La versión puede variar según la actualización instalada._"
         },
         {
           "type": "cue",
-          "question": "¿Es indispensable utilizar un entorno gráfico para construir un programa en C#?",
-          "answer": "No. La **CLI** _dotnet_ permite crear, compilar y ejecutar todo tipo de proyectos desde la terminal usando cualquier editor de texto plano."
+          "question": "¿Por qué no reconoce el comando dotnet después de instalar?",
+          "answer": "Si aparece un mensaje como\n`dotnet no se reconoce como un comando interno o externo`\n\nEs posible que la terminal estuviera abierta antes de instalar el SDK y no haya actualizado la variable de entorno `PATH`.\n\n**Solución:**\nCierra la terminal, abre una nueva y ejecuta nuevamente `dotnet --list-sdks`.\n\nSi el problema continúa, verifica que el SDK se haya instalado correctamente y que la ruta de .NET esté incluida en `PATH`."
         },
         {
-          "type": "concept",
-          "title": "Comparativa de entornos de desarrollo",
-          "text": "Existen tres herramientas principales para programar en C#: Visual Studio Community como **IDE** (_Integrated Development Environment_ / Entorno de Desarrollo Integrado) robusto para Windows; Visual Studio Code como editor modular multiplataforma mediante la extensión C# Dev Kit; y JetBrains Rider como **IDE** multiplataforma enfocado en refactorización avanzada y análisis de código."
-        },
-        {
-          "type": "cue",
-          "question": "¿Cuál es la diferencia principal en la forma de trabajar entre Visual Studio y Visual Studio Code?",
-          "answer": "Visual Studio es un **IDE** enfocado en soluciones completas con gestión gráfica centralizada, mientras que Visual Studio Code es un editor centrado en carpetas de código que requiere extensiones."
-        },
-        {
-          "type": "concept",
-          "title": "Comprobación práctica del entorno",
-          "text": "Para verificar la instalación del **SDK**, se crea un proyecto de consola inicial desde la terminal, se edita el punto de entrada y se valida la ejecución:"
+          "type": "subconcept",
+          "title": "5.6 Verificar los Runtimes",
+          "text": "Para consultar los **Runtimes instalados**, ejecuta:"
         },
         {
           "type": "code",
           "language": "text",
-          "code": "# Crear y entrar a carpeta\ndotnet new console -n Hola\ncd Hola"
+          "code": "dotnet --list-runtimes",
+          "output": "Microsoft.AspNetCore.App 10.0.13\nMicrosoft.NETCore.App 8.0.32\nMicrosoft.NETCore.App 9.0.21\nMicrosoft.NETCore.App 10.0.13\nMicrosoft.WindowsDesktop.App 10.0.13"
         },
         {
-          "type": "code",
-          "language": "c#",
-          "code": "// Program.cs\nConsole.WriteLine(\"¡Hola, C#!\");"
-        },
-        {
-          "type": "code",
-          "language": "text",
-          "code": "# Compilar y ejecutar\ndotnet run\n\n# Salida esperada:\n¡Hola, C#!"
+          "type": "subconcept",
+          "title": "",
+          "text": "_La salida real también incluye las rutas de instalación. Las versiones y cantidades pueden variar según tu computadora._"
         },
         {
           "type": "cue",
-          "question": "¿Cómo sé si mi entorno quedó bien configurado?",
-          "answer": "Si la terminal imprime el saludo tras ejecutar _dotnet run_. Si el comando no se reconoce, el **SDK** no está registrado en el **PATH** (_System Path_ / Ruta del Sistema)."
+          "question": "¿Por qué ahora aparecen más Runtimes que antes?",
+          "answer": "Porque al instalar el **SDK de .NET 10** en Windows también se incluyen los Runtimes correspondientes:\n- **.NET Runtime 10:** para aplicaciones generales y de consola.\n- **.NET Desktop Runtime 10:** para aplicaciones de escritorio de Windows.\n- **ASP.NET Core Runtime 10:** para aplicaciones web y APIs.\n\nLas versiones anteriores, como **.NET 8 o .NET 9**, pueden permanecer instaladas porque las versiones principales de .NET pueden **convivir en una misma computadora**.\n\nEsto permite que distintas aplicaciones utilicen los **Runtimes compatibles** que necesitan.\n\n**En resumen:** \nCon `dotnet --list-sdks` verificas las herramientas de desarrollo y con"
+        },
+        {
+          "type": "concept",
+          "title": "¡Felicidades! Primera lección completada",
+          "text": ""
         },
         {
           "type": "summary",
           "items": [
-            ".NET divide su arquitectura en **CLR** (ejecución), biblioteca **BCL** (clases base) y herramientas **SDK** (compiladores y **CLI**).",
-            "El **.NET Runtime** ejecuta programas existentes; el **SDK** añade lo necesario para compilarlos.",
-            "C# genera código administrado en **CIL** (**IL**), empaquetado en un ensamblado `.dll` y un host ejecutable.",
-            "El **CLR** compila a lenguaje nativo vía **JIT** y limpia la memoria dinámica automáticamente con el **GC**.",
-            "Los proyectos se definen en `.csproj` y se pueden agrupar en soluciones `.sln` o `.slnx`.",
-            "La **CLI** _dotnet_ permite crear, compilar y correr proyectos sin depender de herramientas visuales.",
-            "El desarrollo se puede realizar en Visual Studio, Visual Studio Code (con C# Dev Kit) o JetBrains Rider."
+            "**.NET es una plataforma**, no un lenguaje de programación. **C#**, **F#** y **VB.NET** comparten la misma **BCL** y el mismo **CLR**.",
+            "La **BCL** proporciona tipos y funcionalidades reutilizables; el **CLR** ejecuta el código administrado y gestiona la memoria.",
+            "C# es un **lenguaje administrado**: normalmente se compila a **CIL** (o **IL**), almacenado en un ensamblado `.dll` o `.exe` junto con metadatos y un manifiesto.",
+            "Durante la ejecución, el **CLR** carga el ensamblado, resuelve sus dependencias y utiliza el **JIT** para convertir el **CIL** en código máquina.",
+            "El **SDK** proporciona herramientas para desarrollar y compilar aplicaciones e incluye Runtimes. Existen tres tipos principales: **.NET Runtime**, **Desktop Runtime** y **ASP.NET Core Runtime**.",
+            "Varias versiones del **Runtime** pueden coexistir. No conviene eliminar una versión sin comprobar si alguna aplicación depende de ella.",
+            "**LTS** ofrece soporte prolongado y **STS** un ciclo de soporte más corto. Puedes verificar la instalación con `dotnet --list-sdks` y `dotnet --list-runtimes`."
           ]
+        },
+        {
+          "type": "concept",
+          "title": "",
+          "text": "En la siguiente lección aprenderás a **crear, compilar y ejecutar tu primer proyecto C#** utilizando la **CLI de .NET** desde la terminal. También conocerás la **estructura de un proyecto** y las herramientas que facilitan el desarrollo."
         }
       ],
       "exercises": [
         {
           "id": "exercise_lesson_01_unique_choice_01",
           "type": "UNIQUE_CHOICE",
-          "instruction": "¿Cuáles son los tres pilares fundamentales de la plataforma .NET?",
-          "xp": 100,
-          "orderIndex": 1,
-          "options": [
-            {
-              "content": "CLR, JIT y GC",
-              "explanation": "JIT y GC son funciones internas del CLR, no los pilares principales.",
-              "isCorrect": false,
-              "orderIndex": 1
-            },
-            {
-              "content": "CLR, BCL y SDK",
-              "explanation": "Correcto. El CLR (ejecución), BCL (clases) y SDK (herramientas) forman la base de .NET.",
-              "isCorrect": true,
-              "orderIndex": 2
-            },
-            {
-              "content": "BCL, Roslyn y CLI",
-              "explanation": "Roslyn y la CLI son partes incluidas dentro del SDK.",
-              "isCorrect": false,
-              "orderIndex": 3
-            },
-            {
-              "content": "Runtime, SDK y .csproj",
-              "explanation": "El archivo .csproj configura proyectos, no es un pilar de la plataforma.",
-              "isCorrect": false,
-              "orderIndex": 4
-            }
-          ]
-        },
-        {
-          "id": "exercise_lesson_01_unique_choice_02",
-          "type": "UNIQUE_CHOICE",
           "instruction": "¿Qué componentes forman el .NET Runtime?",
-          "xp": 100,
-          "orderIndex": 2,
+          "xp": 50,
+          "orderIndex": 1,
           "options": [
             {
               "content": "CLR + SDK",
@@ -191,34 +298,67 @@
           ]
         },
         {
-          "id": "exercise_lesson_01_unique_choice_03",
+          "id": "exercise_lesson_01_unique_choice_02",
           "type": "UNIQUE_CHOICE",
-          "instruction": "¿Qué proporciona la BCL (Base Class Library)?",
-          "xp": 100,
-          "orderIndex": 3,
+          "instruction": "¿Qué es exactamente .NET según la documentación?",
+          "xp": 50,
+          "orderIndex": 2,
           "options": [
             {
-              "content": "Compiladores y plantillas",
-              "explanation": "Eso lo provee el SDK.",
+              "content": "Un lenguaje orientado a objetos",
+              "explanation": "Ese es C#; .NET admite varios lenguajes pero no es uno.",
               "isCorrect": false,
               "orderIndex": 1
             },
             {
-              "content": "La compilación JIT",
-              "explanation": "La realiza el CLR.",
-              "isCorrect": false,
+              "content": "Una plataforma de desarrollo",
+              "explanation": "Correcto. Incluye un entorno de ejecución (CLR) y bibliotecas de clases (BCL).",
+              "isCorrect": true,
               "orderIndex": 2
             },
             {
-              "content": "Liberación automática de memoria",
-              "explanation": "Es responsabilidad del GC dentro del CLR.",
+              "content": "Un compilador de código máquina",
+              "explanation": "Los compiladores son solo una herramienta dentro del SDK de .NET.",
               "isCorrect": false,
               "orderIndex": 3
             },
             {
-              "content": "Tipos base estándar y utilidades",
-              "explanation": "Correcto. Provee utilidades para trabajar y tipos de datos base.",
+              "content": "Un sistema operativo ligero",
+              "explanation": ".NET es una plataforma de software que corre sobre el sistema operativo.",
+              "isCorrect": false,
+              "orderIndex": 4
+            }
+          ]
+        },
+        {
+          "id": "exercise_lesson_01_unique_choice_03",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "¿Cuáles son los tres lenguajes principales de .NET y cuál es el más usado?",
+          "xp": 50,
+          "orderIndex": 3,
+          "options": [
+            {
+              "content": "C#, F# y VB.NET (C# el más usado)",
+              "explanation": "Correcto. Los tres comparten la plataforma, siendo C# el más utilizado.",
               "isCorrect": true,
+              "orderIndex": 1
+            },
+            {
+              "content": "C#, C++ y F# (C# el más usado)",
+              "explanation": "C++ no forma parte de los tres lenguajes principales explicados en la lección.",
+              "isCorrect": false,
+              "orderIndex": 2
+            },
+            {
+              "content": "C#, F# y Python (F# el más usado)",
+              "explanation": "Python es ajeno a .NET y el lenguaje más utilizado es C#, no F#.",
+              "isCorrect": false,
+              "orderIndex": 3
+            },
+            {
+              "content": "C#, VB.NET y CIL (C# el más usado)",
+              "explanation": "CIL es el código intermedio generado al compilar, no un lenguaje fuente.",
+              "isCorrect": false,
               "orderIndex": 4
             }
           ]
@@ -226,31 +366,31 @@
         {
           "id": "exercise_lesson_01_unique_choice_04",
           "type": "UNIQUE_CHOICE",
-          "instruction": "¿Qué incluye el .NET SDK además del Runtime?",
-          "xp": 100,
+          "instruction": "¿Qué elementos definen la sintaxis principal de C#?",
+          "xp": 50,
           "orderIndex": 4,
           "options": [
             {
-              "content": "Compiladores, plantillas y la CLI",
-              "explanation": "Correcto. Añade las herramientas necesarias para desarrollar código.",
-              "isCorrect": true,
+              "content": "Sangría obligatoria sin símbolos",
+              "explanation": "Organizar bloques mediante indentación es propio de F#.",
+              "isCorrect": false,
               "orderIndex": 1
             },
             {
-              "content": "El Recolector de Basura (GC)",
-              "explanation": "El GC ya viene incluido en el Runtime (dentro del CLR).",
+              "content": "Palabras clave como Dim y End Sub",
+              "explanation": "El estilo verbal pertenece a VB.NET.",
               "isCorrect": false,
               "orderIndex": 2
             },
             {
-              "content": "Únicamente la BCL",
-              "explanation": "La BCL es parte del Runtime, el SDK añade más cosas.",
-              "isCorrect": false,
+              "content": "Llaves { } y punto y coma ;",
+              "explanation": "Correcto. Usa llaves para delimitar bloques y punto y coma al cerrar instrucciones.",
+              "isCorrect": true,
               "orderIndex": 3
             },
             {
-              "content": "El ejecutable host",
-              "explanation": "El host se genera al compilar, no es una herramienta del SDK.",
+              "content": "Declaración de variables con let",
+              "explanation": "El uso de let con inferencia automática es característico de F#.",
               "isCorrect": false,
               "orderIndex": 4
             }
@@ -259,31 +399,31 @@
         {
           "id": "exercise_lesson_01_unique_choice_05",
           "type": "UNIQUE_CHOICE",
-          "instruction": "Para un servidor que solo necesita ejecutar aplicaciones ya compiladas, ¿qué es lo mínimo requerido?",
-          "xp": 100,
+          "instruction": "¿Qué rasgo distingue a F# frente a C# y VB.NET?",
+          "xp": 50,
           "orderIndex": 5,
           "options": [
             {
-              "content": ".NET SDK",
-              "explanation": "Incluye herramientas extra que un servidor de ejecución no necesita.",
+              "content": "Exige declarar cada tipo manualmente",
+              "explanation": "Al contrario, F# permite omitir el tipo explícito gracias a la inferencia.",
               "isCorrect": false,
               "orderIndex": 1
             },
             {
-              "content": ".NET Runtime",
-              "explanation": "Correcto. Es el paquete mínimo necesario para ejecutar aplicaciones.",
+              "content": "Estilo funcional, indentación e inferencia",
+              "explanation": "Correcto. Es conciso, organiza el código por sangría y deduce los tipos.",
               "isCorrect": true,
               "orderIndex": 2
             },
             {
-              "content": "Visual Studio Community",
-              "explanation": "Es un entorno de desarrollo (IDE).",
+              "content": "Delimita bloques con llaves { }",
+              "explanation": "El estilo basado en llaves corresponde a C#.",
               "isCorrect": false,
               "orderIndex": 3
             },
             {
-              "content": "C# Dev Kit",
-              "explanation": "Es una extensión de VS Code para desarrollo.",
+              "content": "Usa sintaxis verbal similar al inglés",
+              "explanation": "El estilo verbal con palabras como Dim y As corresponde a VB.NET.",
               "isCorrect": false,
               "orderIndex": 4
             }
@@ -292,32 +432,32 @@
         {
           "id": "exercise_lesson_01_unique_choice_06",
           "type": "UNIQUE_CHOICE",
-          "instruction": "¿Qué comando lista los entornos de ejecución instalados en tu sistema?",
-          "xp": 100,
+          "instruction": "En F#, escribir `let edad = 30` sin indicar el tipo es posible gracias a:",
+          "xp": 50,
           "orderIndex": 6,
           "options": [
             {
-              "content": "dotnet --list-sdks",
-              "explanation": "Lista los SDKs, no los entornos de ejecución.",
+              "content": "La seguridad de tipos del CLR",
+              "explanation": "La seguridad de tipos evita operaciones incompatibles al ejecutar, no deduce tipos.",
               "isCorrect": false,
               "orderIndex": 1
             },
             {
-              "content": "dotnet --version",
-              "explanation": "Muestra la versión actual del SDK.",
+              "content": "La compilación Just-In-Time",
+              "explanation": "El JIT traduce CIL a código máquina durante la ejecución.",
               "isCorrect": false,
               "orderIndex": 2
             },
             {
-              "content": "dotnet --list-runtimes",
-              "explanation": "Correcto. Lista todos los Runtimes instalados.",
-              "isCorrect": true,
+              "content": "El recolector de basura (GC)",
+              "explanation": "El GC libera memoria en desuso, no interviene en la declaración de variables.",
+              "isCorrect": false,
               "orderIndex": 3
             },
             {
-              "content": "dotnet build",
-              "explanation": "Compila el código, no lista instalaciones.",
-              "isCorrect": false,
+              "content": "La inferencia de tipos",
+              "explanation": "Correcto. El compilador deduce el tipo de dato a partir del valor asignado.",
+              "isCorrect": true,
               "orderIndex": 4
             }
           ]
@@ -325,31 +465,31 @@
         {
           "id": "exercise_lesson_01_unique_choice_07",
           "type": "UNIQUE_CHOICE",
-          "instruction": "Al compilar código fuente en C#, ¿a qué formato se traduce primero?",
-          "xp": 100,
+          "instruction": "Un código usa `{ }` y `;`, y otro usa `Dim` y `As`. ¿A qué lenguajes corresponden?",
+          "xp": 50,
           "orderIndex": 7,
           "options": [
             {
-              "content": "CIL (Common Intermediate Language)",
-              "explanation": "Correcto. El código se traduce a este binario intermedio.",
+              "content": "El primero a C# y el segundo a VB.NET",
+              "explanation": "Correcto. C# se basa en llaves y punto y coma; VB.NET usa un estilo verbal.",
               "isCorrect": true,
               "orderIndex": 1
             },
             {
-              "content": "Código máquina nativo",
-              "explanation": "Esto lo hace el JIT más adelante, en tiempo de ejecución.",
+              "content": "El primero a F# y el segundo a C#",
+              "explanation": "F# se estructura con indentación, no con llaves ni punto y coma.",
               "isCorrect": false,
               "orderIndex": 2
             },
             {
-              "content": "Metadatos",
-              "explanation": "Los metadatos acompañan al código, pero no son las instrucciones compiladas.",
+              "content": "El primero a VB.NET y el segundo a F#",
+              "explanation": "Invierte el estilo de VB.NET y atribuye palabras verbales a F#.",
               "isCorrect": false,
               "orderIndex": 3
             },
             {
-              "content": "Archivos .csproj",
-              "explanation": "Es el archivo de configuración del proyecto.",
+              "content": "Ambos pertenecen a distintas versiones de C#",
+              "explanation": "Son dos lenguajes diferentes dentro de la misma plataforma .NET.",
               "isCorrect": false,
               "orderIndex": 4
             }
@@ -358,32 +498,32 @@
         {
           "id": "exercise_lesson_01_unique_choice_08",
           "type": "UNIQUE_CHOICE",
-          "instruction": "¿Qué extensión principal tiene el ensamblado generado tras compilar en .NET?",
-          "xp": 100,
+          "instruction": "Si C#, F# y VB.NET tienen sintaxis distintas, ¿cómo logra ejecutarlos el mismo CLR?",
+          "xp": 50,
           "orderIndex": 8,
           "options": [
             {
-              "content": ".exe",
-              "explanation": "El .exe es solo el ejecutable de arranque en Windows, no el ensamblado en sí.",
+              "content": "Convierte F# y VB.NET a sintaxis C#",
+              "explanation": "El código nunca se traduce a C#; cada lenguaje se compila directo a CIL.",
               "isCorrect": false,
               "orderIndex": 1
             },
             {
-              "content": ".cs",
-              "explanation": "Es la extensión del código fuente sin compilar.",
+              "content": "Los tres usan el compilador Roslyn",
+              "explanation": "F# no utiliza Roslyn, sino su propio compilador llamado Fsc.",
               "isCorrect": false,
               "orderIndex": 2
             },
             {
-              "content": ".csproj",
-              "explanation": "Es la configuración del proyecto.",
-              "isCorrect": false,
+              "content": "Cada compilador genera el mismo código CIL",
+              "explanation": "Correcto. Todos compilan a CIL, comparten la BCL y corren sobre el CLR.",
+              "isCorrect": true,
               "orderIndex": 3
             },
             {
-              "content": ".dll",
-              "explanation": "Correcto. .NET empaqueta el código CIL en archivos .dll.",
-              "isCorrect": true,
+              "content": "La CPU interpreta el código fuente directo",
+              "explanation": "El procesador solo ejecuta código máquina traducido por el JIT.",
+              "isCorrect": false,
               "orderIndex": 4
             }
           ]
@@ -391,31 +531,31 @@
         {
           "id": "exercise_lesson_01_unique_choice_09",
           "type": "UNIQUE_CHOICE",
-          "instruction": "¿Qué acompaña al código binario intermedio (CIL) dentro de un ensamblado `.dll`?",
-          "xp": 100,
+          "instruction": "¿Cuál es la función de la BCL (Base Class Library)?",
+          "xp": 50,
           "orderIndex": 9,
           "options": [
             {
-              "content": "El código fuente original en C#",
-              "explanation": "El código fuente no se incluye en el ensamblado final por defecto.",
+              "content": "Traducir CIL a código máquina nativo",
+              "explanation": "Esa traducción en tiempo de ejecución la realiza el compilador JIT.",
               "isCorrect": false,
               "orderIndex": 1
             },
             {
-              "content": "Metadatos y un host ejecutable nativo",
-              "explanation": "Correcto. El binario se almacena junto a sus metadatos y un host ejecutable.",
+              "content": "Proveer tipos y funciones reutilizables",
+              "explanation": "Correcto. Aporta herramientas comunes para leer archivos, manejar texto o datos.",
               "isCorrect": true,
               "orderIndex": 2
             },
             {
-              "content": "El compilador Roslyn",
-              "explanation": "Roslyn hace la compilación, pero no viaja dentro del `.dll`.",
+              "content": "Supervisar y liberar la memoria RAM",
+              "explanation": "La administración de memoria le corresponde al CLR mediante el GC.",
               "isCorrect": false,
               "orderIndex": 3
             },
             {
-              "content": "El entorno CLR completo",
-              "explanation": "El CLR está instalado en la máquina objetivo, no dentro del ensamblado.",
+              "content": "Compilar archivos .cs a ensamblados .dll",
+              "explanation": "La compilación de C# a ensamblado la realiza Roslyn.",
               "isCorrect": false,
               "orderIndex": 4
             }
@@ -424,32 +564,32 @@
         {
           "id": "exercise_lesson_01_unique_choice_10",
           "type": "UNIQUE_CHOICE",
-          "instruction": "¿En qué momento traduce el JIT el código CIL a código de máquina?",
-          "xp": 100,
+          "instruction": "Al imprimir texto con `Console.WriteLine` o `printfn`, ¿qué aprovechan los tres lenguajes?",
+          "xp": 50,
           "orderIndex": 10,
           "options": [
             {
-              "content": "Al usar el comando dotnet build",
-              "explanation": "Ese comando usa Roslyn para generar CIL, no código máquina.",
+              "content": "El compilador Fsc",
+              "explanation": "Fsc es exclusivo para compilar F#.",
               "isCorrect": false,
               "orderIndex": 1
             },
             {
-              "content": "Al instalar el SDK",
-              "explanation": "La instalación no ejecuta ni compila código de usuario.",
+              "content": "El manifiesto del ensamblado",
+              "explanation": "El manifiesto solo identifica al ensamblado y sus dependencias.",
               "isCorrect": false,
               "orderIndex": 2
             },
             {
-              "content": "Al invocar cada método por primera vez",
-              "explanation": "Correcto. El compilador Just-In-Time traduce bajo demanda.",
-              "isCorrect": true,
+              "content": "El instalador Desktop Runtime",
+              "explanation": "La consola básica no requiere el Runtime de escritorio.",
+              "isCorrect": false,
               "orderIndex": 3
             },
             {
-              "content": "Al finalizar el programa",
-              "explanation": "El código máquina se requiere para poder ejecutar el programa.",
-              "isCorrect": false,
+              "content": "Las capacidades compartidas de la BCL",
+              "explanation": "Correcto. Todos recurren a la biblioteca base de .NET para tareas comunes.",
+              "isCorrect": true,
               "orderIndex": 4
             }
           ]
@@ -457,31 +597,31 @@
         {
           "id": "exercise_lesson_01_unique_choice_11",
           "type": "UNIQUE_CHOICE",
-          "instruction": "¿Cuál es la función principal del Recolector de Basura (GC)?",
-          "xp": 100,
+          "instruction": "¿Cuál es la responsabilidad principal del CLR en .NET?",
+          "xp": 50,
           "orderIndex": 11,
           "options": [
             {
-              "content": "Liberar de la memoria los objetos huérfanos",
-              "explanation": "Correcto. Administra la memoria dinámica y elimina lo que ya no se usa.",
+              "content": "Ejecutar el código y administrar la memoria",
+              "explanation": "Correcto. Es el motor que corre el CIL, gestiona la memoria y maneja excepciones.",
               "isCorrect": true,
               "orderIndex": 1
             },
             {
-              "content": "Traducir CIL a código máquina",
-              "explanation": "Esa es la función del JIT.",
+              "content": "Proveer clases para manipular archivos",
+              "explanation": "Las clases reutilizables para archivos y texto pertenecen a la BCL.",
               "isCorrect": false,
               "orderIndex": 2
             },
             {
-              "content": "Cerrar archivos abiertos",
-              "explanation": "El GC no administra recursos del sistema operativo como archivos.",
+              "content": "Transformar archivos .cs en código CIL",
+              "explanation": "Esa transformación inicial la realiza el compilador Roslyn.",
               "isCorrect": false,
               "orderIndex": 3
             },
             {
-              "content": "Compilar el código fuente",
-              "explanation": "Esto lo hace el compilador Roslyn.",
+              "content": "Descargar actualizaciones del SDK",
+              "explanation": "El CLR es el motor de ejecución, no un gestor de descargas.",
               "isCorrect": false,
               "orderIndex": 4
             }
@@ -490,32 +630,32 @@
         {
           "id": "exercise_lesson_01_unique_choice_12",
           "type": "UNIQUE_CHOICE",
-          "instruction": "Si tu programa abre un archivo en el sistema operativo, ¿quién es el responsable de cerrarlo?",
-          "xp": 100,
+          "instruction": "¿Cuál es la diferencia esencial entre el CLR y la BCL?",
+          "xp": 50,
           "orderIndex": 12,
           "options": [
             {
-              "content": "El Recolector de Basura (GC)",
-              "explanation": "El GC administra memoria, no recursos de red o archivos.",
+              "content": "El CLR da las herramientas y la BCL ejecuta",
+              "explanation": "Invierte los roles: la BCL da las herramientas y el CLR ejecuta.",
               "isCorrect": false,
               "orderIndex": 1
             },
             {
-              "content": "El compilador JIT",
-              "explanation": "Solo traduce código a lenguaje máquina.",
+              "content": "El CLR compila el código y la BCL libera memoria",
+              "explanation": "Los compiladores son Roslyn/Fsc y la memoria la libera el propio CLR.",
               "isCorrect": false,
               "orderIndex": 2
             },
             {
-              "content": "El CLR automáticamente",
-              "explanation": "El motor de ejecución no cierra conexiones externas.",
-              "isCorrect": false,
+              "content": "El CLR ejecuta el programa y la BCL da herramientas",
+              "explanation": "Correcto. El CLR es el motor de ejecución y la BCL la biblioteca de funciones.",
+              "isCorrect": true,
               "orderIndex": 3
             },
             {
-              "content": "El programador de forma manual",
-              "explanation": "Correcto. El programador debe liberar explícitamente los recursos del sistema.",
-              "isCorrect": true,
+              "content": "El CLR es para web y la BCL para escritorio",
+              "explanation": "Ambos participan en cualquier aplicación de la plataforma .NET.",
+              "isCorrect": false,
               "orderIndex": 4
             }
           ]
@@ -523,31 +663,31 @@
         {
           "id": "exercise_lesson_01_unique_choice_13",
           "type": "UNIQUE_CHOICE",
-          "instruction": "¿Cuál es la ruta correcta de compilación y ejecución de un programa en C#?",
-          "xp": 100,
+          "instruction": "¿Qué implica que C# sea un lenguaje administrado (managed language)?",
+          "xp": 50,
           "orderIndex": 13,
           "options": [
             {
-              "content": ".cs → CLR → Roslyn → Ensamblado",
-              "explanation": "Roslyn debe compilar antes de que el CLR actúe.",
+              "content": "Que el programador libera la memoria a mano",
+              "explanation": "Eso ocurre en C o C++; en C# el CLR automatiza la gestión de memoria.",
               "isCorrect": false,
               "orderIndex": 1
             },
             {
-              "content": ".cs → Roslyn → Ensamblado → CLR (JIT/GC)",
-              "explanation": "Correcto. Primero se compila, luego se empaqueta, y finalmente el CLR lo ejecuta.",
+              "content": "Que su ejecución está supervisada por el CLR",
+              "explanation": "Correcto. El CLR brinda recolección de basura, seguridad de tipos y control de errores.",
               "isCorrect": true,
               "orderIndex": 2
             },
             {
-              "content": "Ensamblado → Roslyn → .cs → CLR",
-              "explanation": "El ensamblado es el resultado, no el origen.",
+              "content": "Que se compila directo a la CPU sin etapas",
+              "explanation": "C# pasa primero por código intermedio CIL antes de llegar al procesador.",
               "isCorrect": false,
               "orderIndex": 3
             },
             {
-              "content": ".cs → Ensamblado → JIT → Roslyn",
-              "explanation": "Roslyn (el compilador) va al principio del proceso.",
+              "content": "Que exige instalar el SDK para poder abrirse",
+              "explanation": "Para ejecutar un programa administrado basta con tener el Runtime.",
               "isCorrect": false,
               "orderIndex": 4
             }
@@ -556,32 +696,32 @@
         {
           "id": "exercise_lesson_01_unique_choice_14",
           "type": "UNIQUE_CHOICE",
-          "instruction": "¿Para qué sirve el archivo `.csproj`?",
-          "xp": 100,
+          "instruction": "¿Qué tres servicios brinda el CLR al supervisar un programa administrado?",
+          "xp": 50,
           "orderIndex": 14,
           "options": [
             {
-              "content": "Agrupa varios proyectos",
-              "explanation": "Eso lo hace el archivo `.sln`.",
+              "content": "Inferencia de tipos, sangría y uso de llaves",
+              "explanation": "Esas son reglas sintácticas de los lenguajes, no servicios del CLR.",
               "isCorrect": false,
               "orderIndex": 1
             },
             {
-              "content": "Contiene el código binario",
-              "explanation": "El código compilado se guarda en el ensamblado.",
+              "content": "Compilación a CIL, creación de .dll y PATH",
+              "explanation": "Compilar a .dll corresponde a Roslyn y el PATH es del sistema operativo.",
               "isCorrect": false,
               "orderIndex": 2
             },
             {
-              "content": "Configura el framework y las librerías",
-              "explanation": "Correcto. Define las características y dependencias del proyecto.",
-              "isCorrect": true,
+              "content": "Creación de metadatos, manifiesto y BCL",
+              "explanation": "Los metadatos y el manifiesto se generan al compilar el ensamblado.",
+              "isCorrect": false,
               "orderIndex": 3
             },
             {
-              "content": "Almacena logs del compilador",
-              "explanation": "No se usa para guardar logs.",
-              "isCorrect": false,
+              "content": "Garbage Collector, seguridad de tipos y excepciones",
+              "explanation": "Correcto. Automatiza la memoria, previene tipos incompatibles y gestiona errores.",
+              "isCorrect": true,
               "orderIndex": 4
             }
           ]
@@ -589,31 +729,31 @@
         {
           "id": "exercise_lesson_01_unique_choice_15",
           "type": "UNIQUE_CHOICE",
-          "instruction": "¿Cuál es la función de un archivo de solución (`.sln`)?",
-          "xp": 100,
+          "instruction": "¿Qué función cumple el Garbage Collector (GC) dentro del CLR?",
+          "xp": 50,
           "orderIndex": 15,
           "options": [
             {
-              "content": "Agrupar y organizar proyectos",
-              "explanation": "Correcto. Sirve para manejar varios proyectos como una sola unidad.",
+              "content": "Gestionar y liberar memoria automáticamente",
+              "explanation": "Correcto. Libera la memoria de los objetos que la aplicación ya no utiliza.",
               "isCorrect": true,
               "orderIndex": 1
             },
             {
-              "content": "Definir dependencias individuales",
-              "explanation": "Eso se hace en el archivo de proyecto `.csproj`.",
+              "content": "Traducir el código fuente C# a CIL",
+              "explanation": "La compilación de C# a CIL la realiza Roslyn.",
               "isCorrect": false,
               "orderIndex": 2
             },
             {
-              "content": "Guardar código fuente",
-              "explanation": "El código fuente se guarda en archivos `.cs`.",
+              "content": "Desinstalar Runtimes antiguos del disco",
+              "explanation": "El GC actúa sobre la memoria RAM en ejecución, no sobre archivos instalados.",
               "isCorrect": false,
               "orderIndex": 3
             },
             {
-              "content": "Reemplazar al compilador",
-              "explanation": "No realiza tareas de compilación, es solo configuración.",
+              "content": "Eliminar los metadatos del archivo .dll",
+              "explanation": "Los metadatos son necesarios para que el CLR reconozca las clases y métodos.",
               "isCorrect": false,
               "orderIndex": 4
             }
@@ -622,32 +762,32 @@
         {
           "id": "exercise_lesson_01_unique_choice_16",
           "type": "UNIQUE_CHOICE",
-          "instruction": "¿Qué comando añade el proyecto 'App' a una solución existente?",
-          "xp": 100,
+          "instruction": "¿Cuál es el objetivo de la seguridad de tipos en el CLR?",
+          "xp": 50,
           "orderIndex": 16,
           "options": [
             {
-              "content": "dotnet new sln -n Sol",
-              "explanation": "Este comando crea una nueva solución.",
+              "content": "Ocultar el código dentro del archivo .dll",
+              "explanation": "No es un mecanismo de cifrado, sino de validación en ejecución.",
               "isCorrect": false,
               "orderIndex": 1
             },
             {
-              "content": "dotnet build",
-              "explanation": "Sirve para compilar.",
-              "isCorrect": false,
+              "content": "Evitar operaciones incompatibles entre datos",
+              "explanation": "Correcto. Garantiza que las operaciones respeten los tipos definidos.",
+              "isCorrect": true,
               "orderIndex": 2
             },
             {
-              "content": "dotnet run",
-              "explanation": "Ejecuta un proyecto.",
+              "content": "Obligar a declarar tipos en el lenguaje F#",
+              "explanation": "F# sigue manteniendo su inferencia de tipos sin problema.",
               "isCorrect": false,
               "orderIndex": 3
             },
             {
-              "content": "dotnet sln add App/App.csproj",
-              "explanation": "Correcto. Vincula el `.csproj` especificado a la solución actual.",
-              "isCorrect": true,
+              "content": "Verificar el dominio oficial de descarga",
+              "explanation": "La seguridad de tipos opera sobre los datos en memoria, no en el navegador.",
+              "isCorrect": false,
               "orderIndex": 4
             }
           ]
@@ -655,31 +795,31 @@
         {
           "id": "exercise_lesson_01_unique_choice_17",
           "type": "UNIQUE_CHOICE",
-          "instruction": "¿Cuál es una diferencia clave entre Visual Studio y Visual Studio Code?",
-          "xp": 100,
+          "instruction": "¿Qué es el CIL (Common Intermediate Language)?",
+          "xp": 50,
           "orderIndex": 17,
           "options": [
             {
-              "content": "VS es para carpetas, VS Code para soluciones",
-              "explanation": "Al revés: VS se enfoca en soluciones, VS Code en directorios.",
+              "content": "Código máquina exclusivo para chips Intel x64",
+              "explanation": "El CIL no es código nativo ni depende de una arquitectura de CPU.",
               "isCorrect": false,
               "orderIndex": 1
             },
             {
-              "content": "VS se enfoca en soluciones, VS Code en carpetas",
-              "explanation": "Correcto. VS es un IDE integral por soluciones, VS Code es modular por carpetas.",
-              "isCorrect": true,
+              "content": "Un script para configurar la variable PATH",
+              "explanation": "El CIL contiene las instrucciones compiladas del programa, no ajustes del sistema.",
+              "isCorrect": false,
               "orderIndex": 2
             },
             {
-              "content": "Ambos son exclusivos de Windows",
-              "explanation": "VS Code es multiplataforma, VS (Community) es principalmete para Windows.",
-              "isCorrect": false,
+              "content": "Instrucciones intermedias independientes de la CPU",
+              "explanation": "Correcto. Es el código generado al compilar antes de que el JIT lo pase a código máquina.",
+              "isCorrect": true,
               "orderIndex": 3
             },
             {
-              "content": "VS Code incluye compiladores integrados",
-              "explanation": "VS Code requiere el SDK por separado y extensiones.",
+              "content": "El archivo de texto plano donde escribes C#",
+              "explanation": "El código fuente en texto plano se guarda en archivos .cs.",
               "isCorrect": false,
               "orderIndex": 4
             }
@@ -688,32 +828,32 @@
         {
           "id": "exercise_lesson_01_unique_choice_18",
           "type": "UNIQUE_CHOICE",
-          "instruction": "Para programar en C# usando Visual Studio Code, ¿qué extensión es fundamental instalar?",
-          "xp": 100,
+          "instruction": "¿Qué compiladores transforman el código de C# y F# a CIL respectivamente?",
+          "xp": 50,
           "orderIndex": 18,
           "options": [
             {
-              "content": "JetBrains Rider",
-              "explanation": "Rider es un IDE distinto, no una extensión.",
+              "content": "C# usa JIT y F# usa directamente el CLR",
+              "explanation": "El JIT y el CLR actúan en ejecución; no compilan código fuente a CIL.",
               "isCorrect": false,
               "orderIndex": 1
             },
             {
-              "content": "Roslyn Compiler",
-              "explanation": "Roslyn viene incluido en el SDK de .NET.",
+              "content": "C# usa Fsc y F# usa el compilador Roslyn",
+              "explanation": "Invierte el compilador que corresponde a cada lenguaje.",
               "isCorrect": false,
               "orderIndex": 2
             },
             {
-              "content": "C# Dev Kit",
-              "explanation": "Correcto. Provee las herramientas avanzadas para trabajar con C# en VS Code.",
-              "isCorrect": true,
+              "content": "Ambos lenguajes usan únicamente Roslyn",
+              "explanation": "Roslyn solo compila C# y VB.NET; F# no lo utiliza.",
+              "isCorrect": false,
               "orderIndex": 3
             },
             {
-              "content": "Sol Explorer",
-              "explanation": "El explorador de soluciones ya viene incluido en el Dev Kit.",
-              "isCorrect": false,
+              "content": "C# usa Roslyn y F# usa su compilador Fsc",
+              "explanation": "Correcto. Roslyn compila C# y VB.NET, mientras que F# emplea Fsc.",
+              "isCorrect": true,
               "orderIndex": 4
             }
           ]
@@ -721,31 +861,31 @@
         {
           "id": "exercise_lesson_01_unique_choice_19",
           "type": "UNIQUE_CHOICE",
-          "instruction": "Al usar `dotnet new console`, se genera un archivo con el código de inicio (punto de entrada). ¿Cómo se llama?",
-          "xp": 100,
+          "instruction": "¿Cuáles son los tres elementos principales dentro de un ensamblado (.dll)?",
+          "xp": 50,
           "orderIndex": 19,
           "options": [
             {
-              "content": "Program.cs",
-              "explanation": "Correcto. Es el archivo que contiene la ejecución inicial del programa.",
+              "content": "Código CIL, metadatos y manifiesto",
+              "explanation": "Correcto. Contienen las instrucciones intermedias, los tipos y las dependencias.",
               "isCorrect": true,
               "orderIndex": 1
             },
             {
-              "content": "App.csproj",
-              "explanation": "Es el archivo de configuración.",
+              "content": "Código máquina nativo, CPU y memoria RAM",
+              "explanation": "El ensamblado guarda CIL, no instrucciones nativas de CPU.",
               "isCorrect": false,
               "orderIndex": 2
             },
             {
-              "content": "Main.cs",
-              "explanation": "Por convención en .NET, la plantilla usa Program.cs.",
+              "content": "Archivos .cs, biblioteca BCL e instalador SDK",
+              "explanation": "Los archivos .cs son el código fuente previo y el SDK es el kit de desarrollo.",
               "isCorrect": false,
               "orderIndex": 3
             },
             {
-              "content": "Index.cs",
-              "explanation": "Nombre común en desarrollo web, no en consolas C#.",
+              "content": "Compilador Roslyn, motor CLR y traductor JIT",
+              "explanation": "Esos son los motores y herramientas que procesan el ensamblado, no su contenido.",
               "isCorrect": false,
               "orderIndex": 4
             }
@@ -754,31 +894,691 @@
         {
           "id": "exercise_lesson_01_unique_choice_20",
           "type": "UNIQUE_CHOICE",
-          "instruction": "Si al ejecutar `dotnet run` la terminal dice que el comando no se reconoce, ¿qué debes revisar?",
-          "xp": 100,
+          "instruction": "En un ensamblado .NET, ¿qué información almacenan los metadatos?",
+          "xp": 50,
           "orderIndex": 20,
           "options": [
             {
-              "content": "Errores de sintaxis en el código",
-              "explanation": "Si fuera error de código, dotnet sí se reconocería.",
+              "content": "Las instrucciones binarias para el procesador",
+              "explanation": "El código nativo lo genera el JIT en memoria durante la ejecución.",
               "isCorrect": false,
               "orderIndex": 1
             },
             {
-              "content": "Que el C# Dev Kit esté instalado",
-              "explanation": "Es independiente de la terminal del sistema operativo.",
+              "content": "Las clases, métodos, propiedades y tipos",
+              "explanation": "Correcto. Describen todos los elementos y tipos definidos dentro del código.",
+              "isCorrect": true,
+              "orderIndex": 2
+            },
+            {
+              "content": "Los comentarios escritos por el programador",
+              "explanation": "Los comentarios del código fuente no forman parte de los metadatos.",
+              "isCorrect": false,
+              "orderIndex": 3
+            },
+            {
+              "content": "La lista de Runtimes instalados en la PC",
+              "explanation": "Eso se consulta en el sistema con dotnet --list-runtimes.",
+              "isCorrect": false,
+              "orderIndex": 4
+            }
+          ]
+        },
+        {
+          "id": "exercise_lesson_01_unique_choice_21",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "¿Cuál es la función específica del manifiesto dentro de un ensamblado?",
+          "xp": 50,
+          "orderIndex": 21,
+          "options": [
+            {
+              "content": "Traducir el CIL a código máquina al ejecutar",
+              "explanation": "Esa traducción en tiempo real la realiza el compilador JIT.",
+              "isCorrect": false,
+              "orderIndex": 1
+            },
+            {
+              "content": "Proveer funciones para leer archivos y texto",
+              "explanation": "Las utilidades de archivos y texto pertenecen a la BCL.",
               "isCorrect": false,
               "orderIndex": 2
             },
             {
-              "content": "La instalación del SDK y su inclusión en el PATH",
-              "explanation": "Correcto. Si el sistema no reconoce 'dotnet', falta el SDK o no está en el PATH.",
+              "content": "Identificar el ensamblado y sus dependencias",
+              "explanation": "Correcto. Registra la identidad del ensamblado y qué otros componentes requiere.",
               "isCorrect": true,
               "orderIndex": 3
             },
             {
-              "content": "El archivo .csproj de la solución",
-              "explanation": "No afecta si el sistema operativo no detecta la herramienta principal.",
+              "content": "Limpiar los objetos sin uso en la memoria",
+              "explanation": "La limpieza de memoria le corresponde al Garbage Collector.",
+              "isCorrect": false,
+              "orderIndex": 4
+            }
+          ]
+        },
+        {
+          "id": "exercise_lesson_01_unique_choice_22",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "¿En qué momento actúa el compilador JIT y cuál es su función?",
+          "xp": 50,
+          "orderIndex": 22,
+          "options": [
+            {
+              "content": "Al guardar el archivo .cs; crea el archivo .dll",
+              "explanation": "Transformar el archivo .cs en .dll es tarea de Roslyn al compilar.",
+              "isCorrect": false,
+              "orderIndex": 1
+            },
+            {
+              "content": "Al compilar el proyecto; genera el manifiesto",
+              "explanation": "El manifiesto se empaqueta durante la compilación inicial con Roslyn o Fsc.",
+              "isCorrect": false,
+              "orderIndex": 2
+            },
+            {
+              "content": "Al instalar el SDK; configura la variable PATH",
+              "explanation": "El JIT es parte del CLR y solo interviene al correr un programa.",
+              "isCorrect": false,
+              "orderIndex": 3
+            },
+            {
+              "content": "Al ejecutar la app; traduce CIL a código máquina",
+              "explanation": "Correcto. Convierte las instrucciones CIL en código nativo compatible con la CPU.",
+              "isCorrect": true,
+              "orderIndex": 4
+            }
+          ]
+        },
+        {
+          "id": "exercise_lesson_01_unique_choice_23",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "¿Cuál es la secuencia correcta desde el archivo `.cs` hasta la CPU?",
+          "xp": 50,
+          "orderIndex": 23,
+          "options": [
+            {
+              "content": "Código .cs -> Roslyn (.dll) -> CLR -> JIT -> CPU",
+              "explanation": "Correcto. Se compila a .dll, el CLR lo carga, el JIT traduce a nativo y la CPU ejecuta.",
+              "isCorrect": true,
+              "orderIndex": 1
+            },
+            {
+              "content": "Código .cs -> JIT (.dll) -> Roslyn -> CLR -> CPU",
+              "explanation": "Invierte los papeles de Roslyn y el compilador JIT.",
+              "isCorrect": false,
+              "orderIndex": 2
+            },
+            {
+              "content": "Código .cs -> CLR -> Roslyn (.dll) -> JIT -> CPU",
+              "explanation": "El CLR no puede cargar un ensamblado que aún no fue compilado por Roslyn.",
+              "isCorrect": false,
+              "orderIndex": 3
+            },
+            {
+              "content": "Código .cs -> Roslyn (.dll) -> CPU -> JIT -> CLR",
+              "explanation": "La CPU es el último eslabón y no puede ejecutar CIL sin que pasen antes el CLR y el JIT.",
+              "isCorrect": false,
+              "orderIndex": 4
+            }
+          ]
+        },
+        {
+          "id": "exercise_lesson_01_unique_choice_24",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "Durante la ejecución, ¿en qué paso se carga el ensamblado y se resuelven sus dependencias?",
+          "xp": 50,
+          "orderIndex": 24,
+          "options": [
+            {
+              "content": "Al escribir el código fuente .cs en el editor",
+              "explanation": "En el editor solo hay texto; aún no existe el ensamblado compilado.",
+              "isCorrect": false,
+              "orderIndex": 1
+            },
+            {
+              "content": "Cuando el CLR toma el .dll antes de que actúe el JIT",
+              "explanation": "Correcto. El CLR primero carga el ensamblado y verifica dependencias antes de traducir métodos.",
+              "isCorrect": true,
+              "orderIndex": 2
+            },
+            {
+              "content": "Después de que la CPU termina de ejecutar el binario",
+              "explanation": "Las dependencias deben resolverse antes de poder ejecutar las instrucciones.",
+              "isCorrect": false,
+              "orderIndex": 3
+            },
+            {
+              "content": "Al correr echo %PROCESSOR_ARCHITECTURE% en CMD",
+              "explanation": "Ese comando solo consulta la arquitectura del procesador en Windows.",
+              "isCorrect": false,
+              "orderIndex": 4
+            }
+          ]
+        },
+        {
+          "id": "exercise_lesson_01_unique_choice_25",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "¿Qué tres ventajas ofrece compilar a CIL en lugar de pasar directo a código máquina?",
+          "xp": 50,
+          "orderIndex": 25,
+          "options": [
+            {
+              "content": "No usar Runtime, no usar RAM y evitar el JIT",
+              "explanation": "El CIL siempre necesita del Runtime y del JIT para ejecutarse en memoria.",
+              "isCorrect": false,
+              "orderIndex": 1
+            },
+            {
+              "content": "Omitir compiladores, correr sin CPU y dar soporte eterno",
+              "explanation": "Cada lenguaje usa su compilador y toda instrucción termina en la CPU.",
+              "isCorrect": false,
+              "orderIndex": 2
+            },
+            {
+              "content": "Interoperabilidad, portabilidad y optimización JIT",
+              "explanation": "Correcto. Conecta C#/F#/VB.NET, corre en x64 o ARM64 y adapta el código a la CPU.",
+              "isCorrect": true,
+              "orderIndex": 3
+            },
+            {
+              "content": "Eliminar metadatos, ocultar el manifiesto y ahorrar disco",
+              "explanation": "Los metadatos y el manifiesto son obligatorios dentro del ensamblado.",
+              "isCorrect": false,
+              "orderIndex": 4
+            }
+          ]
+        },
+        {
+          "id": "exercise_lesson_01_unique_choice_26",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "¿Por qué un ensamblado `.dll` compatible puede ejecutarse tanto en procesadores x64 como en ARM64?",
+          "xp": 50,
+          "orderIndex": 26,
+          "options": [
+            {
+              "content": "Porque guarda código máquina duplicado para ambos",
+              "explanation": "El ensamblado no almacena código máquina nativo, sino instrucciones CIL.",
+              "isCorrect": false,
+              "orderIndex": 1
+            },
+            {
+              "content": "Porque el procesador ARM64 lee archivos .cs directos",
+              "explanation": "Los procesadores solo entienden código máquina, no archivos de código fuente.",
+              "isCorrect": false,
+              "orderIndex": 2
+            },
+            {
+              "content": "Porque la BCL desactiva el JIT en laptops ARM64",
+              "explanation": "Al contrario, el JIT es indispensable para traducir el CIL en ARM64.",
+              "isCorrect": false,
+              "orderIndex": 3
+            },
+            {
+              "content": "Porque contiene CIL y el JIT lo adapta a cada CPU",
+              "explanation": "Correcto. El CIL es neutral y el JIT genera el código nativo según el procesador actual.",
+              "isCorrect": true,
+              "orderIndex": 4
+            }
+          ]
+        },
+        {
+          "id": "exercise_lesson_01_unique_choice_27",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "Un proyecto une un `.dll` hecho en C# y otro en F#. ¿Por qué el CLR los integra sin conflicto?",
+          "xp": 50,
+          "orderIndex": 27,
+          "options": [
+            {
+              "content": "Porque Roslyn y Fsc generan CIL y metadatos compatibles",
+              "explanation": "Correcto. Al compartir CIL, metadatos y la BCL, el CLR los ejecuta sin importar el lenguaje origen.",
+              "isCorrect": true,
+              "orderIndex": 1
+            },
+            {
+              "content": "Porque el CLR reescribe el módulo F# con llaves { }",
+              "explanation": "El CLR jamás reescribe el código fuente original de ningún lenguaje.",
+              "isCorrect": false,
+              "orderIndex": 2
+            },
+            {
+              "content": "Porque Windows abre una máquina virtual por cada lenguaje",
+              "explanation": "Ambos módulos corren unificados sobre el mismo motor CLR.",
+              "isCorrect": false,
+              "orderIndex": 3
+            },
+            {
+              "content": "Porque F# se compila directamente dentro de Roslyn",
+              "explanation": "F# utiliza su propio compilador Fsc, no Roslyn.",
+              "isCorrect": false,
+              "orderIndex": 4
+            }
+          ]
+        },
+        {
+          "id": "exercise_lesson_01_unique_choice_28",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "Si necesitas crear, compilar y publicar aplicaciones en .NET, ¿qué debes instalar?",
+          "xp": 50,
+          "orderIndex": 28,
+          "options": [
+            {
+              "content": "Solo el .NET Runtime base",
+              "explanation": "El Runtime solo permite ejecutar aplicaciones ya creadas, no compilarlas.",
+              "isCorrect": false,
+              "orderIndex": 1
+            },
+            {
+              "content": "El .NET SDK",
+              "explanation": "Correcto. Es la caja de herramientas con compiladores, bibliotecas y Runtimes para desarrollar.",
+              "isCorrect": true,
+              "orderIndex": 2
+            },
+            {
+              "content": "Únicamente el ASP.NET Core Runtime",
+              "explanation": "Ese paquete solo sirve para ejecutar aplicaciones web ya compiladas.",
+              "isCorrect": false,
+              "orderIndex": 3
+            },
+            {
+              "content": "Solo el compilador JIT sin el CLR",
+              "explanation": "El JIT no se instala suelto ni compila código fuente .cs.",
+              "isCorrect": false,
+              "orderIndex": 4
+            }
+          ]
+        },
+        {
+          "id": "exercise_lesson_01_unique_choice_29",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "Un usuario final solo quiere abrir una app hecha en C#. ¿Necesita instalar el .NET SDK?",
+          "xp": 50,
+          "orderIndex": 29,
+          "options": [
+            {
+              "content": "Sí, porque sin Roslyn no abre ningún archivo .dll",
+              "explanation": "El archivo .dll ya está compilado en CIL; no requiere a Roslyn para ejecutarse.",
+              "isCorrect": false,
+              "orderIndex": 1
+            },
+            {
+              "content": "Sí, salvo que use un procesador ARM64",
+              "explanation": "La arquitectura de la CPU no obliga al usuario final a instalar herramientas de desarrollo.",
+              "isCorrect": false,
+              "orderIndex": 2
+            },
+            {
+              "content": "No, le basta el Runtime compatible (o si la app lo incluye)",
+              "explanation": "Correcto. El SDK es para desarrolladores; para ejecutar solo hace falta el Runtime.",
+              "isCorrect": true,
+              "orderIndex": 3
+            },
+            {
+              "content": "No, porque Windows convierte el .dll en código C++",
+              "explanation": "Windows no convierte ensamblados .NET a C++; los ejecuta mediante el CLR.",
+              "isCorrect": false,
+              "orderIndex": 4
+            }
+          ]
+        },
+        {
+          "id": "exercise_lesson_01_unique_choice_30",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "¿Qué tipo de programas exigen tener instalado el `.NET Desktop Runtime`?",
+          "xp": 50,
+          "orderIndex": 30,
+          "options": [
+            {
+              "content": "APIs REST y servicios backend web",
+              "explanation": "Los servicios web y APIs requieren el ASP.NET Core Runtime.",
+              "isCorrect": false,
+              "orderIndex": 1
+            },
+            {
+              "content": "Aplicaciones de consola que solo muestran texto",
+              "explanation": "Para consola básica basta con el .NET Runtime estándar.",
+              "isCorrect": false,
+              "orderIndex": 2
+            },
+            {
+              "content": "Instaladores de arquitecturas x86 y Arm64",
+              "explanation": "Los instaladores del sistema no dependen del Desktop Runtime.",
+              "isCorrect": false,
+              "orderIndex": 3
+            },
+            {
+              "content": "Apps de escritorio en Windows (Windows Forms y WPF)",
+              "explanation": "Correcto. Es el entorno requerido para aplicaciones gráficas de escritorio en Windows.",
+              "isCorrect": true,
+              "orderIndex": 4
+            }
+          ]
+        },
+        {
+          "id": "exercise_lesson_01_unique_choice_31",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "Para un servidor que solo necesita ejecutar una API web ya compilada, ¿qué es lo mínimo requerido?",
+          "xp": 50,
+          "orderIndex": 31,
+          "options": [
+            {
+              "content": "El ASP.NET Core Runtime",
+              "explanation": "Correcto. Incluye lo necesario para correr apps web y APIs sin agregar el SDK de desarrollo.",
+              "isCorrect": true,
+              "orderIndex": 1
+            },
+            {
+              "content": "El .NET SDK completo",
+              "explanation": "En un servidor de producción no se desarrolla ni compila código, por lo que sobra el SDK.",
+              "isCorrect": false,
+              "orderIndex": 2
+            },
+            {
+              "content": "El .NET Desktop Runtime",
+              "explanation": "Ese entorno es para aplicaciones de escritorio con WPF o Windows Forms.",
+              "isCorrect": false,
+              "orderIndex": 3
+            },
+            {
+              "content": "Nada, el servidor lee archivos .cs directamente",
+              "explanation": "Toda aplicación compilada en .NET requiere un Runtime para ejecutarse.",
+              "isCorrect": false,
+              "orderIndex": 4
+            }
+          ]
+        },
+        {
+          "id": "exercise_lesson_01_unique_choice_32",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "Al instalar el SDK de .NET 10 en Windows, ¿qué Runtimes se incluyen automáticamente?",
+          "xp": 50,
+          "orderIndex": 32,
+          "options": [
+            {
+              "content": "Ninguno; deben descargarse uno por uno aparte",
+              "explanation": "El instalador del SDK ya trae integrados los Runtimes de su versión.",
+              "isCorrect": false,
+              "orderIndex": 1
+            },
+            {
+              "content": "Los tres Runtimes 10 (Base, Desktop y ASP.NET Core)",
+              "explanation": "Correcto. Incorpora los entornos para consola, escritorio de Windows y aplicaciones web.",
+              "isCorrect": true,
+              "orderIndex": 2
+            },
+            {
+              "content": "Únicamente el .NET Runtime base de consola",
+              "explanation": "En Windows también se incluyen el Desktop Runtime y el ASP.NET Core Runtime.",
+              "isCorrect": false,
+              "orderIndex": 3
+            },
+            {
+              "content": "Todos los Runtimes antiguos (.NET 8 y .NET 9)",
+              "explanation": "El SDK 10 solo instala los Runtimes de la versión 10.",
+              "isCorrect": false,
+              "orderIndex": 4
+            }
+          ]
+        },
+        {
+          "id": "exercise_lesson_01_unique_choice_33",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "Ejecutas `dotnet --list-runtimes` y solo aparece `Microsoft.NETCore.App 10.0.0`. ¿Qué fallará al iniciar?",
+          "xp": 50,
+          "orderIndex": 33,
+          "options": [
+            {
+              "content": "Una aplicación de consola creada en .NET 10",
+              "explanation": "Las aplicaciones de consola funcionan con Microsoft.NETCore.App.",
+              "isCorrect": false,
+              "orderIndex": 1
+            },
+            {
+              "content": "El comando dotnet --list-sdks en la consola",
+              "explanation": "La CLI sigue funcionando con normalidad.",
+              "isCorrect": false,
+              "orderIndex": 2
+            },
+            {
+              "content": "Una app de escritorio WPF por faltar WindowsDesktop.App",
+              "explanation": "Correcto. Las aplicaciones WPF requieren que esté instalado el .NET Desktop Runtime.",
+              "isCorrect": true,
+              "orderIndex": 3
+            },
+            {
+              "content": "El Garbage Collector dentro del motor CLR",
+              "explanation": "El recolector de basura ya viene incluido dentro del CLR base.",
+              "isCorrect": false,
+              "orderIndex": 4
+            }
+          ]
+        },
+        {
+          "id": "exercise_lesson_01_unique_choice_34",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "Tienes .NET 10 instalado, pero una app de .NET 8 exige su propio Runtime. ¿Por qué sucede esto?",
+          "xp": 50,
+          "orderIndex": 34,
+          "options": [
+            {
+              "content": "Porque instalar .NET 10 daña las versiones anteriores",
+              "explanation": "Varias versiones principales de .NET pueden convivir sin problema en la misma PC.",
+              "isCorrect": false,
+              "orderIndex": 1
+            },
+            {
+              "content": "Porque .NET 8 no usaba CIL sino código nativo fijo",
+              "explanation": "Todas las versiones de .NET compilan a código intermedio CIL.",
+              "isCorrect": false,
+              "orderIndex": 2
+            },
+            {
+              "content": "Porque el comando --list-runtimes bloquea versiones viejas",
+              "explanation": "Ese comando es únicamente de consulta y no bloquea ningún Runtime.",
+              "isCorrect": false,
+              "orderIndex": 3
+            },
+            {
+              "content": "Porque las apps no cambian de versión principal por defecto",
+              "explanation": "Correcto. Cada aplicación busca la versión principal de Runtime para la que fue creada.",
+              "isCorrect": true,
+              "orderIndex": 4
+            }
+          ]
+        },
+        {
+          "id": "exercise_lesson_01_unique_choice_35",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "¿Qué instalador de .NET corresponde a una PC moderna de 64 bits con procesador Intel o AMD?",
+          "xp": 50,
+          "orderIndex": 35,
+          "options": [
+            {
+              "content": "x64",
+              "explanation": "Correcto. Es la opción estándar para equipos de 64 bits con procesadores Intel o AMD.",
+              "isCorrect": true,
+              "orderIndex": 1
+            },
+            {
+              "content": "Arm64",
+              "explanation": "Arm64 está destinado a procesadores ARM como Qualcomm Snapdragon.",
+              "isCorrect": false,
+              "orderIndex": 2
+            },
+            {
+              "content": "x86",
+              "explanation": "x86 es para sistemas Windows de 32 bits, no para 64 bits.",
+              "isCorrect": false,
+              "orderIndex": 3
+            },
+            {
+              "content": "AMD32",
+              "explanation": "Esa opción no existe; para 64 bits Intel/AMD se utiliza x64.",
+              "isCorrect": false,
+              "orderIndex": 4
+            }
+          ]
+        },
+        {
+          "id": "exercise_lesson_01_unique_choice_36",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "En una laptop con chip Snapdragon (ARM), ¿qué devuelve `echo %PROCESSOR_ARCHITECTURE%` y qué SDK eliges?",
+          "xp": 50,
+          "orderIndex": 36,
+          "options": [
+            {
+              "content": "Devuelve AMD64 y debes elegir el instalador x64",
+              "explanation": "AMD64 identifica procesadores Intel o AMD de 64 bits, no chips ARM.",
+              "isCorrect": false,
+              "orderIndex": 1
+            },
+            {
+              "content": "Devuelve ARM64 y debes elegir el instalador Arm64",
+              "explanation": "Correcto. Confirma la arquitectura ARM de 64 bits para descargar su instalador nativo.",
+              "isCorrect": true,
+              "orderIndex": 2
+            },
+            {
+              "content": "Devuelve x86 y debes elegir el instalador de 32 bits",
+              "explanation": "Los procesadores Snapdragon modernos para Windows trabajan bajo arquitectura ARM64.",
+              "isCorrect": false,
+              "orderIndex": 3
+            },
+            {
+              "content": "Devuelve Snapdragon y debes elegir Desktop Runtime",
+              "explanation": "La variable muestra la familia de arquitectura (ARM64), no la marca comercial.",
+              "isCorrect": false,
+              "orderIndex": 4
+            }
+          ]
+        },
+        {
+          "id": "exercise_lesson_01_unique_choice_37",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "¿Cuál es la diferencia clave entre las versiones LTS y STS de .NET?",
+          "xp": 50,
+          "orderIndex": 37,
+          "options": [
+            {
+              "content": "LTS recibe parches de seguridad y STS no recibe ninguno",
+              "explanation": "Ambos modelos reciben actualizaciones de seguridad durante su periodo activo.",
+              "isCorrect": false,
+              "orderIndex": 1
+            },
+            {
+              "content": "LTS sirve para servidores web y STS para escritorio",
+              "explanation": "El modelo de soporte no limita el tipo de aplicación que puedes desarrollar.",
+              "isCorrect": false,
+              "orderIndex": 2
+            },
+            {
+              "content": "LTS da 3 años de soporte (estabilidad) y STS 2 años (novedades)",
+              "explanation": "Correcto. LTS reduce migraciones a largo plazo; STS adopta funciones recientes más rápido.",
+              "isCorrect": true,
+              "orderIndex": 3
+            },
+            {
+              "content": "LTS incluye el SDK completo y STS solo incluye el Runtime",
+              "explanation": "Tanto LTS como STS ofrecen descargas completas de SDK y de Runtime.",
+              "isCorrect": false,
+              "orderIndex": 4
+            }
+          ]
+        },
+        {
+          "id": "exercise_lesson_01_unique_choice_38",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "¿Hasta cuándo tiene soporte oficial .NET 10 LTS y desde qué dominio debe descargarse?",
+          "xp": 50,
+          "orderIndex": 38,
+          "options": [
+            {
+              "content": "Hasta noviembre de 2026 desde github.com/dotnet",
+              "explanation": "Un año no corresponde a un ciclo LTS y las descargas oficiales van en microsoft.com.",
+              "isCorrect": false,
+              "orderIndex": 1
+            },
+            {
+              "content": "Hasta noviembre de 2027 desde nuget.org",
+              "explanation": "NuGet es para paquetes de bibliotecas y 2027 sería un ciclo STS de 2 años.",
+              "isCorrect": false,
+              "orderIndex": 2
+            },
+            {
+              "content": "Hasta noviembre de 2030 desde microsoft.org",
+              "explanation": "El ciclo LTS dura 3 años (no 5) y el dominio oficial termina en .com.",
+              "isCorrect": false,
+              "orderIndex": 3
+            },
+            {
+              "content": "Hasta noviembre de 2028 desde dotnet.microsoft.com",
+              "explanation": "Correcto. Cumple sus 3 años de soporte LTS y garantiza una descarga oficial segura.",
+              "isCorrect": true,
+              "orderIndex": 4
+            }
+          ]
+        },
+        {
+          "id": "exercise_lesson_01_unique_choice_39",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "¿Con qué comando verificas los SDKs instalados y con cuál los Runtimes disponibles?",
+          "xp": 50,
+          "orderIndex": 39,
+          "options": [
+            {
+              "content": "dotnet --list-sdks y dotnet --list-runtimes",
+              "explanation": "Correcto. Muestran respectivamente las versiones y rutas de los SDKs y Runtimes.",
+              "isCorrect": true,
+              "orderIndex": 1
+            },
+            {
+              "content": "dotnet --check-sdk y dotnet --check-runtime",
+              "explanation": "Esas banderas no existen dentro de la CLI de .NET.",
+              "isCorrect": false,
+              "orderIndex": 2
+            },
+            {
+              "content": "dotnet --version-all para ambos casos",
+              "explanation": "No existe el parámetro --version-all en el comando dotnet.",
+              "isCorrect": false,
+              "orderIndex": 3
+            },
+            {
+              "content": "echo %PATH% y echo %PROCESSOR_ARCHITECTURE%",
+              "explanation": "Esos comandos son de Windows para ver rutas y tipo de CPU, no listan versiones de .NET.",
+              "isCorrect": false,
+              "orderIndex": 4
+            }
+          ]
+        },
+        {
+          "id": "exercise_lesson_01_unique_choice_40",
+          "type": "UNIQUE_CHOICE",
+          "instruction": "Tras instalar el SDK, `dotnet` no se reconoce en la terminal que ya tenías abierta. ¿Cómo lo resuelves?",
+          "xp": 50,
+          "orderIndex": 40,
+          "options": [
+            {
+              "content": "Instalando la versión de 32 bits (x86) del Runtime",
+              "explanation": "El fallo no es de arquitectura, sino de actualización de variables en la consola.",
+              "isCorrect": false,
+              "orderIndex": 1
+            },
+            {
+              "content": "Cerrando la terminal para abrir una nueva (y verificando PATH)",
+              "explanation": "Correcto. La consola previa no cargó el nuevo PATH; si aún falla en una nueva, se revisa PATH.",
+              "isCorrect": true,
+              "orderIndex": 2
+            },
+            {
+              "content": "Borrando las versiones anteriores como .NET 8 o .NET 9",
+              "explanation": "Las versiones previas conviven sin interferir con el comando dotnet.",
+              "isCorrect": false,
+              "orderIndex": 3
+            },
+            {
+              "content": "Ejecutando el compilador Fsc para activar la consola",
+              "explanation": "El compilador de F# no configura las variables de entorno de Windows.",
               "isCorrect": false,
               "orderIndex": 4
             }
@@ -787,81 +1587,812 @@
         {
           "id": "exercise_lesson_01_flashcard_01",
           "type": "DEFAULT_FLASHCARDS",
-          "instruction": "¿Diferencia entre .NET SDK y .NET Runtime?",
-          "answer": "El **SDK** tiene herramientas para compilar (CLI, Roslyn). El **Runtime** (CLR + BCL) es lo mínimo necesario solo para ejecutar las aplicaciones ya creadas.",
-          "xp": 100,
-          "orderIndex": 21,
+          "instruction": "¿Es .NET un lenguaje de programación?",
+          "answer": "**No**. Es una **plataforma de desarrollo** que incluye un **entorno de ejecución (CLR)** y **bibliotecas de clases (BCL)** para crear y ejecutar aplicaciones.",
+          "xp": 50,
+          "orderIndex": 1,
           "options": []
         },
         {
           "id": "exercise_lesson_01_flashcard_02",
           "type": "DEFAULT_FLASHCARDS",
-          "instruction": "¿Por qué las aplicaciones en C# se llaman 'código administrado'?",
-          "answer": "Porque se ejecutan bajo la supervisión del motor **CLR**, que se encarga de traducirlo con **JIT** y manejar su memoria automáticamente con el **GC**.",
-          "xp": 100,
-          "orderIndex": 22,
+          "instruction": "¿Cuáles son los tres lenguajes de programación principales admitidos por .NET y cuál es el más utilizado?",
+          "answer": "**C#**, **F#** y **VB.NET**, siendo **C#** el más utilizado.",
+          "xp": 50,
+          "orderIndex": 2,
           "options": []
         },
         {
           "id": "exercise_lesson_01_flashcard_03",
           "type": "DEFAULT_FLASHCARDS",
-          "instruction": "Resume el flujo de ejecución: del código a la CPU.",
-          "answer": "Código (.cs) → Roslyn → Binario CIL (.dll). Al ejecutarse, el **CLR** usa el **JIT** para convertir ese CIL a instrucciones nativas para la CPU.",
-          "xp": 100,
-          "orderIndex": 23,
+          "instruction": "¿Qué sintaxis utiliza C# para delimitar bloques de código y terminar instrucciones?",
+          "answer": "Utiliza **llaves `{ }`** para delimitar bloques y **punto y coma `;`** para terminar instrucciones.",
+          "xp": 50,
+          "orderIndex": 3,
           "options": []
         },
         {
           "id": "exercise_lesson_01_flashcard_04",
           "type": "DEFAULT_FLASHCARDS",
-          "instruction": "¿Cuál es el enfoque de cada herramienta: Visual Studio, VS Code y Rider?",
-          "answer": "Visual Studio: IDE robusto (Windows) para soluciones. VS Code: Editor ligero multiplataforma por carpetas (requiere extensión). Rider: IDE profesional avanzado.",
-          "xp": 100,
-          "orderIndex": 24,
+          "instruction": "¿Qué elementos caracterizan la sintaxis del lenguaje F# en .NET?",
+          "answer": "Prioriza un **estilo funcional y conciso**, usa la **indentación** para organizar el código y permite la **inferencia de tipos**.",
+          "xp": 50,
+          "orderIndex": 4,
           "options": []
         },
         {
           "id": "exercise_lesson_01_flashcard_05",
           "type": "DEFAULT_FLASHCARDS",
-          "instruction": "¿Qué comandos crean y ejecutan un proyecto de consola?",
-          "answer": "`dotnet new console -n NombreProyecto` para crearlo, y `dotnet run` para compilar y ejecutarlo al instante.",
-          "xp": 100,
+          "instruction": "¿Qué elemento caracteriza la sintaxis de VB.NET en comparación con C#?",
+          "answer": "Utiliza un **estilo verbal** basado en palabras clave descriptivas (como **`Dim`**, **`As`** y **`End Sub`**) en lugar de símbolos.",
+          "xp": 50,
+          "orderIndex": 5,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_flashcard_06",
+          "type": "DEFAULT_FLASHCARDS",
+          "instruction": "¿Cómo logran C#, F# y VB.NET ejecutarse sobre la misma plataforma .NET a pesar de sus diferencias sintácticas?",
+          "answer": "Cada uno usa su propio **compilador** para generar el mismo código intermedio (**CIL**), comparten la **BCL** y son ejecutados por el **CLR**.",
+          "xp": 50,
+          "orderIndex": 6,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_flashcard_07",
+          "type": "DEFAULT_FLASHCARDS",
+          "instruction": "¿Qué es la BCL (Base Class Library) en .NET?",
+          "answer": "Es la **Biblioteca Base de Clases** compartida que proporciona **tipos y funcionalidades reutilizables** (leer archivos, manipular texto o almacenar datos).",
+          "xp": 50,
+          "orderIndex": 7,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_flashcard_08",
+          "type": "DEFAULT_FLASHCARDS",
+          "instruction": "Cuando se invoca Console.WriteLine en C# o VB.NET, ¿qué componente de .NET provee dicha funcionalidad?",
+          "answer": "La **BCL (Base Class Library)**.",
+          "xp": 50,
+          "orderIndex": 8,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_flashcard_09",
+          "type": "DEFAULT_FLASHCARDS",
+          "instruction": "¿Cuál es la función principal del CLR (Common Language Runtime)?",
+          "answer": "Es el **motor de ejecución** encargado de **ejecutar el código CIL**, **administrar la memoria** y gestionar excepciones y recolección de basura.",
+          "xp": 50,
+          "orderIndex": 9,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_flashcard_10",
+          "type": "DEFAULT_FLASHCARDS",
+          "instruction": "¿Cuál es la diferencia fundamental entre el CLR y la BCL?",
+          "answer": "El **CLR** es el **motor** que administra y ejecuta el programa; la **BCL** es la **biblioteca** que proporciona las herramientas que el programa utiliza.",
+          "xp": 50,
+          "orderIndex": 10,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_flashcard_11",
+          "type": "DEFAULT_FLASHCARDS",
+          "instruction": "¿Qué significa que C# sea un lenguaje administrado (managed language)?",
+          "answer": "Significa que la ejecución del programa está **supervisada por el CLR**, el cual automatiza la gestión de memoria y seguridad.",
+          "xp": 50,
+          "orderIndex": 11,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_flashcard_12",
+          "type": "DEFAULT_FLASHCARDS",
+          "instruction": "¿Cuáles son los tres servicios principales que otorga el CLR durante la ejecución administrada?",
+          "answer": "1. **Gestión automática de memoria** (*Garbage Collector*).\n2. **Seguridad de tipos**.\n3. **Manejo de excepciones**.",
+          "xp": 50,
+          "orderIndex": 12,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_flashcard_13",
+          "type": "DEFAULT_FLASHCARDS",
+          "instruction": "¿Qué servicio del CLR se encarga de la gestión automática de memoria en aplicaciones C#?",
+          "answer": "El **Garbage Collector (GC)** o Recolector de Basura.",
+          "xp": 50,
+          "orderIndex": 13,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_flashcard_14",
+          "type": "DEFAULT_FLASHCARDS",
+          "instruction": "¿Qué es el CIL (Common Intermediate Language)?",
+          "answer": "También llamado **IL**, es el **código intermedio** independiente del procesador al que los compiladores de .NET traducen el código fuente.",
+          "xp": 50,
+          "orderIndex": 14,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_flashcard_15",
+          "type": "DEFAULT_FLASHCARDS",
+          "instruction": "¿Cuál es el nombre del compilador oficial utilizado para C# y Visual Basic?",
+          "answer": "**Roslyn**.",
+          "xp": 50,
+          "orderIndex": 15,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_flashcard_16",
+          "type": "DEFAULT_FLASHCARDS",
+          "instruction": "¿Qué compilador utiliza el lenguaje F# para generar código CIL?",
+          "answer": "**Fsc** (no utiliza Roslyn).",
+          "xp": 50,
+          "orderIndex": 16,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_flashcard_17",
+          "type": "DEFAULT_FLASHCARDS",
+          "instruction": "¿Qué es un ensamblado (assembly) en .NET y qué extensión de archivo suele tener?",
+          "answer": "Es el archivo resultante de compilar el código fuente con **Roslyn** o **Fsc**; normalmente tiene extensión **`.dll`**.",
+          "xp": 50,
+          "orderIndex": 17,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_flashcard_18",
+          "type": "DEFAULT_FLASHCARDS",
+          "instruction": "¿Cuáles son los tres componentes principales contenidos en un ensamblado de .NET?",
+          "answer": "1. **Código CIL**.\n2. **Metadatos**.\n3. **Manifiesto**.",
+          "xp": 50,
+          "orderIndex": 18,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_flashcard_19",
+          "type": "DEFAULT_FLASHCARDS",
+          "instruction": "¿Qué función cumplen los metadatos dentro de un ensamblado .NET?",
+          "answer": "Almacenan información sobre las **clases, métodos, propiedades y otros tipos** definidos en el programa.",
+          "xp": 50,
+          "orderIndex": 19,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_flashcard_20",
+          "type": "DEFAULT_FLASHCARDS",
+          "instruction": "¿Qué función cumple el manifiesto dentro de un ensamblado .NET?",
+          "answer": "**Identifica el ensamblado** y registra sus **dependencias**.",
+          "xp": 50,
+          "orderIndex": 20,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_flashcard_21",
+          "type": "DEFAULT_FLASHCARDS",
+          "instruction": "¿Qué función cumple el compilador JIT (Just-In-Time) dentro del CLR y cuándo actúa?",
+          "answer": "Transforma el **código intermedio CIL** en **código máquina nativo** compatible con el procesador **durante la ejecución** de la aplicación.",
+          "xp": 50,
+          "orderIndex": 21,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_flashcard_22",
+          "type": "DEFAULT_FLASHCARDS",
+          "instruction": "¿Cuál es la secuencia completa de 5 pasos desde el código fuente C# hasta su ejecución en la CPU?",
+          "answer": "1. **Código fuente** (`.cs`) → 2. **Compilación** con **Roslyn** (`.dll`) → 3. **Carga** en el **CLR** → 4. **Traducción** por el **JIT** → 5. **Ejecución** de código máquina en la **CPU**.",
+          "xp": 50,
+          "orderIndex": 22,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_flashcard_23",
+          "type": "DEFAULT_FLASHCARDS",
+          "instruction": "¿Cuáles son las tres ventajas principales de compilar a CIL en lugar de compilar a código máquina directamente?",
+          "answer": "1. **Interoperabilidad** entre lenguajes.\n2. **Portabilidad** entre arquitecturas (`x64`, `ARM64`).\n3. **Optimización** adaptada al procesador mediante el **JIT**.",
+          "xp": 50,
+          "orderIndex": 23,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_flashcard_24",
+          "type": "DEFAULT_FLASHCARDS",
+          "instruction": "¿Qué es el .NET SDK (Software Development Kit)?",
+          "answer": "Es el conjunto de **herramientas, compiladores y bibliotecas** necesario para **crear, compilar y publicar** aplicaciones.",
+          "xp": 50,
+          "orderIndex": 24,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_flashcard_25",
+          "type": "DEFAULT_FLASHCARDS",
+          "instruction": "¿Qué es el Runtime en la plataforma .NET y en qué se diferencia del SDK?",
+          "answer": "El **Runtime** (**CLR + bibliotecas base**) es el entorno necesario solo para **ejecutar** aplicaciones ya creadas, mientras que el **SDK** incluye las herramientas para **desarrollarlas y compilarlas**.",
+          "xp": 50,
           "orderIndex": 25,
           "options": []
         },
         {
-          "id": "exercise_lesson_01_complete_code_01",
-          "type": "COMPLETE_CODE",
-          "instruction": "Completa el saludo:\n```c#\n// Saludo en C#\nstring mensaje = [[slot]];\n// Muestra el mensaje\nConsole.[[slot]](mensaje);\n```",
-          "answer": "string mensaje = \"Hola\";\nConsole.WriteLine(mensaje);",
-          "xp": 100,
+          "id": "exercise_lesson_01_flashcard_26",
+          "type": "DEFAULT_FLASHCARDS",
+          "instruction": "¿Necesita un usuario final instalar el .NET SDK para ejecutar un programa en C#?",
+          "answer": "**No**; para ejecutar un programa normalmente basta con tener el **Runtime compatible** instalado (si la app no incluye el suyo).",
+          "xp": 50,
           "orderIndex": 26,
-          "options": [
-            {
-              "content": "\"Hola\"",
-              "explanation": "\"Hola\" es el literal de cadena asignado a la variable mensaje.",
-              "isCorrect": true,
-              "orderIndex": 0
-            },
-            {
-              "content": "WriteLine",
-              "explanation": "WriteLine es el método para mostrar la variable en la consola.",
-              "isCorrect": true,
-              "orderIndex": 1
-            },
-            {
-              "content": "\"Adiós\"",
-              "explanation": "\"Adiós\" no coincide con el saludo esperado.",
-              "isCorrect": false,
-              "orderIndex": 0
-            },
-            {
-              "content": "ReadLine",
-              "explanation": "ReadLine es para leer datos del teclado, no para mostrar texto.",
-              "isCorrect": false,
-              "orderIndex": 1
-            }
-          ]
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_flashcard_27",
+          "type": "DEFAULT_FLASHCARDS",
+          "instruction": "¿Qué tipo de aplicaciones ejecuta el .NET Runtime estándar?",
+          "answer": "**Aplicaciones de consola** y programas que utilizan el **entorno base**.",
+          "xp": 50,
+          "orderIndex": 27,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_flashcard_28",
+          "type": "DEFAULT_FLASHCARDS",
+          "instruction": "¿Qué tipo de aplicaciones requiere el .NET Desktop Runtime?",
+          "answer": "**Aplicaciones de escritorio de Windows**, como las creadas con **Windows Forms** y **WPF**.",
+          "xp": 50,
+          "orderIndex": 28,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_flashcard_29",
+          "type": "DEFAULT_FLASHCARDS",
+          "instruction": "¿Qué tipo de aplicaciones requiere el ASP.NET Core Runtime?",
+          "answer": "**Aplicaciones web, APIs y servicios backend** desarrollados con ASP.NET Core.",
+          "xp": 50,
+          "orderIndex": 29,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_flashcard_30",
+          "type": "DEFAULT_FLASHCARDS",
+          "instruction": "¿Qué Runtimes específicos se incluyen automáticamente al instalar el SDK de .NET 10 en Windows?",
+          "answer": "Incluye los tres Runtimes de su versión: **.NET Runtime 10**, **.NET Desktop Runtime 10** y **ASP.NET Core Runtime 10**.",
+          "xp": 50,
+          "orderIndex": 30,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_flashcard_31",
+          "type": "DEFAULT_FLASHCARDS",
+          "instruction": "¿Por qué es normal tener instaladas múltiples versiones del Runtime de .NET en una misma computadora?",
+          "answer": "Porque cada aplicación se desarrolla para una **versión determinada** y **no cambia de versión principal por defecto** (ej. tener `.NET 10` no garantiza ejecutar una app de `.NET 8`).",
+          "xp": 50,
+          "orderIndex": 31,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_flashcard_32",
+          "type": "DEFAULT_FLASHCARDS",
+          "instruction": "¿Cuál es la opción de arquitectura recomendada para instalar el SDK en procesadores Intel o AMD modernos de 64 bits?",
+          "answer": "**`x64` (64 bits)**.",
+          "xp": 50,
+          "orderIndex": 32,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_flashcard_33",
+          "type": "DEFAULT_FLASHCARDS",
+          "instruction": "¿Qué arquitectura de instalador se debe elegir para equipos Windows con procesadores ARM como Qualcomm Snapdragon?",
+          "answer": "**`Arm64` (64 bits)**.",
+          "xp": 50,
+          "orderIndex": 33,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_flashcard_34",
+          "type": "DEFAULT_FLASHCARDS",
+          "instruction": "¿En qué único caso se debe seleccionar la arquitectura x86 para descargar el SDK de .NET?",
+          "answer": "Cuando el sistema operativo sea **Windows de 32 bits** compatible.",
+          "xp": 50,
+          "orderIndex": 34,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_flashcard_35",
+          "type": "DEFAULT_FLASHCARDS",
+          "instruction": "En la terminal CMD de Windows, ¿qué comando muestra la arquitectura del procesador y qué valores devuelve?",
+          "answer": "El comando **`echo %PROCESSOR_ARCHITECTURE%`**, que puede mostrar **`AMD64`** (x64), **`ARM64`** o **`x86`** (32 bits).",
+          "xp": 50,
+          "orderIndex": 35,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_flashcard_36",
+          "type": "DEFAULT_FLASHCARDS",
+          "instruction": "¿Qué significan las siglas LTS en .NET, cuánto dura su soporte y cuáles son sus ventajas?",
+          "answer": "**Long Term Support** (Soporte a Largo Plazo). Ofrece **3 años** de soporte con parches de seguridad, mayor estabilidad y **menos migraciones**.",
+          "xp": 50,
+          "orderIndex": 36,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_flashcard_37",
+          "type": "DEFAULT_FLASHCARDS",
+          "instruction": "¿Qué significan las siglas STS en .NET, cuánto dura su soporte y cuáles son sus ventajas?",
+          "answer": "**Standard Term Support** (Soporte de Duración Estándar). Ofrece **2 años** de soporte y facilita el **acceso rápido a novedades** con actualizaciones más frecuentes.",
+          "xp": 50,
+          "orderIndex": 37,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_flashcard_38",
+          "type": "DEFAULT_FLASHCARDS",
+          "instruction": "¿Hasta qué fecha cuenta con soporte oficial .NET 10 LTS y cuál es el dominio web oficial para descargarlo?",
+          "answer": "Cuenta con soporte hasta **noviembre de 2028** y debe descargarse desde **`dotnet.microsoft.com`**.",
+          "xp": 50,
+          "orderIndex": 38,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_flashcard_39",
+          "type": "DEFAULT_FLASHCARDS",
+          "instruction": "¿Qué comando de terminal se utiliza para verificar los SDK instalados y cuál para listar los Runtimes?",
+          "answer": "- **SDKs instalados:** `dotnet --list-sdks`\n- **Runtimes instalados:** `dotnet --list-runtimes`",
+          "xp": 50,
+          "orderIndex": 39,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_flashcard_40",
+          "type": "DEFAULT_FLASHCARDS",
+          "instruction": "¿Por qué la terminal puede mostrar el error 'dotnet no se reconoce como un comando' tras instalar el SDK y cómo se soluciona?",
+          "answer": "Ocurre porque la terminal estaba abierta antes de instalar y no actualizó la variable **`PATH`**. Se soluciona **cerrando la terminal y abriendo una nueva**.",
+          "xp": 50,
+          "orderIndex": 40,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_01",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "¿Qué es la plataforma .NET y con qué analogía cotidiana se puede comprender su función?",
+          "answer": ".NET es una plataforma de desarrollo que incluye un entorno de ejecución y bibliotecas reutilizables.\n\nAnalogía cotidiana: Es como un taller de cocina totalmente equipado (BCL) con un chef supervisor (CLR) donde puedes preparar recetas usando distintos idiomas de cocina (C#, F#, VB.NET).",
+          "xp": 50,
+          "orderIndex": 1,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_02",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "¿Cuáles son los rasgos sintácticos principales de C# dentro de la plataforma .NET?",
+          "answer": "C# utiliza un estilo basado en llaves { } para delimitar bloques de código y punto y coma ; para finalizar instrucciones. Su sintaxis es orientada a objetos y es el lenguaje más utilizado en .NET.",
+          "xp": 50,
+          "orderIndex": 2,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_03",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "¿En qué se diferencia la sintaxis de F# respecto a la de C#?",
+          "answer": "F# prioriza un estilo funcional y conciso. Organiza el código mediante indentación (sangría) en lugar de llaves y utiliza inferencia de tipos para no declarar explícitamente cada tipo de dato.",
+          "xp": 50,
+          "orderIndex": 3,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_04",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "En F#, al escribir let edad = 30, no se especifica el tipo int. ¿Qué mecanismo del lenguaje hace esto posible?",
+          "answer": "La **inferencia de tipos**, un mecanismo que permite al compilador deducir automáticamente el tipo de dato a partir del valor asignado.",
+          "xp": 50,
+          "orderIndex": 4,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_05",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "¿Cómo define VB.NET su estilo de escritura frente a C#?",
+          "answer": "VB.NET utiliza un estilo verbal basado en palabras clave descriptivas como Dim, As y End Sub en lugar de símbolos, logrando que el código se asemeje al inglés escrito.",
+          "xp": 50,
+          "orderIndex": 5,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_06",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "Compara cómo expresan C# y VB.NET la creación e impresión de una variable de texto.",
+          "answer": "En C#:\nstring nombre = \"Carlos\";\nConsole.WriteLine($\"Hola {nombre}\");\n\nEn VB.NET:\nDim nombre As String = \"Carlos\"\nConsole.WriteLine($\"Hola {nombre}\")",
+          "xp": 50,
+          "orderIndex": 6,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_07",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "Si C#, F# y VB.NET tienen sintaxis tan distintas, ¿cómo terminan ejecutándose en la misma plataforma .NET?",
+          "answer": "Cada lenguaje utiliza su propio compilador para traducir su código fuente a un mismo código intermedio llamado CIL. Además, comparten la biblioteca de clases BCL y son ejecutados por el mismo motor CLR.",
+          "xp": 50,
+          "orderIndex": 7,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_08",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "¿Qué es la BCL (Base Class Library) y qué analogía permite entenderla?",
+          "answer": "La BCL es la biblioteca base de clases de .NET que proporciona tipos y herramientas preconstruidas para tareas comunes como manipular texto o leer archivos.\n\nAnalogía cotidiana: Es como una caja de herramientas compartida en un taller; no importa qué artesano entre (C#, F# o VB.NET), todos usan los mismos martillos y destornilladores.",
+          "xp": 50,
+          "orderIndex": 8,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_09",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "¿Qué es el CLR (Common Language Runtime) y cuál es su analogía cotidiana?",
+          "answer": "El CLR es el motor de ejecución de .NET que administra la memoria, gestiona la seguridad y ejecuta el código administrado.\n\nAnalogía cotidiana: Es como el director de una obra de teatro que supervisa que los actores salgan a tiempo, maneja la escenografía y limpia el escenario.",
+          "xp": 50,
+          "orderIndex": 9,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_10",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "¿Cuál es la diferencia fundamental entre el CLR y la BCL?",
+          "answer": "El CLR es el motor que ejecuta y supervisa el programa, mientras que la BCL es la biblioteca que proporciona las herramientas que el programa utiliza mientras se ejecuta.",
+          "xp": 50,
+          "orderIndex": 10,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_11",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "¿Cómo se relacionan la BCL y los lenguajes C#, F# y VB.NET al momento de imprimir texto en pantalla?",
+          "answer": "Aunque cada lenguaje usa una sintaxis distinta (Console.WriteLine en C#/VB.NET o printfn en F#), todos aprovechan la BCL compartida para invocar la funcionalidad estándar de impresión de la plataforma .NET.",
+          "xp": 50,
+          "orderIndex": 11,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_12",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "¿Por qué se dice que C# es un lenguaje 'administrado' a diferencia de lenguajes como C o C++?",
+          "answer": "Porque su ejecución está supervisada en todo momento por el CLR, el cual automatiza servicios críticos como la gestión de memoria (Garbage Collector), la seguridad de tipos y el manejo de excepciones, evitando la intervención manual del programador.",
+          "xp": 50,
+          "orderIndex": 12,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_13",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "¿Qué función cumple la seguridad de tipos (type safety) proporcionada por el CLR?",
+          "answer": "Supervisa que los datos y operaciones respeten los tipos definidos, evitando asignaciones u operaciones incompatibles durante la ejecución.",
+          "xp": 50,
+          "orderIndex": 13,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_14",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "¿Qué es el Garbage Collector (GC) dentro del CLR y cuál es su analogía cotidiana?",
+          "answer": "El Garbage Collector (Recolector de Basura) es el componente del CLR que libera automáticamente la memoria de objetos que el programa ya no está utilizando.\n\nAnalogía cotidiana: Es como un servicio de limpieza que vacía automáticamente los botes de basura de tu oficina mientras trabajas para que no te quedes sin espacio.",
+          "xp": 50,
+          "orderIndex": 14,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_15",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "¿Qué ventajas ofrece el modelo de código administrado de .NET frente al modelo de compilación directa de C y C++?",
+          "answer": "Puntos clave de integración a reflexionar:\n1. Automatización de memoria mediante Garbage Collector (evita fugas de memoria).\n2. Seguridad de tipos verificada en tiempo de ejecución.\n3. Portabilidad multiarquitectura mediante código CIL.\n4. Control centralizado de errores y excepciones por el CLR.",
+          "xp": 50,
+          "orderIndex": 15,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_16",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "¿Qué es Roslyn y cuál es su función en el proceso de compilación de C#?",
+          "answer": "Roslyn es el compilador oficial de C# (y Visual Basic). Su función es transformar los archivos de código fuente .cs en un ensamblado intermediario (archivo .dll).",
+          "xp": 50,
+          "orderIndex": 16,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_17",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "¿Es verdad que el compilador Roslyn compila todo el código de los lenguajes de .NET, incluido F#?",
+          "answer": "Falso. Roslyn solo compila C# y Visual Basic. F# utiliza su propio compilador llamado Fsc, adaptado a su sintaxis funcional e indentación, aunque ambos terminan generando CIL compatible.",
+          "xp": 50,
+          "orderIndex": 17,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_18",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "¿Qué es el CIL (Common Intermediate Language)?",
+          "answer": "Es el código intermedio independiente de la plataforma al que se compilan los lenguajes de .NET antes de ser traducidos a código máquina nativo.",
+          "xp": 50,
+          "orderIndex": 18,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_19",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "En un ensamblado .NET, ¿en qué se diferencian los Metadatos del Manifiesto?",
+          "answer": "Los **Metadatos** describen los elementos internos del código (clases, métodos, propiedades y tipos), mientras que el **Manifiesto** describe la identidad externa del ensamblado y sus dependencias externas.",
+          "xp": 50,
+          "orderIndex": 19,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_20",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "Simplifica los 3 componentes esenciales que contiene un ensamblado (.dll).",
+          "answer": "1. Código CIL: Las instrucciones intermedias del programa.\n2. Metadatos: El índice que describe las clases, métodos y propiedades.\n3. Manifiesto: La etiqueta que identifica al ensamblado y sus dependencias.",
+          "xp": 50,
+          "orderIndex": 20,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_21",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "¿Qué es el compilador JIT (Just-In-Time) y cuándo entra en acción?",
+          "answer": "El JIT es el compilador interno del CLR que traduce el código intermedio CIL a código máquina nativo justo en el momento en que la aplicación se está ejecutando.",
+          "xp": 50,
+          "orderIndex": 21,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_22",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "Explica qué es el compilador JIT a alguien que no sabe de programación.",
+          "answer": "El compilador JIT es como un traductor simultáneo. En lugar de traducir todo un libro antes de leerlo, traduce cada frase al idioma nativo del procesador justo en el momento exacto en que la computadora la necesita ejecutar.",
+          "xp": 50,
+          "orderIndex": 22,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_23",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "Si el archivo .dll de C# ya fue compilado por Roslyn, ¿por qué el procesador de la computadora no puede ejecutarlo directamente?",
+          "answer": "Porque Roslyn no genera instrucciones de CPU (código máquina nativo), sino CIL (código intermedio). El error común es creer que el .dll es código nativo, cuando requiere al CLR y al JIT para convertirse en instrucciones de procesador.",
+          "xp": 50,
+          "orderIndex": 23,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_24",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "Describe los 5 pasos que recorre el código C# desde que se escribe hasta que lo ejecuta el procesador.",
+          "answer": "1. Código fuente (.cs)\n2. Compilación con Roslyn a ensamblado (.dll)\n3. Carga del ensamblado por el CLR\n4. Traducción de CIL a código máquina por el JIT\n5. Ejecución nativa en la CPU",
+          "xp": 50,
+          "orderIndex": 24,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_25",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "¿Qué relación existe entre Roslyn, CIL y el CLR durante la compilación y ejecución de un programa en C#?",
+          "answer": "Roslyn recibe el código C# y genera un ensamblado con código intermedio CIL; posteriormente, el CLR toma ese CIL, lo traduce con JIT y administra su ejecución en memoria.",
+          "xp": 50,
+          "orderIndex": 25,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_26",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "Analiza cómo colaboran la BCL, Roslyn, CIL, el CLR y el JIT cuando ejecutas un programa escrito en C#.",
+          "answer": "Puntos clave de integración a reflexionar:\n1. Roslyn compila C# (que usa la BCL) generando CIL y metadatos en un .dll.\n2. El CLR carga el ensamblado y resuelve dependencias.\n3. El JIT traduce las instrucciones CIL a código máquina nativo según la CPU.\n4. El CLR supervisa la ejecución, memoria y excepciones.",
+          "xp": 50,
+          "orderIndex": 26,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_27",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "¿Por qué .NET compila primero a un código intermedio (CIL) en lugar de generar directamente código máquina?",
+          "answer": "Para ofrecer tres ventajas clave:\n1. Interoperabilidad: C#, F# y VB.NET pueden generar el mismo código intermedio.\n2. Portabilidad: Un ensamblado puede ejecutarse en distintas arquitecturas (x64, ARM64).\n3. Optimización: El JIT adapta el código nativo al procesador específico del usuario.",
+          "xp": 50,
+          "orderIndex": 27,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_28",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "¿Por qué un ensamblado .dll generado en una PC con procesador Intel de 64 bits puede ejecutarse en una laptop ARM64?",
+          "answer": "Porque el ensamblado no contiene instrucciones nativas fijas, sino CIL (código intermedio). Al ejecutar la aplicación en la laptop ARM64, el JIT local traduce ese CIL al código máquina específico de ARM64.",
+          "xp": 50,
+          "orderIndex": 28,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_29",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "¿Qué es el .NET SDK y para quién está diseñado?",
+          "answer": "El SDK (Software Development Kit) es la caja de herramientas que incluye compiladores, utilidades de terminal y bibliotecas necesarias para crear, compilar y publicar aplicaciones. Está destinado únicamente a desarrolladores.",
+          "xp": 50,
+          "orderIndex": 29,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_30",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "¿Qué es el Runtime de .NET y cuál es su único objetivo?",
+          "answer": "El Runtime es el entorno de ejecución (el motor) necesario para hacer funcionar una aplicación .NET una vez que ha sido creada. Contiene el CLR y las bibliotecas mínimas necesarias.",
+          "xp": 50,
+          "orderIndex": 30,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_31",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "¿Qué diferencia existe entre el SDK de .NET y el Runtime de .NET?",
+          "answer": "El SDK incluye herramientas, compiladores y bibliotecas para crear y compilar programas; el Runtime solo contiene lo necesario para ejecutar aplicaciones ya construidas.",
+          "xp": 50,
+          "orderIndex": 31,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_32",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "¿Un usuario final que solo desea ejecutar un programa en C# necesita instalar el .NET SDK?",
+          "answer": "No. El usuario final solo necesita el Runtime compatible con la aplicación. El SDK solo es requerido por quienes programan y compilan software.",
+          "xp": 50,
+          "orderIndex": 32,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_33",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "¿Cuáles son los 3 tipos de Runtime en .NET y qué tipo de aplicación ejecuta cada uno?",
+          "answer": "1. .NET Runtime: Aplicaciones generales y de consola.\n2. .NET Desktop Runtime: Aplicaciones de escritorio en Windows (WPF y Windows Forms).\n3. ASP.NET Core Runtime: Aplicaciones web, APIs y servicios backend.",
+          "xp": 50,
+          "orderIndex": 33,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_34",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "¿Qué es el .NET Desktop Runtime y para qué tipo de programas es obligatorio?",
+          "answer": "Es el entorno de ejecución diseñado específicamente para correr aplicaciones de escritorio nativas de Windows desarrolladas con tecnologías como WPF o Windows Forms.",
+          "xp": 50,
+          "orderIndex": 34,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_35",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "Si un servidor web solo debe poner en producción una API hecha en ASP.NET Core, ¿es necesario instalar todo el SDK de .NET en el servidor?",
+          "answer": "No. Para un servidor de producción basta con instalar el **ASP.NET Core Runtime**. Instalar el SDK agregaría herramientas de desarrollo innecesarias.",
+          "xp": 50,
+          "orderIndex": 35,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_36",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "¿Por qué es normal y común encontrar varias versiones de Runtimes instaladas en la misma computadora?",
+          "answer": "Porque cada aplicación se crea para una versión determinada de .NET y no cambia de versión principal automáticamente. Tener .NET 10 no garantiza ejecutar una app creada para .NET 8 si su Runtime no está presente.",
+          "xp": 50,
+          "orderIndex": 36,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_37",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "Si ya instalaste el .NET SDK en tu equipo, ¿necesitas instalar el Runtime por separado?",
+          "answer": "Normalmente no, porque el SDK ya incluye los Runtimes correspondientes a su versión. Sin embargo, si necesitas ejecutar aplicaciones creadas con versiones anteriores de .NET, podrías necesitar sus Runtimes específicos.",
+          "xp": 50,
+          "orderIndex": 37,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_38",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "Un usuario afirma: «Tengo el SDK de .NET 10 instalado, así que mi PC puede ejecutar cualquier programa viejo de .NET sin instalar nada más». ¿Por qué es incorrecta esa afirmación?",
+          "answer": "Porque tener el SDK 10 no garantiza poseer los Runtimes de versiones anteriores (como .NET 8). Las aplicaciones no actualizan su versión de Runtime por defecto y pueden requerir su Runtime específico.",
+          "xp": 50,
+          "orderIndex": 38,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_39",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "Tras instalar el SDK de .NET 10 en Windows, ¿por qué al ejecutar dotnet --list-runtimes aparecen de repente más Runtimes que antes?",
+          "answer": "Porque el SDK de .NET 10 incluye automáticamente los tres Runtimes correspondientes a su versión: .NET Runtime 10, .NET Desktop Runtime 10 y ASP.NET Core Runtime 10.",
+          "xp": 50,
+          "orderIndex": 39,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_40",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "¿Cuáles son las tres opciones de arquitectura para el instalador de .NET y cómo elegir la adecuada?",
+          "answer": "1. x64: Para la mayoría de PCs modernas con procesadores Intel o AMD.\n2. Arm64: Para procesadores ARM (ej. laptops Snapdragon).\n3. x86: Para sistemas Windows de 32 bits.",
+          "xp": 50,
+          "orderIndex": 40,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_41",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "¿Qué comando en el Símbolo del Sistema (CMD) te revela la arquitectura exacta de tu procesador?",
+          "answer": "El comando echo %PROCESSOR_ARCHITECTURE%, el cual devolverá AMD64 (equivalente a x64), ARM64 o x86.",
+          "xp": 50,
+          "orderIndex": 41,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_42",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "¿Qué significa LTS en las versiones de .NET y cuáles son sus características principales?",
+          "answer": "LTS significa Long Term Support (Soporte a Largo Plazo). Recibe actualizaciones durante 3 años, lo que ofrece mayor estabilidad, parches de seguridad prolongados y menos necesidad de migrar proyectos constantemente.",
+          "xp": 50,
+          "orderIndex": 42,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_43",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "¿Qué significa STS en las versiones de .NET y en qué se diferencia de LTS?",
+          "answer": "STS significa Standard Term Support (Soporte de Duración Estándar). Recibe actualizaciones durante 2 años y permite acceder más rápido a novedades y características recientes a cambio de migraciones más frecuentes.",
+          "xp": 50,
+          "orderIndex": 43,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_44",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "Si una empresa necesita desarrollar un sistema empresarial y minimizar las migraciones de software durante los próximos 3 años, ¿debe elegir una versión LTS o STS?",
+          "answer": "Debe elegir una versión LTS (_Long Term Support_), ya que ofrece 3 años de soporte frente a los 2 años que otorga una versión STS.",
+          "xp": 50,
+          "orderIndex": 44,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_45",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "¿Qué factores técnicos y empresariales determinan la elección entre una versión LTS (Long Term Support) y una versión STS (Standard Term Support)?",
+          "answer": "Puntos clave de integración a reflexionar:\n1. LTS (3 años): Proyectos empresariales críticos que exigen estabilidad y pocas migraciones.\n2. STS (2 años): Proyectos que requieren adoptar rápidamente nuevas características y optimizaciones.\n3. Balance entre costo de mantenimiento continuo vs innovación tecnológica.",
+          "xp": 50,
+          "orderIndex": 45,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_46",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "¿Cuál es el ciclo de vida y soporte de la versión .NET 10 LTS?",
+          "answer": ".NET 10 es una versión LTS (Long Term Support) que cuenta con soporte oficial y actualizaciones de seguridad hasta noviembre de 2028.",
+          "xp": 50,
+          "orderIndex": 46,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_47",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "Si tras instalar el SDK la terminal muestra que 'dotnet' no se reconoce como un comando, ¿cuál es la causa más probable y su solución?",
+          "answer": "Causa: La terminal estaba abierta antes de instalar el SDK y no ha actualizado la variable de entorno PATH.\nSolución: Cerrar la terminal actual, abrir una nueva terminal y volver a ejecutar el comando.",
+          "xp": 50,
+          "orderIndex": 47,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_48",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "¿Qué comando ejecutas para consultar las versiones del SDK instaladas y cuál para consultar las de los Runtimes?",
+          "answer": "SDKs instalados: dotnet --list-sdks\nRuntimes disponibles: dotnet --list-runtimes",
+          "xp": 50,
+          "orderIndex": 48,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_49",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "¿En qué dominio de internet oficial se deben descargar los instaladores de .NET y por qué es importante verificarlo?",
+          "answer": "Siempre se deben descargar únicamente desde el dominio oficial de Microsoft: dotnet.microsoft.com, comprobando que no se trate de un foro o sitio de terceros.",
+          "xp": 50,
+          "orderIndex": 49,
+          "options": []
+        },
+        {
+          "id": "exercise_lesson_01_feynman_50",
+          "type": "FEYNMAN_FLASHCARDS",
+          "instruction": "¿Cómo permite la arquitectura de .NET que un módulo escrito en F# interactúe e invoque clases escritas en C# sin problemas?",
+          "answer": "Puntos clave de integración:\n1. Ambos compiladores (Roslyn y Fsc) generan el mismo código intermedio (CIL).\n2. Comparten los mismos tipos fundamentales provistos por la BCL.\n3. Los metadatos estandarizados de los ensamblados permiten al CLR interpretar el código sin depender de su sintaxis original.",
+          "xp": 50,
+          "orderIndex": 50,
+          "options": []
         }
       ]
     },
