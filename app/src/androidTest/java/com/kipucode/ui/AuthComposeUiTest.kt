@@ -17,11 +17,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/**
- * Pruebas funcionales automatizadas de interfaz Compose (PF-01, PF-02).
- * Verifica los flujos de interacción de formularios de Login y Registro de Usuario,
- * asegurando la captura de credenciales y el bloqueo reactivo ante validaciones fallidas.
- */
 @RunWith(AndroidJUnit4::class)
 class AuthComposeUiTest {
 
@@ -31,10 +26,6 @@ class AuthComposeUiTest {
     // ============================================================================================
     //  PF-01: Flujo de Interacción y Validación de Inicio de Sesión
     // ============================================================================================
-
-    /**
-     * PF-01: Verifies Login UI interaction, credential capture, and callback execution on success.
-     */
     @Test
     fun loginFormCapturesCredentialsAndTriggersCallback() {
         // Arrange
@@ -75,9 +66,6 @@ class AuthComposeUiTest {
 
     }
 
-    /**
-     * PF-01: Verifies Login UI blocks submission when validator rejects credentials.
-     */
     @Test
     fun loginFormDoesNotTriggerCallbackWhenValidationFails() {
         // Arrange
@@ -113,10 +101,6 @@ class AuthComposeUiTest {
     // ============================================================================================
     //  PF-02: Flujo de Interacción y Validación de Registro de Usuario
     // ============================================================================================
-
-    /**
-     * PF-02: Verifies Registration UI interaction, field inputs, and callback execution on success.
-     */
     @Test
     fun registrationFormCapturesAllFieldsAndTriggersCallback() {
         // Arrange
@@ -162,9 +146,6 @@ class AuthComposeUiTest {
         assertEquals("KipuSecure2026", registeredPassword)
     }
 
-    /**
-     * PF-02: Verifies Registration UI blocks submission when validator rejects form data.
-     */
     @Test
     fun registrationFormDoesNotTriggerCallbackWhenValidationFails() {
         // Arrange

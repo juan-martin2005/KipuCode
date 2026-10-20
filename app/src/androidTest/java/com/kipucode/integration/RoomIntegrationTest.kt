@@ -34,11 +34,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.IOException
 
-/**
- * Pruebas de integración sobre Room Database en memoria (PI-01 a PI-05).
- * Valida la persistencia relacional, integridad referencial de llaves foráneas,
- * colas de repaso FSRS offline y transacciones atómicas de progreso del usuario bajo el patrón AAA.
- */
 @RunWith(AndroidJUnit4::class)
 class RoomIntegrationTest {
 
@@ -77,10 +72,6 @@ class RoomIntegrationTest {
     // ============================================================================================
     //  PI-01: Persistencia Relacional de Cursos y Lecciones en Room
     // ============================================================================================
-
-    /**
-     * PI-01: Verifies 1:N relational persistence between courses and lessons in Room.
-     */
     @Test
     fun verifyCourseAndLessonsRelationalPersistence() = runBlocking {
         // Arrange
@@ -123,9 +114,6 @@ class RoomIntegrationTest {
         assertEquals("lesson_cs_02", result.lessons[1].id)
     }
 
-    /**
-     * PI-01: Verifies filtering and counting courses by track.
-     */
     @Test
     fun verifyCourseFilteringAndCountingByTrack() = runBlocking {
         // Arrange
@@ -150,10 +138,6 @@ class RoomIntegrationTest {
     // ============================================================================================
     //  PI-02: Registro de Intentos y Recuperación de Ejercicios
     // ============================================================================================
-
-    /**
-     * PI-02: Verifies recording and querying exercise attempt history with referential integrity.
-     */
     @Test
     fun verifyExerciseAttemptsRecordAndQuery() = runBlocking {
         // Arrange
@@ -193,9 +177,6 @@ class RoomIntegrationTest {
         assertEquals(1, retrievedAttempt.correctCount)
     }
 
-    /**
-     * PI-02: Verifies bulk retrieval of exercise IDs from Room database.
-     */
     @Test
     fun verifyBatchRetrievalOfExerciseIds() = runBlocking {
         // Arrange
