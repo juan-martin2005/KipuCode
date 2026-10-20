@@ -47,7 +47,9 @@ class GetCognitiveMasteryOverviewUseCase @Inject constructor(
                 courseWithLessons.lessons.forEach { lesson ->
                     val allLessonExercises = exercisesByLesson[lesson.id] ?: emptyList()
                     val flashcards = allLessonExercises.filter {
-                        it.type.equals("DEFAULT_FLASHCARDS", ignoreCase = true) || it.type.equals("FLASHCARD", ignoreCase = true)
+                        it.type.equals("DEFAULT_FLASHCARDS", ignoreCase = true) ||
+                        it.type.equals("FEYNMAN_FLASHCARDS", ignoreCase = true) ||
+                        it.type.equals("FLASHCARD", ignoreCase = true)
                     }
                     if (flashcards.isEmpty()) {
                         lessonMap[lesson.id] = CognitiveMasteryDomain.fromPercentage(0, 0, 0)
