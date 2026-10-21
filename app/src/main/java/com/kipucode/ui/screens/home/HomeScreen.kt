@@ -31,10 +31,12 @@ import com.kipucode.R
 import com.kipucode.domain.model.LessonDomain
 import com.kipucode.ui.components.navbar.KipuBottomBar
 import com.kipucode.ui.components.navbar.KipuTopBar
-import com.kipucode.ui.screens.profile.components.avatar.AvatarProvider
+import com.kipucode.ui.navigation.ExerciseRoute
 import com.kipucode.ui.screens.home.components.HeadlineHome
+import com.kipucode.ui.screens.home.components.UrgentReviewsCard
 import com.kipucode.ui.components.cards.CoursesCard
 import com.kipucode.ui.components.cards.LessonCard
+import com.kipucode.ui.screens.profile.components.avatar.AvatarProvider
 import com.kipucode.ui.theme.BackgroundGray
 import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuDarkBlue
@@ -88,6 +90,15 @@ fun HomeScreen(
                         lessons = uiState.lessons,
                         lessonMasteryMap = uiState.lessonMasteryMap,
 
+                        hasDueReviews = uiState.hasDueReviews,
+                        isUrgentReviewDismissed = uiState.isUrgentReviewDismissed,
+                        onStartUrgentReviews = {
+                            navController.navigate(ExerciseRoute(lessonId = "", type = null, onlyDue = true))
+                        },
+                        onDismissUrgentReviews = {
+                            homeViewModel.dismissUrgentReview()
+                        },
+
                         isLessonCompleted = { lesson -> lesson.id in uiState.completedLessonIds },
                         isLessonLocked = { false },
 
@@ -110,6 +121,11 @@ fun HomeContent(
     streakDay: Int? = null,
 
     onBackClick: (() -> Unit)? = null,
+
+    hasDueReviews: Boolean = false,
+    isUrgentReviewDismissed: Boolean = false,
+    onStartUrgentReviews: () -> Unit = {},
+    onDismissUrgentReviews: () -> Unit = {},
 
     sectionTitle: String = stringResource(id = R.string.learning_journey),
     courseTitle: String,
@@ -145,6 +161,17 @@ fun HomeContent(
                     title = stringResource(id = R.string.back_to_modules),
                     onBackClick = onBackClick,
                     modifier = Modifier.padding(vertical = 16.dp)
+                )
+            }
+        }
+
+        // --- SECCIÓN: REPASO URGENTE (FSRS-6) ---
+        if (hasDueReviews && !isUrgentReviewDismissed) {
+            item {
+                UrgentReviewsCard(
+                    onStartClick = onStartUrgentReviews,
+                    onLaterClick = onDismissUrgentReviews,
+                    modifier = Modifier.padding(bottom = 24.dp)
                 )
             }
         }

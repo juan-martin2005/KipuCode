@@ -26,5 +26,9 @@ data class HomeUiState(
     val lessonMasteryMap: Map<String, CognitiveMasteryDomain> = emptyMap(),
     val completedLessonIds: List<String> = emptyList(),
     val currentLessonOrderIndex: Int = 0,
-    val currentLessonId: String? = null
+    val currentLessonId: String? = null,
+
+    // Repaso Urgente (FSRS-6)
+    val hasDueReviews: Boolean = false,
+    val isUrgentReviewDismissed: Boolean = false
 )

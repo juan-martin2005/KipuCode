@@ -7,6 +7,7 @@ import com.kipucode.domain.usecase.course.GetCognitiveMasteryOverviewUseCase
 import com.kipucode.domain.usecase.course.GetCourseWithLessonsUseCase
 import com.kipucode.domain.usecase.course.RefreshCoursesUseCase
 import com.kipucode.domain.usecase.course.UpdateLastViewedLessonUseCase
+import com.kipucode.domain.usecase.learning.GetDueExercisesUseCase
 import com.kipucode.domain.usecase.learning.RefreshLearningProgressUseCase
 import com.kipucode.domain.usecase.user.CalculateStreakUseCase
 import com.kipucode.domain.usecase.user.GetUserProfileUseCase
@@ -28,6 +29,7 @@ class HomeViewModel @Inject constructor(
     getUserProgressUseCase: GetUserProgressUseCase,
     getCourseWithLessonsUseCase: GetCourseWithLessonsUseCase,
     getCognitiveMasteryOverviewUseCase: GetCognitiveMasteryOverviewUseCase,
+    getDueExercisesUseCase: GetDueExercisesUseCase,
     private val calculateStreakUseCase: CalculateStreakUseCase,
     private val updateLastViewedLessonUseCase: UpdateLastViewedLessonUseCase,
     private val refreshUserProfileUseCase: RefreshUserProfileUseCase,
@@ -39,20 +41,37 @@ class HomeViewModel @Inject constructor(
     // Controla la animación de deslizar para refrescar (Pull-to-refresh)
     private val _isRefreshing = MutableStateFlow(false)
 
+    // Controla si el usuario descartó la tarjeta de repaso urgente en la sesión actual
+    private val _isUrgentReviewDismissed = MutableStateFlow(false)
+
+    private val _urgentReviewFlow = combine(
+        getDueExercisesUseCase(),
+        _isUrgentReviewDismissed
+    ) { dueList, isDismissed ->
+        Pair(dueList.isNotEmpty(), isDismissed)
+    }
+
+    private val _syncAndReviewFlow = combine(
+        _urgentReviewFlow,
+        _isRefreshing
+    ) { urgentReview, isRefreshing ->
+        Triple(urgentReview.first, urgentReview.second, isRefreshing)
+    }
+
     init {
         syncDataInBackground()
     }
 
     // ============================================================================================
-    //  COMBINE: 5 flujos se convierten en un solo HomeUiState inmutable con Dominio FSRS-6
+    //  COMBINE: flujos se convierten en un solo HomeUiState inmutable con Dominio FSRS-6
     // ============================================================================================
     val uiState: StateFlow<HomeUiState> = combine(
         getUserProfileUseCase(),
         getUserProgressUseCase(),
         getCourseWithLessonsUseCase(),
         getCognitiveMasteryOverviewUseCase(),
-        _isRefreshing
-    ) { userProfile, userProgress, coursesWithLessons, masteryOverview, isRefreshing ->
+        _syncAndReviewFlow
+    ) { userProfile, userProgress, coursesWithLessons, masteryOverview, (hasDueReviews, isDismissed, isRefreshing) ->
 
         // Si aún no tenemos cursos cargados, indicamos Loading
         if (coursesWithLessons.isEmpty()) {
@@ -113,7 +132,9 @@ class HomeViewModel @Inject constructor(
             lessonMasteryMap = masteryOverview.lessonMastery,
             completedLessonIds = userProgress?.completedLessons ?: emptyList(),
             currentLessonOrderIndex = currentLessonOrderIndex,
-            currentLessonId = activeLessonId
+            currentLessonId = activeLessonId,
+            hasDueReviews = hasDueReviews,
+            isUrgentReviewDismissed = isDismissed
         )
     }.stateIn(
         scope = viewModelScope,
@@ -125,6 +146,10 @@ class HomeViewModel @Inject constructor(
         viewModelScope.launch {
             updateLastViewedLessonUseCase(lessonId)
         }
+    }
+
+    fun dismissUrgentReview() {
+        _isUrgentReviewDismissed.value = true
     }
 
     // ============================================================================================
@@ -142,6 +167,7 @@ class HomeViewModel @Inject constructor(
     fun swipeToRefresh() {
         viewModelScope.launch {
             _isRefreshing.value = true
+            _isUrgentReviewDismissed.value = false
             try {
                 // Sincronización secuencial ordenada para evitar condiciones de carrera entre tablas
                 refreshCoursesUseCase()
