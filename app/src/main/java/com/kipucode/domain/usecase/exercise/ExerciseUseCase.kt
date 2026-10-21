@@ -26,6 +26,15 @@ class GetExercisesByLessonUseCase @Inject constructor(
     }
 }
 
+// Obtener todos los ejercicios del repositorio para sesiones globales
+class GetAllExercisesUseCase @Inject constructor(
+    private val exerciseRepository: ExerciseRepository
+) {
+    operator fun invoke(): Flow<List<ExerciseDomain>> {
+        return exerciseRepository.getAllExercises()
+    }
+}
+
 // Obtener el pool de ejercicios de todas las lecciones completadas por el usuario
 class GetExercisesForPracticePoolUseCase @Inject constructor(
     private val exerciseRepository: ExerciseRepository,
@@ -121,8 +130,9 @@ class PrioritizeExerciseSessionUseCase @Inject constructor() {
             if (onlyDue) {
                 // Modo repaso: solo vencidas (dueDate <= currentTimeMillis y reps > 0)
                 typeFiltered.filter { ex ->
+                    val isCard = ex.type in setOf("DEFAULT_FLASHCARDS", "FEYNMAN_FLASHCARDS", "FLASHCARD")
                     val p = progressMap[ex.id]
-                    p != null && p.reps > 0 && p.dueDate <= currentTimeMillis
+                    isCard && p != null && p.reps > 0 && p.dueDate <= currentTimeMillis
                 }.sortedBy { progressMap[it.id]?.dueDate ?: 0L }
             } else {
                 // Modo normal de flashcards con priorización FSRS-6:

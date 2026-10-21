@@ -11,6 +11,7 @@ import com.kipucode.domain.usecase.exercise.EvaluateBlockCompletionUseCase
 import com.kipucode.domain.usecase.exercise.EvaluateFlashCardUseCase
 import com.kipucode.domain.usecase.exercise.EvaluateUniqueChoiceUseCase
 import com.kipucode.domain.usecase.exercise.GetAllExerciseAttemptsUseCase
+import com.kipucode.domain.usecase.exercise.GetAllExercisesUseCase
 import com.kipucode.domain.usecase.exercise.GetCompletedExerciseIdsUseCase
 import com.kipucode.domain.usecase.exercise.GetExercisesByLessonUseCase
 import com.kipucode.domain.usecase.exercise.GetExercisesForPracticePoolUseCase
@@ -36,6 +37,7 @@ import javax.inject.Inject
 class ExerciseViewModel @Inject constructor(
     private val getExercisesUseCase: GetExercisesByLessonUseCase,
     private val getExercisesForPracticePoolUseCase: GetExercisesForPracticePoolUseCase,
+    private val getAllExercisesUseCase: GetAllExercisesUseCase,
     private val getLessonUseCase: GetLessonByCourseUseCase,
     private val getDueExercisesUseCase: GetDueExercisesUseCase,
     private val completeLessonUseCase: CompleteLessonUseCase,
@@ -81,13 +83,14 @@ class ExerciseViewModel @Inject constructor(
                 }
             }
         } else {
-            _uiState.update { it.copy(lessonName = "Entrenamiento de Código") }
+            val title = if (onlyDue) "Repaso Urgente" else "Entrenamiento de Código"
+            _uiState.update { it.copy(lessonName = title) }
         }
 
-        val exercisesFlow = if (lessonId.isNotEmpty()) {
-            getExercisesUseCase(lessonId)
-        } else {
-            getExercisesForPracticePoolUseCase()
+        val exercisesFlow = when {
+            lessonId.isNotEmpty() -> getExercisesUseCase(lessonId)
+            onlyDue -> getAllExercisesUseCase()
+            else -> getExercisesForPracticePoolUseCase()
         }
 
         loadJob?.cancel()
