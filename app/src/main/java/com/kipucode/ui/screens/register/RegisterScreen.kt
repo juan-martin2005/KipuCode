@@ -211,6 +211,7 @@ fun RegisterContent(
             // Campo: Name
             KipuForm(
                 label = stringResource(R.string.full_name),
+                testTag = "input_register_name",
                 value = name,
                 onValueChange = {
                     name = it
@@ -225,6 +226,7 @@ fun RegisterContent(
             // Campo: Email
             KipuForm(
                 label = stringResource(R.string.email),
+                testTag = "input_register_email",
                 value = email,
                 onValueChange = {
                     email = it
@@ -241,6 +243,7 @@ fun RegisterContent(
             // Campo: Password
             KipuForm(
                 label = stringResource(R.string.password),
+                testTag = "input_register_password",
                 value = password,
                 onValueChange = {
                     password = it
@@ -259,6 +262,7 @@ fun RegisterContent(
             // Campo: Confirm Password
             KipuForm(
                 label = stringResource(R.string.confirm_password),
+                testTag = "input_register_confirm_password",
                 value = confirmPassword,
                 onValueChange = {
                     confirmPassword = it
@@ -278,6 +282,7 @@ fun RegisterContent(
 
             FilledButton(
                 textButton = stringResource(id = R.string.register_next),
+                testTag = "btn_register",
                 onClickFilledButton = {
                     val isValid = onValidate(name, email, password, confirmPassword)
                     if (isValid) {

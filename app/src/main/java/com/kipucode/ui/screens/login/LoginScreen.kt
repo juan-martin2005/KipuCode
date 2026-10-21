@@ -218,6 +218,7 @@ fun LoginContent(
             // Campo: Email
             KipuForm(
                 label = stringResource(R.string.email),
+                testTag = "input_login_email",
                 value = email,
                 onValueChange = {
                     email = it
@@ -235,6 +236,7 @@ fun LoginContent(
             // Campo: Password
             KipuForm(
                 label = stringResource(R.string.password),
+                testTag = "input_login_password",
                 value = password,
                 onValueChange = {
                     password = it
@@ -274,6 +276,7 @@ fun LoginContent(
 
             FilledButton(
                 textButton = stringResource(id = R.string.logIn),
+                testTag = "btn_login",
                 onClickFilledButton = {
                     val isValid = onValidate(email, password)
                     if (isValid) {

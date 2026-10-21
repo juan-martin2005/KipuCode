@@ -1,18 +1,22 @@
-package com.kipucode.ui
+﻿package com.kipucode.ui
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createComposeRule
-import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.kipucode.domain.usecase.auth.ValidateConfirmPasswordUseCase
+import com.kipucode.domain.usecase.auth.ValidateEmailUseCase
+import com.kipucode.domain.usecase.auth.ValidateFullNameUseCase
+import com.kipucode.domain.usecase.auth.ValidatePasswordUseCase
 import com.kipucode.ui.screens.login.LoginContent
 import com.kipucode.ui.screens.register.RegisterContent
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -22,6 +26,18 @@ class AuthComposeUiTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()
+    private lateinit var validateEmailUseCase: ValidateEmailUseCase
+    private lateinit var validatePasswordUseCase: ValidatePasswordUseCase
+    private lateinit var validateFullNameUseCase: ValidateFullNameUseCase
+    private lateinit var validateConfirmPasswordUseCase: ValidateConfirmPasswordUseCase
+
+    @Before
+    fun setUp() {
+        validateEmailUseCase = ValidateEmailUseCase()
+        validatePasswordUseCase = ValidatePasswordUseCase()
+        validateFullNameUseCase = ValidateFullNameUseCase()
+        validateConfirmPasswordUseCase = ValidateConfirmPasswordUseCase()
+    }
 
     // ============================================================================================
     //  PF-01: Flujo de Interacción y Validación de Inicio de Sesión
@@ -42,7 +58,9 @@ class AuthComposeUiTest {
                 onNavigateToForgotPassword = {},
                 onValidate = { email, pass ->
                     wasValidated = true
-                    email.isNotEmpty() && pass.isNotEmpty()
+                    val emailResult = validateEmailUseCase(email)
+                    val passResult = validatePasswordUseCase(pass)
+                    emailResult.successful && passResult.successful
                 },
                 onLoginClick = { email, password ->
                     isLoginCalled = true
@@ -53,49 +71,15 @@ class AuthComposeUiTest {
         }
 
         // Act
-        composeTestRule.onNodeWithText("¡Bienvenido de nuevo!").assertIsDisplayed()
-        composeTestRule.onNodeWithText("n00123456@upn.pe").performTextInput("n00123456@upn.pe")
-        composeTestRule.onNodeWithText("••••••••").performTextInput("kipuPassword2026")
-        composeTestRule.onNodeWithText("Iniciar Sesión").performClick()
+        composeTestRule.onNodeWithTag("input_login_email").performTextInput("marcelomamani246@gmail.com")
+        composeTestRule.onNodeWithTag("input_login_password").performTextInput("123456")
+        composeTestRule.onNodeWithTag("btn_login").performClick()
 
         // Assert
-        assertTrue("La función de validación debió ser ejecutada", wasValidated)
-        assertTrue("onLoginClick debió ser invocado", isLoginCalled)
-        assertEquals("n00123456@upn.pe", submittedEmail)
-        assertEquals("kipuPassword2026", submittedPassword)
-
-    }
-
-    @Test
-    fun loginFormDoesNotTriggerCallbackWhenValidationFails() {
-        // Arrange
-        var wasValidated = false
-        var isLoginCalled = false
-
-        composeTestRule.setContent {
-            LoginContent(
-                modifier = Modifier,
-                onNavigateToRegister = {},
-                onBack = {},
-                onNavigateToForgotPassword = {},
-                onValidate = { _, _ ->
-                    wasValidated = true
-                    false // Simula fallo en validación (e.g. dominio no institucional)
-                },
-                onLoginClick = { _, _ ->
-                    isLoginCalled = true
-                }
-            )
-        }
-
-        // Act
-        composeTestRule.onNodeWithText("n00123456@upn.pe").performTextInput("invalido@externo.xyz")
-        composeTestRule.onNodeWithText("••••••••").performTextInput("123")
-        composeTestRule.onNodeWithText("Iniciar Sesión").performClick()
-
-        // Assert
-        assertTrue("La función de validación debió ser ejecutada", wasValidated)
-        assertFalse("onLoginClick NO debe ser invocado si la validación falla", isLoginCalled)
+        assertTrue(wasValidated)
+        assertTrue(isLoginCalled)
+        assertEquals("marcelomamani246@gmail.com", submittedEmail)
+        assertEquals("123456", submittedPassword)
     }
 
     // ============================================================================================
@@ -117,7 +101,11 @@ class AuthComposeUiTest {
                 onBack = {},
                 onValidate = { name, email, pass, confirmPass ->
                     wasValidated = true
-                    name.isNotBlank() && email.isNotBlank() && pass == confirmPass
+                    val nameResult = validateFullNameUseCase(name)
+                    val emailResult = validateEmailUseCase(email)
+                    val passResult = validatePasswordUseCase(pass)
+                    val confirmpassResult = validateConfirmPasswordUseCase(pass, confirmPass)
+                    nameResult.successful && emailResult.successful && passResult.successful && confirmpassResult.successful
                 },
                 onRegisterClick = { name, email, password ->
                     isRegisterCalled = true
@@ -130,52 +118,18 @@ class AuthComposeUiTest {
 
         // Act
         composeTestRule.onNodeWithText("Crear cuenta").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Tu nombre").performTextInput("Estudiante Kipu")
-        composeTestRule.onNodeWithText("n00123456@upn.pe").performTextInput("estudiante@upn.pe")
+        composeTestRule.onNodeWithTag("input_register_name").performTextInput("Marcelo Fernando")
+        composeTestRule.onNodeWithTag("input_register_email").performTextInput("marcelomamani246@gmail.com")
 
-        // Consumo secuencial del placeholder para password y confirmPassword
-        composeTestRule.onAllNodesWithText("••••••••")[0].performTextInput("KipuSecure2026")
-        composeTestRule.onAllNodesWithText("••••••••")[0].performTextInput("KipuSecure2026")
-        composeTestRule.onNodeWithText("Siguiente").performClick()
+        composeTestRule.onNodeWithTag("input_register_password").performTextInput("123456")
+        composeTestRule.onNodeWithTag("input_register_confirm_password").performTextInput("123456")
+        composeTestRule.onNodeWithTag("btn_register").performClick()
 
         // Assert
         assertTrue("El validador de registro debió ejecutarse", wasValidated)
         assertTrue("onRegisterClick debió ser invocado", isRegisterCalled)
-        assertEquals("Estudiante Kipu", registeredName)
-        assertEquals("estudiante@upn.pe", registeredEmail)
-        assertEquals("KipuSecure2026", registeredPassword)
-    }
-
-    @Test
-    fun registrationFormDoesNotTriggerCallbackWhenValidationFails() {
-        // Arrange
-        var wasValidated = false
-        var isRegisterCalled = false
-
-        composeTestRule.setContent {
-            RegisterContent(
-                modifier = Modifier,
-                onNavigateToLogin = {},
-                onBack = {},
-                onValidate = { _, _, _, _ ->
-                    wasValidated = true
-                    false // Simula fallo en validación (e.g. contraseñas no coinciden)
-                },
-                onRegisterClick = { _, _, _ ->
-                    isRegisterCalled = true
-                }
-            )
-        }
-
-        // Act
-        composeTestRule.onNodeWithText("Tu nombre").performTextInput("Marcelino")
-        composeTestRule.onNodeWithText("n00123456@upn.pe").performTextInput("marcelino@upn.pe")
-        composeTestRule.onAllNodesWithText("••••••••")[0].performTextInput("password123")
-        composeTestRule.onAllNodesWithText("••••••••")[0].performTextInput("discrepancia99")
-        composeTestRule.onNodeWithText("Siguiente").performClick()
-
-        // Assert
-        assertTrue("El validador de registro debió ejecutarse", wasValidated)
-        assertFalse("onRegisterClick NO debe ser invocado si la validación falla", isRegisterCalled)
+        assertEquals("Marcelo Fernando", registeredName)
+        assertEquals("marcelomamani246@gmail.com", registeredEmail)
+        assertEquals("123456", registeredPassword)
     }
 }

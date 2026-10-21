@@ -13,6 +13,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -29,6 +30,7 @@ fun FilledButton(
     textButton: String,
     onClickFilledButton: () -> Unit,
     modifier: Modifier = Modifier,
+    testTag: String? = null,
     enabled: Boolean = true,
     isLoading: Boolean = false,
     fontSize: TextUnit = 18.sp,
@@ -43,7 +45,8 @@ fun FilledButton(
         },
         modifier = modifier
             .fillMaxWidth()
-            .height(50.dp),
+            .height(50.dp)
+            .then(if (testTag != null) Modifier.testTag(testTag) else Modifier),
         enabled = enabled && !isLoading,
         shape = RoundedCornerShape(14.dp),
         colors = ButtonDefaults.buttonColors(

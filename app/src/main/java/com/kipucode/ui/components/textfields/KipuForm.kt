@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -36,6 +37,7 @@ fun KipuForm(
     placeholder: String,
     iconRes: Int,
     modifier: Modifier = Modifier,
+    testTag: String? = null,
     isPasswordField: Boolean = false,
     isPasswordVisible: Boolean = false,
     onVisibilityChange: () -> Unit = {},
@@ -100,7 +102,9 @@ fun KipuForm(
                 errorLeadingIconColor = Color(0xFFE35D5B),
                 errorTrailingIconColor = Color(0xFFE35D5B)
             ),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .then(if (testTag != null) Modifier.testTag(testTag) else Modifier)
         )
         if (isError && errorMessage != null) {
             Text(
