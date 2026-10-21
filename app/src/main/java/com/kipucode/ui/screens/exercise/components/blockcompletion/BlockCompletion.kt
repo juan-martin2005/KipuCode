@@ -13,7 +13,6 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -51,12 +50,17 @@ import com.kipucode.R
 import com.kipucode.domain.model.BlockOptionDomain
 import com.kipucode.ui.screens.exercise.components.ExerciseProgressBar
 import com.kipucode.ui.screens.exercise.components.formats.FormattedText
+import com.kipucode.ui.theme.Gray
+import com.kipucode.ui.theme.Green
 import com.kipucode.ui.theme.JetBrains
 import com.kipucode.ui.theme.KipuCodeTheme
+import com.kipucode.ui.theme.KipuCyan
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.KipuH4
 import com.kipucode.ui.theme.KipuTeal
+import com.kipucode.ui.theme.MoonFrost
 import com.kipucode.ui.theme.Nunito
+import com.kipucode.ui.theme.Red
 
 // ============================================================================================
 //  MODELOS DE DATOS PARA LÍNEAS DE CÓDIGO Y RANURAS DINÁMICAS
@@ -98,7 +102,7 @@ fun BlockCompletion(
 ) {
     // Analizamos la instrucción para separar la descripción y el código interactivo con slots
     val (descriptionText, snippetData) = remember(instruction, options) {
-        parseInstructionAndCode(instruction, options)
+        parseInstructionAndCode(instruction)
     }
 
     val totalSlots = if (snippetData.totalSlots > 0) {
@@ -160,7 +164,7 @@ fun BlockCompletion(
                 fontFamily = Nunito,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 13.sp,
-                color = Color(0xFF64748B)
+                color = Gray
             )
         }
 
@@ -227,7 +231,7 @@ fun BlockCompletion(
             colors = ButtonDefaults.buttonColors(
                 containerColor = KipuTeal,
                 contentColor = Color.White,
-                disabledContainerColor = Color(0xFFCBD5E1),
+                disabledContainerColor = Gray,
                 disabledContentColor = Color.White
             )
         ) {
@@ -245,8 +249,6 @@ fun BlockCompletion(
 // ============================================================================================
 //  CONTENEDOR DE CÓDIGO EN TEMA OSCURO (DARK THEME IDE) CON SYNTAX HIGHLIGHTING
 // ============================================================================================
-
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun DarkCodeBox(
     snippetData: CodeSnippetData,
@@ -271,7 +273,7 @@ fun DarkCodeBox(
             fontFamily = JetBrains,
             fontWeight = FontWeight.Bold,
             fontSize = 12.sp,
-            color = Color(0xFF94A3B8)
+            color = MoonFrost
         )
 
         // Líneas de código con scroll horizontal si es necesario
@@ -287,12 +289,12 @@ fun DarkCodeBox(
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     // Número de línea en gris pizarra
-                    Text(
-                        text = "${line.lineNumber}".padStart(2, ' '),
-                        fontFamily = JetBrains,
-                        fontSize = 13.sp,
-                        color = Color(0xFF475569)
-                    )
+//                    Text(
+//                        text = "${line.lineNumber}".padStart(2, ' '),
+//                        fontFamily = JetBrains,
+//                        fontSize = 13.sp,
+//                        color = Color(0xFF475569)
+//                    )
 
                     // Segmentos de la línea (código coloreado intercalado con slots)
                     FlowRow(
@@ -362,7 +364,7 @@ fun DashedCodeSlotBox(
                             pathEffect = PathEffect.dashPathEffect(floatArrayOf(12f, 8f), 0f)
                         )
                         drawRoundRect(
-                            color = Color(0xFF00E5FF),
+                            color = KipuCyan,
                             cornerRadius = CornerRadius(10.dp.toPx()),
                             style = stroke
                         )
@@ -379,15 +381,15 @@ fun DashedCodeSlotBox(
                     fontFamily = JetBrains,
                     fontWeight = FontWeight.Bold,
                     fontSize = 13.sp,
-                    color = Color(0xFF00E5FF).copy(alpha = 0.5f)
+                    color = KipuCyan.copy(alpha = 0.5f)
                 )
             }
         } else {
             // Ranura ocupada: ficha sólida con borde suave y botón × para retirar
             val bgColor = when {
                 !isEvaluated -> KipuTeal
-                block.isCorrect -> Color(0xFF2E7D32) // Verde éxito
-                else -> Color(0xFFD32F2F) // Rojo error
+                block.isCorrect -> Green // Verde éxito
+                else -> Red // Rojo error
             }
 
             Surface(
@@ -521,7 +523,6 @@ fun highlightCSharpCode(code: String): AnnotatedString {
 
 fun parseInstructionAndCode(
     rawInstruction: String,
-    options: List<BlockOptionDomain>
 ): Pair<String, CodeSnippetData> {
     val codeBlockRegex = Regex("""```([^\r\n]*)\r?\n([\s\S]*?)```""")
     val match = codeBlockRegex.find(rawInstruction)
@@ -540,7 +541,7 @@ fun parseInstructionAndCode(
     }
 
     val lines = rawCode.lines()
-    val slotRegex = Regex("""\[\[slot(?::\d+)?\]\]|___""")
+    val slotRegex = Regex("""\[\[slot(?::\d+)?]]|___""")
     var slotCounter = 0
     val resultLines = mutableListOf<CodeSnippetLine>()
 
