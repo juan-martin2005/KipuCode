@@ -34,6 +34,10 @@ class SummaryViewModel @Inject constructor(
             timeSeconds = route.timeSeconds
         )
 
+        val isFlashcardSession = route.isFlashcard ||
+                route.onlyDue ||
+                route.type?.contains("FLASHCARD", ignoreCase = true) == true
+
         viewModelScope.launch {
             val remainingDueCount = if (route.onlyDue) {
                 try {
@@ -61,6 +65,7 @@ class SummaryViewModel @Inject constructor(
                     reinforceCount = metrics.reinforceCount,
                     timeFormatted = metrics.timeFormatted,
                     summaryMessage = dynamicMessage,
+                    showRepetitionSchedule = isFlashcardSession,
                     memoryRetentionPct = metrics.memoryRetentionPct,
                     nextReviewText = if (route.onlyDue && remainingDueCount > 0) "Hoy más tarde" else "Mañana",
                     isLoading = false
@@ -69,4 +74,3 @@ class SummaryViewModel @Inject constructor(
         }
     }
 }
-

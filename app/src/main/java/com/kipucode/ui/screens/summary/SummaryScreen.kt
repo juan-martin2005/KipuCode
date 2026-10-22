@@ -80,12 +80,14 @@ fun SummaryScreenContent(
             )
         }
 
-        // Repaso inteligente espaciado
-        item(key = "repetition_schedule") {
-            RepetitionSchedule(
-                memoryRetentionPct = uiState.memoryRetentionPct,
-                nextReviewText = uiState.nextReviewText
-            )
+        // Repaso inteligente espaciado (solo para ejercicios flashcards)
+        if (uiState.showRepetitionSchedule) {
+            item(key = "repetition_schedule") {
+                RepetitionSchedule(
+                    memoryRetentionPct = uiState.memoryRetentionPct,
+                    nextReviewText = uiState.nextReviewText
+                )
+            }
         }
 
         // Botón reiniciar los ejercicios
@@ -113,7 +115,7 @@ fun SummaryScreenContent(
 }
 
 // --- PREVIEW ---
-@Preview(showBackground = true, name = "Summary Screen - Default", showSystemUi = true, heightDp = 1000)
+@Preview(showBackground = true, name = "Summary Screen - Flashcards", showSystemUi = true, heightDp = 1000)
 @Composable
 private fun SummaryScreenContentPreview() {
     KipuCodeTheme {
@@ -125,8 +127,29 @@ private fun SummaryScreenContentPreview() {
                 reinforceCount = 2,
                 timeFormatted = "1m 45s",
                 summaryMessage = "¡Compiló con éxito!",
+                showRepetitionSchedule = true,
                 memoryRetentionPct = 85,
                 nextReviewText = "En 3 días"
+            ),
+            onClickResetFilledButton = {},
+            onClickFilledButton = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Summary Screen - Code Exercise", showSystemUi = true, heightDp = 800)
+@Composable
+private fun SummaryScreenContentCodePreview() {
+    KipuCodeTheme {
+        SummaryScreenContent(
+            uiState = SummaryUiState(
+                xpEarned = 150,
+                accuracy = 1.0f,
+                correctCount = 5,
+                reinforceCount = 0,
+                timeFormatted = "2m 10s",
+                summaryMessage = "¡Dominio total!",
+                showRepetitionSchedule = false
             ),
             onClickResetFilledButton = {},
             onClickFilledButton = {}

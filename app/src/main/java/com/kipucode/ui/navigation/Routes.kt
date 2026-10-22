@@ -58,5 +58,6 @@ data class SummaryRoute(
     val timeSeconds: Long,
     val lessonId: String = "",
     val type: String? = null,
-    val onlyDue: Boolean = false
+    val onlyDue: Boolean = false,
+    val isFlashcard: Boolean = false
 )

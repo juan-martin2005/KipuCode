@@ -253,6 +253,9 @@ fun AppNavigation() {
                 },
                 onFinished = { session ->
                     if (backStackEntry.lifecycle.currentState == Lifecycle.State.RESUMED) {
+                        val isFlashcard = session.isFlashcard ||
+                                route.onlyDue ||
+                                route.type?.contains("FLASHCARD", ignoreCase = true) == true
                         navController.navigate(
                             SummaryRoute(
                                 xp = session.xpEarned,
@@ -261,7 +264,8 @@ fun AppNavigation() {
                                 timeSeconds = session.timeSeconds,
                                 lessonId = route.lessonId,
                                 type = route.type,
-                                onlyDue = route.onlyDue
+                                onlyDue = route.onlyDue,
+                                isFlashcard = isFlashcard
                             )
                         ) {
                             popUpTo<ExerciseRoute> { inclusive = true }

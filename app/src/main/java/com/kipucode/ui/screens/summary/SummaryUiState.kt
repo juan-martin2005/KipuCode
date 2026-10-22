@@ -10,9 +10,9 @@ data class SummaryUiState(
     val summaryMessage: String = "",
 
     // RepetitionSchedule (FSRS-6)
+    val showRepetitionSchedule: Boolean = false,
     val memoryRetentionPct: Int = 85,
     val nextReviewText: String = "Mañana",
 
     val isLoading: Boolean = false
 )
-

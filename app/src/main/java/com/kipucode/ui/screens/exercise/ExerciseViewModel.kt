@@ -131,11 +131,14 @@ class ExerciseViewModel @Inject constructor(
             totalCount = _uiState.value.exercises.size,
             startTimeMillis = sessionStartTime
         )
+        val exercises = _uiState.value.exercises
+        val isFlashcard = exercises.isNotEmpty() && exercises.all { it.type.contains("FLASHCARD", ignoreCase = true) }
         return ExerciseSessionData(
             xpEarned = effectiveSessionXp ?: summary.xpEarned,
             correctCount = summary.correctCount,
             totalCount = summary.totalCount,
-            timeSeconds = summary.timeSeconds
+            timeSeconds = summary.timeSeconds,
+            isFlashcard = isFlashcard
         )
     }
 

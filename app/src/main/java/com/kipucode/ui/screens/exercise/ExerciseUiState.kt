@@ -15,7 +15,8 @@ data class ExerciseSessionData(
     val xpEarned: Int,
     val correctCount: Int,
     val totalCount: Int,
-    val timeSeconds: Long
+    val timeSeconds: Long,
+    val isFlashcard: Boolean = false
 )
 
 data class ExerciseUiState(
