@@ -1,7 +1,9 @@
 package com.kipucode.domain.usecase.summary
 
 import com.kipucode.domain.model.DailyActivityDomain
+import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneId
 import javax.inject.Inject
 
 // ============================================================================================
@@ -112,14 +114,22 @@ class CalculateWeeklyStreakSummaryUseCase @Inject constructor() {
 
     fun extractActiveWeekDayIndices(
         activities: List<DailyActivityDomain>,
-        todayDate: LocalDate = LocalDate.now()
+        todayDate: LocalDate = LocalDate.now(),
+        lastCompletedMillis: Long? = null
     ): Set<Int> {
         val todayIndex = todayDate.dayOfWeek.value - 1
         val weekStart = todayDate.minusDays(todayIndex.toLong())
         val activeDates = activities
             .filter { it.exercisesCount > 0 || it.lessonsCount > 0 || it.xpEarned > 0 }
             .map { it.date }
-            .toSet()
+            .toMutableSet()
+
+        if (lastCompletedMillis != null) {
+            val lastDate = Instant.ofEpochMilli(lastCompletedMillis)
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate()
+            activeDates.add(lastDate.toString())
+        }
 
         return (0..6).filter { index ->
             val dateStr = weekStart.plusDays(index.toLong()).toString()
@@ -144,10 +154,19 @@ class CalculateWeeklyStreakSummaryUseCase @Inject constructor() {
         activeWeekDayIndices: Set<Int>
     ): List<WeekDayStreakDomain> {
         val dayLabels = listOf("L", "M", "X", "J", "V", "S", "D")
-        val startCompletedIndex = if (streakDays >= 1) maxOf(0, todayIndex - (streakDays - 1)) else -1
+        val isTodayCompleted = todayIndex in activeWeekDayIndices
+
+        // Si hoy ya se completó, la racha llega hasta hoy.
+        // Si hoy aún está pendiente, la racha activa acumulada llega hasta ayer.
+        val streakEndIndex = if (isTodayCompleted) todayIndex else todayIndex - 1
+        val startCompletedIndex = if (streakDays >= 1 && streakEndIndex >= 0) {
+            maxOf(0, streakEndIndex - (streakDays - 1))
+        } else {
+            -1
+        }
 
         return dayLabels.mapIndexed { index, label ->
-            val isCompletedByStreak = streakDays >= 1 && index in startCompletedIndex..todayIndex
+            val isCompletedByStreak = startCompletedIndex != -1 && index in startCompletedIndex..streakEndIndex
             val isCompletedByActivity = index <= todayIndex && index in activeWeekDayIndices
 
             val status = when {

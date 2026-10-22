@@ -137,6 +137,7 @@ class SummaryMetricsUnitTest(
                 SummaryMetricsTestCase.WeeklyStreakSummaryCase(
                     streakDays = 1,
                     todayDayOfWeekIndex = 3,
+                    activeWeekDayIndices = setOf(3),
                     expectedNextStreakText = "¡Mantén el ritmo mañana para alcanzar tu meta de 3 días!",
                     expectedStatuses = listOf(
                         WeekDayStatus.PENDING,
@@ -147,11 +148,28 @@ class SummaryMetricsUnitTest(
                         WeekDayStatus.PENDING,
                         WeekDayStatus.PENDING
                     ),
-                    scenario = "Racha de 1 día en jueves"
+                    scenario = "Racha de 1 día completada el jueves"
+                ),
+                SummaryMetricsTestCase.WeeklyStreakSummaryCase(
+                    streakDays = 1,
+                    todayDayOfWeekIndex = 3,
+                    activeWeekDayIndices = setOf(2),
+                    expectedNextStreakText = "¡Mantén el ritmo mañana para alcanzar tu meta de 3 días!",
+                    expectedStatuses = listOf(
+                        WeekDayStatus.PENDING,
+                        WeekDayStatus.PENDING,
+                        WeekDayStatus.COMPLETED,
+                        WeekDayStatus.CURRENT,
+                        WeekDayStatus.PENDING,
+                        WeekDayStatus.PENDING,
+                        WeekDayStatus.PENDING
+                    ),
+                    scenario = "Jueves aún pendiente con racha activa de 1 día de ayer miércoles"
                 ),
                 SummaryMetricsTestCase.WeeklyStreakSummaryCase(
                     streakDays = 3,
                     todayDayOfWeekIndex = 2,
+                    activeWeekDayIndices = setOf(2),
                     expectedNextStreakText = "¡Mantén el ritmo mañana para alcanzar tu meta de 7 días!",
                     expectedStatuses = listOf(
                         WeekDayStatus.COMPLETED,
@@ -162,11 +180,12 @@ class SummaryMetricsUnitTest(
                         WeekDayStatus.PENDING,
                         WeekDayStatus.PENDING
                     ),
-                    scenario = "Racha inicial en miércoles"
+                    scenario = "Racha inicial completada en miércoles"
                 ),
                 SummaryMetricsTestCase.WeeklyStreakSummaryCase(
                     streakDays = 6,
                     todayDayOfWeekIndex = 0,
+                    activeWeekDayIndices = setOf(0),
                     expectedNextStreakText = "A solo 1 día de superar tu meta de 7 días",
                     expectedStatuses = listOf(
                         WeekDayStatus.COMPLETED,
@@ -177,11 +196,12 @@ class SummaryMetricsUnitTest(
                         WeekDayStatus.PENDING,
                         WeekDayStatus.PENDING
                     ),
-                    scenario = "A 1 día de la meta"
+                    scenario = "A 1 día de la meta completada el lunes"
                 ),
                 SummaryMetricsTestCase.WeeklyStreakSummaryCase(
                     streakDays = 7,
                     todayDayOfWeekIndex = 6,
+                    activeWeekDayIndices = setOf(6),
                     expectedNextStreakText = "¡Mantén el ritmo mañana para alcanzar tu meta de 14 días!",
                     expectedStatuses = listOf(
                         WeekDayStatus.COMPLETED,

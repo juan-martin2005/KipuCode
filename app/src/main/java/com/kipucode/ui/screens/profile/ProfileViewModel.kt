@@ -71,7 +71,10 @@ class ProfileViewModel @Inject constructor(
             lastCompletedMillis = progress?.completedAt,
             databaseStreak = progress?.streakDay ?: 0
         )
-        val activeWeekDays = calculateWeeklyStreakSummaryUseCase.extractActiveWeekDayIndices(activities)
+        val activeWeekDays = calculateWeeklyStreakSummaryUseCase.extractActiveWeekDayIndices(
+            activities = activities,
+            lastCompletedMillis = progress?.completedAt
+        )
         val streakSummary = calculateWeeklyStreakSummaryUseCase(
             streakDays = activeStreak,
             activeWeekDayIndices = activeWeekDays
@@ -142,4 +145,3 @@ class ProfileViewModel @Inject constructor(
         }
     }
 }
-
