@@ -64,6 +64,41 @@ class AuthFormValidationTest(
                 ),
                 AuthFormTestCase(
                     field = "name",
+                    value = "Al",
+                    expected = false,
+                    error = ValidationErrorType.NAME_TOO_SHORT,
+                    scenario = "Nombre con menos de 3 caracteres (2 letras)"
+                ),
+                AuthFormTestCase(
+                    field = "name",
+                    value = " A ",
+                    expected = false,
+                    error = ValidationErrorType.NAME_TOO_SHORT,
+                    scenario = "Nombre con 1 letra rodeada de espacios"
+                ),
+                AuthFormTestCase(
+                    field = "name",
+                    value = "Juan123",
+                    expected = false,
+                    error = ValidationErrorType.NAME_CONTAINS_NUMBERS,
+                    scenario = "Nombre con letras y números"
+                ),
+                AuthFormTestCase(
+                    field = "name",
+                    value = "12345",
+                    expected = false,
+                    error = ValidationErrorType.NAME_CONTAINS_NUMBERS,
+                    scenario = "Nombre compuesto solo por números"
+                ),
+                AuthFormTestCase(
+                    field = "name",
+                    value = "Ana",
+                    expected = true,
+                    error = null,
+                    scenario = "Nombre válido de 3 caracteres exactos"
+                ),
+                AuthFormTestCase(
+                    field = "name",
                     value = "Marcelino Pérez",
                     expected = true,
                     error = null,
@@ -124,7 +159,7 @@ class AuthFormValidationTest(
                 ),
 
                 // ====================================================================================
-                // --- (PU-03) - CONTRASEÑA ---
+                // --- (PU-03) - CONTRASEÑA (POLÍTICAS FIREBASE AUTH) ---
                 // ====================================================================================
                 AuthFormTestCase(
                     field = "password",
@@ -149,24 +184,52 @@ class AuthFormValidationTest(
                 ),
                 AuthFormTestCase(
                     field = "password",
-                    value = "abcde",
+                    value = "Ab1!",
                     expected = false,
                     error = ValidationErrorType.PASSWORD_TOO_SHORT,
-                    scenario = "Longitud 5 alfabética"
+                    scenario = "Contraseña compleja pero de menos de 6 caracteres"
                 ),
                 AuthFormTestCase(
                     field = "password",
-                    value = "123456",
-                    expected = true,
-                    error = null,
-                    scenario = "Longitud 6 caso límite exacto"
+                    value = "abcdef1!",
+                    expected = false,
+                    error = ValidationErrorType.PASSWORD_MISSING_UPPERCASE,
+                    scenario = "Sin mayúscula"
                 ),
                 AuthFormTestCase(
                     field = "password",
-                    value = "abcdef",
+                    value = "ABCDEF1!",
+                    expected = false,
+                    error = ValidationErrorType.PASSWORD_MISSING_LOWERCASE,
+                    scenario = "Sin minúscula"
+                ),
+                AuthFormTestCase(
+                    field = "password",
+                    value = "Abcdef!",
+                    expected = false,
+                    error = ValidationErrorType.PASSWORD_MISSING_DIGIT,
+                    scenario = "Sin número"
+                ),
+                AuthFormTestCase(
+                    field = "password",
+                    value = "Abcdef1",
+                    expected = false,
+                    error = ValidationErrorType.PASSWORD_MISSING_SPECIAL_CHAR,
+                    scenario = "Sin carácter especial"
+                ),
+                AuthFormTestCase(
+                    field = "password",
+                    value = "KipuCode2026!",
                     expected = true,
                     error = null,
-                    scenario = "Longitud 6 alfabética"
+                    scenario = "Contraseña válida que cumple todas las políticas"
+                ),
+                AuthFormTestCase(
+                    field = "password",
+                    value = "P@ssw0rd",
+                    expected = true,
+                    error = null,
+                    scenario = "Contraseña estándar válida con símbolo y número"
                 ),
 
                 // ====================================================================================
@@ -175,7 +238,7 @@ class AuthFormValidationTest(
                 AuthFormTestCase(
                     field = "confirmPassword",
                     value = "",
-                    secondaryValue = "123456",
+                    secondaryValue = "KipuCode2026!",
                     expected = false,
                     error = ValidationErrorType.EMPTY_FIELD,
                     scenario = "Confirmación vacía"
@@ -183,42 +246,42 @@ class AuthFormValidationTest(
                 AuthFormTestCase(
                     field = "confirmPassword",
                     value = "   ",
-                    secondaryValue = "123456",
+                    secondaryValue = "KipuCode2026!",
                     expected = false,
                     error = ValidationErrorType.EMPTY_FIELD,
                     scenario = "Confirmación solo espacios"
                 ),
                 AuthFormTestCase(
                     field = "confirmPassword",
-                    value = "12345",
-                    secondaryValue = "123456",
+                    value = "KipuCode2026",
+                    secondaryValue = "KipuCode2026!",
                     expected = false,
                     error = ValidationErrorType.PASSWORDS_DONT_MATCH,
                     scenario = "Longitud discrepante"
                 ),
                 AuthFormTestCase(
                     field = "confirmPassword",
-                    value = "otraClave99",
-                    secondaryValue = "123456",
+                    value = "otraClave99!",
+                    secondaryValue = "KipuCode2026!",
                     expected = false,
                     error = ValidationErrorType.PASSWORDS_DONT_MATCH,
                     scenario = "Claves totalmente distintas"
                 ),
                 AuthFormTestCase(
                     field = "confirmPassword",
-                    value = "kipupassword",
-                    secondaryValue = "KipuPassword",
+                    value = "kipucode2026!",
+                    secondaryValue = "KipuCode2026!",
                     expected = false,
                     error = ValidationErrorType.PASSWORDS_DONT_MATCH,
                     scenario = "Sensibilidad a mayúsculas/minúsculas"
                 ),
                 AuthFormTestCase(
                     field = "confirmPassword",
-                    value = "123456",
-                    secondaryValue = "123456",
+                    value = "KipuCode2026!",
+                    secondaryValue = "KipuCode2026!",
                     expected = true,
                     error = null,
-                    scenario = "Coincidencia numérica exacta"
+                    scenario = "Coincidencia exacta válida"
                 )
             )
         }

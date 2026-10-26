@@ -121,8 +121,8 @@ class AuthComposeUiTest {
         composeTestRule.onNodeWithTag("input_register_name").performTextInput("Marcelo Fernando")
         composeTestRule.onNodeWithTag("input_register_email").performTextInput("marcelomamani246@gmail.com")
 
-        composeTestRule.onNodeWithTag("input_register_password").performTextInput("123456")
-        composeTestRule.onNodeWithTag("input_register_confirm_password").performTextInput("123456")
+        composeTestRule.onNodeWithTag("input_register_password").performTextInput("KipuCode2026!")
+        composeTestRule.onNodeWithTag("input_register_confirm_password").performTextInput("KipuCode2026!")
         composeTestRule.onNodeWithTag("btn_register").performClick()
 
         // Assert
@@ -130,6 +130,6 @@ class AuthComposeUiTest {
         assertTrue("onRegisterClick debió ser invocado", isRegisterCalled)
         assertEquals("Marcelo Fernando", registeredName)
         assertEquals("marcelomamani246@gmail.com", registeredEmail)
-        assertEquals("123456", registeredPassword)
+        assertEquals("KipuCode2026!", registeredPassword)
     }
 }

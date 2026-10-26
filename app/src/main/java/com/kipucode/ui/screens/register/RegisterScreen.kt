@@ -133,6 +133,8 @@ fun RegisterContent(
 
     val nameErrorText = when (formErrors.nameError) {
         ValidationErrorType.EMPTY_FIELD -> stringResource(R.string.error_name_required)
+        ValidationErrorType.NAME_TOO_SHORT -> stringResource(R.string.error_name_too_short)
+        ValidationErrorType.NAME_CONTAINS_NUMBERS -> stringResource(R.string.error_name_contains_numbers)
         else -> null
     }
 
@@ -146,6 +148,10 @@ fun RegisterContent(
     val passwordErrorText = when (formErrors.passwordError) {
         ValidationErrorType.EMPTY_FIELD -> stringResource(R.string.error_password_required)
         ValidationErrorType.PASSWORD_TOO_SHORT -> stringResource(R.string.error_password_too_short)
+        ValidationErrorType.PASSWORD_MISSING_UPPERCASE -> stringResource(R.string.error_password_missing_uppercase)
+        ValidationErrorType.PASSWORD_MISSING_LOWERCASE -> stringResource(R.string.error_password_missing_lowercase)
+        ValidationErrorType.PASSWORD_MISSING_DIGIT -> stringResource(R.string.error_password_missing_digit)
+        ValidationErrorType.PASSWORD_MISSING_SPECIAL_CHAR -> stringResource(R.string.error_password_missing_special)
         else -> null
     }
 
@@ -233,7 +239,7 @@ fun RegisterContent(
                     onClearEmailError()
                     onClearServerEmailError()
                 },
-                placeholder = "usuario@gmail.com",
+                placeholder = stringResource(R.string.ph_email),
                 iconRes = R.drawable.ic_mail,
                 keyboardType = KeyboardType.Email,
                 isError = emailErrorText != null,
@@ -281,7 +287,7 @@ fun RegisterContent(
             Spacer(modifier = Modifier.height(16.dp))
 
             FilledButton(
-                textButton = stringResource(id = R.string.register_next),
+                textButton = stringResource(id = R.string.register),
                 testTag = "btn_register",
                 onClickFilledButton = {
                     val isValid = onValidate(name, email, password, confirmPassword)

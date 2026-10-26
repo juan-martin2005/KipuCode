@@ -4,27 +4,36 @@ import com.kipucode.domain.model.ValidationErrorType
 import com.kipucode.domain.model.ValidationResult
 import javax.inject.Inject
 
-class ValidateFullNameUseCase @Inject constructor(){
-    operator fun invoke(fullName: String): ValidationResult{
-        if (fullName.isBlank()){
+class ValidateFullNameUseCase @Inject constructor() {
+    operator fun invoke(fullName: String): ValidationResult {
+        val trimmed = fullName.trim()
+        if (trimmed.isBlank()) {
             return ValidationResult(false, ValidationErrorType.EMPTY_FIELD)
+        }
+
+        if (trimmed.any { it.isDigit() }) {
+            return ValidationResult(false, ValidationErrorType.NAME_CONTAINS_NUMBERS)
+        }
+
+        if (trimmed.length < 3) {
+            return ValidationResult(false, ValidationErrorType.NAME_TOO_SHORT)
         }
 
         return ValidationResult(true)
     }
 }
 
-class ValidateEmailUseCase @Inject constructor(){
+class ValidateEmailUseCase @Inject constructor() {
     private val emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.(com|pe)$".toRegex()
 
-    operator fun invoke(email: String): ValidationResult{
+    operator fun invoke(email: String): ValidationResult {
         val emailTrimmed = email.trim().lowercase()
 
-        if (emailTrimmed.isBlank()){
+        if (emailTrimmed.isBlank()) {
             return ValidationResult(false, ValidationErrorType.EMPTY_FIELD)
         }
 
-        if (!emailRegex.matches(emailTrimmed)){
+        if (!emailRegex.matches(emailTrimmed)) {
             return ValidationResult(false, ValidationErrorType.INVALID_EMAIL_DOMAIN)
         }
 
@@ -33,26 +42,41 @@ class ValidateEmailUseCase @Inject constructor(){
 }
 
 class ValidatePasswordUseCase @Inject constructor() {
-    operator fun invoke(password: String): ValidationResult{
-        if (password.isBlank()){
+    operator fun invoke(password: String, requireComplexity: Boolean = true): ValidationResult {
+        if (password.isBlank()) {
             return ValidationResult(false, ValidationErrorType.EMPTY_FIELD)
         }
 
-        if (password.length<6){
+        if (password.length < 6) {
             return ValidationResult(false, ValidationErrorType.PASSWORD_TOO_SHORT)
+        }
+
+        if (requireComplexity) {
+            if (!password.any { it.isUpperCase() }) {
+                return ValidationResult(false, ValidationErrorType.PASSWORD_MISSING_UPPERCASE)
+            }
+            if (!password.any { it.isLowerCase() }) {
+                return ValidationResult(false, ValidationErrorType.PASSWORD_MISSING_LOWERCASE)
+            }
+            if (!password.any { it.isDigit() }) {
+                return ValidationResult(false, ValidationErrorType.PASSWORD_MISSING_DIGIT)
+            }
+            if (!password.any { !it.isLetterOrDigit() && !it.isWhitespace() }) {
+                return ValidationResult(false, ValidationErrorType.PASSWORD_MISSING_SPECIAL_CHAR)
+            }
         }
 
         return ValidationResult(true)
     }
 }
 
-class ValidateConfirmPasswordUseCase @Inject constructor(){
-    operator fun invoke(password:String, confirmPassword: String): ValidationResult{
-        if (confirmPassword.isBlank()){
+class ValidateConfirmPasswordUseCase @Inject constructor() {
+    operator fun invoke(password: String, confirmPassword: String): ValidationResult {
+        if (confirmPassword.isBlank()) {
             return ValidationResult(false, ValidationErrorType.EMPTY_FIELD)
         }
 
-        if (confirmPassword != password){
+        if (confirmPassword != password) {
             return ValidationResult(false, ValidationErrorType.PASSWORDS_DONT_MATCH)
         }
 

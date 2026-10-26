@@ -32,6 +32,7 @@
     <string name="full_name">Nombre Completo</string>
 
     <string name="ph_full_name">Tu nombre</string>
+    <string name="ph_email">ejemplo@gmail.com</string>
 
     <!-- Login-Screen -->
     <string name="good_morning">¡Buenos días!</string>
@@ -58,10 +59,16 @@
 
     <!-- Login & Register - Validaciones -->
     <string name="error_name_required">El Nombre Completo es obligatorio</string>
+    <string name="error_name_too_short">El nombre debe tener al menos 3 caracteres</string>
+    <string name="error_name_contains_numbers">El nombre no debe contener números</string>
     <string name="error_email_required">El Correo electrónico es obligatorio</string>
     <string name="error_email_domain">Por favor, ingresa un correo electrónico válido (.com o .pe)</string>
     <string name="error_password_required">La Contraseña es obligatoria</string>
     <string name="error_password_too_short">La contraseña debe tener al menos 6 caracteres</string>
+    <string name="error_password_missing_uppercase">La contraseña debe incluir al menos una letra mayúscula</string>
+    <string name="error_password_missing_lowercase">La contraseña debe incluir al menos una letra minúscula</string>
+    <string name="error_password_missing_digit">La contraseña debe incluir al menos un número</string>
+    <string name="error_password_missing_special">La contraseña debe incluir al menos un carácter especial</string>
     <string name="error_confirm_password_required">Confirmar Contraseña es obligatorio</string>
     <string name="error_password_mismatch">Las contraseñas no coinciden</string>
 

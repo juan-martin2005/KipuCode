@@ -226,7 +226,7 @@ fun LoginContent(
                     onClearEmailVerified()
                     onClearCredentialsError()
                 },
-                placeholder = "usuario@gmail.com",
+                placeholder = stringResource(R.string.ph_email),
                 iconRes = R.drawable.ic_mail,
                 keyboardType = KeyboardType.Email,
                 isError = emailErrorText != null,

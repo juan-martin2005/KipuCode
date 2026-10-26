@@ -26,7 +26,7 @@ class LoginViewModel @Inject constructor(
 
     fun validateLoginForm(email: String, pass: String): Boolean {
         val emailResult = validateEmailUseCase(email)
-        val passwordResult = validatePasswordUseCase(pass)
+        val passwordResult = validatePasswordUseCase(pass, requireComplexity = false)
 
         _uiState.update { current ->
             current.copy(

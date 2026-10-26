@@ -3,6 +3,7 @@ package com.kipucode.data.repository
 import android.util.Log
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.kipucode.data.local.dao.CourseDao
 import com.kipucode.data.local.dao.DailyActivityDao
@@ -59,6 +60,9 @@ internal class AuthRepositoryImpl @Inject constructor(
     ): Response<T> {
         return try {
             apiCall()
+        } catch (ex: FirebaseAuthWeakPasswordException) {
+            Log.e(logTag, "Weak Password: ${ex.reason}", ex)
+            Response.Error(ex.reason ?: "La contraseña no cumple con los requisitos mínimos de seguridad", ServerErrorType.CREDENTIAL_INVALID)
         } catch (ex: FirebaseAuthInvalidCredentialsException) {
             Log.e(logTag, "Invalid Credentials", ex)
             Response.Error("The credential is invalid", ServerErrorType.CREDENTIAL_INVALID)
