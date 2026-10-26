@@ -1,6 +1,7 @@
 package com.kipucode.ui.components.buttons
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -35,7 +36,8 @@ fun FilledButton(
     isLoading: Boolean = false,
     fontSize: TextUnit = 18.sp,
     containerColor: Color = KipuTeal,
-    contentColor: Color = Color.White
+    contentColor: Color = Color.White,
+    contentPadding: PaddingValues = ButtonDefaults.ContentPadding
 ) {
     Button(
         onClick = {
@@ -49,6 +51,7 @@ fun FilledButton(
             .then(if (testTag != null) Modifier.testTag(testTag) else Modifier),
         enabled = enabled && !isLoading,
         shape = RoundedCornerShape(14.dp),
+        contentPadding = contentPadding,
         colors = ButtonDefaults.buttonColors(
             containerColor = containerColor,
             contentColor = contentColor,

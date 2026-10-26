@@ -2,6 +2,7 @@ package com.kipucode.ui.components.buttons
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -33,7 +34,8 @@ fun OutlineButton(
     enabled: Boolean = true,
     isLoading: Boolean = false,
     fontSize: TextUnit = 18.sp,
-    containerColor: Color = KipuTeal
+    containerColor: Color = KipuTeal,
+    contentPadding: PaddingValues = ButtonDefaults.ContentPadding
 ) {
     val isInteractive = enabled && !isLoading
     val activeColor = if (isInteractive) containerColor else containerColor.copy(alpha = 0.5f)
@@ -49,6 +51,7 @@ fun OutlineButton(
             .height(50.dp),
         enabled = isInteractive,
         shape = RoundedCornerShape(14.dp),
+        contentPadding = contentPadding,
         border = BorderStroke(
             width = 2.dp,
             color = activeColor
