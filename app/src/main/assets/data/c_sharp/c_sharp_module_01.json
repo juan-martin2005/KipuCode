@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "course": {
     "id": "csharp_module_01",
     "title": "Fundamentos de .NET, Lógica y Diagramación",
@@ -7103,32 +7103,32 @@
         {
           "id": "exercise_lesson_04_block_01",
           "type": "COMPLETE_CODE",
-          "instruction": "Documenta el saldo base con un comentario simple y define su valor numérico:\n\n```csharp\n[[slot]] Saldo inicial del cliente\nint saldo = [[slot]];\n```",
-          "answer": "// Saldo inicial del cliente\nint saldo = 100;",
+          "instruction": "Documenta la capacidad de una sala con un comentario y define su aforo:\n```csharp\n[[slot]] Capacidad máxima de la sala\nint aforoMaximo = [[slot]];\n```",
+          "answer": "// Capacidad máxima de la sala\nint aforoMaximo = 50;",
           "xp": 50,
           "orderIndex": 1,
           "options": [
             {
               "content": "//",
-              "explanation": "Delimita una nota explicativa de una sola línea ignorada por Roslyn.",
+              "explanation": "Doble barra obligatoria para iniciar un comentario de una sola línea en C#.",
               "isCorrect": true,
               "orderIndex": 1
             },
             {
-              "content": "100",
-              "explanation": "Asigna un valor numérico entero inicial a la variable de saldo.",
+              "content": "50",
+              "explanation": "Literal entero que define la capacidad numérica máxima admitida en la sala.",
               "isCorrect": true,
               "orderIndex": 2
             },
             {
               "content": "/*",
-              "explanation": "Inicia un comentario multilínea y exige un delimitador de cierre.",
+              "explanation": "Delimitador de apertura multilínea que requeriría un cierre con asterisco-barra.",
               "isCorrect": false,
               "orderIndex": 3
             },
             {
-              "content": "null",
-              "explanation": "No es un valor compatible para inicializar una variable de tipo int.",
+              "content": "\"50\"",
+              "explanation": "Cadena alfanumérica incompatible con el tipo entero primitivo int de C#.",
               "isCorrect": false,
               "orderIndex": 4
             }
@@ -7331,7 +7331,7 @@
               "orderIndex": 3
             },
             {
-              "content": "t",
+              "content": "tasaAct",
               "explanation": "Nombre de una sola letra críptico que viola el principio de código limpio.",
               "isCorrect": false,
               "orderIndex": 4
@@ -7603,7 +7603,7 @@
               "orderIndex": 3
             },
             {
-              "content": "m",
+              "content": "dist",
               "explanation": "Nombre de una sola letra críptico que oscurece el propósito de la constante.",
               "isCorrect": false,
               "orderIndex": 4
@@ -8460,32 +8460,32 @@
         {
           "id": "exercise_lesson_05_uc_18",
           "type": "UNIQUE_CHOICE",
-          "instruction": "Si un sistema de aforo exige cantidades positivas, ¿qué representa un ingreso de `-5`?",
+          "instruction": "Si un sistema de inventario exige cantidades físicas reales, ¿qué representa ingresar un stock de `-5`?",
           "answer": "",
           "xp": 50,
           "orderIndex": 18,
           "options": [
             {
-              "content": "El sistema devuelve un total de cero soles automáticamente",
-              "explanation": "Sin validación previa, la multiplicación aritmética arrojaría un resultado negativo.",
+              "content": "El sistema devuelve un total de cero por defecto",
+              "explanation": "Los cálculos erróneos sobre datos no validados no devuelven cero por iniciativa propia.",
               "isCorrect": false,
               "orderIndex": 1
             },
             {
-              "content": "Viola la restricción ineludible de cantidad positiva",
-              "explanation": "El aforo debe ser estrictamente mayor que cero; ingresar negativos quiebra la regla.",
+              "content": "Viola la restricción ineludible de cantidad física positiva",
+              "explanation": "En el análisis previo, variables de conteo deben ser mayores a cero obligatoriamente.",
               "isCorrect": true,
               "orderIndex": 2
             },
             {
-              "content": "Roslyn impide ejecutar el programa emitiendo CS0165",
-              "explanation": "CS0165 señala variables no asignadas, no datos numéricos negativos en tiempo de ejecución.",
+              "content": "Roslyn impide compilar emitiendo el código de error CS0165",
+              "explanation": "El compilador Roslyn no verifica la validez semántica o física de los valores asignados.",
               "isCorrect": false,
               "orderIndex": 3
             },
             {
               "content": "El compilador convierte el valor negativo en positivo",
-              "explanation": "El compilador no altera los datos suministrados por el usuario durante la ejecución.",
+              "explanation": "Ningún compilador altera el signo de los números sin una instrucción explícita del programador.",
               "isCorrect": false,
               "orderIndex": 4
             }
@@ -9047,8 +9047,8 @@
         {
           "id": "exercise_lesson_05_ff_16",
           "type": "FEYNMAN_FLASHCARDS",
-          "instruction": "Un estudiante afirma: «Si pruebo mi programa con 15 personas y funciona, no hace falta probarlo con 20 ni 40». ¿Por qué yerra?",
-          "answer": "Probar un único escenario favorable ignora el comportamiento del software en las fronteras y en escalas con descuentos por volumen.\n\nEn palabras simples: El software debe validarse en cada tramo tarifario para asegurar que las reglas condicionales se activan a tiempo.",
+          "instruction": "Un estudiante afirma: «Si pruebo mi algoritmo con un solo dato de entrada y funciona, ya está probado». ¿Por qué yerra?",
+          "answer": "Probar un único escenario favorable ignora el comportamiento del software ante valores frontera y condiciones límite.\n\nEn palabras simples: Un programa puede operar con un valor típico pero fallar cuando se ingresan ceros, límites de tarifa o datos extremos.",
           "xp": 50,
           "orderIndex": 16,
           "options": []
@@ -9262,14 +9262,14 @@
         {
           "id": "exercise_lesson_05_cc_06",
           "type": "COMPLETE_CODE",
-          "instruction": "Una academia alquila un proyector por 3 días a 40 soles diarios. Modela el cálculo:\n```C#\nint diasAlquiler = [[slot]];\nint costoPorDia = 40;\nint total = diasAlquiler * [[slot]];\n```",
-          "answer": "int diasAlquiler = 3;\nint costoPorDia = 40;\nint total = diasAlquiler * costoPorDia;",
+          "instruction": "Una academia alquila un proyector por 10 días a 40 soles diarios. Modela el cálculo:\n```C#\nint diasAlquiler = [[slot]];\nint costoPorDia = 40;\nint total = diasAlquiler * [[slot]];\n```",
+          "answer": "int diasAlquiler = 10;\nint costoPorDia = 40;\nint total = diasAlquiler * costoPorDia;",
           "xp": 50,
           "orderIndex": 6,
           "options": [
             {
-              "content": "3",
-              "explanation": "Cantidad de días acordada capturada como dato de Entrada para el servicio.",
+              "content": "10",
+              "explanation": "Cantidad entera de días que dura el servicio de alquiler contratado.",
               "isCorrect": true,
               "orderIndex": 1
             },
@@ -9280,7 +9280,7 @@
               "orderIndex": 2
             },
             {
-              "content": "\"3\"",
+              "content": "\"10\"",
               "explanation": "Los literales entre comillas son de tipo string y no pueden asignarse a int.",
               "isCorrect": false,
               "orderIndex": 3
@@ -9330,14 +9330,14 @@
         {
           "id": "exercise_lesson_05_cc_08",
           "type": "COMPLETE_CODE",
-          "instruction": "Una casa consume 14 metros cúbicos de agua a 3 soles el metro. Modela el Proceso:\n```C#\nint consumoMetros = 14;\nint costoMetro = [[slot]];\nint total = consumoMetros * [[slot]];\n```",
-          "answer": "int consumoMetros = 14;\nint costoMetro = 3;\nint total = consumoMetros * costoMetro;",
+          "instruction": "Una casa consume 14 metros cúbicos de agua a 12 soles el metro. Modela el Proceso:\n```C#\nint consumoMetros = 14;\nint costoMetro = [[slot]];\nint total = consumoMetros * [[slot]];\n```",
+          "answer": "int consumoMetros = 14;\nint costoMetro = 12;\nint total = consumoMetros * costoMetro;",
           "xp": 50,
           "orderIndex": 8,
           "options": [
             {
-              "content": "3",
-              "explanation": "Tarifa fijada por metro cúbico ingresada como dato de Entrada para el cálculo.",
+              "content": "12",
+              "explanation": "Tarifa volumétrica fijada por cada metro cúbico consumido en el hogar.",
               "isCorrect": true,
               "orderIndex": 1
             },
@@ -9348,7 +9348,7 @@
               "orderIndex": 2
             },
             {
-              "content": "\"3\"",
+              "content": "\"12\"",
               "explanation": "El valor entre comillas es un texto y provocaría un error de compilación.",
               "isCorrect": false,
               "orderIndex": 3
@@ -9364,32 +9364,32 @@
         {
           "id": "exercise_lesson_05_cc_09",
           "type": "COMPLETE_CODE",
-          "instruction": "Una oficina encarga 15 almuerzos corporativos con la tarifa estándar de 30 soles:\n```C#\nint comensales = 15;\nint tarifaMenu = [[slot]];\nint total = comensales * [[slot]];\n```",
-          "answer": "int comensales = 15;\nint tarifaMenu = 30;\nint total = comensales * tarifaMenu;",
+          "instruction": "Un instituto dicta 12 talleres técnicos con tarifa de 45 soles por sesión:\n```C#\nint talleres = 12;\nint tarifaSesion = [[slot]];\nint total = talleres * [[slot]];\n```",
+          "answer": "int talleres = 12;\nint tarifaSesion = 45;\nint total = talleres * tarifaSesion;",
           "xp": 50,
           "orderIndex": 9,
           "options": [
             {
-              "content": "30",
-              "explanation": "Tarifa estándar por comensal para grupos menores de 20 personas en el banquete.",
+              "content": "45",
+              "explanation": "Tarifa monetaria estándar fijada para cada sesión individual.",
               "isCorrect": true,
               "orderIndex": 1
             },
             {
-              "content": "tarifaMenu",
-              "explanation": "Aplica la tarifa unitaria en la multiplicación de la fase de Proceso.",
+              "content": "tarifaSesion",
+              "explanation": "Variable que almacena el costo unitario de cada taller dictado.",
               "isCorrect": true,
               "orderIndex": 2
             },
             {
-              "content": "\"30\"",
-              "explanation": "El tipo string entre comillas no es compatible con la variable entera int.",
+              "content": "\"45\"",
+              "explanation": "Cadena de texto no válida para operar aritméticamente en C#.",
               "isCorrect": false,
               "orderIndex": 3
             },
             {
-              "content": "comensales",
-              "explanation": "Multiplicar comensales por comensales no produce un importe monetario.",
+              "content": "talleres",
+              "explanation": "Duplicaría la cantidad de sesiones en lugar del costo unitario.",
               "isCorrect": false,
               "orderIndex": 4
             }
@@ -9398,32 +9398,32 @@
         {
           "id": "exercise_lesson_05_cc_10",
           "type": "COMPLETE_CODE",
-          "instruction": "Una empresa contrata almuerzos para 20 personas accediendo a la tarifa de 25 soles:\n```C#\nint comensales = 20;\nint tarifaReducida = [[slot]];\nint total = comensales * [[slot]];\n```",
-          "answer": "int comensales = 20;\nint tarifaReducida = 25;\nint total = comensales * tarifaReducida;",
+          "instruction": "Un taller confecciona 25 camisas con tarifa mayorista de 35 soles cada una:\n```C#\nint camisas = 25;\nint tarifaMayorista = [[slot]];\nint total = camisas * [[slot]];\n```",
+          "answer": "int camisas = 25;\nint tarifaMayorista = 35;\nint total = camisas * tarifaMayorista;",
           "xp": 50,
           "orderIndex": 10,
           "options": [
             {
-              "content": "25",
-              "explanation": "Tarifa preferencial en soles asignada al alcanzar la frontera de 20 comensales.",
+              "content": "35",
+              "explanation": "Importe mayorista con descuento aplicado por volumen de compra.",
               "isCorrect": true,
               "orderIndex": 1
             },
             {
-              "content": "tarifaReducida",
-              "explanation": "Variable con el precio unitario empleada en la fase de Proceso del sistema.",
+              "content": "tarifaMayorista",
+              "explanation": "Variable que conserva la tarifa unitaria reducida en memoria.",
               "isCorrect": true,
               "orderIndex": 2
             },
             {
-              "content": "\"25\"",
-              "explanation": "La sintaxis entre comillas provocaría incompatibilidad de tipos con int.",
+              "content": "\"35\"",
+              "explanation": "Literal alfanumérico incompatible con la multiplicación en C#.",
               "isCorrect": false,
               "orderIndex": 3
             },
             {
-              "content": "comensales",
-              "explanation": "comensales representa las personas asistentes y no el precio por plato.",
+              "content": "camisas",
+              "explanation": "Multiplicaría dos veces las unidades omitiendo el costo unitario.",
               "isCorrect": false,
               "orderIndex": 4
             }
@@ -9466,32 +9466,32 @@
         {
           "id": "exercise_lesson_05_cc_12",
           "type": "COMPLETE_CODE",
-          "instruction": "Identifica mediante comentarios la restricción y el supuesto del pedido:\n```C#\n// [[slot]]: personas > 0\nint personas = 10;\n// [[slot]]: precio incluye IGV\nint precio = 20;\n```",
-          "answer": "// Restriccion: personas > 0\nint personas = 10;\n// Supuesto: precio incluye IGV\nint precio = 20;",
+          "instruction": "Identifica mediante comentarios la restricción y el supuesto en el alquiler:\n```C#\n// [[slot]]: diasAlquiler > 0\nint dias = 4;\n// [[slot]]: tarifa incluye seguro\nint costo = 50;\n```",
+          "answer": "// Restriccion: diasAlquiler > 0\nint dias = 4;\n// Supuesto: tarifa incluye seguro\nint costo = 50;",
           "xp": 50,
           "orderIndex": 12,
           "options": [
             {
               "content": "Restriccion",
-              "explanation": "Regla inviolable que prohíbe el ingreso de aforos negativos o iguales a cero.",
+              "explanation": "Regla técnica ineludible que exige una cantidad de días positiva.",
               "isCorrect": true,
               "orderIndex": 1
             },
             {
               "content": "Supuesto",
-              "explanation": "Premisa documentada asumida por el desarrollador ante vacíos del enunciado.",
+              "explanation": "Premisa de negocio que asume la cobertura de seguro en el cobro.",
               "isCorrect": true,
               "orderIndex": 2
             },
             {
               "content": "Salida",
-              "explanation": "La Salida es la fase de emisión de resultados y no una regla del sistema.",
+              "explanation": "Emisión de resultados, ajena a las premisas o límites lógicos.",
               "isCorrect": false,
               "orderIndex": 3
             },
             {
               "content": "Proceso",
-              "explanation": "El Proceso engloba las operaciones lógicas y no las condiciones previas.",
+              "explanation": "Transformación matemática de datos, no una condición o premisa.",
               "isCorrect": false,
               "orderIndex": 4
             }
@@ -9500,14 +9500,14 @@
         {
           "id": "exercise_lesson_05_cc_13",
           "type": "COMPLETE_CODE",
-          "instruction": "Un pedido de comida suma un subtotal de 60 soles más un costo de envío de 8 soles:\n```C#\nint subtotal = 60;\nint costoEnvio = [[slot]];\nint totalFinal = subtotal + [[slot]];\n```",
-          "answer": "int subtotal = 60;\nint costoEnvio = 8;\nint totalFinal = subtotal + costoEnvio;",
+          "instruction": "Un pedido de comida suma un subtotal de 60 soles más un costo de envío de 15 soles:\n```C#\nint subtotal = 60;\nint costoEnvio = [[slot]];\nint totalFinal = subtotal + [[slot]];\n```",
+          "answer": "int subtotal = 60;\nint costoEnvio = 15;\nint totalFinal = subtotal + costoEnvio;",
           "xp": 50,
           "orderIndex": 13,
           "options": [
             {
-              "content": "8",
-              "explanation": "Tarifa fija de delivery en soles registrada como dato de Entrada en el pedido.",
+              "content": "15",
+              "explanation": "Importe monetario asignado al transporte para llevar el pedido al cliente.",
               "isCorrect": true,
               "orderIndex": 1
             },
@@ -9518,7 +9518,7 @@
               "orderIndex": 2
             },
             {
-              "content": "\"8\"",
+              "content": "\"15\"",
               "explanation": "El valor entre comillas es un texto y provocaría el error de tipado CS0029.",
               "isCorrect": false,
               "orderIndex": 3
@@ -9568,14 +9568,14 @@
         {
           "id": "exercise_lesson_05_cc_15",
           "type": "COMPLETE_CODE",
-          "instruction": "Una agencia vende 3 pasajes en bus a 50 soles cada uno. Modela el Proceso:\n```C#\nint pasajes = [[slot]];\nint precioPasaje = 50;\nint monto = pasajes * [[slot]];\n```",
-          "answer": "int pasajes = 3;\nint precioPasaje = 50;\nint monto = pasajes * precioPasaje;",
+          "instruction": "Una agencia vende 10 pasajes en bus a 50 soles cada uno. Modela el Proceso:\n```C#\nint pasajes = [[slot]];\nint precioPasaje = 50;\nint monto = pasajes * [[slot]];\n```",
+          "answer": "int pasajes = 10;\nint precioPasaje = 50;\nint monto = pasajes * precioPasaje;",
           "xp": 50,
           "orderIndex": 15,
           "options": [
             {
-              "content": "3",
-              "explanation": "Número de pasajes adquiridos asignado como dato de Entrada para el viaje.",
+              "content": "10",
+              "explanation": "Unidades enteras de boletos interprovinciales adquiridos por el grupo.",
               "isCorrect": true,
               "orderIndex": 1
             },
@@ -9586,7 +9586,7 @@
               "orderIndex": 2
             },
             {
-              "content": "\"3\"",
+              "content": "\"10\"",
               "explanation": "Los caracteres entre comillas representan texto y provocan el error CS0029.",
               "isCorrect": false,
               "orderIndex": 3
@@ -10390,32 +10390,32 @@
         {
           "id": "exercise_lesson_06_unique_choice_19",
           "type": "UNIQUE_CHOICE",
-          "instruction": "En un pseudocódigo con la condición `Si peso > 5 Entonces`, ¿qué ocurre cuando `peso` vale `5`?",
+          "instruction": "En la condición `Si horasLaboradas > 8 Entonces`, ¿qué ocurre cuando la variable vale `8`?",
           "answer": "",
           "xp": 50,
           "orderIndex": 19,
           "options": [
             {
               "content": "Ejecuta el bloque afirmativo del Entonces",
-              "explanation": "5 no es estrictamente mayor que 5, por lo que la condición resulta falsa.",
+              "explanation": "La condición evalúa si es estrictamente mayor; 8 no es mayor que 8, por lo que es falsa.",
               "isCorrect": false,
               "orderIndex": 1
             },
             {
-              "content": "Elimina la variable peso de la memoria RAM",
-              "explanation": "Evaluar una condición lógica solo lee la variable sin destruir su valor.",
+              "content": "Elimina la variable de horas de la memoria RAM",
+              "explanation": "Las decisiones condicionales no destruyen identificadores en la memoria.",
               "isCorrect": false,
               "orderIndex": 2
             },
             {
               "content": "Salta a la rama Sino o continúa tras FinSi",
-              "explanation": "Al evaluarse como falso `5 > 5`, el flujo omite el bloque del Entonces.",
+              "explanation": "Al resultar falsa la comparación estricta, el flujo pasa a la alternativa o sale del bloque.",
               "isCorrect": true,
               "orderIndex": 3
             },
             {
               "content": "Detiene el algoritmo con un error de sintaxis",
-              "explanation": "Comparar dos números iguales con `>` es una operación lógica 100% válida.",
+              "explanation": "La evaluación de condiciones falsas es un comportamiento natural de cualquier bifurcación.",
               "isCorrect": false,
               "orderIndex": 4
             }
@@ -10424,32 +10424,32 @@
         {
           "id": "exercise_lesson_06_unique_choice_20",
           "type": "UNIQUE_CHOICE",
-          "instruction": "¿Qué valor final toma `total` en esta prueba de escritorio?\n```c#\nFijar base = 40\nFijar extra = 3 * 8\nFijar total = base + extra\n```",
+          "instruction": "¿Qué valor final toma `total` en esta prueba de escritorio?\n```text\nFijar tarifaPlana = 30\nFijar recargoNoche = 2 * 10\nFijar total = tarifaPlana + recargoNoche\n```",
           "answer": "",
           "xp": 50,
           "orderIndex": 20,
           "options": [
             {
-              "content": "El valor numérico 43",
-              "explanation": "Resulta de olvidar multiplicar los 3 kilos adicionales por el factor 8.",
+              "content": "El valor numérico 32",
+              "explanation": "Cálculo erróneo que sumaría los dos factores en lugar de efectuar el producto.",
               "isCorrect": false,
               "orderIndex": 1
             },
             {
-              "content": "El valor numérico 48",
-              "explanation": "Suma únicamente un cargo de 8 sobre la base sin multiplicar por 3.",
+              "content": "El valor numérico 40",
+              "explanation": "Omitiría la multiplicación de los dos tramos del recargo nocturno fijado.",
               "isCorrect": false,
               "orderIndex": 2
             },
             {
-              "content": "El valor numérico 24",
-              "explanation": "24 corresponde solo a la variable `extra`, faltando sumar la `base` de 40.",
+              "content": "El valor numérico 20",
+              "explanation": "Ignoraría la tarifa plana de 30 soles establecida al arranque del cálculo.",
               "isCorrect": false,
               "orderIndex": 3
             },
             {
-              "content": "El valor numérico 64",
-              "explanation": "Calcula `extra = 24` y luego suma `40 + 24`, asignando 64 a `total`.",
+              "content": "El valor numérico 50",
+              "explanation": "Resultado exacto: 30 soles de tarifa base más 20 soles del recargo liquidado.",
               "isCorrect": true,
               "orderIndex": 4
             }
