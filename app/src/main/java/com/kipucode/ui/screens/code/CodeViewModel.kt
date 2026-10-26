@@ -3,6 +3,9 @@ package com.kipucode.ui.screens.code
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kipucode.domain.model.PracticeMethod
+import com.kipucode.domain.usecase.activity.CalculateProfileHeatmapUseCase
+import com.kipucode.domain.usecase.activity.GetActivityCalendarUseCase
+import com.kipucode.domain.usecase.activity.RefreshActivityCalendarUseCase
 import com.kipucode.domain.usecase.course.RefreshCoursesUseCase
 import com.kipucode.domain.usecase.exercise.GetCodePracticeAvailabilityUseCase
 import com.kipucode.domain.usecase.learning.RefreshLearningProgressUseCase
@@ -18,6 +21,9 @@ import javax.inject.Inject
 @HiltViewModel
 class CodeViewModel @Inject constructor(
     private val getCodePracticeAvailabilityUseCase: GetCodePracticeAvailabilityUseCase,
+    private val getActivityCalendarUseCase: GetActivityCalendarUseCase,
+    private val calculateProfileHeatmapUseCase: CalculateProfileHeatmapUseCase,
+    private val refreshActivityCalendarUseCase: RefreshActivityCalendarUseCase,
     private val refreshLearningProgressUseCase: RefreshLearningProgressUseCase,
     private val refreshCoursesUseCase: RefreshCoursesUseCase,
     private val refreshUserProgressUseCase: RefreshUserProgressUseCase
@@ -29,6 +35,7 @@ class CodeViewModel @Inject constructor(
     init {
         syncDataInBackground()
         observeAvailableExercises()
+        observeActivityHeatmap()
     }
 
     private fun observeAvailableExercises() {
@@ -46,6 +53,25 @@ class CodeViewModel @Inject constructor(
         }
     }
 
+    private fun observeActivityHeatmap() {
+        viewModelScope.launch {
+            getActivityCalendarUseCase().collect { activities ->
+                val heatmap = calculateProfileHeatmapUseCase(activities)
+                _uiState.update { state ->
+                    state.copy(
+                        heatmapData = HeatmapUiData(
+                            year = heatmap.year,
+                            totalActiveDays = heatmap.totalActiveDays,
+                            totalExercises = heatmap.totalExercises,
+                            totalXp = heatmap.totalXp,
+                            activityMap = heatmap.activityMap
+                        )
+                    )
+                }
+            }
+        }
+    }
+
     fun selectMethod(method: PracticeMethod) {
         _uiState.update { it.copy(selectedMethod = method) }
     }
@@ -55,6 +81,7 @@ class CodeViewModel @Inject constructor(
             refreshLearningProgressUseCase()
             refreshCoursesUseCase()
             refreshUserProgressUseCase()
+            refreshActivityCalendarUseCase()
         }
     }
 
@@ -65,6 +92,7 @@ class CodeViewModel @Inject constructor(
                 refreshLearningProgressUseCase()
                 refreshCoursesUseCase()
                 refreshUserProgressUseCase()
+                refreshActivityCalendarUseCase()
             } finally {
                 _uiState.update { it.copy(isRefreshing = false) }
             }

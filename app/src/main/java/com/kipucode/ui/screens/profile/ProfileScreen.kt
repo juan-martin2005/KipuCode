@@ -28,7 +28,6 @@ import com.kipucode.ui.components.cards.KipuDialog
 import com.kipucode.ui.screens.home.components.MultipleChoicesCard
 import com.kipucode.ui.screens.profile.components.UserProfileCard
 import com.kipucode.ui.navigation.ChangePasswordRoute
-import com.kipucode.ui.screens.profile.components.ActivityHeatmapCard
 import com.kipucode.ui.screens.profile.components.DayStatus
 import com.kipucode.ui.screens.profile.components.DayStreakUI
 import com.kipucode.ui.screens.profile.components.WeeklyStreak
@@ -72,7 +71,6 @@ fun ProfileScreen(
                 currentStreakDays = uiState.currentStreakDays,
                 weekDays = uiState.weekDays,
                 nextStreakText = uiState.nextStreakText,
-                heatmapData = uiState.heatmapData,
                 onLogoutClick = { showLogoutDialog = true },
                 onEditAvatar = { showAvatarList = true },
                 onChangePassword = { navController.navigate(ChangePasswordRoute) }
@@ -127,7 +125,6 @@ fun ProfileContent(
     currentStreakDays: Int,
     weekDays: List<DayStreakUI>,
     nextStreakText: String,
-    heatmapData: HeatmapUiData,
     onLogoutClick: () -> Unit,
     onEditAvatar: () -> Unit,
     onChangePassword: () -> Unit
@@ -175,17 +172,7 @@ fun ProfileContent(
             Spacer(modifier = Modifier.height(15.dp))
         }
 
-        // --- SECCIÓN 3: MAPA DE CALOR DE ACTIVIDAD ANUAL ---
-        item {
-            ActivityHeatmapCard(
-                heatmapData = heatmapData,
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(15.dp))
-        }
-
-        // --- SECCIÓN 4: OPCIONES ---
+        // --- SECCIÓN 3: OPCIONES ---
         item {
             MultipleChoicesCard(
                 text = stringResource(id = R.string.change_password),
@@ -229,7 +216,6 @@ private fun ProfileScreenPreview() {
                 DayStreakUI("D", DayStatus.PENDING)
             ),
             nextStreakText = "A solo 1 día de superar la racha",
-            heatmapData = HeatmapUiData(),
             onLogoutClick = {},
             onEditAvatar = {},
             onChangePassword = {}

@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.kipucode.R
 import com.kipucode.domain.model.DailyActivityDomain
-import com.kipucode.ui.screens.profile.HeatmapUiData
+import com.kipucode.ui.screens.code.HeatmapUiData
 import com.kipucode.ui.theme.*
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter

@@ -26,10 +26,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.kipucode.domain.model.PracticeMethod
-import com.kipucode.ui.components.navbar.KipuBottomBar
 import com.kipucode.ui.components.buttons.FilledButton
+import com.kipucode.ui.components.navbar.KipuBottomBar
 import com.kipucode.ui.navigation.ExerciseRoute
 import com.kipucode.ui.screens.code.components.PracticeCodeSelectorContent
+import com.kipucode.ui.screens.profile.components.ActivityHeatmapCard
 import com.kipucode.ui.theme.Gray
 import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuDarkBlue
@@ -57,6 +58,7 @@ fun CodeScreen(
                 selectedMethod = uiState.selectedMethod,
                 completeCodeCount = uiState.availability.completeCodeCount,
                 whatsOutputCount = uiState.availability.whatsOutputCount,
+                heatmapData = uiState.heatmapData,
                 onMethodSelected = { codeViewModel.selectMethod(it) },
                 onStartPractice = { method ->
                     navController.navigate(
@@ -76,6 +78,7 @@ fun CodeContent(
     selectedMethod: PracticeMethod,
     completeCodeCount: Int,
     whatsOutputCount: Int,
+    heatmapData: HeatmapUiData,
     onMethodSelected: (PracticeMethod) -> Unit,
     onStartPractice: (PracticeMethod) -> Unit,
     modifier: Modifier = Modifier
@@ -128,6 +131,14 @@ fun CodeContent(
                 if (isSelectedAvailable) onStartPractice(selectedMethod)
             },
             enabled = isSelectedAvailable,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Mapa de calor de actividad anual
+        ActivityHeatmapCard(
+            heatmapData = heatmapData,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 24.dp)
@@ -149,6 +160,7 @@ private fun CodeScreenPreview() {
                     selectedMethod = PracticeMethod.COMPLETE_CODE,
                     completeCodeCount = 1,
                     whatsOutputCount = 0,
+                    heatmapData = HeatmapUiData(),
                     onMethodSelected = {},
                     onStartPractice = {}
                 )

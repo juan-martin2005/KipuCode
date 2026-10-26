@@ -2,7 +2,6 @@ package com.kipucode.ui.screens.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kipucode.domain.usecase.activity.CalculateProfileHeatmapUseCase
 import com.kipucode.domain.usecase.activity.GetActivityCalendarUseCase
 import com.kipucode.domain.usecase.activity.RefreshActivityCalendarUseCase
 import com.kipucode.domain.usecase.auth.LogoutUseCase
@@ -30,7 +29,6 @@ class ProfileViewModel @Inject constructor(
     getUserProfileUseCase: GetUserProfileUseCase,
     getUserProgressUseCase: GetUserProgressUseCase,
     getActivityCalendarUseCase: GetActivityCalendarUseCase,
-    private val calculateProfileHeatmapUseCase: CalculateProfileHeatmapUseCase,
     private val calculateStreakUseCase: CalculateStreakUseCase,
     private val calculateWeeklyStreakSummaryUseCase: CalculateWeeklyStreakSummaryUseCase,
     private val updateUserAvatarUseCase: UpdateUserAvatarUseCase,
@@ -58,15 +56,6 @@ class ProfileViewModel @Inject constructor(
         _isUpdatingAvatar,
         _updateAvatarSuccess
     ) { (userProfile, progress, activities), isRefreshing, isUpdatingAvatar, updateAvatarSuccess ->
-        val heatmap = calculateProfileHeatmapUseCase(activities)
-        val heatmapUiData = HeatmapUiData(
-            year = heatmap.year,
-            totalActiveDays = heatmap.totalActiveDays,
-            totalExercises = heatmap.totalExercises,
-            totalXp = heatmap.totalXp,
-            activityMap = heatmap.activityMap
-        )
-
         val activeStreak = calculateStreakUseCase.calculateActiveStreak(
             lastCompletedMillis = progress?.completedAt,
             databaseStreak = progress?.streakDay ?: 0
@@ -99,7 +88,6 @@ class ProfileViewModel @Inject constructor(
             currentStreakDays = streakSummary.currentStreakDays,
             weekDays = weekDaysUi,
             nextStreakText = streakSummary.nextStreakText,
-            heatmapData = heatmapUiData,
             isUpdatingAvatar = isUpdatingAvatar,
             updateAvatarSuccess = updateAvatarSuccess
         )
