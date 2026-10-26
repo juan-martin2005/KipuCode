@@ -127,34 +127,46 @@ class PrioritizeExerciseSessionUseCase @Inject constructor() {
 
         val selectedList = if (isFlashcard) {
             val progressMap = learningProgressList.associateBy { it.exerciseId }
+            val endOfTodayMillis = java.time.LocalDate.now()
+                .atTime(java.time.LocalTime.MAX)
+                .atZone(java.time.ZoneId.systemDefault())
+                .toInstant()
+                .toEpochMilli()
+
             if (onlyDue) {
-                // Modo repaso: solo vencidas (dueDate <= currentTimeMillis y reps > 0)
+                // Modo repaso urgente: solo vencidas y del día de hoy (dueDate <= endOfTodayMillis y reps > 0)
                 typeFiltered.filter { ex ->
                     val isCard = ex.type in setOf("DEFAULT_FLASHCARDS", "FEYNMAN_FLASHCARDS", "FLASHCARD")
                     val p = progressMap[ex.id]
-                    isCard && p != null && p.reps > 0 && p.dueDate <= currentTimeMillis
+                    isCard && p != null && p.reps > 0 && p.dueDate <= endOfTodayMillis
                 }.sortedBy { progressMap[it.id]?.dueDate ?: 0L }
             } else {
-                // Modo normal de flashcards con priorización FSRS-6:
-                // 1. Vencidas (dueDate <= currentTimeMillis y reps > 0)
-                val dueCards = typeFiltered.filter { ex ->
+                // Modo lección normal con priorización inteligente:
+                // 1. Atrasadas de días anteriores (dueDate <= currentTimeMillis)
+                val overdueCards = typeFiltered.filter { ex ->
                     val p = progressMap[ex.id]
                     p != null && p.reps > 0 && p.dueDate <= currentTimeMillis
                 }.sortedBy { progressMap[it.id]?.dueDate ?: 0L }
 
-                // 2. Nuevas (sin registrar en FSRS o reps == 0)
+                // 2. Del día de hoy (currentTimeMillis < dueDate <= endOfTodayMillis)
+                val todayCards = typeFiltered.filter { ex ->
+                    val p = progressMap[ex.id]
+                    p != null && p.reps > 0 && p.dueDate > currentTimeMillis && p.dueDate <= endOfTodayMillis
+                }.sortedBy { progressMap[it.id]?.dueDate ?: 0L }
+
+                // 3. Nuevas (sin registrar en FSRS o reps == 0)
                 val newCards = typeFiltered.filter { ex ->
                     val p = progressMap[ex.id]
                     p == null || p.reps == 0
                 }.sortedBy { it.orderIndex }
 
-                // 3. Próximas / Al día (dueDate > currentTimeMillis) ordenadas por la más próxima a vencer
-                val upcomingCards = typeFiltered.filter { ex ->
+                // 4. Próximas de días futuros (dueDate > endOfTodayMillis)
+                val futureCards = typeFiltered.filter { ex ->
                     val p = progressMap[ex.id]
-                    p != null && p.reps > 0 && p.dueDate > currentTimeMillis
+                    p != null && p.reps > 0 && p.dueDate > endOfTodayMillis
                 }.sortedBy { progressMap[it.id]?.dueDate ?: Long.MAX_VALUE }
 
-                dueCards + newCards + upcomingCards
+                overdueCards + todayCards + newCards + futureCards
             }
         } else {
             // Modo ejercicios de código / no-flashcard (UNIQUE_CHOICE, COMPLETE_CODE, WHATS_OUTPUT, etc.)

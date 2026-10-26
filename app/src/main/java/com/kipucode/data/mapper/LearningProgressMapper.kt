@@ -57,6 +57,13 @@ fun LearningProgressEntity.toFsrsCard(): Card {
     }
     builder.state(stateEnum)
 
+    // FSRS requiere step != null para estados intradía (LEARNING y RELEARNING).
+    // Card.Builder omite inicializar step si state == RELEARNING dejándolo en null,
+    // lo que provocaba un NullPointerException interno en reviewCard() que abortaba el guardado en SQLite.
+    if (stateEnum == State.RELEARNING || stateEnum == State.LEARNING) {
+        builder.step(0)
+    }
+
     return builder.build()
 }
 // =========================================================================================

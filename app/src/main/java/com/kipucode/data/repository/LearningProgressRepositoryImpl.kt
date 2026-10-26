@@ -37,7 +37,12 @@ internal class LearningProgressRepositoryImpl @Inject constructor(
 
     override fun getDueExercises(): Flow<List<LearningProgressDomain>> {
         val currentUid = userRemoteDataSource.currentUserId ?: return flowOf(emptyList())
-        return learningProgressDao.getDueExercises(currentUid, System.currentTimeMillis())
+        val endOfTodayMillis = java.time.LocalDate.now()
+            .atTime(java.time.LocalTime.MAX)
+            .atZone(java.time.ZoneId.systemDefault())
+            .toInstant()
+            .toEpochMilli()
+        return learningProgressDao.getDueExercises(currentUid, endOfTodayMillis)
             .map { list -> list.map { it.toDomain() } }
     }
 

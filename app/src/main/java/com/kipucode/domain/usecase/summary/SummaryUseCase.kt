@@ -67,9 +67,9 @@ class CalculateSessionMetricsUseCase @Inject constructor() {
         val minutes = totalSeconds / 60
         val seconds = totalSeconds % 60
         return when {
-            minutes > 0 && seconds > 0 -> "$minutes min $seconds seg"
-            minutes > 0 -> "$minutes min"
-            else -> "$seconds seg"
+            minutes > 0 && seconds > 0 -> "${minutes}m ${seconds}s"
+            minutes > 0 -> "${minutes}m"
+            else -> "${seconds}s"
         }
     }
 }
