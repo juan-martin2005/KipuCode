@@ -42,6 +42,7 @@ import com.kipucode.ui.theme.Gray
 import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuDarkBlue
 import com.kipucode.ui.theme.Nunito
+import com.kipucode.ui.util.toCompactFormat
 import kotlinx.coroutines.delay
 import java.time.LocalTime
 import kotlin.time.Duration.Companion.milliseconds
@@ -136,7 +137,7 @@ fun HeadlineHome(
                 val iconRes = if (isShowingXp) R.drawable.ic_star else R.drawable.ic_fire
                 val iconTint = if (isShowingXp) Color(0xFFFFC107) else Color(0xFFFF5722)
 
-                val textValue = if (isShowingXp) userXp else userStreak
+                val textValue = if (isShowingXp) userXp.toCompactFormat() else "$userStreak"
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically
