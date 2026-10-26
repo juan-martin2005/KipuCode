@@ -156,11 +156,11 @@
 
 
     <!--FLash Cards -->
-    <string name="rating_question">¿Cómo sentiste la respuesta?</string>
+    <string name="rating_question">¿Cómo te fue al responder?</string>
+    <string name="rating_again">Otra vez</string>
+    <string name="rating_hard">Difícil</string>
     <string name="rating_good">Bien</string>
     <string name="rating_easy">Fácil</string>
-    <string name="rating_hard">Difícil</string>
-    <string name="rating_again">Mal</string>
 
 
 </resources>
