@@ -147,7 +147,7 @@ fun ForgotPasswordScreenContent(
                 label = stringResource(R.string.email),
                 value = email,
                 onValueChange = onEmailChange,
-                placeholder = "n00123456@upn.pe",
+                placeholder = "usuario@gmail.com",
                 iconRes = R.drawable.ic_mail,
                 keyboardType = KeyboardType.Email,
                 isError = emailError != null,

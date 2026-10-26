@@ -233,7 +233,7 @@ fun RegisterContent(
                     onClearEmailError()
                     onClearServerEmailError()
                 },
-                placeholder = "n00123456@upn.pe",
+                placeholder = "usuario@gmail.com",
                 iconRes = R.drawable.ic_mail,
                 keyboardType = KeyboardType.Email,
                 isError = emailErrorText != null,
