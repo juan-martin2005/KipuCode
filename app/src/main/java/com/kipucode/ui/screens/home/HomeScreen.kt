@@ -1,5 +1,14 @@
 package com.kipucode.ui.screens.home
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -166,8 +175,19 @@ fun HomeContent(
         }
 
         // --- SECCIÓN: REPASO URGENTE (FSRS-6) ---
-        if (hasDueReviews && !isUrgentReviewDismissed) {
-            item {
+        item {
+            AnimatedVisibility(
+                visible = hasDueReviews && !isUrgentReviewDismissed,
+                enter = fadeIn(animationSpec = tween(durationMillis = 250)) + expandVertically(
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioLowBouncy,
+                        stiffness = Spring.StiffnessLow
+                    )
+                ),
+                exit = fadeOut(animationSpec = tween(durationMillis = 200)) + shrinkVertically(
+                    animationSpec = tween(durationMillis = 350, easing = FastOutSlowInEasing)
+                )
+            ) {
                 UrgentReviewsCard(
                     onStartClick = onStartUrgentReviews,
                     onLaterClick = onDismissUrgentReviews,
