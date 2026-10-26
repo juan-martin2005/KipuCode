@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -53,7 +52,7 @@ fun FinalSummary(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(20.dp),
+            .padding(vertical = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(
@@ -98,8 +97,7 @@ fun FinalSummary(
         )
 
         Row(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             // Correctas
@@ -201,24 +199,27 @@ private fun StatPill(
     modifier: Modifier = Modifier,
     iconRes: Int? = null
 ) {
+    val countFontSize = if (count.length > 3) 14.sp else 17.sp
+
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            modifier = Modifier.padding(vertical = 4.dp),
             text = label,
             fontFamily = Nunito,
-            fontWeight = FontWeight.ExtraBold,
-            fontSize = 16.sp,
-            color = lerp(color, Color.Black, 0.2f)
+            fontWeight = FontWeight.Bold,
+            fontSize = 13.sp,
+            color = lerp(color, Color.Black, 0.25f),
+            maxLines = 1,
+            softWrap = false,
         )
 
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(color.copy(alpha = 0.05f), RoundedCornerShape(16.dp))
-                .padding(vertical = 12.dp),
+                .background(color.copy(alpha = 0.08f), RoundedCornerShape(14.dp))
+                .padding(vertical = 10.dp, horizontal = 4.dp),
             contentAlignment = Alignment.Center
         ) {
             Row(
@@ -230,21 +231,22 @@ private fun StatPill(
                         painter = painterResource(id = iconRes),
                         contentDescription = null,
                         tint = color,
-                        modifier = Modifier.size(21.dp)
+                        modifier = Modifier.size(16.dp)
                     )
                 }
                 Text(
                     text = count,
                     fontFamily = Nunito,
                     fontWeight = FontWeight.Black,
-                    fontSize = 18.sp,
-                    color = lerp(color, Color.Black, 0.2f)
+                    fontSize = countFontSize,
+                    color = lerp(color, Color.Black, 0.25f),
+                    maxLines = 1,
+                    softWrap = false
                 )
             }
         }
     }
 }
-
 
 @Preview(showBackground = true, backgroundColor = 0xFFF3F7FA, name = "FinalSummary")
 @Composable
@@ -255,7 +257,7 @@ private fun FinalSummaryPreview() {
             accuracy = 0.80f,
             correctCount = 8,
             reinforceCount = 2,
-            timeFormatted = "12m",
+            timeFormatted = "3m 12s",
             modifier = Modifier.padding(16.dp),
             summaryMessage = "¡Felicidades! Dominaste la mayoría de conceptos"
         )
