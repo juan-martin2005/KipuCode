@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 5,
   "course": {
     "id": "csharp_module_01",
     "title": "Fundamentos de .NET, Lógica y Diagramación",
@@ -3882,24 +3882,204 @@
     },
     {
       "id": "csharp_lesson_03",
-      "title": "Documentación y Comentarios Útiles en el Código",
+      "title": "El Compilador Roslyn y Diagnóstico de Errores",
       "orderIndex": 3,
       "xp": 400,
       "content": [
         {
           "type": "header",
-          "title": "03 - Documentación y Comentarios Útiles en el Código",
-          "objective": "Aprender el uso de comentarios de línea, bloque y documentación XML para facilitar el mantenimiento del software."
+          "title": "03 - El Compilador Roslyn y Diagnóstico de Errores",
+          "objective": "Comprender las **tres fases del compilador Roslyn** al procesar el código de `Program.cs`.\nAprender a diagnosticar **errores y advertencias** mediante `dotnet build` para corregir fallos sintácticos."
         },
         {
           "type": "concept",
-          "title": "Tipos de Comentarios en C#",
-          "text": "Los comentarios son ignorados por el compilador y sirven para explicar la intención del código. C# soporta comentarios de una línea (//), bloques multilínea (/* ... */) y documentación XML (///) que el IDE utiliza para generar ayuda contextual."
+          "title": "1. El Pipeline del Compilador Roslyn y sus Fases",
+          "text": "El compilador **Roslyn** es la infraestructura en **.NET** que transforma el código fuente del archivo `.cs` en un ensamblado. Comprender su arquitectura permite entender cómo C# valida sintaxis y semántica.\n\nEste pipeline está dividido en **tres fases secuenciales** que analizan el programa paso a paso sin saltar lógica en `.cs`. Cada etapa genera una representación intermedia necesaria para **Roslyn**."
+        },
+        {
+          "type": "subconcept",
+          "title": "1.1 El Análisis Sintáctico y el Árbol de Sintaxis",
+          "text": "El **Parser** procesa el texto plano de `Program.cs` carácter por carácter para verificar que cumpla la gramática oficial de **C#**.\n\nComo resultado, Roslyn construye un **árbol sintáctico** _(AST)_ que organiza cada token. Si detecta un símbolo no válido o falta de delimitadores, la compilación en `Program.cs` se detiene."
+        },
+        {
+          "type": "diagram",
+          "language": "text",
+          "code": "   Código .cs\n        │\n        ▼\nÁrbol Sintáctico\n        │\n        ▼\nTabla de Símbolos\n        │\n        ▼\n   Código CIL"
+        },
+        {
+          "type": "subconcept",
+          "title": "1.2 El Análisis Semántico y la Tabla de Símbolos",
+          "text": "El **Binder** asigna significado semántico a cada nodo del árbol sintáctico en `Program.cs` y crea una **tabla de símbolos** para vincular identificadores con su tipo.\n\nEn esta fase, **Roslyn** confirma que métodos como `Console.WriteLine` existan y valida las reglas de **asignación definitiva** para asegurar la coherencia de tipos."
+        },
+        {
+          "type": "subconcept",
+          "title": "1.3 Emisión de Código Intermedio IL",
+          "text": "En la etapa final de **Emisión**, el compilador traduce el árbol validado a código **CIL** _(Common Intermediate Language)_. Este formato en `.dll` es independiente de la CPU.\n\nEl resultado se guarda en el ejecutable `.dll` dentro de `bin/`. Posteriormente, la máquina virtual del **CLR** traducirá este código a instrucciones nativas."
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "dotnet build",
+          "output": "Build succeeded.\n    0 Warning(s)\n    0 Error(s)"
+        },
+        {
+          "type": "fact",
+          "question": "¿Sabías que Roslyn está escrito en el propio lenguaje C# y es de código abierto?",
+          "answer": "En sus primeras versiones, el compilador de C# estaba programado en **C++**. Microsoft rediseñó todo el sistema utilizando el propio lenguaje C# bajo el proyecto **Roslyn**. Esto permite a cualquier desarrollador inspeccionar su **código fuente** en GitHub y crear **analizadores estáticos** personalizados para el IDE."
+        },
+        {
+          "type": "cue",
+          "question": "¿Qué función cumple la fase de emisión dentro del pipeline del compilador Roslyn?",
+          "answer": "La **fase de emisión** toma el árbol sintáctico decorado con información semántica y genera las instrucciones de **código intermedio CIL** dentro del archivo ejecutable `.dll`. Este resultado permite que sea procesado por la máquina virtual del **runtime de .NET**."
+        },
+        {
+          "type": "concept",
+          "title": "2. Diagnóstico: Errores, Advertencias y Excepciones",
+          "text": "Al desarrollar aplicaciones en **C#**, el sistema de compilación y el entorno emiten avisos de **diagnóstico** en `Program.cs`. Es esencial diferenciar entre alertas de compilación y fallos en ejecución.\n\nCada tipo de aviso cumple un propósito específico para mantener la calidad y estabilidad del **código fuente**. Aprender a interpretar estas señales facilita una depuración estructurada en la **CLI** con `dotnet`."
+        },
+        {
+          "type": "subconcept",
+          "title": "2.1 Errores de Compilador: Bloqueos del Parser",
+          "text": "Un **error de compilación** ocurre cuando el código viola las reglas de sintaxis o tipos en **C#**. Roslyn detiene el proceso y no produce el archivo `.dll` hasta corregir la falla.\n\nEstos **mensajes de error** indican la palabra `Error` en consola al ejecutar `dotnet build` e impiden traducir `Program.cs` a código válido."
+        },
+        {
+          "type": "subconcept",
+          "title": "2.2 Advertencias de Compilación: Avisos Preventivos",
+          "text": "Una **advertencia** es un aviso donde Roslyn detecta un patrón sospechoso en `Program.cs` pero técnicamente válido. A diferencia de los errores, la compilación continúa y genera el ejecutable `.dll`.\n\nUn ejemplo común aparece al declarar variables de **referencia** que podrían contener valores `null`. Conviene corregirlas en `Program.cs`."
+        },
+        {
+          "type": "subconcept",
+          "title": "2.3 Excepciones en Tiempo de Ejecución",
+          "text": "Una **excepción** es un fallo impredecible que ocurre mientras la aplicación en `Program.cs` está en **ejecución**, al solicitar una operación inválida al **CLR**.\n\nUn caso típico es intentar abrir un archivo inexistente mediante la clase `StreamReader` en `Program.cs`. Este tipo de fallos no puede ser detectado en **compilación**."
+        },
+        {
+          "type": "cue",
+          "question": "¿Cuál es la diferencia entre una advertencia de compilación y una excepción de ejecución?",
+          "answer": "Una **advertencia** es un aviso preventivo emitido por Roslyn durante la compilación que no impide generar el ensamblado `.dll`. En cambio, una **excepción** es un fallo imprevisto que interrumpe la ejecución del programa cuando el **CLR** realiza una operación inválida."
+        },
+        {
+          "type": "concept",
+          "title": "3. Anatomía de los Mensajes de Error en la Consola",
+          "text": "Cuando la compilación detecta fallos, la terminal muestra **mensajes estructurados** con datos técnicos. Entender cada segmento del reporte permite localizar rápidamente el problema en `Program.cs`.\n\nLa herramienta de línea de comandos `dotnet build` estandariza la salida para facilitar su lectura. Cada reporte contiene la ubicación precisa y una descripción formal de la **anomalía**."
+        },
+        {
+          "type": "subconcept",
+          "title": "3.1 Identificación de Archivo, Línea y Columna",
+          "text": "El reporte de consola inicia mostrando la **ruta del archivo** con extensión `.cs`. Inmediatamente después figuran dos números con la coordenada `(12,15)`.\n\nEl primer número señala la **línea exacta** del archivo y el segundo indica la **columna** del carácter, orientando la posición del cursor en `VS Code`."
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Program.cs(12,15): error CS1002: ; expected"
+        },
+        {
+          "type": "subconcept",
+          "title": "3.2 El Código de Diagnóstico CS y su Significado",
+          "text": "Cada mensaje incluye un **código alfanumérico** compuesto por el prefijo `CS` y cuatro dígitos. Este identificador clasifica el tipo de error detectado por el compilador **Roslyn**.\n\nAl consultar el código `CS1002` en la documentación oficial, el desarrollador encuentra la **solución** junto a un texto explicativo sobre el archivo `Program.cs`."
+        },
+        {
+          "type": "fact",
+          "question": "¿Sabías que el prefijo CS en los mensajes de error significa C-Sharp?",
+          "answer": "Los códigos de diagnóstico de **.NET** utilizan prefijos de dos letras para identificar su origen. Mientras que el compilador de C# utiliza el prefijo **CS** en errores como `CS1002`, los analizadores de código estático del SDK utilizan el prefijo **CA** para advertencias de calidad y diseño."
+        },
+        {
+          "type": "cue",
+          "question": "¿Qué indican los números entre paréntesis en un mensaje de error como Program.cs(10,5)?",
+          "answer": "Indican las **coordenadas precisas** dentro del archivo de código fuente `.cs`. El primer valor `10` representa el **número de línea** y el segundo valor `5` señala la **columna exacta** donde el compilador detectó la falla."
+        },
+        {
+          "type": "concept",
+          "title": "4. Los Códigos de Error Frecuentes en C#",
+          "text": "Al comenzar a escribir programas en **C#**, es habitual encontrarse con un grupo de **errores sintácticos**. Conocer estos códigos acelera la corrección de fallos en el archivo `Program.cs`.\n\nRoslyn aplica reglas estrictas de **tipado estático** y gramática para prevenir fallos en producción. A continuación, analizamos los códigos más comunes reportados por la **CLI** `dotnet`."
+        },
+        {
+          "type": "subconcept",
+          "title": "4.1 Error CS1002: Falta Punto y Coma",
+          "text": "El código **CS1002** señala la omisión del punto y coma al final de una **instrucción**. En C#, cada sentencia ejecutatoria debe finalizar obligatoriamente con el delimitador `;`.\n\nSi el **parser** no encuentra este signo al terminar la línea, se produce una ruptura gramatical. Se soluciona colocando el punto y coma correspondiente en el archivo `Program.cs`."
+        },
+        {
+          "type": "subconcept",
+          "title": "4.2 Error CS0165: Variable Local No Asignada",
+          "text": "El diagnóstico **CS0165** aparece al intentar leer una variable no inicializada en `Program.cs`. C# exige la regla de **asignación definitiva** antes de permitir el acceso a memoria.\n\nPor ejemplo, declarar `int total;` e invocar `Console.WriteLine(total)` provocará este **error**. Se resuelve asignando un valor como `int total = 0;` en `Program.cs`."
+        },
+        {
+          "type": "subconcept",
+          "title": "4.3 Errores CS0029 y CS0103: Tipos e Identificadores",
+          "text": "El código **CS0029** ocurre al intentar realizar una conversión implícita entre tipos **incompatibles**. Sucede, por ejemplo, al asignar un valor de tipo `string` a una variable `int`.\n\nPor otro lado, el error **CS0103** indica que un nombre de variable no existe en el **contexto actual**. Ocurre habitualmente por errores tipográficos o por olvidar el `using`."
+        },
+        {
+          "type": "fact",
+          "question": "¿Sabías que el error CS0165 evita que leas basura de la memoria en tu programa?",
+          "answer": "A diferencia de lenguajes como **C++**, donde leer una variable no inicializada devuelve datos residuales de la memoria RAM, C# implementa la regla de **asignación definitiva** mediante el error `CS0165` para garantizar la **seguridad de tipos** y evitar comportamientos impredecibles."
+        },
+        {
+          "type": "cue",
+          "question": "¿Por qué el compilador emite el error CS0029 al guardar texto en una variable numérica?",
+          "answer": "El error `CS0029` se emite porque C# es un lenguaje de **tipado estático estricto** que prohíbe conversiones implícitas entre tipos no compatibles como `string` e `int`. El compilador exige que los **tipos coincidan** o que se aplique una **conversión explícita**."
+        },
+        {
+          "type": "concept",
+          "title": "5. Comprobación Práctica Guiada: Depurando un Programa",
+          "text": "A continuación, realizaremos un ejercicio práctico para corregir un programa con **errores de compilación**. Usaremos la terminal interactiva con la herramienta de la **CLI** `dotnet`.\n\nEsta guía paso a paso te permitirá experimentar el flujo de trabajo de un **desarrollador .NET** profesional. Aprenderás a interpretar el reporte y aplicar correcciones en `Program.cs`."
+        },
+        {
+          "type": "subconcept",
+          "title": "Paso 1: Inspeccionar el Código Con Errores",
+          "text": "Abre tu editor y examina el archivo `Program.cs` dentro del proyecto creado previamente. Reemplaza todo su contenido por el siguiente bloque con un **fallo sintáctico** en `mensaje`.\n\nEn este **código de prueba** hemos omitido intencionadamente el punto y coma al declarar la variable `mensaje`. Este fallo impedirá que la compilación genere el ejecutable `.dll`."
         },
         {
           "type": "code",
           "language": "c#",
-          "code": "// Comentario de una línea\n/* Comentario\n   de bloque */\n/// <summary>Calcula una suma simple</summary>\nint total = 3 + 4;"
+          "code": "using System;\nstring mensaje = \"Hola KipuCode\"\nConsole.WriteLine(mensaje);"
+        },
+        {
+          "type": "subconcept",
+          "title": "Paso 2: Ejecutar el Comando de Compilación",
+          "text": "Abre la terminal integrada en tu entorno y ejecuta el **comando** `dotnet build`. Observa cómo el proceso se interrumpe reportando la omisión del delimitador en `Program.cs`.\n\nEl **reporte de consola** señala la coordenada `(3,30)` con el código `CS1002`, confirmando que Roslyn esperaba un punto y coma al final de la línea."
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "dotnet build",
+          "output": "Program.cs(3,30): error CS1002: ; expected\nBuild FAILED."
+        },
+        {
+          "type": "subconcept",
+          "title": "Paso 3: Corregir el Error CS1002 y Recompilar",
+          "text": "Edita el archivo `Program.cs` y añade el punto y coma al final de la declaración de `mensaje`. Guarda los cambios en el disco y ejecuta de nuevo el **comando** `dotnet build`.\n\nAl agregar el **delimitador** `;`, el parser puede completar el análisis sintáctico sin detenerse. Roslyn procesa el archivo sin detectar anomalías y genera con éxito el ensamblado `.dll`."
+        },
+        {
+          "type": "code",
+          "language": "c#",
+          "code": "using System;\nstring mensaje = \"Hola KipuCode\";\nConsole.WriteLine(mensaje);"
+        },
+        {
+          "type": "subconcept",
+          "title": "Paso 4: Validar la Ejecución Exitosa",
+          "text": "Una vez corregido el problema sintáctico, ejecuta la aplicación mediante el **comando** `dotnet run`. Comprueba que el valor de la variable `mensaje` se imprime correctamente en la pantalla.\n\nLa salida en consola confirma que el programa compiló y se ejecutó sin **excepciones** no controladas en `Program.cs`. Has completado con éxito la depuración en **.NET**."
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "dotnet run",
+          "output": "Hola KipuCode"
+        },
+        {
+          "type": "cue",
+          "question": "¿Cuál es la mejor estrategia ante múltiples errores al ejecutar dotnet build?",
+          "answer": "La mejor estrategia es corregir únicamente el **primer error reportado** en la lista y volver a compilar con `dotnet build`. Con frecuencia, un solo **fallo de sintaxis** desencadena múltiples **errores secundarios falsos**."
+        },
+        {
+          "type": "summary",
+          "items": [
+            "El **compilador Roslyn** procesa el código C# en tres fases: sintaxis, semántica y emisión de código `CIL`.",
+            "Los **errores de compilación** bloquean la generación del ejecutable `.dll` al compilar el proyecto con `dotnet build`.",
+            "Las **advertencias** señalan código sospechoso pero permiten generar la aplicación en la **CLI** `dotnet`.",
+            "Las **excepciones** son fallos que ocurren en tiempo de ejecución gestionados por la máquina virtual del **CLR**.",
+            "Las coordenadas `(línea,columna)` señalan la posición exacta del fallo sintáctico dentro del archivo `Program.cs`.",
+            "El código de error **CS1002** indica la falta del punto y coma obligatorio al finalizar una **instrucción** en C#.",
+            "El código **CS0165** evita leer variables locales no inicializadas garantizando la **seguridad de tipos**."
+          ]
         }
       ],
       "exercises": [
@@ -11506,92 +11686,92 @@
         {
           "type": "header",
           "title": "07 - Diagramas de Flujo Textuales y Representación Lógica",
-          "objective": "Transforma la lógica de **pseudocódigo** en **diagramas de flujo verticales** mediante simbología estándar.\nAprende a trazar **rutas de ejecución** y verificar condiciones límite para diseñar software en **.NET**."
+          "objective": "Aprende a transformar pseudocódigo en **diagramas de flujo textuales** para visualizar decisiones algorítmicas.\nDiseña esquemas verticales y traza rutas de ejecución antes de programar en `C#` dentro de **.NET**."
         },
         {
           "type": "concept",
           "title": "1. De Pseudocódigo a Diagramas Visuales",
-          "text": "Transformar instrucciones textuales en **diagramas de flujo** facilita la comprensión de la **lógica secuencial** antes de programar en `C#`.\n\nEl uso de representaciones gráficas permite visualizar el camino de los datos. En **.NET**, dominar la **anatomía visual** ayuda a detectar fallos en el **control de flujo** antes de compilar en `.csproj`."
+          "text": "Transformar instrucciones de pseudocódigo en **diagramas de flujo** facilita la comprensión de la **lógica secuencial** antes de programar en `C#`.\n\nVisualizar el camino de los datos ayuda a detectar errores en el **control de flujo** y comprender la **anatomía visual** del sistema antes de compilar archivos `.csproj` en **.NET**."
         },
         {
           "type": "subconcept",
           "title": "1.1 Complementariedad con el Pseudocódigo",
-          "text": "El pseudocódigo describe soluciones con texto, mientras que los **diagramas de flujo** ofrecen una vista espacial para reforzar el **razonamiento lógico** en archivos `.cs`.\n\nConvertir sentencias en figuras permite identificar **rutas ciegas** o pasos innecesarios, facilitando el desarrollo de **algoritmos limpios** antes de codificar sentencias `if`."
+          "text": "El pseudocódigo describe la solución con texto, mientras que los **diagramas de flujo** ofrecen una vista espacial que refuerza el **razonamiento lógico** al crear archivos `.cs`.\n\nConvertir cada sentencia en una figura revela **rutas ciegas** o pasos redundantes, impulsando el desarrollo de **algoritmos limpios** antes de codificar sentencias `if`."
         },
         {
           "type": "subconcept",
           "title": "1.2 Del Texto a la Representación Gráfica",
-          "text": "Traducir texto a esquemas gráficos descompone problemas en acciones atómicas, fomentando una **abstracción estructurada** para comprender la **secuencia de ejecución**.\n\nMientras el texto exige memorizar variables, el gráfico plasma la **representación visual** directamente, acelerando el diseño de **soluciones robustas** en herramientas como `VS Code`."
+          "text": "Traducir texto a gráficos requiere descomponer el problema en acciones atómicas. Este proceso fomenta una **abstracción estructurada** para comprender la **secuencia de ejecución** sin depender de la sintaxis.\n\nEl esquema proyecta la **representación visual** en tu mente sin saturar la memoria, acelerando el diseño de **soluciones robustas** en `VS Code`."
         },
         {
           "type": "subconcept",
           "title": "1.3 Beneficios en la Lógica Móvil",
-          "text": "Los **diagramas ASCII** se adaptan al formato vertical de smartphones, garantizando una **lectura fluida** en pantallas compactas sin perder detalle arquitectónico.\n\nRespetar restricciones de ancho móvil ejercita la **concisión técnica**, preparándote para escribir métodos breves en `C#` bajo principios de **código limpio**."
+          "text": "Diseñar para pantallas móviles exige esquemas compactos. Los **diagramas ASCII** se adaptan al formato vertical, garantizando una **lectura fluida** sin perder detalle arquitectónico.\n\nAjustarse a las restricciones de 360dp ejercita la **concisión técnica**, preparándote para escribir métodos pequeños en `C#` bajo principios de **código limpio**."
         },
         {
           "type": "fact",
           "question": "¿Sabías que los diagramas de flujo surgieron hace más de un siglo?",
-          "answer": "**Frank Gilbreth** presentó los primeros diagramas de flujo de procesos en **1921** ante ingenieros mecánicos. Décadas después, pioneros de la computación adaptaron esta **herramienta gráfica** para estructurar y diseñar los **primeros programas de ordenador** de la historia."
+          "answer": "Frank Gilbreth presentó los primeros **diagramas de flujo de procesos** en 1921 ante la Sociedad de Ingenieros Mecánicos. Décadas después, pioneros de la computación adaptaron esta herramienta gráfica para diseñar los **primeros programas de ordenador** de la historia."
         },
         {
           "type": "cue",
-          "question": "¿Por qué los diagramas de flujo complementan al pseudocódigo?",
-          "answer": "Transforman instrucciones textuales en una **representación visual directa**, permitiendo identificar con rapidez **ramificaciones**, **ciclos** y **rutas lógicas** sin necesidad de rastrear mentalmente la sintaxis del código."
+          "question": "¿Por qué los diagramas de flujo complementan al pseudocódigo en el análisis de algoritmos?",
+          "answer": "Transforman las instrucciones en una **representación visual directa**, permitiendo identificar de inmediato **ramificaciones, ciclos y rutas lógicas** sin necesidad de rastrear mentalmente la sintaxis de cada sentencia."
         },
         {
           "type": "concept",
           "title": "2. Simbología Estándar en Formato Textual",
-          "text": "Utilizar una **simbología estándar** basada en normas internacionales garantiza que cualquier desarrollador interprete el esquema y su **equivalencia textual** en consola.\n\nCada figura cumple un rol específico para entradas, evaluaciones o transformaciones. Dominar este **vocabulario gráfico** resulta clave para traducir lógica a código funcional en `C#`."
+          "text": "Para que un esquema sea comprensible, utilizamos una **simbología estándar** basada en normas ISO y su **equivalencia textual** en consolas.\n\nCada figura cumple un rol representando entradas, transformaciones o evaluaciones. Dominar este **vocabulario gráfico** es fundamental para traducir la lógica en código funcional de `C#`."
         },
         {
           "type": "subconcept",
           "title": "2.1 Bloques de Inicio y Fin",
-          "text": "El símbolo de **terminal** delimita las fronteras del algoritmo: inicia con un bloque de **inicio** y concluye con uno de **fin**, asegurando su finitud.\n\nEn formato textual usamos corchetes o elipses para delimitar un **punto de entrada** claro, evitando la **ejecución huérfana** al compilar en `dotnet`."
+          "text": "El símbolo de **terminal** delimita las fronteras del algoritmo: debe iniciar con un bloque de **inicio** y concluir con uno de **fin** para asegurar la finitud.\n\nEn formato textual usamos elipses o corchetes que garantizan un **punto de entrada** claro y previenen la **ejecución huérfana** al compilar en `dotnet`."
         },
         {
           "type": "subconcept",
           "title": "2.2 Bloques de Entrada y Salida",
-          "text": "Los bloques de **entrada y salida** modelan interacción externa, indicando lecturas como `ReadLine` o impresiones en pantalla mediante paralelogramos.\n\nEn esquemas ASCII móviles se identifican con la etiqueta `[E/S]` o barras inclinadas, reconociendo fácilmente la **lectura de datos** y la **presentación de resultados**."
+          "text": "Los bloques de **entrada y salida** representan la interacción con el usuario, como la captura con `ReadLine` o el envío de datos a pantalla.\n\nEn esquemas ASCII móviles se identifican con la etiqueta `[E/S]` o barras inclinadas, señalando dónde ocurre la **lectura de datos** y la **presentación de resultados**."
         },
         {
           "type": "subconcept",
           "title": "2.3 Bloques de Proceso y Decisión",
-          "text": "El bloque de **proceso** usa un rectángulo para asignaciones o cálculos. Por su parte, el rombo de **decisión** evalúa una condición booleana produciendo verdadero o falso.\n\nAmbas figuras forman el núcleo de la **lógica algorítmica**: el proceso modifica variables y la decisión altera la **ruta de ejecución**, equivaliendo a un `if` real."
+          "text": "El bloque de **proceso** usa rectángulos para expresar cálculos o asignaciones, mientras que el rombo de **decisión** evalúa una condición booleana.\n\nAmbas figuras forman el núcleo de la **lógica algorítmica**: el proceso modifica variables y la decisión altera la **ruta de ejecución**, equivalente a un `if` en código real."
         },
         {
-          "type": "code",
+          "type": "diagram",
           "language": "text",
           "code": "┌────────────────────────┐\n│     [Inicio / Fin]     │\n├────────────────────────┤\n│    / Entrada/Salida /  │\n├────────────────────────┤\n│    [   Proceso    ]    │\n├────────────────────────┤\n│   <   Decisión   >     │\n└────────────────────────┘"
         },
         {
           "type": "fact",
           "question": "¿Sabías que la norma ISO 5807 estandarizó la simbología de diagramación?",
-          "answer": "En 1985, la Organización Internacional de Normalización _(ISO)_ definió oficialmente los símbolos para **diagramas de datos** y algoritmos. Gracias a este **estándar global**, un esquema dibujado en cualquier parte del mundo es comprendido al instante por programadores en toda **Latinoamérica**."
+          "answer": "En 1985, la **Organización Internacional de Normalización** _(ISO)_ definió oficialmente los símbolos estándar para diagramas de datos y algoritmos. Gracias a esta norma global, un esquema diseñado en cualquier país puede ser interpretado sin ambigüedades."
         },
         {
           "type": "cue",
-          "question": "¿Cuál es la diferencia entre un bloque de proceso y uno de decisión?",
-          "answer": "Un **bloque de proceso** ejecuta una acción directa como asignaciones o cálculos, mientras que un **bloque de decisión** evalúa una condición booleana que bifurca la **ruta del flujo** en dos ramas según el resultado obtenido."
+          "question": "¿Cuál es la diferencia fundamental entre un bloque de proceso y uno de decisión?",
+          "answer": "Un bloque de **proceso** ejecuta una acción directa como una asignación o cálculo matemático, mientras que uno de **decisión** evalúa una condición booleana que bifurca el flujo del programa en dos ramas posibles."
         },
         {
           "type": "concept",
           "title": "3. Construcción de Diagramas Verticales ASCII",
-          "text": "La diagramación horizontal dificulta la lectura en móviles. Diseñar **diagramas ASCII** alineados verticalmente optimiza el espacio y ofrece una visualización limpia.\n\nUsar caracteres de texto permite integrar esquemas en la documentación y comentarios de `C#`, mejorando la **legibilidad técnica** sin herramientas gráficas externas."
+          "text": "La diagramación tradicional horizontal dificulta la lectura en teléfonos móviles. Aquí aprenderás a construir **diagramas ASCII** alineados verticalmente de forma limpia.\n\nDibujar flujos con caracteres de texto permite incluir esquemas en documentación o comentarios de `C#`, mejorando la **legibilidad técnica** sin herramientas externas."
         },
         {
           "type": "subconcept",
           "title": "3.1 Estructura del Flujo Vertical",
-          "text": "La estructura vertical organiza instrucciones de arriba hacia abajo siguiendo la **secuencia natural** de ejecución, adaptándose al desplazamiento en **dispositivos móviles**.\n\nLos elementos se conectan con líneas `│` y flechas `▼` alineadas en una columna central, evitando la **desviación visual** y facilitando el rastreo de datos."
+          "text": "La estructura vertical organiza las instrucciones de arriba hacia abajo siguiendo la **secuencia natural** de ejecución en **dispositivos móviles**.\n\nLos elementos se conectan con líneas `│` y flechas `▼` alineadas en una columna central uniforme, evitando la **desviación visual** y permitiendo rastrear el flujo de forma precisa."
         },
         {
           "type": "subconcept",
           "title": "3.2 Manejo de Ramificaciones Sí y No",
-          "text": "Al llegar a una decisión, el flujo se divide: la **rama afirmativa** continúa hacia abajo y la **rama negativa** se desplaza hacia un lateral con claridad.\n\nEtiquetar bifurcaciones con `[Sí]` y `[No]` en menos de 26 caracteres previene el **desbordamiento de texto** en pantallas y consolas de smartphones."
+          "text": "Al llegar a una decisión, la secuencia se divide: la **rama afirmativa** continúa hacia abajo y la **rama negativa** se desplaza lateralmente.\n\nPara respetar el límite de 26 caracteres, etiquetamos las bifurcaciones con `[Sí]` y `[No]`. Esta convención evita el **desbordamiento de texto** en pantallas de smartphones."
         },
         {
           "type": "subconcept",
           "title": "3.3 Conectores y Flechas Textuales",
-          "text": "Los conectores permiten que ramas divergentes se reúnan en un único punto, usando símbolos que aseguran una **confluencia ordenada** de rutas lógicas.\n\nAsegurar que cada flecha apunte a una figura válida evita la **ambigüedad gráfica**, facilitando la traducción directa del diagrama a bloques de código en `C#`."
+          "text": "Los conectores reúnen las ramas divergentes en un único punto antes de continuar. Utilizar símbolos como `┼` asegura una **confluencia ordenada** de las rutas.\n\nCada flecha debe apuntar hacia una figura válida; un conector mal colocado introduce **ambigüedad gráfica** al traducir el diagrama a código en `C#`."
         },
         {
           "type": "diagram",
@@ -11600,48 +11780,48 @@
         },
         {
           "type": "cue",
-          "question": "¿Cómo se logra que un diagrama ASCII sea legible en móviles de 360dp?",
-          "answer": "Se logra estructurando el flujo en una **columna vertical central**, empleando conectores compactos como corchetes y **flechas alineadas**, y limitando el ancho para evitar el **desplazamiento horizontal** en la pantalla móvil."
+          "question": "¿Cómo se logra que un diagrama de flujo ASCII sea legible en pantallas móviles de 360dp?",
+          "answer": "Se logra estructurando el flujo en una **columna vertical central**, usando conectores compactos con flechas alineadas y manteniendo un **ancho máximo estricto** para evitar el desplazamiento horizontal en la pantalla."
         },
         {
           "type": "concept",
           "title": "4. Trazado y Verificación de Rutas Lógicas",
-          "text": "Validar el funcionamiento del diagrama es indispensable. El **trazado de rutas** permite recorrer mentalmente o en papel cada camino posible para verificar su exactitud.\n\nEsta comprobación asegura que las entradas generen resultados esperados. Dicho proceso de **prueba lógica** equivale al rastreo paso a paso en el depurador de `Visual Studio`."
+          "text": "Construir el diagrama es solo la primera mitad del trabajo; la segunda consiste en validar su lógica. El **trazado de rutas** permite recorrer mentalmente cada camino posible para garantizar su exactitud.\n\nVerificar el esquema asegura que las entradas generen los resultados correctos. Esta **prueba lógica** equivale a rastrear variables en el depurador de `Visual Studio`."
         },
         {
           "type": "subconcept",
           "title": "4.1 Identificación de Rutas de Ejecución",
-          "text": "Una ruta de ejecución es la secuencia continua desde el **inicio** hasta el **fin**. Los esquemas con decisiones poseen múltiples **caminos independientes** a validar.\n\nRastrear cada camino verifica que ninguna rama quede abierta, evitando **estados indeterminados** al ejecutar las instrucciones en `C#`."
+          "text": "Una ruta de ejecución es la secuencia de bloques desde el **inicio** hasta el **fin**. Todo diagrama con decisiones contiene múltiples **caminos independientes** que deben verificarse.\n\nRastrear cada camino confirma que ninguna bifurcación quede inconclusa, evitando **estados indeterminados** al ejecutar código en `C#`."
         },
         {
           "type": "subconcept",
           "title": "4.2 Evaluación de Condiciones Extremas",
-          "text": "Evaluar valores límite como ceros, negativos o cadenas vacías valida la **solidez algorítmica** ante entradas inesperadas del usuario.\n\nProbar cuando una variable alcanza el valor exacto de comparación revela **errores de frontera**, previniendo fallos lógicos en la plataforma **.NET**."
+          "text": "Las condiciones extremas prueban el diagrama en los límites de los datos. Evaluar valores como cero o negativos valida la **solidez algorítmica** ante entradas inesperadas.\n\nSi una decisión evalúa `x > 0`, debes probar con `x` en cero. Este rigor descubre **errores de frontera**, previniendo fallos que generarían excepciones en **.NET**."
         },
         {
           "type": "subconcept",
           "title": "4.3 Detección de Lazos Infinitos",
-          "text": "Al incluir un retorno para repetir instrucciones, verificar la **condición de salida** asegura que la repetición concluya en pasos finitos.\n\nSi la variable de control no cambia, el diagrama genera un **ciclo sin fin**. Identificarlo en el diseño previene bloqueos en la terminal."
+          "text": "Cuando un flujo incluye un retorno para repetir instrucciones, se forma un ciclo. Verificar la **condición de salida** asegura que la repetición concluya tras pasos finitos.\n\nSi la variable de control no cambia dentro del bucle, el diagrama cae en un **ciclo sin fin**. Detectar este error ahorra horas de depuración en consola."
         },
         {
           "type": "fact",
-          "question": "¿Sabías que el término bug informático se popularizó con una polilla real?",
-          "answer": "En 1947, operadores de la computadora **Harvard Mark II** hallaron una polilla atrapada en un relé que provocaba fallos. La pionera **Grace Hopper** pegó el insecto en su bitácora, documentándolo como el primer **bug real** y popularizando el concepto de **depuración** en informática."
+          "question": "¿Sabías que el término \"bug\" informático se popularizó al encontrar una polilla real?",
+          "answer": "En 1947, los operadores de la computadora Harvard Mark II hallaron una polilla atrapada en un relé que provocaba fallos. **Grace Hopper** pegó el insecto en la bitácora, registrándolo como el **primer \"bug\" real** detectado en la historia de la informática."
         },
         {
           "type": "cue",
-          "question": "¿En qué consiste el trazado de rutas lógicas en un diagrama?",
-          "answer": "Consiste en seguir manualmente la **secuencia de instrucciones** desde el inicio hasta el fin, evaluando cada **camino condicional** para verificar que el algoritmo responda con exactitud ante cualquier combinación de **datos de entrada**."
+          "question": "¿En qué consiste el proceso de trazado de rutas lógicas en un diagrama de flujo?",
+          "answer": "Consiste en seguir manualmente la **secuencia de instrucciones** desde el inicio hasta el fin evaluando los caminos posibles según las condiciones, para verificar que el algoritmo responda con **exactitud lógica** ante cualquier combinación de datos."
         },
         {
           "type": "concept",
           "title": "5. Comprobación Práctica: Conversión Paso a Paso",
-          "text": "A través de este ejercicio guiado convertirás un pseudocódigo de validación en un **diagrama de flujo ASCII** completo y verificado paso a paso.\n\nComprender la transición entre descripción verbal y **representación gráfica** consolida tus competencias en **diseño de software** para la plataforma **.NET**."
+          "text": "Pondremos a prueba lo aprendido mediante un ejercicio guiado: convertirás un pseudocódigo de validación de acceso en un **diagrama de flujo ASCII** completo y verificado paso a paso.\n\nEsta metodología ilustra la transición entre la descripción verbal y la **representación gráfica**, fortaleciendo tu destreza en **diseño de software** para **.NET**."
         },
         {
           "type": "subconcept",
-          "title": "Paso 1 Analizar el Pseudocódigo Base",
-          "text": "Examinemos el pseudocódigo para solicitar una clave de usuario y validar el acceso, sirviendo como **modelo lógico** para el gráfico.\n\nIdentificar variables y decisiones clave facilita la **selección de símbolos** antes de dibujar la estructura en formato textual."
+          "title": "Paso 1: Analizar el Pseudocódigo Base",
+          "text": "Revisemos el pseudocódigo diseñado para validar una clave de acceso, el cual servirá como **modelo lógico** para nuestro gráfico.\n\nIdentificar las variables y la toma de decisiones facilita la **selección de símbolos** antes de estructurar el esquema en formato textual."
         },
         {
           "type": "code",
@@ -11650,44 +11830,55 @@
         },
         {
           "type": "subconcept",
-          "title": "Paso 2 Identificar Bloques y Símbolos",
-          "text": "Asociamos cada instrucción con su símbolo: `Leer` requerirá un bloque de **entrada/salida**, mientras que `SI` será un rombo de **decisión**.\n\nLos mensajes en pantalla forman bloques de **salida de datos**, y la delimitación usa bloques de **inicio y fin** para cerrar el flujo."
+          "title": "Paso 2: Identificar Bloques y Símbolos",
+          "text": "Asociamos cada instrucción del pseudocódigo con su símbolo correspondiente: la instrucción `Leer` requiere un bloque de **entrada/salida**, mientras que `SI` se convertirá en un rombo de **decisión**.\n\nLos mensajes impresos formarán bloques de **salida de datos**, y la delimitación empleará bloques de **inicio y fin** para cerrar el flujo."
         },
         {
           "type": "subconcept",
-          "title": "Paso 3 Ensamblar el Diagrama ASCII",
-          "text": "Alineamos verticalmente figuras con líneas y flechas, manteniendo el ancho dentro del límite para una **estética limpia** en smartphones.\n\nLas ramas afirmativa y negativa se bifurcan tras la decisión y convergen en un conector común antes del cierre del **diagrama algorítmico**."
+          "title": "Paso 3: Ensamblar el Diagrama ASCII",
+          "text": "Conectamos las figuras verticalmente con líneas y flechas, cuidando que el ancho no supere 26 caracteres para mantener una **estética limpia** en la pantalla móvil.\n\nLas ramas afirmativa y negativa se bifurcan tras la decisión y se unen en un conector común antes de alcanzar el bloque final del **diagrama algorítmico**."
         },
         {
           "type": "diagram",
           "language": "text",
-          "code": "      ( Inicio )\n          │\n          ▼\n    / Leer clave /\n          │\n          ▼\n  < ¿clave == 1234? >\n     │          │\n    [Sí]       [No]\n     │          │\n     ▼          ▼\n  / Acceso /  / Denegado /\n     │          │\n     └────┬─────┘\n          │\n          ▼\n       ( Fin )"
+          "code": "      ( Inicio )\n          │\n          ▼\n    / Leer clave /\n          │\n          ▼\n  < ¿clave == 1234? >\n     │          │\n    [Sí]       [No]\n     │          │\n     ▼          ▼\n / \"Acceso\" / / \"Denegado\" /\n     │          │\n     └────┬─────┘\n          │\n          ▼\n       ( Fin )"
         },
         {
           "type": "subconcept",
-          "title": "Paso 4 Trazar las Rutas de Prueba",
-          "text": "Ingresamos `1234`: el flujo sigue la rama `[Sí]`, muestra el mensaje de éxito y finaliza de manera **correcta y lineal**.\n\nCon `9999`, la condición es falsa: sigue la ruta `[No]` e imprime el rechazo, confirmando la **validez lógica** del diagrama."
+          "title": "Paso 4: Trazar las Rutas de Prueba",
+          "text": "Realizamos dos pruebas ejecutando manualmente el gráfico. Primero ingresamos el valor `1234`; el flujo toma la rama del `[Sí]`, muestra el mensaje correspondiente y finaliza de manera **correcta y lineal**."
         },
         {
           "type": "code",
           "language": "text",
-          "code": "Entrada de prueba: 1234\nSalida: Acceso Concedido\n\nEntrada de prueba: 9999\nSalida: Acceso Denegado",
-          "output": "Entrada de prueba: 1234\nSalida: Acceso Concedido\n\nEntrada de prueba: 9999\nSalida: Acceso Denegado"
+          "code": "Entrada de prueba: 1234",
+          "output": "Acceso Concedido"
+        },
+        {
+          "type": "subconcept",
+          "title": "Segunda prueba: ruta de rechazo",
+          "text": "En la segunda prueba ingresamos `9999`; la condición resulta falsa, por lo que el programa toma la ruta del `[No]` e imprime el rechazo. Ambas pruebas confirman la **validez lógica** del diagrama."
+        },
+        {
+          "type": "code",
+          "language": "text",
+          "code": "Entrada de prueba: 9999",
+          "output": "Acceso Denegado"
         },
         {
           "type": "cue",
-          "question": "¿Qué ventaja tiene validar las rutas del diagrama antes de programar en C#?",
-          "answer": "Permite detectar **errores de lógica**, **rutas ciegas** o **bucles infinitos** en la etapa conceptual, evitando perder tiempo corrigiendo fallos estructurales directamente en el **código fuente** de la aplicación."
+          "question": "¿Qué ventaja tiene validar las rutas de un diagrama antes de escribir el código en C#?",
+          "answer": "Validar las rutas antes de programar permite detectar **errores de lógica, rutas ciegas o bucles infinitos** en la etapa de diseño, evitando perder tiempo corrigiendo fallos estructurales en el código de `C#`."
         },
         {
           "type": "summary",
           "items": [
-            "Los **diagramas de flujo** transforman las instrucciones de pseudocódigo en esquemas visuales estructurados y comprensibles.",
-            "La **simbología ISO** estandariza la representación de bloques para **inicio/fin**, **procesos**, **entrada/salida** y **decisiones**.",
-            "La disposición en **columna vertical** optimiza la lectura secuencial de diagramas ASCII en pantallas móviles estrechas de 360dp.",
-            "Las decisiones dividen el flujo en ramas de **verdadero** y **falso**, las cuales deben converger ordenadamente en un **conector**.",
-            "El **trazado de rutas** valida la solidez de la lógica algorítmica probando caminos estándar y **condiciones límite** extremas.",
-            "La conversión metódica de pseudocódigo a esquemas gráficos prepara el razonamiento para estructurar **código limpio** en `C#`."
+            "Los **diagramas de flujo** transforman instrucciones de pseudocódigo en esquemas visuales estructurados que facilitan el análisis lógico.",
+            "La **simbología ISO** estandariza figuras como **inicio y fin**, **proceso**, **entrada/salida** y rombos de **decisión** en cualquier sistema.",
+            "La disposición en **columna vertical** optimiza la lectura de diagramas en pantallas de 360dp, evitando desplazamientos horizontales incómodos.",
+            "Las decisiones dividen el camino en ramas de **verdadero** y **falso** que deben converger en un conector antes de finalizar el algoritmo.",
+            "El **trazado de rutas** valida la lógica probando caminos normales y condiciones límite para evitar errores de frontera o ciclos sin fin.",
+            "La **conversión metódica** de pseudocódigo a diagramas prepara la mente para escribir algoritmos limpios y estructurados en el lenguaje `C#`."
           ]
         }
       ],
