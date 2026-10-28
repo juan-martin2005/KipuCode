@@ -4,6 +4,8 @@ import com.google.gson.JsonParser
 import com.kipucode.domain.model.LessonBlock
 
 object LessonBlockConverter {
+    fun sanitizeHeading(title: String): String = title.replace(Regex("""^#{1,6}\s+"""), "").trim()
+
     fun parse(rawContent: String?): List<LessonBlock> {
         if (rawContent.isNullOrBlank()) return emptyList()
 
@@ -26,7 +28,7 @@ object LessonBlockConverter {
                     "header" -> {
                         blocks.add(
                             LessonBlock.Header(
-                                title = obj.get("title")?.asString.orEmpty(),
+                                title = sanitizeHeading(obj.get("title")?.asString.orEmpty()),
                                 objective = obj.get("objective")?.asString.orEmpty()
                             )
                         )
@@ -34,7 +36,7 @@ object LessonBlockConverter {
                     "concept" -> {
                         blocks.add(
                             LessonBlock.Concept(
-                                title = obj.get("title")?.asString.orEmpty(),
+                                title = sanitizeHeading(obj.get("title")?.asString.orEmpty()),
                                 text = obj.get("text")?.asString.orEmpty()
                             )
                         )
@@ -42,7 +44,7 @@ object LessonBlockConverter {
                     "subconcept" -> {
                         blocks.add(
                             LessonBlock.Subconcept(
-                                title = obj.get("title")?.asString.orEmpty(),
+                                title = sanitizeHeading(obj.get("title")?.asString.orEmpty()),
                                 text = obj.get("text")?.asString.orEmpty()
                             )
                         )

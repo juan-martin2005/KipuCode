@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -14,6 +13,8 @@ import com.kipucode.domain.model.LessonBlock
 import com.kipucode.ui.theme.KipuCodeTheme
 import com.kipucode.ui.theme.KipuH3
 import com.kipucode.ui.theme.KipuParagraph
+import com.kipucode.ui.theme.KipuTeal
+
 @Composable
 fun LessonSubconceptBlock(
     block: LessonBlock.Subconcept,
@@ -24,9 +25,11 @@ fun LessonSubconceptBlock(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         if (block.title.isNotBlank()) {
-            Text(
-                text = block.title,
+            val cleanTitle = block.title.replace(Regex("""^#{1,6}\s+"""), "").trim()
+            FormattedLessonText(
+                text = cleanTitle,
                 style = KipuH3,
+                color = KipuTeal,
                 modifier = Modifier.fillMaxWidth()
             )
         }
@@ -40,6 +43,7 @@ fun LessonSubconceptBlock(
         }
     }
 }
+
 @Preview(showBackground = true, name = "LessonSubconceptBlock - Default")
 @Composable
 private fun LessonSubconceptBlockPreview() {
@@ -48,6 +52,20 @@ private fun LessonSubconceptBlockPreview() {
             block = LessonBlock.Subconcept(
                 title = "Compilación Just-In-Time (JIT)",
                 text = "El compilador **JIT** convierte el código **CIL** intermedio a código máquina nativo bajo demanda."
+            ),
+            modifier = Modifier.padding(16.dp)
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "LessonSubconceptBlock - Code in Title")
+@Composable
+private fun LessonSubconceptBlockCodeInTitlePreview() {
+    KipuCodeTheme {
+        LessonSubconceptBlock(
+            block = LessonBlock.Subconcept(
+                title = "### 4.1 Anatomía de `int.TryParse` y el parámetro `out`",
+                text = "El método `int.TryParse` retorna un booleano indicando el éxito de la conversión."
             ),
             modifier = Modifier.padding(16.dp)
         )

@@ -37,9 +37,11 @@ fun LessonHeaderBlock(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text(
-            text = block.title,
+        val cleanTitle = block.title.replace(Regex("""^#{1,6}\s+"""), "").trim()
+        FormattedLessonText(
+            text = cleanTitle,
             style = KipuH1,
+            color = KipuTeal,
             modifier = Modifier.fillMaxWidth()
         )
 

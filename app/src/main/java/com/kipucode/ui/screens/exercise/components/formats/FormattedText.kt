@@ -17,6 +17,8 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.isSpecified
 import androidx.compose.ui.unit.sp
 import com.kipucode.ui.theme.JetBrains
 import com.kipucode.ui.theme.KipuCodeTheme
@@ -35,18 +37,25 @@ fun FormattedText(
     boldColor: Color = Color.Unspecified,
     codeColor: Color = KipuTeal,
     codeBackground: Color = MoonFrost.copy(alpha = 0.2f),
+    codeFontSize: TextUnit = TextUnit.Unspecified,
     textAlign: TextAlign = TextAlign.Start
 ) {
     val targetColor = if (color != Color.Unspecified) color else (style.color.takeIf { it != Color.Unspecified } ?: KipuDarkBlue)
     val targetBoldColor = if (boldColor != Color.Unspecified) boldColor else targetColor
+    val targetCodeFontSize = when {
+        codeFontSize.isSpecified -> codeFontSize
+        style.fontSize.isSpecified -> (style.fontSize.value * 0.9f).sp
+        else -> TextUnit.Unspecified
+    }
 
-    val annotatedString = remember(text, targetColor, targetBoldColor, codeColor, codeBackground) {
+    val annotatedString = remember(text, targetColor, targetBoldColor, codeColor, codeBackground, targetCodeFontSize) {
         parseFormattedSpans(
             input = text,
             defaultColor = targetColor,
             boldColor = targetBoldColor,
             codeColor = codeColor,
-            codeBackground = codeBackground
+            codeBackground = codeBackground,
+            codeFontSize = targetCodeFontSize
         )
     }
 
@@ -62,7 +71,8 @@ fun parseFormattedSpans(
     defaultColor: Color,
     boldColor: Color = defaultColor,
     codeColor: Color = KipuTeal,
-    codeBackground: Color = MoonFrost.copy(alpha = 0.2f)
+    codeBackground: Color = MoonFrost.copy(alpha = 0.2f),
+    codeFontSize: TextUnit = TextUnit.Unspecified
 ): AnnotatedString {
     return buildAnnotatedString {
         // Regex para capturar `código inline`, **negrita**, *cursiva* o _cursiva_
@@ -86,7 +96,7 @@ fun parseFormattedSpans(
                             fontFamily = JetBrains,
                             fontStyle = FontStyle.Italic,
                             fontWeight = FontWeight.Normal,
-                            fontSize = 13.sp,
+                            fontSize = if (codeFontSize.isSpecified) codeFontSize else 13.sp,
                             color = codeColor,
                             background = codeBackground
                         ),
