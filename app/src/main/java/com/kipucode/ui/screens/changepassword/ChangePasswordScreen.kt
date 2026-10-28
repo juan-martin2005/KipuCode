@@ -102,6 +102,10 @@ fun ChangePasswordScreen(
                         val currentPasswordErrorText = when (uiState.currentPasswordError) {
                             ValidationErrorType.EMPTY_FIELD -> stringResource(R.string.error_password_required)
                             ValidationErrorType.PASSWORD_TOO_SHORT -> stringResource(R.string.error_password_too_short)
+                            ValidationErrorType.PASSWORD_MISSING_UPPERCASE -> stringResource(R.string.error_password_missing_uppercase)
+                            ValidationErrorType.PASSWORD_MISSING_LOWERCASE -> stringResource(R.string.error_password_missing_lowercase)
+                            ValidationErrorType.PASSWORD_MISSING_DIGIT -> stringResource(R.string.error_password_missing_digit)
+                            ValidationErrorType.PASSWORD_MISSING_SPECIAL_CHAR -> stringResource(R.string.error_password_missing_special)
                             else -> uiState.serverError
                         }
 

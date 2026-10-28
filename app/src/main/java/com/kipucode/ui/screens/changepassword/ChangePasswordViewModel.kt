@@ -28,7 +28,7 @@ class ChangePasswordViewModel @Inject constructor(
 
     // --- PASO 1: Verificar contraseña actual ---
     fun verifyCurrentPassword(currentPass: String) {
-        val validation = validatePasswordUseCase(currentPass)
+        val validation = validatePasswordUseCase(currentPass, requireComplexity = false)
         if (!validation.successful) {
             _uiState.update { it.copy(currentPasswordError = validation.errorType) }
             return
@@ -96,14 +96,14 @@ class ChangePasswordViewModel @Inject constructor(
     }
 
     fun clearNewPasswordError() {
-        if (_uiState.value.newPasswordError != null) {
-            _uiState.update { it.copy(newPasswordError = null) }
+        if (_uiState.value.newPasswordError != null || _uiState.value.serverError != null) {
+            _uiState.update { it.copy(newPasswordError = null, serverError = null) }
         }
     }
 
     fun clearConfirmPasswordError() {
-        if (_uiState.value.confirmPasswordError != null) {
-            _uiState.update { it.copy(confirmPasswordError = null) }
+        if (_uiState.value.confirmPasswordError != null || _uiState.value.serverError != null) {
+            _uiState.update { it.copy(confirmPasswordError = null, serverError = null) }
         }
     }
 

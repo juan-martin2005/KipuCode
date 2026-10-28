@@ -49,8 +49,8 @@ class AuthRemoteDataSource @Inject constructor(
     //  Autenticar user ->
     // ======================================================================================
     suspend fun reAutenticateUser(currentPassword: String) {
-        val user = firebaseAuth.currentUser ?: return
-        val email = user.email ?: return
+        val user = firebaseAuth.currentUser ?: throw IllegalStateException("Usuario no autenticado")
+        val email = user.email ?: throw IllegalStateException("Correo no encontrado")
 
         val credential = EmailAuthProvider.getCredential(email, currentPassword)
         user.reauthenticate(credential).await()
@@ -62,7 +62,7 @@ class AuthRemoteDataSource @Inject constructor(
     //  Cambiar contraseña -> FirebaseAuth incluye una función updatePassword
     // ======================================================================================
     suspend fun changePassword(newPassword: String) {
-        val  user = firebaseAuth.currentUser ?: return
+        val user = firebaseAuth.currentUser ?: throw IllegalStateException("Usuario no autenticado")
 
         user.updatePassword(newPassword).await()
     }
